@@ -30,55 +30,28 @@
             }
         })();
     </script>
+    <link rel="stylesheet" href="/css/theme.css">
     <style>
         :root {
-            --bg: #313233;
-            --on-bg: #e2e4e6;
-            --surface: #313233;
-            --on-surface: #e2e4e6;
-            --surface-variant: #545c66;
-            --on-surface-variant: #d4dce6;
-            --primary: #8DB5E6;
-            --on-primary: #0B294C;
-            --secondary: #97E6C2;
-            --on-secondary: #124C32;
-            --tertiary: #E3E6AA;
-            --error: #E69490;
-            --outline: #9fa8b3;
-            --input-bg: rgba(84, 92, 102, 0.12);
-            --input-border: rgba(159, 168, 179, 0.18);
-            --card-bg: rgba(49, 50, 51, 0.50);
-            --card-border: rgba(159, 168, 179, 0.06);
+            --input-bg: color-mix(in srgb, var(--color-surface-variant) 30%, transparent);
+            --input-border: var(--color-outline);
+            --card-bg: color-mix(in srgb, var(--color-surface) 65%, transparent);
+            --card-border: var(--color-outline);
             --glass-blur: blur(28px);
-            --shadow-card: 0 24px 80px rgba(0,0,0,0.35);
+            --shadow-card: var(--shadow-lg);
         }
         .light {
-            --bg: #f2f4f5;
-            --on-bg: #1e1f20;
-            --surface: #fbfcfc;
-            --on-surface: #1e1f20;
-            --surface-variant: #d9dfe6;
-            --on-surface-variant: #545c66;
-            --primary: #1A5FB4;
-            --on-primary: #FFFFFF;
-            --secondary: #2EC27E;
-            --on-secondary: #FFFFFF;
-            --tertiary: #E7EB63;
-            --error: #B3261E;
-            --outline: #7f8b99;
-            --input-bg: rgba(217, 223, 230, 0.25);
-            --input-border: rgba(127, 139, 153, 0.2);
-            --card-bg: rgba(251, 252, 252, 0.55);
-            --card-border: rgba(127, 139, 153, 0.08);
+            --input-bg: color-mix(in srgb, var(--color-surface-variant) 40%, transparent);
+            --input-border: var(--color-outline);
+            --card-bg: color-mix(in srgb, var(--color-surface) 60%, transparent);
+            --card-border: var(--color-outline);
             --shadow-card: 0 24px 80px rgba(0,0,0,0.08);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: var(--bg);
-            color: var(--on-bg);
+            background: var(--color-bg);
+            color: var(--color-on-bg);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -125,7 +98,7 @@
             background: var(--card-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -134,7 +107,7 @@
             transition: background 0.25s, transform 0.2s, border-color 0.25s;
             animation: fadeSlideDown 0.6s ease 0.2s both;
         }
-        .theme-toggle:hover { transform: scale(1.08); background: var(--input-bg); border-color: var(--outline); }
+        .theme-toggle:hover { transform: scale(1.08); background: var(--input-bg); border-color: var(--color-outline); }
         .theme-toggle:active { transform: scale(0.95); }
 
         .login-card {
@@ -194,8 +167,8 @@
             align-items: center;
             justify-content: center;
             border-radius: 16px;
-            background: var(--primary);
-            color: var(--on-primary);
+            background: var(--color-primary);
+            color: var(--color-on-primary);
             font-size: 22px;
             font-weight: 700;
             letter-spacing: -0.5px;
@@ -227,7 +200,7 @@
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             margin-bottom: 8px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
@@ -246,7 +219,7 @@
         .input-wrapper:hover { background: rgba(84, 92, 102, 0.18); }
         .light .input-wrapper:hover { background: rgba(217, 223, 230, 0.35); }
         .input-wrapper:focus-within {
-            border-color: var(--primary);
+            border-color: var(--color-primary);
             background: var(--input-bg);
             box-shadow: 0 0 0 3px rgba(141, 181, 230, 0.1);
         }
@@ -254,7 +227,7 @@
 
         .input-icon {
             padding: 0 0 0 14px;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             font-size: 18px;
             display: flex;
             align-items: center;
@@ -262,7 +235,7 @@
             opacity: 0.5;
             transition: opacity 0.3s, color 0.3s;
         }
-        .input-wrapper:focus-within .input-icon { opacity: 0.8; color: var(--primary); }
+        .input-wrapper:focus-within .input-icon { opacity: 0.8; color: var(--color-primary); }
 
         .input-wrapper input {
             width: 100%;
@@ -270,7 +243,7 @@
             background: transparent;
             border: none;
             outline: none;
-            color: var(--on-surface);
+            color: var(--color-on-surface);
             font-size: 15px;
             font-family: inherit;
             font-weight: 400;
@@ -284,7 +257,7 @@
             padding: 0 14px 0 0;
             background: none;
             border: none;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -310,11 +283,11 @@
             gap: 9px;
             cursor: pointer;
             font-size: 14px;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             user-select: none;
             transition: color 0.2s;
         }
-        .remember-me:hover { color: var(--on-surface); }
+        .remember-me:hover { color: var(--color-on-surface); }
 
         .remember-me input { display: none; }
 
@@ -322,7 +295,7 @@
             width: 18px;
             height: 18px;
             border-radius: 5px;
-            border: 1.5px solid var(--outline);
+            border: 1.5px solid var(--color-outline);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -332,8 +305,8 @@
         }
         .remember-me:hover .check-box { transform: scale(1.05); }
         .remember-me input:checked + .check-box {
-            background: var(--primary);
-            border-color: var(--primary);
+            background: var(--color-primary);
+            border-color: var(--color-primary);
         }
         .check-box svg {
             width: 11px;
@@ -346,7 +319,7 @@
 
         .forgot-link {
             font-size: 14px;
-            color: var(--primary);
+            color: var(--color-primary);
             text-decoration: none;
             font-weight: 500;
             transition: opacity 0.2s;
@@ -359,7 +332,7 @@
             left: 0;
             width: 0;
             height: 1px;
-            background: var(--primary);
+            background: var(--color-primary);
             transition: width 0.25s ease;
         }
         .forgot-link:hover::after { width: 100%; }
@@ -370,8 +343,8 @@
             padding: 16px;
             border: none;
             border-radius: 14px;
-            background: var(--secondary);
-            color: var(--on-secondary);
+            background: var(--color-secondary);
+            color: var(--color-on-secondary);
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
@@ -398,7 +371,7 @@
             width: 18px;
             height: 18px;
             border: 2px solid transparent;
-            border-top-color: var(--on-secondary);
+            border-top-color: var(--color-on-secondary);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             display: none;
@@ -427,7 +400,7 @@
             align-items: center;
             gap: 12px;
             margin: 22px 0 0;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -445,18 +418,16 @@
             text-align: center;
             margin-top: 18px;
             font-size: 14px;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             animation: fadeSlideUp 0.6s ease 0.62s both;
         }
         .register-link a {
-            color: var(--primary);
+            color: var(--color-primary);
             text-decoration: none;
             font-weight: 500;
             transition: opacity 0.2s;
         }
         .register-link a:hover { opacity: 0.75; }
-
-        ::selection { background: var(--primary); color: var(--on-primary); }
 
         @media (max-width: 480px) {
             .login-card { padding: 32px 24px 28px; margin: 12px; border-radius: 20px; max-width: 100%; }

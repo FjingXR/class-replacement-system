@@ -14,83 +14,17 @@
             }
         })();
     </script>
+    <link rel="stylesheet" href="/css/theme.css">
     <style>
-        :root {
-            --background: #1c1e1f;
-            --on-background: #e2e4e6;
-            --surface: #2a2c2e;
-            --on-surface: #e2e4e6;
-            --surface-variant: #3a3c3e;
-            --on-surface-variant: #c4c9ce;
-            --primary: #8DB5E6;
-            --on-primary: #0B294C;
-            --primary-container: rgba(141, 181, 230, 0.2);
-            --on-primary-container: #8DB5E6;
-            --secondary: #2EC27E;
-            --on-secondary: #FFFFFF;
-            --secondary-container: rgba(46, 194, 126, 0.2);
-            --on-secondary-container: #97E6C2;
-            --tertiary: #E3E6AA;
-            --on-tertiary: #323315;
-            --tertiary-container: rgba(227, 230, 170, 0.2);
-            --on-tertiary-container: #E3E6AA;
-            --error: #E69490;
-            --on-error: #601410;
-            --error-container: rgba(230, 148, 144, 0.2);
-            --on-error-container: #E69490;
-            --outline: rgba(159, 168, 179, 0.2);
-            --outline-strong: rgba(159, 168, 179, 0.35);
-            --shadow: 0 2px 8px rgba(0,0,0,0.25);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.35);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --transition: 0.2s ease;
-        }
-        .light {
-            --background: #f2f4f5;
-            --on-background: #1e1f20;
-            --surface: #ffffff;
-            --on-surface: #1e1f20;
-            --surface-variant: #e8eaed;
-            --on-surface-variant: #5a6068;
-            --primary: #1A5FB4;
-            --on-primary: #FFFFFF;
-            --primary-container: rgba(26, 95, 180, 0.15);
-            --on-primary-container: #1A5FB4;
-            --secondary: #2EC27E;
-            --on-secondary: #FFFFFF;
-            --secondary-container: rgba(46, 194, 126, 0.15);
-            --on-secondary-container: #1a7a4e;
-            --tertiary: #9fa028;
-            --on-tertiary: #FFFFFF;
-            --tertiary-container: rgba(159, 160, 40, 0.15);
-            --on-tertiary-container: #6b6c1a;
-            --error: #B3261E;
-            --on-error: #FFFFFF;
-            --error-container: rgba(179, 38, 30, 0.12);
-            --on-error-container: #b3261e;
-            --outline: rgba(90, 96, 104, 0.2);
-            --outline-strong: rgba(90, 96, 104, 0.35);
-            --shadow: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--background);
-            color: var(--on-background);
+            background: var(--color-bg);
+            color: var(--color-on-bg);
             min-height: 100vh;
             overflow-x: hidden;
             transition: background var(--transition), color var(--transition);
         }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--outline-strong); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--on-surface-variant); }
-        ::selection { background: var(--primary); color: var(--on-primary); }
 
         .top-bar {
             position: fixed;
@@ -115,8 +49,8 @@
             height: 40px;
             border-radius: 10px;
             border: none;
-            background: var(--primary);
-            color: var(--on-primary);
+            background: var(--color-primary);
+            color: var(--color-on-primary);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -143,7 +77,7 @@
         .top-title {
             font-size: 22px;
             font-weight: 700;
-            color: var(--on-surface);
+            color: var(--color-on-surface);
             letter-spacing: -0.3px;
         }
 
@@ -155,16 +89,16 @@
             width: 36px;
             height: 36px;
             border-radius: 10px;
-            border: 1px solid var(--outline);
-            background: var(--surface);
-            color: var(--on-surface-variant);
+            border: 1px solid var(--color-outline);
+            background: var(--color-surface);
+            color: var(--color-on-surface-variant);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
             transition: background var(--transition), transform 0.15s, border-color var(--transition);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
         }
         .theme-toggle:hover { transform: scale(1.08); }
         .theme-toggle:active { transform: scale(0.95); }
@@ -185,10 +119,10 @@
             justify-content: space-between;
             gap: 16px;
             padding: 10px 16px;
-            background: var(--surface);
-            border: 1px solid var(--outline);
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
             transition: background var(--transition), border-color var(--transition);
             flex-wrap: wrap;
         }
@@ -203,8 +137,8 @@
             padding: 8px 14px;
             border-radius: var(--radius-sm);
             border: none;
-            background: var(--secondary-container);
-            color: var(--on-secondary-container);
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
             font-family: inherit;
             font-size: 14px;
             font-weight: 500;
@@ -213,7 +147,7 @@
             outline: none;
         }
         .selector-dropdown:hover { filter: brightness(1.1); }
-        .selector-dropdown option { background: var(--surface); color: var(--on-surface); }
+        .selector-dropdown option { background: var(--color-surface); color: var(--color-on-surface); }
 
         .toolbar-center {
             text-align: center;
@@ -223,11 +157,11 @@
         .toolbar-center .toolbar-subtitle {
             font-size: 14px;
             font-weight: 500;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
         }
         .toolbar-center .toolbar-meta {
             font-size: 13px;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             margin-top: 2px;
             opacity: 0.8;
         }
@@ -241,7 +175,7 @@
         .hint-text {
             text-align: center;
             font-size: 12px;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             margin-top: 12px;
             margin-bottom: -4px;
             opacity: 0.6;
@@ -249,12 +183,11 @@
         }
 
         .grid-wrapper {
-            flex: 1;
             margin-top: 14px;
-            background: var(--surface);
-            border: 1px solid var(--outline);
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
             transition: background var(--transition), border-color var(--transition);
             position: relative;
             overflow: hidden;
@@ -273,7 +206,7 @@
         }
 
         .timetable th, .timetable td {
-            border: 1px solid var(--outline);
+            border: 1px solid var(--color-outline);
             text-align: center;
             vertical-align: middle;
             font-size: 13px;
@@ -281,8 +214,8 @@
         }
 
         .timetable th {
-            background: var(--surface-variant);
-            color: var(--on-surface-variant);
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface-variant);
             font-weight: 600;
             position: sticky;
             z-index: 10;
@@ -307,7 +240,7 @@
             left: 0;
             position: sticky;
             z-index: 15;
-            background: var(--surface);
+            background: var(--color-surface);
             font-weight: 600;
         }
         .time-col .day-label {
@@ -318,14 +251,14 @@
             display: block;
             font-size: 11px;
             font-weight: 400;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             margin-top: 2px;
         }
         .time-col .holiday-label {
             display: block;
             font-size: 10px;
             font-weight: 600;
-            color: var(--error);
+            color: var(--color-error);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-top: 2px;
@@ -368,7 +301,7 @@
         }
 
         .cell-available {
-            background: var(--secondary-container);
+            background: var(--color-secondary-container);
             cursor: pointer;
         }
         .cell-available:hover {
@@ -380,20 +313,20 @@
         }
 
         .cell-occupied {
-            background: var(--error-container);
+            background: var(--color-error-container);
             cursor: not-allowed;
         }
 
         .cell-selected {
-            background: var(--primary-container);
-            border: 2px solid var(--primary);
-            box-shadow: inset 0 0 0 1px var(--primary);
+            background: var(--color-primary-container);
+            border: 2px solid var(--color-primary);
+            box-shadow: inset 0 0 0 1px var(--color-primary);
             cursor: pointer;
         }
         .cell-selected .sel-text {
             font-size: 10px;
             font-weight: 700;
-            color: var(--on-primary-container);
+            color: var(--color-on-primary-container);
             text-transform: uppercase;
             letter-spacing: 0.3px;
             line-height: 1.2;
@@ -412,7 +345,7 @@
         }
 
         .cell-pending {
-            background: var(--tertiary-container);
+            background: var(--color-tertiary-container);
             cursor: not-allowed;
         }
 
@@ -421,10 +354,10 @@
         .footer-area {
             margin-top: 14px;
             padding: 14px 18px;
-            background: var(--surface);
-            border: 1px solid var(--outline);
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
             transition: background var(--transition), border-color var(--transition);
             display: flex;
             align-items: center;
@@ -438,10 +371,10 @@
             align-items: center;
             gap: 20px;
             font-size: 13px;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
         }
         .footer-left strong {
-            color: var(--on-surface);
+            color: var(--color-on-surface);
             font-weight: 600;
         }
 
@@ -450,19 +383,19 @@
             align-items: center;
             gap: 6px;
             font-size: 13px;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
             padding: 10px 14px;
-            background: var(--surface-variant);
+            background: var(--color-surface-variant);
             border-radius: var(--radius-sm);
             height: 40px;
         }
         .selection-counter .count-num {
             font-weight: 700;
-            color: var(--primary);
+            color: var(--color-primary);
         }
         .selection-counter .count-max {
             font-weight: 600;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
         }
 
         .footer-right {
@@ -487,18 +420,18 @@
         .btn:active { transform: scale(0.97); }
 
         .btn-outline {
-            background: var(--surface);
-            border: 1px solid var(--outline-strong);
-            color: var(--on-surface-variant);
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline-strong);
+            color: var(--color-on-surface-variant);
         }
         .btn-outline:hover {
-            background: var(--surface-variant);
-            border-color: var(--on-surface-variant);
+            background: var(--color-surface-variant);
+            border-color: var(--color-on-surface-variant);
         }
 
         .btn-primary {
-            background: var(--secondary);
-            color: var(--on-secondary);
+            background: var(--color-secondary);
+            color: var(--color-on-secondary);
             box-shadow: 0 2px 8px rgba(151, 230, 194, 0.2);
         }
         .btn-primary:hover {
@@ -508,6 +441,67 @@
         .light .btn-primary { box-shadow: 0 2px 8px rgba(46, 194, 126, 0.2); }
         .light .btn-primary:hover { box-shadow: 0 4px 16px rgba(46, 194, 126, 0.3); }
 
+        .btn-primary:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            filter: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+        .btn-primary:disabled:hover { filter: none !important; box-shadow: none !important; }
+
+        .btn-danger {
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+        }
+        .btn-danger:hover {
+            filter: brightness(1.1);
+        }
+
+        .top-logo { cursor: pointer; }
+
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 999;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .modal {
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            max-width: 460px; width: 100%;
+            animation: modalIn 0.2s ease;
+        }
+        @keyframes modalIn {
+            from { opacity:0; transform:scale(0.95) translateY(10px); }
+            to { opacity:1; transform:scale(1) translateY(0); }
+        }
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px 0;
+        }
+        .modal-title { font-size: 18px; font-weight: 700; color: var(--color-on-surface); }
+        .modal-close {
+            width: 32px; height: 32px; border-radius: 8px; border: none;
+            background: var(--color-surface-variant); color: var(--color-on-surface-variant);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; line-height: 1;
+            transition: background var(--transition);
+        }
+        .modal-close:hover { background: var(--color-outline); }
+        .modal-body {
+            padding: 20px 24px;
+            font-size: 14px; color: var(--color-on-surface);
+            line-height: 1.5;
+        }
+        .modal-footer {
+            display: flex; justify-content: flex-end; gap: 10px;
+            padding: 0 24px 20px;
+        }
+
         .legend {
             margin-top: 12px;
             display: flex;
@@ -515,8 +509,8 @@
             flex-wrap: wrap;
             gap: 18px;
             padding: 10px 18px;
-            background: var(--surface);
-            border: 1px solid var(--outline);
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
             border-radius: var(--radius-md);
             transition: background var(--transition), border-color var(--transition);
         }
@@ -526,14 +520,195 @@
             align-items: center;
             gap: 8px;
             font-size: 13px;
-            color: var(--on-surface-variant);
+            color: var(--color-on-surface-variant);
         }
         .legend-swatch {
             width: 18px;
             height: 18px;
             border-radius: 4px;
             flex-shrink: 0;
-            border: 1px solid var(--outline);
+            border: 1px solid var(--color-outline);
+        }
+
+        /* ===== Selection Summary ===== */
+        .sel-summary {
+            margin-top: 14px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: background var(--transition), border-color var(--transition);
+            overflow: hidden;
+        }
+
+        .sel-summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--color-outline);
+        }
+
+        .sel-summary-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-on-surface);
+        }
+
+        .sel-summary-count {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-on-surface-variant);
+        }
+        .sel-summary-count strong {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        .sel-summary-empty {
+            padding: 44px 20px;
+            text-align: center;
+            color: var(--color-on-surface-variant);
+        }
+        .sel-summary-empty svg {
+            width: 44px; height: 44px;
+            opacity: 0.25;
+            margin-bottom: 10px;
+            color: var(--color-on-surface-variant);
+        }
+        .sel-summary-empty p {
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .sel-summary-empty p:first-of-type {
+            font-weight: 500;
+            color: var(--color-on-surface);
+            margin-bottom: 4px;
+        }
+
+        .sel-summary-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 10px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--color-outline);
+        }
+
+        .sel-summary-card {
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 12px 14px;
+            position: relative;
+            animation: cardSlideIn 0.2s ease;
+            transition: background 0.2s, border-color 0.15s, transform 0.15s;
+        }
+        .sel-summary-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-primary);
+        }
+
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cardFadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+        .sel-summary-card.card-removing {
+            animation: cardFadeOut 0.2s ease forwards;
+            pointer-events: none;
+        }
+
+        .card-check {
+            position: absolute;
+            top: 10px;
+            right: 32px;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        .card-day {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .card-date {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-bottom: 6px;
+        }
+        .card-time {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .card-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px; height: 24px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--color-on-primary-container);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            line-height: 1;
+            transition: background 0.15s, color 0.15s;
+            opacity: 0.5;
+        }
+        .card-remove:hover {
+            background: var(--color-error-container);
+            color: var(--color-error);
+            opacity: 1;
+        }
+
+        .sel-summary-info {
+            display: none;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--color-outline);
+        }
+        .info-rows {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 36px;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .info-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--color-on-surface-variant);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-on-surface);
+        }
+
+        .sel-summary-tip {
+            padding: 12px 20px;
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            text-align: center;
+            opacity: 0.65;
+        }
+
+        @media (max-width: 1024px) {
+            .sel-summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 768px) {
@@ -548,19 +723,21 @@
             .time-header-col, .time-col { width: 100px; min-width: 100px; }
             .hour-header, .timetable td.hour-cell { min-width: 60px; }
             .header-logo { height: 44px; }
+            .sel-summary-grid { grid-template-columns: 1fr; }
+            .sel-summary-info .info-rows { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
 <body>
     <div class="top-bar">
-        <button class="back-btn" onclick="history.back()" aria-label="Back">
+        <button class="back-btn" onclick="goBack()" aria-label="Back">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
             </svg>
         </button>
         <div class="top-center">
-            <img src="/images/logo_icon.png" alt="Logo" class="top-logo">
+            <img src="/images/logo_icon.png" alt="Logo" class="top-logo" onclick="navigateHome()">
             <span class="top-title">Replacement Arrangement</span>
         </div>
     </div>
@@ -585,7 +762,7 @@
                 <div class="toolbar-meta">Mon, 31-Aug-2026, 10:00 AM - 12:00 PM (2 hours)</div>
             </div>
             <div class="toolbar-right">
-                <select class="selector-dropdown" id="buildingSelector">
+                <select class="selector-dropdown" id="buildingSelector" onchange="updateSelectionSummary()">
                     <option>B103</option>
                     <option>B104</option>
                     <option>B105</option>
@@ -605,20 +782,61 @@
             </div>
         </div>
 
+        <div class="sel-summary" id="selSummary">
+            <div class="sel-summary-header">
+                <span class="sel-summary-title">Selection Summary</span>
+                <span class="sel-summary-count"><strong id="summaryCount">0</strong> / <span id="summaryMax">4</span> Selected</span>
+            </div>
+            <div class="sel-summary-empty" id="summaryEmpty">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <line x1="12" y1="14" x2="12" y2="18"/>
+                    <line x1="10" y1="16" x2="14" y2="16"/>
+                </svg>
+                <p>No time slots selected.</p>
+                <p>Click an available (green) time slot to begin.</p>
+            </div>
+            <div class="sel-summary-grid" id="summaryGrid"></div>
+            <div class="sel-summary-info" id="summaryInfo">
+                <div class="info-rows">
+                    <div class="info-item">
+                        <span class="info-label">Total Selected</span>
+                        <span class="info-value" id="infoTotal">0 of 4 slots</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Total Duration</span>
+                        <span class="info-value" id="infoDuration">0 hours</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Building</span>
+                        <span class="info-value" id="infoBuilding">B104</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sel-summary-tip" id="summaryTip">Tip: Click an available (green) time slot to begin.</div>
+        </div>
+
         <div class="footer-area">
             <div class="footer-left">
                 <span><strong>Cohort:</strong> DFT2 (S1) / DSF2 (S1) / DFT2 (S1) Jefferson Ng (2310971)</span>
             </div>
             <div class="footer-right">
-                <div class="selection-counter">
-                    Selected: <span class="count-num" id="selCount">0</span><span class="count-max">&nbsp;/ 4</span>
-                </div>
                 <button class="btn btn-outline" onclick="clearSelection()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
-                    Clear
+                    Clear this Page
+                </button>
+                <button class="btn btn-danger" onclick="clearAll()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    Clear ALL
                 </button>
                 <button class="btn btn-primary" onclick="proceed()">
                     Proceed
@@ -632,20 +850,34 @@
 
         <div class="legend">
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--secondary);"></div>
+                <div class="legend-swatch" style="background: var(--color-secondary);"></div>
                 Available
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--tertiary);"></div>
+                <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
                 PENDING by Others
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--error);"></div>
+                <div class="legend-swatch" style="background: var(--color-error);"></div>
                 Occupied / Class on Public Holiday
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--primary);"></div>
+                <div class="legend-swatch" style="background: var(--color-primary);"></div>
                 Reserved (Waiting for Approval)
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirmModal" style="display:none">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">Confirm</span>
+                <button class="modal-close" onclick="hideConfirmModal(event)">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="hideConfirmModal(event)">Cancel</button>
+                <button class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
             </div>
         </div>
     </div>
@@ -714,7 +946,31 @@
             [5, 3, 2],
         ];
 
+        let selectedSlotsByWeek = {};
+        selectedSlotsByWeek[0] = [{ day: 5, hour: 2 }, { day: 5, hour: 3 }];
+        let currentWeek = 0;
         let selectedCells = [];
+
+        function saveCurrentWeek() {
+            selectedSlotsByWeek[currentWeek] = selectedCells.map(c => ({ day: c.day, hour: c.hour }));
+        }
+
+        function loadCurrentWeek() {
+            selectedCells = [];
+            const saved = selectedSlotsByWeek[currentWeek] || [];
+            const body = document.getElementById('tableBody');
+            saved.forEach(s => {
+                const cellDiv = body.querySelector(
+                    `td[data-day="${s.day}"][data-hour="${s.hour}"] .cell-content`
+                );
+                if (cellDiv && cellDiv.classList.contains('cell-available')) {
+                    cellDiv.classList.remove('cell-available');
+                    cellDiv.classList.add('cell-selected');
+                    cellDiv.innerHTML = '<span class="sel-text"></span>';
+                    selectedCells.push({ day: s.day, hour: s.hour, el: cellDiv });
+                }
+            });
+        }
 
         function getDays() {
             const idx = parseInt(document.getElementById('weekSelector').value);
@@ -724,6 +980,77 @@
         function updateCounter() {
             const el = document.getElementById('selCount');
             if (el) el.textContent = selectedCells.length;
+            const btn = document.querySelector('.btn-primary');
+            if (btn) btn.disabled = selectedCells.length === 0;
+            updateSelectionSummary();
+        }
+
+        function updateSelectionSummary() {
+            const days = getDays();
+            const building = document.getElementById('buildingSelector').value;
+            const count = selectedCells.length;
+            const max = MAX_SELECTION;
+
+            document.getElementById('summaryCount').textContent = count;
+            const grid = document.getElementById('summaryGrid');
+
+            if (count === 0) {
+                document.getElementById('summaryEmpty').style.display = '';
+                grid.style.display = 'none';
+                grid.innerHTML = '';
+                document.getElementById('summaryInfo').style.display = 'none';
+                document.getElementById('summaryTip').textContent = 'Tip: Click an available (green) time slot to begin.';
+                return;
+            }
+
+            document.getElementById('summaryEmpty').style.display = 'none';
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
+            document.getElementById('summaryInfo').style.display = '';
+
+            const sorted = [...selectedCells].sort((a, b) => a.day - b.day || a.hour - b.hour);
+
+            sorted.forEach(c => {
+                const day = days[c.day];
+                const startH = parseInt(hours[c.hour]);
+                const endH = startH + 1;
+                const startStr = `${String(startH).padStart(2, '0')}:00`;
+                const endStr = `${String(endH).padStart(2, '0')}:00`;
+
+                const card = document.createElement('div');
+                card.className = 'sel-summary-card';
+                card.dataset.day = c.day;
+                card.dataset.hour = c.hour;
+                card.innerHTML = `
+                    <div class="card-check">✓</div>
+                    <button class="card-remove" onclick="deselectFromSummary(${c.day}, ${c.hour})" aria-label="Remove">×</button>
+                    <div class="card-day">${day.abbr}</div>
+                    <div class="card-date">${day.date}</div>
+                    <div class="card-time">${startStr} → ${endStr}</div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('infoTotal').textContent = `${count} of ${max} slots`;
+            const hrs = count;
+            document.getElementById('infoDuration').textContent = `${hrs} hour${hrs !== 1 ? 's' : ''}`;
+            document.getElementById('infoBuilding').textContent = building;
+
+            const tip = document.getElementById('summaryTip');
+            if (count >= max) {
+                tip.textContent = 'Tip: Maximum of 4 selections reached.';
+            } else {
+                tip.textContent = 'Tip: Click another green time slot to add more selections.';
+            }
+        }
+
+        function deselectFromSummary(di, hi) {
+            const card = document.querySelector(`.sel-summary-card[data-day="${di}"][data-hour="${hi}"]`);
+            if (card) card.classList.add('card-removing');
+            setTimeout(() => {
+                const cell = selectedCells.find(c => c.day === di && c.hour === hi);
+                if (cell) toggleCell(di, hi, cell.el);
+            }, 200);
         }
 
         function buildTimetable() {
@@ -731,7 +1058,6 @@
             const body = document.getElementById('tableBody');
             head.innerHTML = '';
             body.innerHTML = '';
-            selectedCells = [];
 
             const days = getDays();
 
@@ -782,11 +1108,6 @@
                     } else if (cellData) {
                         if (cellData[2] === 1) {
                             div.className += ' cell-occupied';
-                        } else if (cellData[2] === 2) {
-                            div.className += ' cell-selected';
-                            div.innerHTML = '<span class="sel-text"></span>';
-                            selectedCells.push({ day: di, hour: hi, el: div });
-                            div.addEventListener('click', () => toggleCell(di, hi, div));
                         } else if (cellData[2] === 3) {
                             div.className += ' cell-pending';
                         } else {
@@ -805,6 +1126,7 @@
                 body.appendChild(tr);
             });
 
+            loadCurrentWeek();
             updateCounter();
         }
 
@@ -814,19 +1136,25 @@
                 el.classList.add('cell-available');
                 el.innerHTML = '';
                 selectedCells = selectedCells.filter(c => !(c.day === di && c.hour === hi));
+                saveCurrentWeek();
                 updateCounter();
                 return;
             }
 
             if (el.classList.contains('cell-available')) {
                 if (selectedCells.length >= MAX_SELECTION) {
-                    alert(`You can only select up to ${MAX_SELECTION} slots.`);
+                    showConfirmModal(
+                        'Selection Limit',
+                        `You can only select up to ${MAX_SELECTION} slots.`,
+                        null
+                    );
                     return;
                 }
                 el.classList.remove('cell-available');
                 el.classList.add('cell-selected');
                 el.innerHTML = '<span class="sel-text"></span>';
                 selectedCells.push({ day: di, hour: hi, el });
+                saveCurrentWeek();
                 updateCounter();
             }
         }
@@ -838,19 +1166,119 @@
                 c.el.innerHTML = '';
             });
             selectedCells = [];
+            selectedSlotsByWeek[currentWeek] = [];
             updateCounter();
+        }
+
+        function onWeekChange() {
+            saveCurrentWeek();
+            currentWeek = parseInt(document.getElementById('weekSelector').value);
+            buildTimetable();
+        }
+
+        let confirmCallback = null;
+
+        function showConfirmModal(title, bodyHtml, callback) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = bodyHtml;
+            confirmCallback = callback;
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            confirmBtn.onclick = function() {
+                if (confirmCallback) confirmCallback();
+                else hideConfirmModal();
+            };
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function hideConfirmModal(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('confirmModal').style.display = 'none';
+            confirmCallback = null;
+        }
+
+        function formatHour(h) {
+            const hour = parseInt(h);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+            return `${h12}:00 ${ampm}`;
         }
 
         function proceed() {
             if (selectedCells.length === 0) {
-                alert('Please select at least one timeslot.');
+                showConfirmModal('No Selection', 'Please select at least one timeslot before proceeding.', null);
                 return;
             }
-            alert(`Proceeding with ${selectedCells.length} selected slot(s).`);
+            const days = weekData[currentWeek].days;
+            const weekLabel = weekData[currentWeek].label;
+            const listHtml = selectedCells.map(c => {
+                const day = days[c.day];
+                const startH = parseInt(hours[c.hour]);
+                const endH = startH + 1;
+                return `<div style="padding:3px 0;font-size:13px;">(${weekLabel}) ${day.abbr}, ${day.date} — ${formatHour(startH)} ~ ${formatHour(endH)}</div>`;
+            }).join('');
+            showConfirmModal(
+                'Confirm Your Selection',
+                `<div style="margin-bottom:12px;font-weight:500;">You are about to submit a replacement request for the following <strong>${selectedCells.length}</strong> slot(s):</div>
+                 <div style="border:1px solid var(--color-outline);border-radius:8px;padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
+                function() {
+                    hideConfirmModal();
+                    showConfirmModal('Submitted', 'Your replacement request has been submitted for approval.', null);
+                }
+            );
         }
 
-        function onWeekChange() {
-            buildTimetable();
+        function clearAll() {
+            showConfirmModal(
+                'Clear All Selections',
+                'Are you sure you want to clear all selections across <strong>ALL</strong> weeks? This action cannot be undone.',
+                function() {
+                    hideConfirmModal();
+                    Object.keys(selectedSlotsByWeek).forEach(k => { selectedSlotsByWeek[k] = []; });
+                    selectedCells.forEach(c => {
+                        c.el.classList.remove('cell-selected');
+                        c.el.classList.add('cell-available');
+                        c.el.innerHTML = '';
+                    });
+                    selectedCells = [];
+                    updateCounter();
+                }
+            );
+        }
+
+        function navigateTo(url) {
+            if (selectedCells.length > 0) {
+                showConfirmModal(
+                    'Unsaved Changes',
+                    'You have selected time slots that will be lost if you leave this page. Are you sure you want to leave?',
+                    function() { hideConfirmModal(); window.location.href = url; }
+                );
+            } else {
+                window.location.href = url;
+            }
+        }
+
+        function goBack() {
+            if (selectedCells.length > 0) {
+                showConfirmModal(
+                    'Unsaved Changes',
+                    'You have selected time slots that will be lost if you leave this page. Are you sure you want to go back?',
+                    function() { hideConfirmModal(); history.back(); }
+                );
+            } else {
+                history.back();
+            }
+        }
+
+        function navigateHome() {
+            if (selectedCells.length > 0) {
+                showConfirmModal(
+                    'Unsaved Changes',
+                    'You have selected time slots that will be lost if you leave this page. Are you sure you want to leave?',
+                    function() { hideConfirmModal(); window.location.href = '/'; }
+                );
+            } else {
+                window.location.href = '/';
+            }
         }
 
         function updateIcon(isDark) {

@@ -1,0 +1,97 @@
+/* ============================================
+   Shared Theme — Dark & Light Color Tokens
+   Used by: login-dummy, replacement-arrangement
+   ============================================ */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-outline-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-on-surface-variant); }
+
+::selection { background: var(--color-primary); color: var(--color-on-primary); }
+
+/* ---------- Dark (default) ---------- */
+:root {
+    --color-bg: #1c1e1f;
+    --color-on-bg: #e2e4e6;
+
+    --color-surface: #2a2c2e;
+    --color-on-surface: #e2e4e6;
+
+    --color-surface-variant: #3a3c3e;
+    --color-on-surface-variant: #c4c9ce;
+
+    --color-primary: #8DB5E6;
+    --color-on-primary: #0B294C;
+    --color-primary-container: rgba(141, 181, 230, 0.2);
+    --color-on-primary-container: #8DB5E6;
+
+    --color-secondary: #2EC27E;
+    --color-on-secondary: #FFFFFF;
+    --color-secondary-container: rgba(46, 194, 126, 0.2);
+    --color-on-secondary-container: #97E6C2;
+
+    --color-tertiary: #E3E6AA;
+    --color-on-tertiary: #323315;
+    --color-tertiary-container: rgba(227, 230, 170, 0.2);
+    --color-on-tertiary-container: #E3E6AA;
+
+    --color-error: #E69490;
+    --color-on-error: #601410;
+    --color-error-container: rgba(230, 148, 144, 0.2);
+    --color-on-error-container: #E69490;
+
+    --color-outline: rgba(159, 168, 179, 0.2);
+    --color-outline-strong: rgba(159, 168, 179, 0.35);
+
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.35);
+
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    --transition: 0.2s ease;
+}
+
+/* ---------- Light ---------- */
+.light {
+    --color-bg: #f2f4f5;
+    --color-on-bg: #1e1f20;
+
+    --color-surface: #ffffff;
+    --color-on-surface: #1e1f20;
+
+    --color-surface-variant: #e8eaed;
+    --color-on-surface-variant: #5a6068;
+
+    --color-primary: #1A5FB4;
+    --color-on-primary: #FFFFFF;
+    --color-primary-container: rgba(26, 95, 180, 0.15);
+    --color-on-primary-container: #1A5FB4;
+
+    --color-secondary: #2EC27E;
+    --color-on-secondary: #FFFFFF;
+    --color-secondary-container: rgba(46, 194, 126, 0.15);
+    --color-on-secondary-container: #1a7a4e;
+
+    --color-tertiary: #9fa028;
+    --color-on-tertiary: #FFFFFF;
+    --color-tertiary-container: rgba(159, 160, 40, 0.15);
+    --color-on-tertiary-container: #6b6c1a;
+
+    --color-error: #B3261E;
+    --color-on-error: #FFFFFF;
+    --color-error-container: rgba(179, 38, 30, 0.12);
+    --color-on-error-container: #b3261e;
+
+    --color-outline: rgba(90, 96, 104, 0.2);
+    --color-outline-strong: rgba(90, 96, 104, 0.35);
+
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.09);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+}
