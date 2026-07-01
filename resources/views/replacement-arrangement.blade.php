@@ -785,7 +785,7 @@
         <div class="sel-summary" id="selSummary">
             <div class="sel-summary-header">
                 <span class="sel-summary-title">Selection Summary</span>
-                <span class="sel-summary-count"><strong id="summaryCount">0</strong> / <span id="summaryMax">4</span> Selected</span>
+                <span class="sel-summary-count"><strong id="summaryCount">0</strong> / 4 Selected</span>
             </div>
             <div class="sel-summary-empty" id="summaryEmpty">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -977,6 +977,14 @@
             return weekData[idx].days;
         }
 
+        function getGlobalTotal() {
+            let total = 0;
+            Object.values(selectedSlotsByWeek).forEach(slots => {
+                if (slots) total += slots.length;
+            });
+            return total;
+        }
+
         function updateCounter() {
             const el = document.getElementById('selCount');
             if (el) el.textContent = selectedCells.length;
@@ -986,15 +994,32 @@
         }
 
         function updateSelectionSummary() {
-            const days = getDays();
             const building = document.getElementById('buildingSelector').value;
-            const count = selectedCells.length;
-            const max = MAX_SELECTION;
 
-            document.getElementById('summaryCount').textContent = count;
+            const allSelections = [];
+            Object.keys(selectedSlotsByWeek).forEach(weekKey => {
+                const weekIdx = parseInt(weekKey);
+                const slots = selectedSlotsByWeek[weekKey];
+                if (slots && slots.length > 0) {
+                    const days = weekData[weekIdx].days;
+                    slots.forEach(s => {
+                        allSelections.push({
+                            weekIdx: weekIdx,
+                            weekLabel: weekData[weekIdx].label,
+                            day: days[s.day],
+                            dayIdx: s.day,
+                            hour: s.hour
+                        });
+                    });
+                }
+            });
+
+            const totalCount = allSelections.length;
+
+            document.getElementById('summaryCount').textContent = totalCount;
             const grid = document.getElementById('summaryGrid');
 
-            if (count === 0) {
+            if (totalCount === 0) {
                 document.getElementById('summaryEmpty').style.display = '';
                 grid.style.display = 'none';
                 grid.innerHTML = '';
@@ -1008,48 +1033,63 @@
             grid.innerHTML = '';
             document.getElementById('summaryInfo').style.display = '';
 
-            const sorted = [...selectedCells].sort((a, b) => a.day - b.day || a.hour - b.hour);
+            const sorted = allSelections.sort((a, b) => a.weekIdx - b.weekIdx || a.dayIdx - b.dayIdx || a.hour - b.hour);
 
-            sorted.forEach(c => {
-                const day = days[c.day];
-                const startH = parseInt(hours[c.hour]);
+            sorted.forEach(s => {
+                const startH = parseInt(hours[s.hour]);
                 const endH = startH + 1;
                 const startStr = `${String(startH).padStart(2, '0')}:00`;
                 const endStr = `${String(endH).padStart(2, '0')}:00`;
 
                 const card = document.createElement('div');
                 card.className = 'sel-summary-card';
-                card.dataset.day = c.day;
-                card.dataset.hour = c.hour;
+                card.dataset.week = s.weekIdx;
+                card.dataset.day = s.dayIdx;
+                card.dataset.hour = s.hour;
                 card.innerHTML = `
                     <div class="card-check">✓</div>
-                    <button class="card-remove" onclick="deselectFromSummary(${c.day}, ${c.hour})" aria-label="Remove">×</button>
-                    <div class="card-day">${day.abbr}</div>
-                    <div class="card-date">${day.date}</div>
+                    <button class="card-remove" onclick="deselectFromSummary(${s.weekIdx}, ${s.dayIdx}, ${s.hour})" aria-label="Remove">×</button>
+                    <div class="card-day">${s.weekLabel} · ${s.day.abbr}</div>
+                    <div class="card-date">${s.day.date}</div>
                     <div class="card-time">${startStr} → ${endStr}</div>
                 `;
                 grid.appendChild(card);
             });
 
-            document.getElementById('infoTotal').textContent = `${count} of ${max} slots`;
-            const hrs = count;
+            document.getElementById('infoTotal').textContent = `${totalCount} of ${MAX_SELECTION} slots`;
+            const hrs = totalCount;
             document.getElementById('infoDuration').textContent = `${hrs} hour${hrs !== 1 ? 's' : ''}`;
             document.getElementById('infoBuilding').textContent = building;
 
             const tip = document.getElementById('summaryTip');
-            if (count >= max) {
+            if (getGlobalTotal() >= MAX_SELECTION) {
                 tip.textContent = 'Tip: Maximum of 4 selections reached.';
-            } else {
+            } else if (totalCount > 0) {
                 tip.textContent = 'Tip: Click another green time slot to add more selections.';
+            } else {
+                tip.textContent = 'Tip: Click an available (green) time slot to begin.';
             }
         }
 
-        function deselectFromSummary(di, hi) {
-            const card = document.querySelector(`.sel-summary-card[data-day="${di}"][data-hour="${hi}"]`);
+        function deselectFromSummary(weekIdx, di, hi) {
+            const card = document.querySelector(`.sel-summary-card[data-week="${weekIdx}"][data-day="${di}"][data-hour="${hi}"]`);
             if (card) card.classList.add('card-removing');
             setTimeout(() => {
-                const cell = selectedCells.find(c => c.day === di && c.hour === hi);
-                if (cell) toggleCell(di, hi, cell.el);
+                const slots = selectedSlotsByWeek[weekIdx];
+                if (slots) {
+                    const idx = slots.findIndex(s => s.day === di && s.hour === hi);
+                    if (idx !== -1) slots.splice(idx, 1);
+                }
+                if (weekIdx === currentWeek) {
+                    const cell = selectedCells.find(c => c.day === di && c.hour === hi);
+                    if (cell) {
+                        cell.el.classList.remove('cell-selected');
+                        cell.el.classList.add('cell-available');
+                        cell.el.innerHTML = '';
+                        selectedCells = selectedCells.filter(c => !(c.day === di && c.hour === hi));
+                    }
+                }
+                updateCounter();
             }, 200);
         }
 
@@ -1142,11 +1182,10 @@
             }
 
             if (el.classList.contains('cell-available')) {
-                if (selectedCells.length >= MAX_SELECTION) {
-                    showConfirmModal(
+                if (getGlobalTotal() >= MAX_SELECTION) {
+                    showAlertModal(
                         'Selection Limit',
-                        `You can only select up to ${MAX_SELECTION} slots.`,
-                        null
+                        `You can only select up to ${MAX_SELECTION} slots in total across all weeks.`
                     );
                     return;
                 }
@@ -1177,6 +1216,23 @@
         }
 
         let confirmCallback = null;
+
+        function showAlertModal(title, bodyHtml) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = bodyHtml;
+            const cancelBtn = document.querySelector('.modal-footer .btn-outline');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            cancelBtn.style.display = 'none';
+            confirmBtn.textContent = 'OK';
+            confirmBtn.className = 'btn btn-primary';
+            confirmBtn.onclick = function() {
+                cancelBtn.style.display = '';
+                confirmBtn.textContent = 'Confirm';
+                confirmBtn.className = 'btn btn-primary';
+                hideConfirmModal();
+            };
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
 
         function showConfirmModal(title, bodyHtml, callback) {
             document.getElementById('modalTitle').textContent = title;
