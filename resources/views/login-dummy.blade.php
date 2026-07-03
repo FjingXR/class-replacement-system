@@ -453,7 +453,7 @@
 
     <div class="login-card">
         <div class="logo-area">
-            <img src="/images/logo_banner-removebg-preview.png" alt="TAR UMT" class="logo-img">
+            <img src="/images/logo_banner.png" alt="TAR UMT" class="logo-img">
         </div>
 
         <form id="loginForm" onsubmit="handleSubmit(event)">

@@ -337,15 +337,19 @@
             justify-content: center;
         }
         .cell-selected .sel-text::before {
-            content: "Current\A Selection";
-            white-space: pre;
+            content: "";
         }
         .cell-selected:hover .sel-text::before {
-            content: "CLICK ME\A to DESELECT";
+            content: "REMOVE";
         }
 
         .cell-pending {
             background: var(--color-tertiary-container);
+            cursor: not-allowed;
+        }
+
+        .cell-reserved {
+            background: var(--color-surface-variant);
             cursor: not-allowed;
         }
 
@@ -622,13 +626,6 @@
             pointer-events: none;
         }
 
-        .card-check {
-            position: absolute;
-            top: 10px;
-            right: 32px;
-            font-size: 14px;
-            opacity: 0.6;
-        }
 
         .card-day {
             font-size: 14px;
@@ -854,16 +851,20 @@
                 Available
             </div>
             <div class="legend-item">
+                <div class="legend-swatch" style="background: var(--color-primary);"></div>
+                Your Current Selection
+            </div>
+            <div class="legend-item">
                 <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
-                PENDING by Others
+                Pending (You)
+            </div>
+            <div class="legend-item">
+                <div class="legend-swatch" style="background: var(--color-surface-variant);"></div>
+                Reserved by Others
             </div>
             <div class="legend-item">
                 <div class="legend-swatch" style="background: var(--color-error);"></div>
                 Occupied / Class on Public Holiday
-            </div>
-            <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-primary);"></div>
-                Reserved (Waiting for Approval)
             </div>
         </div>
     </div>
@@ -886,9 +887,19 @@
         const MAX_SELECTION = 4;
 
         const hours = [
-            '08:00', '09:00', '10:00', '11:00', '12:00',
-            '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
+            '08:00', '08:30', '09:00', '09:30',
+            '10:00', '10:30', '11:00', '11:30',
+            '12:00', '12:30',
+            '13:00', '13:30', '14:00', '14:30',
+            '15:00', '15:30', '16:00', '16:30',
+            '17:00', '17:30', '18:00', '18:30'
         ];
+
+        function add30min(t) {
+            const [h, m] = t.split(':').map(Number);
+            const total = h * 60 + m + 30;
+            return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+        }
 
         const weekData = [
             {
@@ -930,24 +941,23 @@
         ];
 
         const slotData = [
-            [0, 2, 0],
-            [0, 3, 0],
-            [1, 0, 0],
-            [1, 1, 0],
-            [1, 4, 0],
-            [1, 5, 0],
-            [2, 6, 1],
-            [2, 7, 1],
-            [4, 7, 3],
-            [4, 8, 3],
-            [4, 9, 3],
-            [4, 10, 3],
-            [5, 2, 2],
-            [5, 3, 2],
+            [0, 4, 0], [0, 5, 0],
+            [0, 6, 0], [0, 7, 0],
+            [1, 0, 0], [1, 1, 0],
+            [1, 2, 0], [1, 3, 0],
+            [1, 8, 0], [1, 9, 0],
+            [1, 10, 0], [1, 11, 0],
+            [2, 12, 1], [2, 13, 1],
+            [2, 14, 1], [2, 15, 1],
+            [4, 14, 4], [4, 15, 4],
+            [4, 16, 4], [4, 17, 4],
+            [4, 18, 4], [4, 19, 4],
+            [4, 20, 4], [4, 21, 4],
+            [5, 4, 3], [5, 5, 3],
+            [5, 6, 3], [5, 7, 3],
         ];
 
         let selectedSlotsByWeek = {};
-        selectedSlotsByWeek[0] = [{ day: 5, hour: 2 }, { day: 5, hour: 3 }];
         let currentWeek = 0;
         let selectedCells = [];
 
@@ -1036,10 +1046,8 @@
             const sorted = allSelections.sort((a, b) => a.weekIdx - b.weekIdx || a.dayIdx - b.dayIdx || a.hour - b.hour);
 
             sorted.forEach(s => {
-                const startH = parseInt(hours[s.hour]);
-                const endH = startH + 1;
-                const startStr = `${String(startH).padStart(2, '0')}:00`;
-                const endStr = `${String(endH).padStart(2, '0')}:00`;
+                const startStr = hours[s.hour];
+                const endStr = add30min(startStr);
 
                 const card = document.createElement('div');
                 card.className = 'sel-summary-card';
@@ -1047,7 +1055,6 @@
                 card.dataset.day = s.dayIdx;
                 card.dataset.hour = s.hour;
                 card.innerHTML = `
-                    <div class="card-check">✓</div>
                     <button class="card-remove" onclick="deselectFromSummary(${s.weekIdx}, ${s.dayIdx}, ${s.hour})" aria-label="Remove">×</button>
                     <div class="card-day">${s.weekLabel} · ${s.day.abbr}</div>
                     <div class="card-date">${s.day.date}</div>
@@ -1057,8 +1064,11 @@
             });
 
             document.getElementById('infoTotal').textContent = `${totalCount} of ${MAX_SELECTION} slots`;
-            const hrs = totalCount;
-            document.getElementById('infoDuration').textContent = `${hrs} hour${hrs !== 1 ? 's' : ''}`;
+            const totalMins = totalCount * 30;
+            const hrs = Math.floor(totalMins / 60);
+            const mins = totalMins % 60;
+            const durationStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
+            document.getElementById('infoDuration').textContent = durationStr;
             document.getElementById('infoBuilding').textContent = building;
 
             const tip = document.getElementById('summaryTip');
@@ -1111,9 +1121,8 @@
             hours.forEach(h => {
                 const th = document.createElement('th');
                 th.className = 'hour-header';
-                const [hStr] = h.split(':');
-                const nextH = String(parseInt(hStr) + 1).padStart(2, '0');
-                th.innerHTML = `<span class="hour-top">${h}</span><span class="hour-bottom">${nextH}:00</span>`;
+                const end = add30min(h);
+                th.innerHTML = `<span class="hour-top">${h}</span><span class="hour-bottom">${end}</span>`;
                 timeHeaderRow.appendChild(th);
             });
             head.appendChild(timeHeaderRow);
@@ -1146,11 +1155,13 @@
                     if (isSunday || day.holiday) {
                         div.className += ' cell-occupied';
                     } else if (cellData) {
-                        if (cellData[2] === 1) {
-                            div.className += ' cell-occupied';
-                        } else if (cellData[2] === 3) {
-                            div.className += ' cell-pending';
-                        } else {
+                    if (cellData[2] === 1) {
+                        div.className += ' cell-occupied';
+                    } else if (cellData[2] === 3) {
+                        div.className += ' cell-pending';
+                    } else if (cellData[2] === 4) {
+                        div.className += ' cell-reserved';
+                    } else {
                             div.className += ' cell-available';
                             div.addEventListener('click', () => toggleCell(di, hi, div));
                         }
@@ -1252,11 +1263,12 @@
             confirmCallback = null;
         }
 
-        function formatHour(h) {
-            const hour = parseInt(h);
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-            return `${h12}:00 ${ampm}`;
+        function formatHour(t) {
+            const [hStr, m] = t.split(':');
+            const h = parseInt(hStr);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+            return `${h12}:${m} ${ampm}`;
         }
 
         function proceed() {
@@ -1268,9 +1280,9 @@
             const weekLabel = weekData[currentWeek].label;
             const listHtml = selectedCells.map(c => {
                 const day = days[c.day];
-                const startH = parseInt(hours[c.hour]);
-                const endH = startH + 1;
-                return `<div style="padding:3px 0;font-size:13px;">(${weekLabel}) ${day.abbr}, ${day.date} — ${formatHour(startH)} ~ ${formatHour(endH)}</div>`;
+                const startStr = hours[c.hour];
+                const endStr = add30min(startStr);
+                return `<div style="padding:3px 0;font-size:13px;">(${weekLabel}) ${day.abbr}, ${day.date} — ${formatHour(startStr)} ~ ${formatHour(endStr)}</div>`;
             }).join('');
             showConfirmModal(
                 'Confirm Your Selection',
