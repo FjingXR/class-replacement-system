@@ -2,80 +2,127 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Cohort;
+use App\Models\Department;
+use App\Models\Faculty;
+use App\Models\Lecturer;
+use App\Models\Programme;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Fortify\Features;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_login_screen_can_be_rendered(): void
-    {
-        $response = $this->get(route('login'));
+    private User $studentUser;
+    private User $lecturerUser;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $focs = Faculty::create(['faculty_code' => 'FOCS', 'faculty_name' => 'FOCS']);
+        $dept = Department::create(['dept_code' => 'DCIT', 'dept_name' => 'DCIT', 'faculty_id' => $focs->id]);
+        $prog = Programme::create(['programme_code' => 'RSD', 'programme_name' => 'RSD', 'faculty_id' => $focs->id]);
+        $cohort = Cohort::create([
+            'programme_id' => $prog->id,
+            'current_year' => 1,
+            'semester' => 1,
+            'tutorial_group' => 1,
+            'academic_year' => '2025/26',
+            'intake' => 'June 2025',
+        ]);
+
+        $this->studentUser = User::factory()->create([
+            'role' => 'student',
+            'password' => Hash::make('password'),
+        ]);
+        Student::create([
+            'user_id' => $this->studentUser->id,
+            'student_id' => '25RSD0001',
+            'cohort_id' => $cohort->id,
+        ]);
+
+        $this->lecturerUser = User::factory()->create([
+            'role' => 'lecturer',
+            'password' => Hash::make('password'),
+        ]);
+        Lecturer::create([
+            'user_id' => $this->lecturerUser->id,
+            'staff_id' => '9999',
+            'dept_id' => $dept->id,
+            'is_pl' => false,
+        ]);
+    }
+
+    public function test_student_login_screen_can_be_rendered(): void
+    {
+        $response = $this->get(route('login.student'));
         $response->assertOk();
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_staff_login_screen_can_be_rendered(): void
     {
-        $user = User::factory()->create();
+        $response = $this->get(route('login.staff'));
+        $response->assertOk();
+    }
 
-        $response = $this->post(route('login.store'), [
-            'email' => $user->email,
+    public function test_students_can_authenticate(): void
+    {
+        $response = $this->post('/login', [
+            'login_type' => 'student',
+            'login_id' => '25RSD0001',
             'password' => 'password',
         ]);
 
-        $response
-            ->assertSessionHasNoErrors()
-            ->assertRedirect(route('dashboard', absolute: false));
-
-        $this->assertAuthenticated();
+        $response->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($this->studentUser);
     }
 
-    public function test_users_can_not_authenticate_with_invalid_password(): void
+    public function test_lecturers_can_authenticate(): void
     {
-        $user = User::factory()->create();
+        $response = $this->post('/login', [
+            'login_type' => 'staff',
+            'login_id' => '9999',
+            'password' => 'password',
+        ]);
 
-        $response = $this->post(route('login.store'), [
-            'email' => $user->email,
+        $response->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($this->lecturerUser);
+    }
+
+    public function test_users_cannot_authenticate_with_invalid_password(): void
+    {
+        $response = $this->post('/login', [
+            'login_type' => 'student',
+            'login_id' => '25RSD0001',
             'password' => 'wrong-password',
         ]);
 
-        $response->assertSessionHasErrorsIn('email');
-
+        $response->assertSessionHasErrors();
         $this->assertGuest();
     }
 
-    public function test_users_with_two_factor_enabled_are_redirected_to_two_factor_challenge(): void
+    public function test_users_cannot_authenticate_with_invalid_login_id(): void
     {
-        $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
-
-        Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-        ]);
-
-        $user = User::factory()->withTwoFactor()->create();
-
-        $response = $this->post(route('login.store'), [
-            'email' => $user->email,
+        $response = $this->post('/login', [
+            'login_type' => 'student',
+            'login_id' => 'NONEXISTENT',
             'password' => 'password',
         ]);
 
-        $response->assertRedirect(route('two-factor.login'));
+        $response->assertSessionHasErrors();
         $this->assertGuest();
     }
 
     public function test_users_can_logout(): void
     {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->post(route('logout'));
+        $response = $this->actingAs($this->studentUser)->post(route('logout'));
 
         $response->assertRedirect(route('home'));
-
         $this->assertGuest();
     }
 }

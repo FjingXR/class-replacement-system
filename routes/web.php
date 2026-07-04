@@ -2,17 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Route::view('/', 'welcome')->name('home');
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'welcome')->name('home');
 
-Route::view('/login-dummy', 'login-dummy');
-Route::view('/replacement-arrangement', 'replacement-arrangement');
+Route::get('/login/student', function () {
+    return view('auth.login-student');
+})->name('login.student');
+
+Route::get('/login/staff', function () {
+    return view('auth.login-staff');
+})->name('login.staff');
+
 Route::view('/replacement-arrangement', 'replacement-arrangement');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
-
-require __DIR__.'/settings.php';
