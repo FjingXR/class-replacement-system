@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Login — Class Replacement System</title>
+    <title>Login — Class Replacement System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -63,7 +63,7 @@
         .bg-layer {
             position: fixed;
             inset: 0;
-            background: url('/images/staff-login-bg.jpg') center/cover no-repeat;
+            background: url('/images/login-bg.jpg') center/cover no-repeat;
             filter: saturate(0.9) brightness(0.45);
             transition: filter 0.6s ease;
             will-change: transform;
@@ -139,13 +139,16 @@
             0% { opacity: 0; transform: scale(0.85); }
             100% { opacity: 1; transform: scale(1); }
         }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
 
         .logo-area {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-bottom: 28px;
+            margin-bottom: 32px;
             animation: fadeSlideUp 0.6s ease 0.15s both;
         }
 
@@ -157,16 +160,34 @@
             animation: fadeSlideUp 0.5s ease 0.1s both;
         }
 
-        .page-title {
-            text-align: center;
+        .logo-icon {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: var(--color-primary);
+            color: var(--color-on-primary);
             font-size: 22px;
             font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--color-on-surface);
-            margin-bottom: 24px;
-            animation: fadeSlideUp 0.6s ease 0.2s both;
+            letter-spacing: -0.5px;
+            box-shadow: 0 4px 16px rgba(141, 181, 230, 0.25);
+            transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+            position: relative;
         }
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 18px;
+            border: 1px solid rgba(141, 181, 230, 0.15);
+        }
+        .light .logo-icon {
+            box-shadow: 0 4px 16px rgba(26, 95, 180, 0.2);
+        }
+        .light .logo-icon::after { border-color: rgba(26, 95, 180, 0.1); }
 
         .input-group {
             margin-bottom: 20px;
@@ -248,6 +269,75 @@
         .toggle-pw:hover { opacity: 0.7; }
         .input-wrapper:focus-within .toggle-pw { opacity: 0.6; }
 
+        .options-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 24px 0 28px;
+            animation: fadeSlideUp 0.6s ease 0.4s both;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--color-on-surface-variant);
+            user-select: none;
+            transition: color 0.2s;
+        }
+        .remember-me:hover { color: var(--color-on-surface); }
+
+        .remember-me input { display: none; }
+
+        .check-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            border: 1.5px solid var(--color-outline);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .remember-me:hover .check-box { transform: scale(1.05); }
+        .remember-me input:checked + .check-box {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+        .check-box svg {
+            width: 11px;
+            height: 11px;
+            opacity: 0;
+            transition: opacity 0.15s ease, transform 0.2s ease;
+            transform: scale(0.5);
+        }
+        .remember-me input:checked + .check-box svg { opacity: 1; transform: scale(1); }
+
+        .forgot-link {
+            font-size: 14px;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+            position: relative;
+        }
+        .forgot-link::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--color-primary);
+            transition: width 0.25s ease;
+        }
+        .forgot-link:hover::after { width: 100%; }
+        .forgot-link:hover { opacity: 0.85; }
+
         .login-btn {
             width: 100%;
             padding: 16px;
@@ -268,14 +358,14 @@
             overflow: hidden;
             animation: fadeSlideUp 0.6s ease 0.48s both;
         }
-        .login-btn:hover:not(:disabled) {
+        .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(151, 230, 194, 0.2);
             background: #88dbb3;
         }
-        .light .login-btn:hover:not(:disabled) { box-shadow: 0 8px 25px rgba(46, 194, 126, 0.2); background: #2db876; }
-        .login-btn:active:not(:disabled) { transform: translateY(0) scale(0.99); }
-        .login-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+        .light .login-btn:hover { box-shadow: 0 8px 25px rgba(46, 194, 126, 0.2); background: #2db876; }
+        .login-btn:active { transform: translateY(0) scale(0.99); }
+        .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .login-btn .spinner {
             width: 18px;
@@ -305,39 +395,39 @@
             to { transform: scale(6); opacity: 0; }
         }
 
-        .role-switch {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px 0 0;
             color: var(--color-on-surface-variant);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.4;
             animation: fadeSlideUp 0.6s ease 0.55s both;
         }
-        .role-switch a {
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--input-border);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 14px;
+            color: var(--color-on-surface-variant);
+            animation: fadeSlideUp 0.6s ease 0.62s both;
+        }
+        .register-link a {
             color: var(--color-primary);
             text-decoration: none;
             font-weight: 500;
             transition: opacity 0.2s;
         }
-        .role-switch a:hover { opacity: 0.75; }
-
-        .error-msg {
-            background: color-mix(in srgb, var(--color-error) 15%, transparent);
-            border: 1px solid var(--color-error);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: var(--color-error);
-            animation: fadeSlideUp 0.4s ease both;
-        }
-
-        .format-hint {
-            font-size: 12px;
-            color: var(--color-on-surface-variant);
-            margin-top: 4px;
-            padding-left: 2px;
-            opacity: 0.6;
-        }
+        .register-link a:hover { opacity: 0.75; }
 
         @media (max-width: 480px) {
             .login-card { padding: 32px 24px 28px; margin: 12px; border-radius: 20px; max-width: 100%; }
@@ -347,6 +437,7 @@
         }
         @media (max-width: 380px) {
             .login-card { padding: 28px 20px 24px; border-radius: 16px; }
+            .options-row { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
     </style>
 </head>
@@ -365,28 +456,9 @@
             <img src="/images/logo_banner.png" alt="TAR UMT" class="logo-img">
         </div>
 
-        <div class="page-title">Staff Login</div>
-
-        <form method="POST" action="/login">
-            @csrf
-            <input type="hidden" name="login_type" value="staff">
-
-            @if ($errors->any())
-                <div class="error-msg">
-                    @foreach ($errors->all() as $error)
-                        {{ $error }}
-                    @endforeach
-                </div>
-            @endif
-
-            @if (session('status'))
-                <div class="error-msg">
-                    {{ session('status') }}
-                </div>
-            @endif
-
+        <form id="loginForm" onsubmit="handleSubmit(event)">
             <div class="input-group">
-                <label for="login_id">Staff ID</label>
+                <label for="credential">Staff ID / Student ID / Email</label>
                 <div class="input-wrapper">
                     <span class="input-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -394,9 +466,8 @@
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
                     </span>
-                    <input type="text" id="login_id" name="login_id" placeholder="e.g. 6767" value="{{ old('login_id') }}" autocomplete="username" spellcheck="false" required oninput="validateStaff()">
+                    <input type="text" id="credential" placeholder="e.g. 25SMR10178" autocomplete="username" spellcheck="false">
                 </div>
-                <div class="format-hint">Numeric staff ID only</div>
             </div>
 
             <div class="input-group">
@@ -408,7 +479,7 @@
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                         </svg>
                     </span>
-                    <input type="password" id="password" name="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required oninput="validateStaff()">
+                    <input type="password" id="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password">
                     <button class="toggle-pw" type="button" onclick="togglePassword()" aria-label="Toggle password visibility">
                         <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -418,7 +489,20 @@
                 </div>
             </div>
 
-            <button class="login-btn" type="submit" id="loginBtn" disabled>
+            <div class="options-row">
+                <label class="remember-me">
+                    <input type="checkbox" checked>
+                    <span class="check-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </span>
+                    Remember me
+                </label>
+                {{-- <a href="#" class="forgot-link" onclick="return false;">Forgot password?</a> --}}
+            </div>
+
+            <button class="login-btn" type="submit" id="loginBtn">
                 <span class="spinner"></span>
                 <span class="btn-text">Log in</span>
                 <svg class="btn-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -427,10 +511,6 @@
                 </svg>
             </button>
         </form>
-
-        <div class="role-switch">
-            Student? <a href="{{ route('login.student') }}">Student Login</a>
-        </div>
     </div>
 
     <script>
@@ -438,6 +518,7 @@
             const pw = document.getElementById('password');
             const eye = document.getElementById('eye-icon');
             const isHidden = pw.type === 'password';
+
             pw.type = isHidden ? 'text' : 'password';
             eye.innerHTML = isHidden
                 ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>'
@@ -454,10 +535,14 @@
 
         function toggleTheme() {
             const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
             const isDark = html.classList.contains('dark');
+
             html.classList.toggle('light');
             html.classList.toggle('dark');
+
             localStorage.setItem('theme', isDark ? 'light' : 'dark');
+
             updateIcon(!isDark);
         }
 
@@ -475,21 +560,17 @@
             setTimeout(() => el.remove(), 500);
         }
 
-        function validateStaff() {
-            const loginId = document.getElementById('login_id').value.trim();
-            const password = document.getElementById('password').value;
+        function handleSubmit(e) {
+            e.preventDefault();
             const btn = document.getElementById('loginBtn');
-
-            const idValid = /^\d+$/.test(loginId);
-            const pwValid = password.length > 0;
-
-            btn.disabled = !(idValid && pwValid);
+            if (btn.classList.contains('loading')) return;
+            btn.classList.add('loading');
+            setTimeout(() => btn.classList.remove('loading'), 2000);
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             updateIcon(document.documentElement.classList.contains('dark'));
-            document.getElementById('login_id').focus();
-            validateStaff();
+            document.getElementById('credential').focus();
         });
 
         document.querySelectorAll('.login-btn').forEach(btn => {

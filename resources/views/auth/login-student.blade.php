@@ -63,7 +63,7 @@
         .bg-layer {
             position: fixed;
             inset: 0;
-            background: url('/images/login-bg.jpg') center/cover no-repeat;
+            background: url('/images/student-login-bg.jpg') center/cover no-repeat;
             filter: saturate(0.9) brightness(0.45);
             transition: filter 0.6s ease;
             will-change: transform;
@@ -142,9 +142,10 @@
 
         .logo-area {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
             animation: fadeSlideUp 0.6s ease 0.15s both;
         }
 
@@ -154,6 +155,17 @@
             max-width: 280px;
             height: auto;
             animation: fadeSlideUp 0.5s ease 0.1s both;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-on-surface);
+            margin-bottom: 24px;
+            animation: fadeSlideUp 0.6s ease 0.2s both;
         }
 
         .input-group {
@@ -241,8 +253,8 @@
             padding: 16px;
             border: none;
             border-radius: 14px;
-            background: var(--color-secondary);
-            color: var(--color-on-secondary);
+            background: var(--color-primary);
+            color: var(--color-on-primary);
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
@@ -256,20 +268,20 @@
             overflow: hidden;
             animation: fadeSlideUp 0.6s ease 0.48s both;
         }
-        .login-btn:hover {
+        .login-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(151, 230, 194, 0.2);
-            background: #88dbb3;
+            box-shadow: 0 8px 25px rgba(141, 181, 230, 0.2);
+            background: #154d94;
         }
-        .light .login-btn:hover { box-shadow: 0 8px 25px rgba(46, 194, 126, 0.2); background: #2db876; }
-        .login-btn:active { transform: translateY(0) scale(0.99); }
-        .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .light .login-btn:hover:not(:disabled) { box-shadow: 0 8px 25px rgba(26, 95, 180, 0.2); background: #154d94; }
+        .login-btn:active:not(:disabled) { transform: translateY(0) scale(0.99); }
+        .login-btn:disabled { background: var(--color-outline); opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .login-btn .spinner {
             width: 18px;
             height: 18px;
             border: 2px solid transparent;
-            border-top-color: var(--color-on-secondary);
+            border-top-color: var(--color-on-primary);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             display: none;
@@ -319,6 +331,14 @@
             animation: fadeSlideUp 0.4s ease both;
         }
 
+        .format-hint {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            margin-top: 4px;
+            padding-left: 2px;
+            opacity: 0.6;
+        }
+
         @media (max-width: 480px) {
             .login-card { padding: 32px 24px 28px; margin: 12px; border-radius: 20px; max-width: 100%; }
             .logo-img { max-width: 200px; }
@@ -344,6 +364,8 @@
         <div class="logo-area">
             <img src="/images/logo_banner.png" alt="TAR UMT" class="logo-img">
         </div>
+
+        <div class="page-title">Student Login</div>
 
         <form method="POST" action="/login">
             @csrf
@@ -372,8 +394,9 @@
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
                     </span>
-                    <input type="text" id="login_id" name="login_id" placeholder="e.g. 25RSD0001" value="{{ old('login_id') }}" autocomplete="username" spellcheck="false" required>
+                    <input type="text" id="login_id" name="login_id" placeholder="e.g. 25RSD0001" value="{{ old('login_id') }}" autocomplete="username" spellcheck="false" required oninput="validateStudent()">
                 </div>
+                <div class="format-hint">Format: 2 digits + 3 letters + 4 digits (e.g. 25RSD0001)</div>
             </div>
 
             <div class="input-group">
@@ -385,7 +408,7 @@
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                         </svg>
                     </span>
-                    <input type="password" id="password" name="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required>
+                    <input type="password" id="password" name="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required oninput="validateStudent()">
                     <button class="toggle-pw" type="button" onclick="togglePassword()" aria-label="Toggle password visibility">
                         <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -395,7 +418,7 @@
                 </div>
             </div>
 
-            <button class="login-btn" type="submit" id="loginBtn">
+            <button class="login-btn" type="submit" id="loginBtn" disabled>
                 <span class="spinner"></span>
                 <span class="btn-text">Log in</span>
                 <svg class="btn-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -452,9 +475,21 @@
             setTimeout(() => el.remove(), 500);
         }
 
+        function validateStudent() {
+            const loginId = document.getElementById('login_id').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+
+            const idValid = /^\d{2}[A-Za-z]{3}\d{4}$/.test(loginId);
+            const pwValid = password.length > 0;
+
+            btn.disabled = !(idValid && pwValid);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             updateIcon(document.documentElement.classList.contains('dark'));
             document.getElementById('login_id').focus();
+            validateStudent();
         });
 
         document.querySelectorAll('.login-btn').forEach(btn => {
