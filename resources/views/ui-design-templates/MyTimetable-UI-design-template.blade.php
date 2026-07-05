@@ -221,8 +221,8 @@
         .app-container {
             width: 100%;
             max-width: 100%;
-            padding: 0;
-            padding-top: 56px;
+            padding: 16px 24px;
+            padding-top: 72px;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -291,11 +291,12 @@
 
         /* ───── Grid Wrapper ───── */
         .grid-wrapper {
-            margin: 0;
+            margin-top: 14px;
             background: var(--color-surface);
-            border: none;
-            box-shadow: none;
-            transition: background var(--transition);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: background var(--transition), border-color var(--transition);
             position: relative;
             overflow: hidden;
             flex: 1;
@@ -304,14 +305,14 @@
         .grid-scroll {
             overflow: auto;
             padding-bottom: 0;
-            max-height: calc(100vh - 56px - 44px - 50px);
+            max-height: calc(100vh - 196px);
         }
 
         .timetable {
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            min-width: 1000px;
+            min-width: 900px;
         }
 
         .timetable th, .timetable td {
@@ -336,22 +337,21 @@
         }
 
         .time-header-col {
-            width: 150px;
-            min-width: 150px;
+            width: 130px;
+            min-width: 130px;
             left: 0;
             z-index: 30 !important;
         }
         thead .time-header-col { z-index: 40 !important; }
 
         .time-col {
-            width: 150px;
-            min-width: 150px;
+            width: 130px;
+            min-width: 130px;
             left: 0;
             position: sticky;
             z-index: 15;
-            background: var(--color-surface-variant);
+            background: var(--color-surface);
             font-weight: 600;
-            padding: 4px 6px;
         }
         .time-col .day-label {
             display: block;
@@ -367,7 +367,7 @@
         .time-col .holiday-label {
             display: block;
             font-size: 10px;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--color-error);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -398,17 +398,16 @@
         .hour-header {
             padding: 6px 4px;
             font-size: 12px;
-            min-width: 96px;
-            width: 96px;
+            min-width: 80px;
         }
         .hour-header .hour-top {
             display: block;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
         }
         .hour-header .hour-bottom {
             display: block;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 400;
             opacity: 0.6;
             margin-top: 1px;
@@ -416,10 +415,9 @@
 
         .timetable td.hour-cell {
             padding: 0;
+            height: 80px;
+            min-width: 80px;
             cursor: default;
-            position: relative;
-            vertical-align: middle;
-            height: 48px;
         }
 
         .timetable td.hour-cell.sunday-slot {
@@ -451,9 +449,9 @@
             transition: filter 0.15s, box-shadow var(--transition);
             position: relative;
             cursor: pointer;
-            padding: 2px 4px;
+            padding: 6px 6px;
             box-sizing: border-box;
-            gap: 1px;
+            gap: 2px;
         }
         .event-block:hover {
             filter: brightness(1.08);
@@ -484,27 +482,27 @@
         }
 
         .event-block .ev-code {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
             line-height: 1.3;
             text-align: center;
         }
         .event-block .ev-venue {
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 500;
             opacity: 0.75;
             text-align: center;
             line-height: 1.2;
         }
         .event-block .ev-time {
-            font-size: 10px;
+            font-size: 13px;
             font-weight: 400;
             opacity: 0.65;
             text-align: center;
             line-height: 1.2;
         }
         .event-block .ev-note {
-            font-size: 9px;
+            font-size: 11px;
             font-weight: 600;
             text-align: center;
             line-height: 1.2;
@@ -514,10 +512,10 @@
         .cell-empty {
             background: var(--color-surface);
             height: 100%;
-            min-height: 48px;
+            min-height: 80px;
         }
 
-        .timetable tr:last-child td { border-bottom: 1px solid var(--color-outline); }
+        .timetable tr:last-child td { border-bottom: none; }
 
         .today-highlight {
             background: rgba(26,95,180,0.04) !important;
@@ -669,7 +667,7 @@
             .user-info { display: none; }
             .semester-bar { flex-wrap: wrap; height: auto; padding: 8px 16px; gap: 6px; }
             .time-header-col, .time-col { width: 120px; min-width: 120px; }
-            .hour-header, .timetable td.hour-cell { min-width: 72px; width: 72px; }
+            .hour-header, .timetable td.hour-cell { min-width: 60px; }
             .legend-bar { gap: 12px; font-size: 12px; }
             .session-text { font-size: 11px; }
         }
@@ -967,9 +965,8 @@
             hours.forEach(h => {
                 const th = document.createElement('th');
                 th.className = 'hour-header';
-                const end = to12h(add30min(h));
-                const start = to12h(h);
-                th.innerHTML = `<span class="hour-top">${start}</span><span class="hour-bottom">${end}</span>`;
+                const end = add30min(h);
+                th.innerHTML = `<span class="hour-top">${h}</span><span class="hour-bottom">${end}</span>`;
                 timeHeaderRow.appendChild(th);
             });
             head.appendChild(timeHeaderRow);
