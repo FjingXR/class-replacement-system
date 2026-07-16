@@ -548,6 +548,53 @@
             border: 1px solid var(--color-outline-strong);
         }
 
+        /* ───── Weekly Summary Bar ───── */
+        .summary-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 12px 24px;
+            flex-shrink: 0;
+            border-top: 1px solid var(--color-outline);
+        }
+        .summary-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            border-radius: var(--radius-md);
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface-variant);
+            min-width: 140px;
+        }
+        .summary-card .num {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .summary-card .label {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+        .summary-card.card-total {
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+        }
+        .summary-card.card-replacement {
+            background: var(--color-tertiary-container);
+            color: var(--color-on-tertiary-container);
+        }
+        .summary-card.card-pending {
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+        }
+        .summary-card.card-conflict {
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+        }
+
         /* ───── Modal ───── */
         .modal-overlay {
             position: fixed; inset: 0; z-index: 999;
@@ -657,6 +704,8 @@
             .semester-bar { padding: 0 16px; }
             .legend-bar { padding: 0 16px; gap: 16px; flex-wrap: wrap; height: auto; min-height: 50px; padding: 8px 16px; }
             .nav-item { padding: 0 12px; font-size: 13px; }
+            .summary-bar { gap: 16px; padding: 10px 16px; flex-wrap: wrap; }
+            .summary-card { min-width: 120px; padding: 6px 14px; }
         }
 
         @media (max-width: 768px) {
@@ -670,6 +719,10 @@
             .hour-header, .timetable td.hour-cell { min-width: 60px; }
             .legend-bar { gap: 12px; font-size: 12px; }
             .session-text { font-size: 11px; }
+            .summary-bar { gap: 10px; padding: 8px 12px; }
+            .summary-card { min-width: 90px; padding: 6px 10px; }
+            .summary-card .num { font-size: 18px; }
+            .summary-card .label { font-size: 11px; }
         }
     </style>
 </head>
@@ -762,6 +815,26 @@
             <div class="legend-item">
                 <div class="legend-swatch" style="background: var(--color-error);"></div>
                 Public Holiday / Conflict
+            </div>
+        </div>
+
+        <!-- ─── Weekly Summary Bar ─── -->
+        <div class="summary-bar" id="summaryBar">
+            <div class="summary-card card-total">
+                <span class="num" id="sumTotal">0</span>
+                <span class="label">Total<br>Classes</span>
+            </div>
+            <div class="summary-card card-replacement">
+                <span class="num" id="sumReplacement">0</span>
+                <span class="label">Need<br>Replacement</span>
+            </div>
+            <div class="summary-card card-pending">
+                <span class="num" id="sumPending">0</span>
+                <span class="label">Pending<br>Approval</span>
+            </div>
+            <div class="summary-card card-conflict">
+                <span class="num" id="sumConflict">0</span>
+                <span class="label">Conflicts</span>
             </div>
         </div>
     </div>
@@ -1060,6 +1133,29 @@
 
                 body.appendChild(tr);
             });
+            updateSummary();
+        }
+
+        // ═══════════════════════════════════════
+        //  Weekly Summary
+        // ═══════════════════════════════════════
+
+        function updateSummary() {
+            const events = eventsData[currentWeek] || [];
+            const days = weekData[currentWeek].days;
+            let total = events.length;
+            let replacement = 0, pending = 0, conflict = 0;
+
+            events.forEach(e => {
+                if (e.status === 'replacement') replacement++;
+                if (e.status === 'pending') pending++;
+                if (days[e.di] && days[e.di].holiday) conflict++;
+            });
+
+            document.getElementById('sumTotal').textContent = total;
+            document.getElementById('sumReplacement').textContent = replacement;
+            document.getElementById('sumPending').textContent = pending;
+            document.getElementById('sumConflict').textContent = conflict;
         }
 
         // ═══════════════════════════════════════
