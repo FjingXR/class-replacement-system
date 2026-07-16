@@ -627,6 +627,11 @@
         }
 
 
+        .card-venue {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
         .card-day {
             font-size: 14px;
             font-weight: 600;
@@ -759,7 +764,7 @@
                 <div class="toolbar-meta">Mon, 31-Aug-2026, 10:00 AM - 12:00 PM (2 hours)</div>
             </div>
             <div class="toolbar-right">
-                <select class="selector-dropdown" id="buildingSelector" onchange="updateSelectionSummary()">
+                <select class="selector-dropdown" id="buildingSelector" onchange="onVenueChange()">
                     <option>B103</option>
                     <option>B104</option>
                     <option>B105</option>
@@ -808,8 +813,8 @@
                         <span class="info-value" id="infoDuration">0 hours</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">Building</span>
-                        <span class="info-value" id="infoBuilding">B104</span>
+                        <span class="info-label">Venue</span>
+                        <span class="info-value" id="infoBuilding">B103</span>
                     </div>
                 </div>
             </div>
@@ -940,34 +945,58 @@
             }
         ];
 
-        const slotData = [
-            [0, 4, 0], [0, 5, 0],
-            [0, 6, 0], [0, 7, 0],
-            [1, 0, 0], [1, 1, 0],
-            [1, 2, 0], [1, 3, 0],
-            [1, 8, 0], [1, 9, 0],
-            [1, 10, 0], [1, 11, 0],
-            [2, 12, 1], [2, 13, 1],
-            [2, 14, 1], [2, 15, 1],
-            [4, 14, 4], [4, 15, 4],
-            [4, 16, 4], [4, 17, 4],
-            [4, 18, 4], [4, 19, 4],
-            [4, 20, 4], [4, 21, 4],
-            [5, 4, 3], [5, 5, 3],
-            [5, 6, 3], [5, 7, 3],
-        ];
+        const venueSlotData = {
+            'B103': [
+                [0, 4, 0], [0, 5, 0], [0, 6, 0], [0, 7, 0],
+                [1, 0, 0], [1, 1, 0], [1, 2, 0], [1, 3, 0],
+                [1, 8, 0], [1, 9, 0], [1, 10, 0], [1, 11, 0],
+                [2, 12, 1], [2, 13, 1], [2, 14, 1], [2, 15, 1],
+                [4, 14, 4], [4, 15, 4], [4, 16, 4], [4, 17, 4],
+                [4, 18, 4], [4, 19, 4], [4, 20, 4], [4, 21, 4],
+                [5, 4, 3], [5, 5, 3], [5, 6, 3], [5, 7, 3],
+            ],
+            'B104': [
+                [0, 0, 1], [0, 1, 1], [0, 2, 1], [0, 3, 1],
+                [0, 8, 0], [0, 9, 0], [0, 10, 0], [0, 11, 0],
+                [1, 12, 1], [1, 13, 1], [1, 14, 1], [1, 15, 1],
+                [2, 4, 0], [2, 5, 0], [2, 6, 0], [2, 7, 0],
+                [2, 8, 0], [2, 9, 0],
+                [3, 4, 4], [3, 5, 4], [3, 6, 4], [3, 7, 4],
+                [5, 12, 3], [5, 13, 3], [5, 14, 3], [5, 15, 3],
+            ],
+            'B105': [
+                [0, 12, 0], [0, 13, 0], [0, 14, 0], [0, 15, 0],
+                [1, 4, 0], [1, 5, 0], [1, 6, 0], [1, 7, 0],
+                [2, 0, 1], [2, 1, 1], [2, 2, 1], [2, 3, 1],
+                [2, 16, 4], [2, 17, 4], [2, 18, 4], [2, 19, 4],
+                [4, 0, 3], [4, 1, 3], [4, 2, 3], [4, 3, 3],
+            ],
+            'B106': [
+                [0, 16, 1], [0, 17, 1], [0, 18, 1], [0, 19, 1],
+                [1, 0, 1], [1, 1, 1],
+                [1, 16, 0], [1, 17, 0], [1, 18, 0], [1, 19, 0],
+                [2, 8, 0], [2, 9, 0], [2, 10, 0], [2, 11, 0],
+                [3, 0, 4], [3, 1, 4], [3, 2, 4], [3, 3, 4],
+                [3, 12, 4], [3, 13, 4], [3, 14, 4], [3, 15, 4],
+                [5, 8, 3], [5, 9, 3],
+                [2, 0, 0], [2, 1, 0], [2, 2, 0], [2, 3, 0],
+            ],
+        };
 
-        let selectedSlotsByWeek = {};
+        let selectedSlotsByVenue = {};
         let currentWeek = 0;
+        let currentVenue = 'B103';
         let selectedCells = [];
 
         function saveCurrentWeek() {
-            selectedSlotsByWeek[currentWeek] = selectedCells.map(c => ({ day: c.day, hour: c.hour }));
+            if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
+            selectedSlotsByVenue[currentVenue][currentWeek] = selectedCells.map(c => ({ day: c.day, hour: c.hour }));
         }
 
         function loadCurrentWeek() {
             selectedCells = [];
-            const saved = selectedSlotsByWeek[currentWeek] || [];
+            const venueData = selectedSlotsByVenue[currentVenue] || {};
+            const saved = venueData[currentWeek] || [];
             const body = document.getElementById('tableBody');
             saved.forEach(s => {
                 const cellDiv = body.querySelector(
@@ -989,8 +1018,10 @@
 
         function getGlobalTotal() {
             let total = 0;
-            Object.values(selectedSlotsByWeek).forEach(slots => {
-                if (slots) total += slots.length;
+            Object.values(selectedSlotsByVenue).forEach(venue => {
+                Object.values(venue).forEach(slots => {
+                    if (slots) total += slots.length;
+                });
             });
             return total;
         }
@@ -1004,24 +1035,27 @@
         }
 
         function updateSelectionSummary() {
-            const building = document.getElementById('buildingSelector').value;
-
             const allSelections = [];
-            Object.keys(selectedSlotsByWeek).forEach(weekKey => {
-                const weekIdx = parseInt(weekKey);
-                const slots = selectedSlotsByWeek[weekKey];
-                if (slots && slots.length > 0) {
-                    const days = weekData[weekIdx].days;
-                    slots.forEach(s => {
-                        allSelections.push({
-                            weekIdx: weekIdx,
-                            weekLabel: weekData[weekIdx].label,
-                            day: days[s.day],
-                            dayIdx: s.day,
-                            hour: s.hour
+            Object.keys(selectedSlotsByVenue).forEach(venueKey => {
+                const venueData = selectedSlotsByVenue[venueKey];
+                if (!venueData) return;
+                Object.keys(venueData).forEach(weekKey => {
+                    const weekIdx = parseInt(weekKey);
+                    const slots = venueData[weekKey];
+                    if (slots && slots.length > 0) {
+                        const days = weekData[weekIdx].days;
+                        slots.forEach(s => {
+                            allSelections.push({
+                                venue: venueKey,
+                                weekIdx: weekIdx,
+                                weekLabel: weekData[weekIdx].label,
+                                day: days[s.day],
+                                dayIdx: s.day,
+                                hour: s.hour
+                            });
                         });
-                    });
-                }
+                    }
+                });
             });
 
             const totalCount = allSelections.length;
@@ -1043,7 +1077,7 @@
             grid.innerHTML = '';
             document.getElementById('summaryInfo').style.display = '';
 
-            const sorted = allSelections.sort((a, b) => a.weekIdx - b.weekIdx || a.dayIdx - b.dayIdx || a.hour - b.hour);
+            const sorted = allSelections.sort((a, b) => a.venue.localeCompare(b.venue) || a.weekIdx - b.weekIdx || a.dayIdx - b.dayIdx || a.hour - b.hour);
 
             sorted.forEach(s => {
                 const startStr = hours[s.hour];
@@ -1051,11 +1085,13 @@
 
                 const card = document.createElement('div');
                 card.className = 'sel-summary-card';
+                card.dataset.venue = s.venue;
                 card.dataset.week = s.weekIdx;
                 card.dataset.day = s.dayIdx;
                 card.dataset.hour = s.hour;
                 card.innerHTML = `
-                    <button class="card-remove" onclick="deselectFromSummary(${s.weekIdx}, ${s.dayIdx}, ${s.hour})" aria-label="Remove">×</button>
+                    <button class="card-remove" onclick="deselectFromSummary('${s.venue}', ${s.weekIdx}, ${s.dayIdx}, ${s.hour})" aria-label="Remove">×</button>
+                    <div class="card-venue">${s.venue}</div>
                     <div class="card-day">${s.weekLabel} · ${s.day.abbr}</div>
                     <div class="card-date">${s.day.date}</div>
                     <div class="card-time">${startStr} → ${endStr}</div>
@@ -1069,7 +1105,7 @@
             const mins = totalMins % 60;
             const durationStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
             document.getElementById('infoDuration').textContent = durationStr;
-            document.getElementById('infoBuilding').textContent = building;
+            document.getElementById('infoBuilding').textContent = document.getElementById('buildingSelector').value;
 
             const tip = document.getElementById('summaryTip');
             if (getGlobalTotal() >= MAX_SELECTION) {
@@ -1081,16 +1117,19 @@
             }
         }
 
-        function deselectFromSummary(weekIdx, di, hi) {
-            const card = document.querySelector(`.sel-summary-card[data-week="${weekIdx}"][data-day="${di}"][data-hour="${hi}"]`);
+        function deselectFromSummary(venue, weekIdx, di, hi) {
+            const card = document.querySelector(`.sel-summary-card[data-venue="${venue}"][data-week="${weekIdx}"][data-day="${di}"][data-hour="${hi}"]`);
             if (card) card.classList.add('card-removing');
             setTimeout(() => {
-                const slots = selectedSlotsByWeek[weekIdx];
-                if (slots) {
-                    const idx = slots.findIndex(s => s.day === di && s.hour === hi);
-                    if (idx !== -1) slots.splice(idx, 1);
+                const venueData = selectedSlotsByVenue[venue];
+                if (venueData) {
+                    const slots = venueData[weekIdx];
+                    if (slots) {
+                        const idx = slots.findIndex(s => s.day === di && s.hour === hi);
+                        if (idx !== -1) slots.splice(idx, 1);
+                    }
                 }
-                if (weekIdx === currentWeek) {
+                if (venue === currentVenue && weekIdx === currentWeek) {
                     const cell = selectedCells.find(c => c.day === di && c.hour === hi);
                     if (cell) {
                         cell.el.classList.remove('cell-selected');
@@ -1150,7 +1189,8 @@
                     div.className = 'cell-content';
 
                     const isSunday = day.abbr === 'Sun';
-                    const cellData = slotData.find(d => d[0] === di && d[1] === hi);
+                    const venueData = venueSlotData[currentVenue] || [];
+                    const cellData = venueData.find(d => d[0] === di && d[1] === hi);
 
                     if (isSunday || day.holiday) {
                         div.className += ' cell-occupied';
@@ -1216,13 +1256,20 @@
                 c.el.innerHTML = '';
             });
             selectedCells = [];
-            selectedSlotsByWeek[currentWeek] = [];
+            if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
+            selectedSlotsByVenue[currentVenue][currentWeek] = [];
             updateCounter();
         }
 
         function onWeekChange() {
             saveCurrentWeek();
             currentWeek = parseInt(document.getElementById('weekSelector').value);
+            buildTimetable();
+        }
+
+        function onVenueChange() {
+            saveCurrentWeek();
+            currentVenue = document.getElementById('buildingSelector').value;
             buildTimetable();
         }
 
@@ -1282,7 +1329,7 @@
                 const day = days[c.day];
                 const startStr = hours[c.hour];
                 const endStr = add30min(startStr);
-                return `<div style="padding:3px 0;font-size:13px;">(${weekLabel}) ${day.abbr}, ${day.date} — ${formatHour(startStr)} ~ ${formatHour(endStr)}</div>`;
+                return `<div style="padding:3px 0;font-size:13px;">${currentVenue} · (${weekLabel}) ${day.abbr}, ${day.date} — ${formatHour(startStr)} ~ ${formatHour(endStr)}</div>`;
             }).join('');
             showConfirmModal(
                 'Confirm Your Selection',
@@ -1301,7 +1348,7 @@
                 'Are you sure you want to clear all selections across <strong>ALL</strong> weeks? This action cannot be undone.',
                 function() {
                     hideConfirmModal();
-                    Object.keys(selectedSlotsByWeek).forEach(k => { selectedSlotsByWeek[k] = []; });
+                    Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
                     selectedCells.forEach(c => {
                         c.el.classList.remove('cell-selected');
                         c.el.classList.add('cell-available');

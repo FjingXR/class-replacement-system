@@ -735,10 +735,10 @@
         </div>
 
         <div class="nav-items">
-            <a class="nav-item" href="#">Dashboard</a>
-            <a class="nav-item active" href="#">My Timetable</a>
+            <a class="nav-item" href="/dashboard">Dashboard</a>
+            <a class="nav-item active" href="/my-timetable-ui">My Timetable</a>
             <a class="nav-item" href="#">Cohort Timetables</a>
-            <a class="nav-item" href="#">Replacement Arrangement</a>
+            <a class="nav-item" href="/replacement-arrangement">Replacement Arrangement</a>
             <a class="nav-item" href="#">Reports</a>
         </div>
 
