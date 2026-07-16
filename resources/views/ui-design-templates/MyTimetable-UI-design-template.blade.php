@@ -640,6 +640,10 @@
             background: var(--color-primary-container);
             color: var(--color-on-primary-container);
         }
+        .modal-status-badge.conflict {
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+        }
         .modal-close {
             width: 32px; height: 32px; border-radius: 8px; border: none;
             background: var(--color-surface-variant); color: var(--color-on-surface-variant);
@@ -677,8 +681,14 @@
             line-height: 1.4;
         }
         .modal-footer {
-            display: flex; justify-content: flex-end;
+            display: flex; justify-content: space-between; align-items: center;
             padding: 0 24px 20px;
+        }
+        .modal-footer-left {
+            display: flex; align-items: center;
+        }
+        .modal-footer-right {
+            display: flex; align-items: center; gap: 10px;
         }
         .btn-close-modal {
             padding: 10px 24px;
@@ -696,6 +706,27 @@
             background: var(--color-surface-variant);
         }
         .btn-close-modal:active {
+            transform: scale(0.97);
+        }
+        .btn-replace-now {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition), transform 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-replace-now:hover {
+            filter: brightness(1.1);
+        }
+        .btn-replace-now:active {
             transform: scale(0.97);
         }
 
@@ -849,7 +880,18 @@
             </div>
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
-                <button class="btn-close-modal" onclick="closeModal()">Close</button>
+                <div class="modal-footer-left">
+                    <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"/>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                        </svg>
+                        Replace Now
+                    </button>
+                </div>
+                <div class="modal-footer-right">
+                    <button class="btn-close-modal" onclick="closeModal()">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -962,9 +1004,16 @@
         function openModal(event) {
             document.getElementById('modalTitle').textContent = event.code || 'Class Details';
 
+            const days = weekData[currentWeek].days;
+            const isConflict = days[event.di] && days[event.di].holiday;
+            const displayStatus = isConflict ? 'conflict' : event.status;
+
             const badge = document.getElementById('modalStatusBadge');
-            badge.textContent = event.status.charAt(0).toUpperCase() + event.status.slice(1);
-            badge.className = 'modal-status-badge ' + event.status;
+            badge.textContent = displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1);
+            badge.className = 'modal-status-badge ' + displayStatus;
+
+            const replaceBtn = document.getElementById('btnReplaceNow');
+            replaceBtn.style.display = isConflict ? 'flex' : 'none';
 
             const startStr = to12h(hours[event.start]);
             const endStr = to12h(hours[event.end + 1] || add30min(hours[event.end]));
@@ -987,7 +1036,7 @@
                 { label: 'Day', value: dayNames[event.di] },
                 { label: 'Date', value: weekData[currentWeek].days[event.di].date },
                 { label: 'Time', value: startStr + ' – ' + endStr },
-                { label: 'Status', value: event.status.charAt(0).toUpperCase() + event.status.slice(1) },
+                { label: 'Status', value: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) },
                 { label: 'Remarks', value: event.remarks || '—' },
             ];
 
@@ -1108,9 +1157,7 @@
                         const endTime = to12h(hours[e.end + 1] || add30min(hours[e.end]));
 
                         let extraHtml = '';
-                        if (isConflict) {
-                            extraHtml = `<span class="ev-note" style="color:var(--color-on-error-container);font-weight:700;">(CONFLICT)</span>`;
-                        } else if (e.status === 'replacement') {
+                        if (e.status === 'replacement') {
                             extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
                         } else if (e.status === 'pending') {
                             extraHtml = `<span class="ev-note pending-note">(PENDING)</span>`;
@@ -1123,13 +1170,7 @@
                             ${extraHtml}
                         `;
 
-                        if (isConflict) {
-                            div.addEventListener('click', function() {
-                                window.location.href = '/replacement-arrangement';
-                            });
-                        } else {
-                            div.addEventListener('click', function() { openModal(e); });
-                        }
+                        div.addEventListener('click', function() { openModal(e); });
                         td.appendChild(div);
 
                         if (info.span > 1) {
@@ -1217,6 +1258,10 @@
             html.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'light' : 'dark');
             updateIcon(!isDark);
+        }
+
+        function goToReplacement() {
+            window.location.href = '/replacement-arrangement';
         }
 
         function navigateHome() {
