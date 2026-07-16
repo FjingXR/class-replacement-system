@@ -1091,17 +1091,26 @@
 
                     if (info && info.event) {
                         const e = info.event;
+                        const isConflict = day.holiday;
                         const div = document.createElement('div');
                         div.className = 'event-block span-' + info.span;
-                        if (e.status === 'normal') div.classList.add('event-normal');
-                        else if (e.status === 'replacement') div.classList.add('event-replacement');
-                        else if (e.status === 'pending') div.classList.add('event-pending');
+                        if (isConflict) {
+                            div.classList.add('event-public-holiday');
+                        } else if (e.status === 'normal') {
+                            div.classList.add('event-normal');
+                        } else if (e.status === 'replacement') {
+                            div.classList.add('event-replacement');
+                        } else if (e.status === 'pending') {
+                            div.classList.add('event-pending');
+                        }
 
                         const startTime = to12h(hours[e.start]);
                         const endTime = to12h(hours[e.end + 1] || add30min(hours[e.end]));
 
                         let extraHtml = '';
-                        if (e.status === 'replacement') {
+                        if (isConflict) {
+                            extraHtml = `<span class="ev-note" style="color:var(--color-on-error-container);font-weight:700;">(CONFLICT)</span>`;
+                        } else if (e.status === 'replacement') {
                             extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
                         } else if (e.status === 'pending') {
                             extraHtml = `<span class="ev-note pending-note">(PENDING)</span>`;
@@ -1114,7 +1123,13 @@
                             ${extraHtml}
                         `;
 
-                        div.addEventListener('click', function() { openModal(e); });
+                        if (isConflict) {
+                            div.addEventListener('click', function() {
+                                window.location.href = '/replacement-arrangement';
+                            });
+                        } else {
+                            div.addEventListener('click', function() { openModal(e); });
+                        }
                         td.appendChild(div);
 
                         if (info.span > 1) {
