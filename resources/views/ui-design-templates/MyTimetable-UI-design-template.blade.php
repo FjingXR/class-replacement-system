@@ -394,6 +394,9 @@
         .time-col.sunday-col .day-label {
             color: var(--color-on-error-container);
         }
+        .time-col.sunday-col .date-label {
+            color: var(--color-on-error-container);
+        }
 
         .hour-header {
             padding: 6px 4px;
@@ -579,8 +582,8 @@
             line-height: 1.3;
         }
         .summary-card.card-total {
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
         }
         .summary-card.card-replacement {
             background: var(--color-tertiary-container);
@@ -945,7 +948,7 @@
             </div>
             <div class="summary-card card-replacement">
                 <span class="num" id="sumReplacement">0</span>
-                <span class="label">Confirmed</span>
+                <span class="label">Confirmed<br>Replacement</span>
             </div>
             <div class="summary-card card-pending">
                 <span class="num" id="sumPending">0</span>
@@ -976,7 +979,7 @@
                         </svg>
                         Replace Now
                     </button>
-                    <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()">Cancel Class?</button>
+                    <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()"></button>
                 </div>
                 <div class="modal-footer-right">
                     <button class="btn-close-modal" onclick="closeModal()">Close</button>
@@ -1124,6 +1127,7 @@
 
             const cancelBtn = document.getElementById('btnCancelClass');
             cancelBtn.style.display = isConflict ? 'none' : 'flex';
+            cancelBtn.textContent = event.status === 'pending' ? 'Cancel Request?' : 'Cancel Class?';
 
             const startStr = to12h(hours[event.start]);
             const endStr = to12h(hours[event.end + 1] || add30min(hours[event.end]));
@@ -1288,8 +1292,6 @@
                         let extraHtml = '';
                         if (e.status === 'replacement') {
                             extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
-                        } else if (e.status === 'pending') {
-                            extraHtml = `<span class="ev-note pending-note">(PENDING)</span>`;
                         }
 
                         div.innerHTML = `

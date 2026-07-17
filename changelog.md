@@ -22,6 +22,11 @@
 | Legend label | "Replacement" → "Confirmed Replacement" |
 | Pending modal details | Added "Requested At" and "Requested By" fields for pending-status events |
 | Cancel Class button | Non-conflict modals now show "Cancel Class?" button; opens confirmation dialog |
+| Removed (PENDING) label | Pending event blocks no longer show the "(PENDING)" note on the grid |
+| Card-total color | Changed from `primary-container` to `secondary-container` |
+| Replacement label | "Confirmed" → "Confirmed Replacement" |
+| Cancel button text | Dynamic: "Cancel Request?" for pending, "Cancel Class?" for others |
+| Sunday date-label color | Set to `--color-on-error-container` |
 | Conflict slot styling | Events on Public Holiday days show `(CONFLICT)` badge with `event-public-holiday` class instead of `event-normal` |
 | Conflict slot click | Clicking a conflict slot redirects to `/replacement-arrangement` instead of opening the modal |
 
