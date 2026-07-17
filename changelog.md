@@ -27,6 +27,7 @@
 | Replacement label | "Confirmed" → "Confirmed Replacement" |
 | Cancel button text | Dynamic: "Cancel Request?" for pending, "Cancel Class?" for others |
 | Sunday date-label color | Set to `--color-on-error-container` |
+| Today date-label color | Set to `--color-on-primary-container` |
 | Conflict slot styling | Events on Public Holiday days show `(CONFLICT)` badge with `event-public-holiday` class instead of `event-normal` |
 | Conflict slot click | Clicking a conflict slot redirects to `/replacement-arrangement` instead of opening the modal |
 

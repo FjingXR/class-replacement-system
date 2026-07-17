@@ -379,6 +379,9 @@
         .time-col.today .day-label {
             color: var(--color-on-primary-container);
         }
+        .time-col.today .date-label {
+            color: var(--color-on-primary-container);
+        }
         .time-col.holiday-col {
             background: var(--color-error-container);
         }
