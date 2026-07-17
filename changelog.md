@@ -18,6 +18,10 @@
 | Header nav links | Added real hrefs: Dashboard→`/dashboard`, My Timetable→`/my-timetable-ui`, Replacement Arrangement→`/replacement-arrangement` |
 | Conflict slots open modal | Conflict cells now open the detail modal instead of redirecting directly |
 | Removed (CONFLICT) label | The `(CONFLICT)` span removed from event blocks; modal handles conflict status display instead |
+| Summary card labels | "Need Replacement" → "Confirmed", "Conflicts" → "Conflicts/Public Holiday" |
+| Legend label | "Replacement" → "Confirmed Replacement" |
+| Pending modal details | Added "Requested At" and "Requested By" fields for pending-status events |
+| Cancel Class button | Non-conflict modals now show "Cancel Class?" button; opens confirmation dialog |
 | Conflict slot styling | Events on Public Holiday days show `(CONFLICT)` badge with `event-public-holiday` class instead of `event-normal` |
 | Conflict slot click | Clicking a conflict slot redirects to `/replacement-arrangement` instead of opening the modal |
 

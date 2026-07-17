@@ -730,6 +730,94 @@
             transform: scale(0.97);
         }
 
+        .btn-cancel-class {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--color-error);
+            background: transparent;
+            color: var(--color-error);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition), transform 0.15s;
+        }
+        .btn-cancel-class:hover {
+            background: var(--color-error-container);
+        }
+        .btn-cancel-class:active {
+            transform: scale(0.97);
+        }
+
+        /* ───── Cancel Confirmation Modal ───── */
+        .cancel-overlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .cancel-modal {
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            max-width: 420px; width: 100%;
+            animation: modalIn 0.2s ease;
+        }
+        .cancel-modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 24px 0;
+        }
+        .cancel-modal-title {
+            font-size: 18px; font-weight: 700; color: var(--color-on-surface);
+        }
+        .cancel-modal-body {
+            padding: 20px 24px;
+            font-size: 14px; color: var(--color-on-surface);
+            line-height: 1.5;
+        }
+        .cancel-modal-footer {
+            display: flex; justify-content: flex-end; gap: 10px;
+            padding: 0 24px 20px;
+        }
+        .btn-cancel-secondary {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--color-outline-strong);
+            background: var(--color-surface);
+            color: var(--color-on-surface-variant);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition), transform 0.15s;
+        }
+        .btn-cancel-secondary:hover {
+            background: var(--color-surface-variant);
+        }
+        .btn-cancel-secondary:active {
+            transform: scale(0.97);
+        }
+        .btn-cancel-danger {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background: var(--color-error);
+            color: var(--color-on-error);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition), transform 0.15s;
+        }
+        .btn-cancel-danger:hover {
+            filter: brightness(1.1);
+        }
+        .btn-cancel-danger:active {
+            transform: scale(0.97);
+        }
+
         /* ───── Responsive ───── */
         @media (max-width: 1024px) {
             .semester-bar { padding: 0 16px; }
@@ -837,7 +925,7 @@
             </div>
             <div class="legend-item">
                 <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
-                Replacement
+                Confirmed Replacement
             </div>
             <div class="legend-item">
                 <div class="legend-swatch" style="background: var(--color-primary);"></div>
@@ -857,7 +945,7 @@
             </div>
             <div class="summary-card card-replacement">
                 <span class="num" id="sumReplacement">0</span>
-                <span class="label">Need<br>Replacement</span>
+                <span class="label">Confirmed</span>
             </div>
             <div class="summary-card card-pending">
                 <span class="num" id="sumPending">0</span>
@@ -865,7 +953,7 @@
             </div>
             <div class="summary-card card-conflict">
                 <span class="num" id="sumConflict">0</span>
-                <span class="label">Conflicts</span>
+                <span class="label">Conflicts/<br>Public Holiday</span>
             </div>
         </div>
     </div>
@@ -888,10 +976,29 @@
                         </svg>
                         Replace Now
                     </button>
+                    <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()">Cancel Class?</button>
                 </div>
                 <div class="modal-footer-right">
                     <button class="btn-close-modal" onclick="closeModal()">Close</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Cancel Confirmation Modal ═══ -->
+    <div class="cancel-overlay" id="cancelConfirmOverlay" style="display:none" onclick="if(event.target===this)closeCancelConfirm(false)">
+        <div class="cancel-modal">
+            <div class="cancel-modal-header">
+                <span class="cancel-modal-title">Cancel Class</span>
+                <button class="modal-close" onclick="closeCancelConfirm(false)">&times;</button>
+            </div>
+            <div class="cancel-modal-body">
+                <p>Are you sure you want to cancel this class?</p>
+                <p style="font-size:13px;opacity:0.7;margin-top:6px;">This action cannot be undone. A cancellation notice will be sent to all affected parties.</p>
+            </div>
+            <div class="cancel-modal-footer">
+                <button class="btn-cancel-secondary" onclick="closeCancelConfirm(false)">No, Keep It</button>
+                <button class="btn-cancel-danger" onclick="closeCancelConfirm(true)">Yes, Cancel Class</button>
             </div>
         </div>
     </div>
@@ -991,7 +1098,7 @@
                 { di: 4, start: 0, end: 3, code: 'BMIT3456', type: 'L', venue: 'B103', lecturer: 'Dr. Chang Foo Chung', cohort: 'RAF2 (S1)', status: 'normal', name: 'Artificial Intelligence', remarks: '' },
                 { di: 4, start: 5, end: 7, code: 'BMIT3456', type: 'T', venue: 'B103', lecturer: 'Dr. Chang Foo Chung', cohort: 'RAF2 (S1)', status: 'normal', name: 'Artificial Intelligence', remarks: '' },
                 { di: 5, start: 2, end: 5, code: 'BMIT7890', type: 'L', venue: 'B201', lecturer: 'En. Jefther Edward', cohort: 'RBU2 (S1)', status: 'normal', name: 'Project Management', remarks: '' },
-                { di: 5, start: 12, end: 14, code: 'BMIT9999', type: 'T', venue: 'B202', lecturer: 'Dr. Tan Ah Meng', cohort: 'DMF2 (S1)', status: 'pending', name: 'Machine Learning', remarks: '' },
+                { di: 5, start: 12, end: 14, code: 'BMIT9999', type: 'T', venue: 'B202', lecturer: 'Dr. Tan Ah Meng', cohort: 'DMF2 (S1)', status: 'pending', name: 'Machine Learning', remarks: '', requestedAt: '03 Sep 2026, 10:30 AM', requestedBy: 'Dr. Tan Ah Meng' },
             ]
         };
 
@@ -1014,6 +1121,9 @@
 
             const replaceBtn = document.getElementById('btnReplaceNow');
             replaceBtn.style.display = isConflict ? 'flex' : 'none';
+
+            const cancelBtn = document.getElementById('btnCancelClass');
+            cancelBtn.style.display = isConflict ? 'none' : 'flex';
 
             const startStr = to12h(hours[event.start]);
             const endStr = to12h(hours[event.end + 1] || add30min(hours[event.end]));
@@ -1040,6 +1150,13 @@
                 { label: 'Remarks', value: event.remarks || '—' },
             ];
 
+            if (event.status === 'pending') {
+                fields.splice(fields.length - 1, 0,
+                    { label: 'Requested At', value: event.requestedAt || '—' },
+                    { label: 'Requested By', value: event.requestedBy || '—' }
+                );
+            }
+
             document.getElementById('modalBody').innerHTML = fields.map(f =>
                 `<div class="modal-field">
                     <span class="field-label">${f.label}</span>
@@ -1052,6 +1169,18 @@
 
         function closeModal() {
             document.getElementById('classModal').style.display = 'none';
+        }
+
+        function cancelClass() {
+            const overlay = document.getElementById('cancelConfirmOverlay');
+            overlay.style.display = 'flex';
+        }
+
+        function closeCancelConfirm(confirmed) {
+            document.getElementById('cancelConfirmOverlay').style.display = 'none';
+            if (confirmed) {
+                closeModal();
+            }
         }
 
         function closeModalOutside(e) {
