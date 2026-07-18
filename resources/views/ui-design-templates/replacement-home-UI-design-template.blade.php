@@ -275,7 +275,7 @@
             color: var(--color-on-surface-variant);
             font-family: inherit;
             font-size: 13px;
-            width: 260px;
+            width: 420px;
             outline: none;
         }
         .search-input::placeholder {
@@ -291,18 +291,6 @@
             height: 16px;
             opacity: 0.4;
             color: var(--color-on-surface-variant);
-        }
-        .filter-dropdown {
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background: var(--color-secondary-container);
-            color: var(--color-on-secondary-container);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            outline: none;
         }
         .toolbar-right {
             display: flex;
@@ -531,7 +519,6 @@
             .toolbar-left { width: 100%; }
             .search-wrapper { width: 100%; }
             .search-input { width: 100%; box-sizing: border-box; }
-            .filter-dropdown { width: 100%; }
             .toolbar-right { width: 100%; justify-content: center; }
         }
     </style>
@@ -606,6 +593,7 @@
                     </svg>
                     <input class="search-input" id="searchInput" placeholder="Search by course code or name...">
                 </div>
+                <!-- filter-dropdown commented out — search covers all needs
                 <select class="filter-dropdown" id="reasonFilter">
                     <option value="all">All Reasons</option>
                     <option value="Public Holiday">Public Holiday</option>
@@ -614,6 +602,7 @@
                     <option value="Official Event">Official Event</option>
                     <option value="Emergency Leave">Emergency Leave</option>
                 </select>
+                -->
             </div>
             <div class="toolbar-right">
                 <span class="result-count" id="resultCount">Showing 14 of 14 classes</span>
@@ -716,7 +705,7 @@
 
         function buildTable() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const reason = document.getElementById('reasonFilter').value;
+            const reason = 'all';
 
             let filtered = conflictedClasses.filter(function(c) {
                 const matchesSearch = query === '' ||
@@ -931,10 +920,6 @@
             buildTable();
             updateIcon(document.documentElement.classList.contains('dark'));
             document.getElementById('searchInput').addEventListener('input', function() {
-                currentPage = 1;
-                buildTable();
-            });
-            document.getElementById('reasonFilter').addEventListener('change', function() {
                 currentPage = 1;
                 buildTable();
             });
