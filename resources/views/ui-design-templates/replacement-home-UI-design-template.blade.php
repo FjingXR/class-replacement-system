@@ -502,6 +502,46 @@
             margin: 0;
         }
 
+        /* ───── Summary Dashboard ───── */
+        .summary-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            margin-top: 20px;
+        }
+        .summary-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .summary-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-on-surface-variant);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .summary-card.card-conflicted .summary-value { color: var(--color-error); }
+        .summary-card.card-venues .summary-value { color: var(--color-primary); }
+        .summary-card.card-students .summary-value { color: var(--color-tertiary); }
+        .summary-card.card-duration .summary-value { color: var(--color-secondary); }
+        .summary-card.card-courses .summary-value { color: var(--color-on-primary-container); }
+        @media (max-width: 768px) {
+            .summary-bar { grid-template-columns: repeat(2, 1fr); }
+        }
+
         /* ───── Responsive ───── */
         @media (max-width: 1024px) {
             .grid-scroll { overflow-x: auto; }
@@ -625,6 +665,30 @@
             <div class="pagination-controls" id="paginationControls"></div>
         </div>
 
+        <!-- ─── Summary Dashboard ─── -->
+        <div class="summary-bar" id="summaryBar">
+            <div class="summary-card card-conflicted">
+                <span class="summary-value" id="summaryConflicted">0</span>
+                <span class="summary-label">Total Conflicted</span>
+            </div>
+            <div class="summary-card card-venues">
+                <span class="summary-value" id="summaryVenues">0</span>
+                <span class="summary-label">Venues Affected</span>
+            </div>
+            <div class="summary-card card-students">
+                <span class="summary-value" id="summaryStudents">0</span>
+                <span class="summary-label">Students Affected</span>
+            </div>
+            <div class="summary-card card-duration">
+                <span class="summary-value" id="summaryDuration">0</span>
+                <span class="summary-label">Duration Hours</span>
+            </div>
+            <div class="summary-card card-courses">
+                <span class="summary-value" id="summaryCourses">0</span>
+                <span class="summary-label">Distinct Courses</span>
+            </div>
+        </div>
+
         <!-- ─── Empty State ─── -->
         <div class="empty-state" id="emptyState" style="display:none">
             <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
@@ -646,7 +710,7 @@
 
         const conflictedClasses = [
             { id: 1, code: 'BMIT5555', name: 'Software Engineering', type: 'L', date: '2026-09-04', day: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 35, conflictReason: 'Public Holiday' },
-            { id: 2, code: 'BMIT6666', name: 'Mobile App Development', type: 'T', date: '2026-09-04', day: 'Thursday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B111', totalStudents: 28, conflictReason: 'Public Holiday' },
+            { id: 2, code: 'BMIT5555', name: 'Software Engineering', type: 'T', date: '2026-09-04', day: 'Thursday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B111', totalStudents: 28, conflictReason: 'Public Holiday' },
             { id: 3, code: 'BMIT6767', name: 'Object-Oriented Programming', type: 'L', date: '2026-09-10', day: 'Thursday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B103', totalStudents: 24, conflictReason: 'Annual Leave' },
             { id: 4, code: 'BMIT5678', name: 'Database Systems', type: 'T', date: '2026-09-10', day: 'Thursday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B105', totalStudents: 30, conflictReason: 'Medical Leave' },
             { id: 5, code: 'BMIT9012', name: 'Computer Networks', type: 'L', date: '2026-09-11', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 22, conflictReason: 'Official Event' },
@@ -654,7 +718,7 @@
             { id: 7, code: 'BMIT7890', name: 'Project Management', type: 'L', date: '2026-09-15', day: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 20, conflictReason: 'Medical Leave' },
             { id: 8, code: 'BMIT9999', name: 'Machine Learning', type: 'T', date: '2026-09-15', day: 'Tuesday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B202', totalStudents: 15, conflictReason: 'Emergency Leave' },
             { id: 9, code: 'BMIT1234', name: 'Data Structures', type: 'L', date: '2026-09-18', day: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 30, conflictReason: 'Public Holiday' },
-            { id: 10, code: 'BMIT2345', name: 'Operating Systems', type: 'T', date: '2026-09-18', day: 'Friday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, conflictReason: 'Public Holiday' },
+            { id: 10, code: 'BMIT1234', name: 'Data Structures', type: 'T', date: '2026-09-18', day: 'Friday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, conflictReason: 'Public Holiday' },
             { id: 11, code: 'BMIT4567', name: 'Web Development', type: 'L', date: '2026-09-20', day: 'Sunday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 32, conflictReason: 'Official Event' },
             { id: 12, code: 'BMIT8888', name: 'Cloud Computing', type: 'T', date: '2026-09-22', day: 'Tuesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B105', totalStudents: 20, conflictReason: 'Annual Leave' },
             { id: 13, code: 'BMIT7777', name: 'Cybersecurity', type: 'L', date: '2026-09-25', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, conflictReason: 'Medical Leave' },
@@ -815,6 +879,7 @@
 
             updatePagination();
             updateResultCount();
+            updateSummary();
         }
 
         // ═══════════════════════════════════════
@@ -877,6 +942,29 @@
         function updateResultCount() {
             const count = document.getElementById('resultCount');
             count.textContent = 'Showing ' + currentFiltered.length + ' of ' + conflictedClasses.length + ' classes';
+        }
+
+        // ═══════════════════════════════════════
+        //  Summary
+        // ═══════════════════════════════════════
+
+        function updateSummary() {
+            const total = conflictedClasses.length;
+            const filtered = currentFiltered;
+
+            const venues = new Set(filtered.map(function(c) { return c.venue; }));
+            const students = filtered.reduce(function(sum, c) { return sum + c.totalStudents; }, 0);
+            const duration = filtered.reduce(function(sum, c) { return sum + c.duration; }, 0);
+            const courses = new Set(filtered.map(function(c) { return c.code; }));
+
+            document.getElementById('summaryConflicted').textContent = total;
+            document.getElementById('summaryVenues').textContent = venues.size;
+            document.getElementById('summaryStudents').textContent = students;
+            document.getElementById('summaryDuration').textContent = duration;
+            document.getElementById('summaryCourses').textContent = courses.size;
+
+            const show = filtered.length > 0;
+            document.getElementById('summaryBar').style.display = show ? 'grid' : 'none';
         }
 
         // ═══════════════════════════════════════
