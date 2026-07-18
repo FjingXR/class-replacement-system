@@ -317,7 +317,7 @@
         .timetable {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            min-width: 1270px;
         }
         .timetable th, .timetable td {
             border: 1px solid var(--color-outline);
@@ -356,12 +356,30 @@
         .col-type { width: 90px; }
         .col-date { width: 110px; }
         .col-day { width: 80px; }
+        .col-urgency { width: 100px; }
         .col-time { width: 130px; }
         .col-duration { width: 70px; }
         .col-venue { width: 70px; }
         .col-students { width: 80px; }
+        .col-cohort { width: 130px; }
         .col-reason { width: 140px; }
         .col-action { width: 150px; }
+
+        /* ───── Urgency ───── */
+        .urgency-high { color: var(--color-error); font-weight: 700; }
+        .urgency-mid { color: var(--color-secondary); font-weight: 600; }
+        .urgency-low { color: var(--color-on-surface-variant); font-weight: 500; }
+
+        /* ───── Sort Hint ───── */
+        .sort-hint {
+            text-align: right;
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            opacity: 0.5;
+            margin-top: 8px;
+            margin-bottom: -4px;
+            font-style: italic;
+        }
 
         /* ───── Sort Arrow ───── */
         .sort-arrow {
@@ -649,6 +667,8 @@
             </div>
         </div>
 
+        <div class="sort-hint">Click <strong>Date</strong> or <strong>Course Code &amp; Name</strong> to sort</div>
+
         <!-- ─── Grid Wrapper ─── -->
         <div class="grid-wrapper">
             <div class="grid-scroll">
@@ -709,20 +729,20 @@
         // ═══════════════════════════════════════
 
         const conflictedClasses = [
-            { id: 1, code: 'BMIT5555', name: 'Software Engineering', type: 'L', date: '2026-09-04', day: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 35, conflictReason: 'Public Holiday' },
-            { id: 2, code: 'BMIT5555', name: 'Software Engineering', type: 'T', date: '2026-09-04', day: 'Thursday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B111', totalStudents: 28, conflictReason: 'Public Holiday' },
-            { id: 3, code: 'BMIT6767', name: 'Object-Oriented Programming', type: 'L', date: '2026-09-10', day: 'Thursday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B103', totalStudents: 24, conflictReason: 'Annual Leave' },
-            { id: 4, code: 'BMIT5678', name: 'Database Systems', type: 'T', date: '2026-09-10', day: 'Thursday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B105', totalStudents: 30, conflictReason: 'Medical Leave' },
-            { id: 5, code: 'BMIT9012', name: 'Computer Networks', type: 'L', date: '2026-09-11', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 22, conflictReason: 'Official Event' },
-            { id: 6, code: 'BMIT3456', name: 'Artificial Intelligence', type: 'T', date: '2026-09-12', day: 'Saturday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B103', totalStudents: 18, conflictReason: 'Annual Leave' },
-            { id: 7, code: 'BMIT7890', name: 'Project Management', type: 'L', date: '2026-09-15', day: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 20, conflictReason: 'Medical Leave' },
-            { id: 8, code: 'BMIT9999', name: 'Machine Learning', type: 'T', date: '2026-09-15', day: 'Tuesday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B202', totalStudents: 15, conflictReason: 'Emergency Leave' },
-            { id: 9, code: 'BMIT1234', name: 'Data Structures', type: 'L', date: '2026-09-18', day: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 30, conflictReason: 'Public Holiday' },
-            { id: 10, code: 'BMIT1234', name: 'Data Structures', type: 'T', date: '2026-09-18', day: 'Friday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, conflictReason: 'Public Holiday' },
-            { id: 11, code: 'BMIT4567', name: 'Web Development', type: 'L', date: '2026-09-20', day: 'Sunday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 32, conflictReason: 'Official Event' },
-            { id: 12, code: 'BMIT8888', name: 'Cloud Computing', type: 'T', date: '2026-09-22', day: 'Tuesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B105', totalStudents: 20, conflictReason: 'Annual Leave' },
-            { id: 13, code: 'BMIT7777', name: 'Cybersecurity', type: 'L', date: '2026-09-25', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, conflictReason: 'Medical Leave' },
-            { id: 14, code: 'BMIT3333', name: 'Embedded Systems', type: 'T', date: '2026-09-28', day: 'Monday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B202', totalStudents: 12, conflictReason: 'Emergency Leave' },
+            { id: 1, code: 'BMIT5555', name: 'Software Engineering', type: 'L', date: '2026-09-04', day: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 35, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Public Holiday' },
+            { id: 2, code: 'BMIT5555', name: 'Software Engineering', type: 'T', date: '2026-09-04', day: 'Thursday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B111', totalStudents: 28, cohorts: ['DFT2 (S1)'], conflictReason: 'Public Holiday' },
+            { id: 3, code: 'BMIT6767', name: 'Object-Oriented Programming', type: 'L', date: '2026-09-10', day: 'Thursday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B103', totalStudents: 24, cohorts: ['DFT2 (S1)'], conflictReason: 'Annual Leave' },
+            { id: 4, code: 'BMIT5678', name: 'Database Systems', type: 'T', date: '2026-09-10', day: 'Thursday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B105', totalStudents: 30, cohorts: ['DSF2 (S1)', 'DFT2 (S1)'], conflictReason: 'Medical Leave' },
+            { id: 5, code: 'BMIT9012', name: 'Computer Networks', type: 'L', date: '2026-09-11', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 22, cohorts: ['DFT2 (S1)'], conflictReason: 'Official Event' },
+            { id: 6, code: 'BMIT3456', name: 'Artificial Intelligence', type: 'T', date: '2026-09-12', day: 'Saturday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B103', totalStudents: 18, cohorts: ['DSF2 (S1)'], conflictReason: 'Annual Leave' },
+            { id: 7, code: 'BMIT7890', name: 'Project Management', type: 'L', date: '2026-09-15', day: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 20, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Medical Leave' },
+            { id: 8, code: 'BMIT9999', name: 'Machine Learning', type: 'T', date: '2026-09-15', day: 'Tuesday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B202', totalStudents: 15, cohorts: ['DFT2 (S1)'], conflictReason: 'Emergency Leave' },
+            { id: 9, code: 'BMIT1234', name: 'Data Structures', type: 'L', date: '2026-09-18', day: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 30, cohorts: ['DSF2 (S1)'], conflictReason: 'Public Holiday' },
+            { id: 10, code: 'BMIT1234', name: 'Data Structures', type: 'T', date: '2026-09-18', day: 'Friday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Public Holiday' },
+            { id: 11, code: 'BMIT4567', name: 'Web Development', type: 'L', date: '2026-09-20', day: 'Sunday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 32, cohorts: ['DFT2 (S1)'], conflictReason: 'Official Event' },
+            { id: 12, code: 'BMIT8888', name: 'Cloud Computing', type: 'T', date: '2026-09-22', day: 'Tuesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B105', totalStudents: 20, cohorts: ['DSF2 (S1)'], conflictReason: 'Annual Leave' },
+            { id: 13, code: 'BMIT7777', name: 'Cybersecurity', type: 'L', date: '2026-09-25', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Medical Leave' },
+            { id: 14, code: 'BMIT3333', name: 'Embedded Systems', type: 'T', date: '2026-09-28', day: 'Monday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B202', totalStudents: 12, cohorts: ['DSF2 (S1)'], conflictReason: 'Emergency Leave' },
         ];
 
         // ═══════════════════════════════════════
@@ -754,13 +774,26 @@
             return map[reason] || '';
         }
 
+        function daysLeft(iso) {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            const target = new Date(iso + 'T00:00:00');
+            return Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+        }
+
+        function urgencyClass(days) {
+            if (days <= 7) return 'urgency-high';
+            if (days <= 30) return 'urgency-mid';
+            return 'urgency-low';
+        }
+
         // ═══════════════════════════════════════
         //  State Variables
         // ═══════════════════════════════════════
 
         let currentPage = 1;
         const pageSize = 10;
-        let sortState = { field: '', dir: 'asc' };
+        let sortState = { field: 'date', dir: 'asc' };
         let currentFiltered = [];
 
         // ═══════════════════════════════════════
@@ -813,10 +846,12 @@
                 { label: 'Type', cls: 'col-type', sortable: false },
                 { label: 'Date', cls: 'col-date', sortable: true, field: 'date' },
                 { label: 'Day', cls: 'col-day', sortable: false },
+                { label: 'Days Left', cls: 'col-urgency', sortable: false },
                 { label: 'Time', cls: 'col-time', sortable: false },
                 { label: 'Hrs', cls: 'col-duration', sortable: false },
                 { label: 'Venue', cls: 'col-venue', sortable: false },
                 { label: 'Students', cls: 'col-students', sortable: false },
+                { label: 'Affected Cohort(s)', cls: 'col-cohort', sortable: false },
                 { label: 'Conflict Reason', cls: 'col-reason', sortable: false },
                 { label: 'Action', cls: 'col-action', sortable: false },
             ];
@@ -860,10 +895,12 @@
                         { html: c.type === 'L' ? 'Lecture' : 'Tutorial', cls: 'col-type' },
                         { html: formatDate(c.date), cls: 'col-date' },
                         { html: c.day, cls: 'col-day' },
+                        { html: '<span class="' + urgencyClass(daysLeft(c.date)) + '">' + daysLeft(c.date) + ' days</span>', cls: 'col-urgency' },
                         { html: to12h(c.timeStart) + ' - ' + to12h(c.timeEnd), cls: 'col-time' },
                         { html: String(c.duration) + 'h', cls: 'col-duration' },
                         { html: c.venue, cls: 'col-venue' },
                         { html: String(c.totalStudents), cls: 'col-students' },
+                        { html: c.cohorts.join('<br>'), cls: 'col-cohort' },
                         { html: '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>', cls: 'col-reason' },
                         { html: '<button class="btn-action" onclick="goToReplacementWith(\'' + c.code + '\',\'' + c.date + '\')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Arrange Replacement</button>', cls: 'col-action' },
                     ];
