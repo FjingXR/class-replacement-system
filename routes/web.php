@@ -21,6 +21,9 @@ Route::get('/login-ui', function () {
 Route::get('/my-timetable-ui', function () {
     return view('ui-design-templates.MyTimetable-UI-design-template');
 });
+Route::get('/replacement-home-ui', function () {
+    return view('ui-design-templates.replacement-home-UI-design-template');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
