@@ -473,12 +473,12 @@
             color: var(--color-on-secondary-container);
         }
         .event-replacement {
-            background: var(--color-tertiary-container);
-            color: var(--color-on-tertiary-container);
-        }
-        .event-pending {
             background: var(--color-primary-container);
             color: var(--color-on-primary-container);
+        }
+        .event-pending {
+            background: var(--color-tertiary-container);
+            color: var(--color-on-tertiary-container);
         }
 
         .sunday-slot .event-block,
@@ -589,12 +589,12 @@
             color: var(--color-on-secondary-container);
         }
         .summary-card.card-replacement {
-            background: var(--color-tertiary-container);
-            color: var(--color-on-tertiary-container);
-        }
-        .summary-card.card-pending {
             background: var(--color-primary-container);
             color: var(--color-on-primary-container);
+        }
+        .summary-card.card-pending {
+            background: var(--color-tertiary-container);
+            color: var(--color-on-tertiary-container);
         }
         .summary-card.card-conflict {
             background: var(--color-error-container);
@@ -639,12 +639,12 @@
             color: var(--color-on-secondary-container);
         }
         .modal-status-badge.replacement {
-            background: var(--color-tertiary-container);
-            color: var(--color-on-tertiary-container);
-        }
-        .modal-status-badge.pending {
             background: var(--color-primary-container);
             color: var(--color-on-primary-container);
+        }
+        .modal-status-badge.pending {
+            background: var(--color-tertiary-container);
+            color: var(--color-on-tertiary-container);
         }
         .modal-status-badge.conflict {
             background: var(--color-error-container);
@@ -930,11 +930,11 @@
                 Normal Class
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
+                <div class="legend-swatch" style="background: var(--color-primary);"></div>
                 Confirmed Replacement
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-primary);"></div>
+                <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
                 Pending Approval
             </div>
             <div class="legend-item">
