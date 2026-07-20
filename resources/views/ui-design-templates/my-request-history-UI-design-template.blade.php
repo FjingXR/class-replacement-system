@@ -322,6 +322,72 @@
             color-scheme: dark;
         }
 
+        /* ───── Toggle ───── */
+        .toggle-wrapper {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .toggle-wrapper input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+        .toggle-track {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            border-radius: 10px;
+            background: var(--color-outline);
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .toggle-wrapper input:checked + .toggle-track {
+            background: var(--color-primary, #4f46e5);
+        }
+        .toggle-wrapper input:checked + .toggle-track .toggle-thumb {
+            transform: translateX(16px);
+        }
+        .toggle-label {
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+            font-weight: 500;
+        }
+
+        /* ───── Clear Button ───── */
+        .btn-clear {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--color-outline);
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            margin-left: 8px;
+        }
+        .btn-clear:hover {
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface);
+        }
+
         /* ───── Sort Hint ───── */
         .sort-hint {
             text-align: left;
@@ -827,6 +893,12 @@
                 <select class="filter-select" id="weekFilter">
                     <option value="all">All Weeks</option>
                 </select>
+                <label class="toggle-wrapper" id="completedToggle">
+                    <input type="checkbox" id="hideCompleted" checked>
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    <span class="toggle-label">Exclude Completed</span>
+                </label>
+                <button class="btn-clear" id="clearFilters" title="Reset all filters">Reset Filters</button>
             </div>
             <div class="toolbar-right">
                 <span class="result-count" id="resultCount">Showing 20 of 20 results</span>
@@ -1057,7 +1129,8 @@
                     r.courseName.toLowerCase().includes(query);
                 const matchesStatus = statusVal === 'all' || r.status === statusVal;
                 const matchesWeek = isInWeek(r.classDate, weekVal);
-                return matchesSearch && matchesStatus && matchesWeek;
+                const matchesCompleted = !document.getElementById('hideCompleted').checked || r.status !== 'Completed';
+                return matchesSearch && matchesStatus && matchesWeek && matchesCompleted;
             });
 
             if (sortState.field) {
@@ -1147,9 +1220,9 @@
                 document.getElementById('emptyTitle').textContent = 'No replacement requests match your search or filter criteria.';
                 document.getElementById('emptyText').textContent = 'Try adjusting your filters.';
                 document.getElementById('emptyCta').style.display = 'none';
-                document.getElementById('gridWrapper').style.display = 'block';
+                document.getElementById('gridWrapper').style.display = 'none';
                 document.getElementById('paginationBar').style.display = 'none';
-                document.getElementById('summaryBar').style.display = 'block';
+                document.getElementById('summaryBar').style.display = 'none';
             } else {
                 document.getElementById('emptyState').style.display = 'none';
                 document.getElementById('gridWrapper').style.display = 'block';
@@ -1385,6 +1458,18 @@
                 renderTable();
             });
             document.getElementById('weekFilter').addEventListener('change', function() {
+                currentPage = 1;
+                renderTable();
+            });
+            document.getElementById('hideCompleted').addEventListener('change', function() {
+                currentPage = 1;
+                renderTable();
+            });
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('weekFilter').value = 'all';
+                document.getElementById('hideCompleted').checked = true;
                 currentPage = 1;
                 renderTable();
             });

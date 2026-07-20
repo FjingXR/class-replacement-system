@@ -26,6 +26,9 @@
 | 2026-07-20 18:52 | Lines 1274–1340, 1285–1295 | Modal restructure | Grouped fields into 3 sections (`General Info`, `Original Class Detail`, `Requested Replacement Class`) with section headers. Rejection reason/Remarks now appear immediately below Status. `Venue` → `Original Venue`. Added `cohortCounts` field to 5 multi-cohort entries; Total Students shows breakdown (`20 + 15 = 35`) for multi-cohort entries. |
 | 2026-07-20 19:06 | Lines 1298, 1319 | Modal polish | Status field now shows brief description after badge (e.g. `Pending` badge + "Awaiting approval"). `Replacement Venue` now shows `—` for entries without a venue, making it visible for every status. |
 | 2026-07-20 19:12 | Lines 1306 | Modal cleanup | Removed `Remarks` field from modal entirely. |
+| 2026-07-20 19:15 | Lines 1150, 1152 | Bug fix | Empty state: `gridWrapper` and `summaryBar` now hidden (`'none'`) when filtered results are empty — previously showed table header + stacked summary cards alongside empty state message. |
+| 2026-07-20 19:29 | Lines 896–904, 1127–1132, 1464–1474 | Feature | Added `Hide Completed` toggle (default: on) — filters out Completed entries from table and summary. Added `✕ Clear` button in toolbar-right — resets search, status filter, week filter, and completed toggle to defaults. |
+| 2026-07-20 19:32 | Lines 896, 899, 904 | UX | Renamed `Hide Completed` → `Exclude Completed`, `✕ Clear` → `Reset Filters`. Moved button to toolbar-left after the toggle. |
 
 ### `routes/web.php`
 
