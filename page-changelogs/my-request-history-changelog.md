@@ -23,6 +23,9 @@
 | 2026-07-20 18:41 | Lines 970–983 | Format | Added `getWeekNumber` helper; both `Original Class` and `Requested Replacement` blocks now show `(Week N)` after the date |
 | 2026-07-20 18:41 | Lines 1062–1064 | Column rename | `Venue` → `Requested Venue`, `Cohort(s)` → `Affected Cohort(s)` |
 | 2026-07-20 18:41 | Lines 409–411, 974 | Duration style | Changed `.class-dash` → `.class-duration` with `color: var(--color-on-surface)` and `font-weight: 500` for better visibility |
+| 2026-07-20 18:52 | Lines 1274–1340, 1285–1295 | Modal restructure | Grouped fields into 3 sections (`General Info`, `Original Class Detail`, `Requested Replacement Class`) with section headers. Rejection reason/Remarks now appear immediately below Status. `Venue` → `Original Venue`. Added `cohortCounts` field to 5 multi-cohort entries; Total Students shows breakdown (`20 + 15 = 35`) for multi-cohort entries. |
+| 2026-07-20 19:06 | Lines 1298, 1319 | Modal polish | Status field now shows brief description after badge (e.g. `Pending` badge + "Awaiting approval"). `Replacement Venue` now shows `—` for entries without a venue, making it visible for every status. |
+| 2026-07-20 19:12 | Lines 1306 | Modal cleanup | Removed `Remarks` field from modal entirely. |
 
 ### `routes/web.php`
 
