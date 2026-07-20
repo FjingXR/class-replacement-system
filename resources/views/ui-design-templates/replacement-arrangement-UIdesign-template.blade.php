@@ -1377,10 +1377,10 @@
                 showConfirmModal(
                     'Unsaved Changes',
                     'You have selected time slots that will be lost if you leave this page. Are you sure you want to go back?',
-                    function() { hideConfirmModal(); history.back(); }
+                    function() { hideConfirmModal(); window.location.href = '/replacement-home-ui'; }
                 );
             } else {
-                history.back();
+                window.location.href = '/replacement-home-ui';
             }
         }
 
@@ -1389,10 +1389,10 @@
                 showConfirmModal(
                     'Unsaved Changes',
                     'You have selected time slots that will be lost if you leave this page. Are you sure you want to leave?',
-                    function() { hideConfirmModal(); window.location.href = '/'; }
+                    function() { hideConfirmModal(); window.location.href = '/my-timetable-ui'; }
                 );
             } else {
-                window.location.href = '/';
+                window.location.href = '/my-timetable-ui';
             }
         }
 

@@ -617,8 +617,8 @@
             <a class="nav-item" href="/dashboard">Dashboard</a>
             <a class="nav-item" href="/my-timetable-ui">My Timetable</a>
             <a class="nav-item" href="#">Cohort Timetables</a>
-            <a class="nav-item active" href="/replacement-arrangement">Replacement Arrangement</a>
-            <a class="nav-item" href="#">Replacement History</a>
+            <a class="nav-item active" href="/replacement-home-ui">Replacement Arrangement</a>
+            <a class="nav-item" href="/my-request-history-ui">Replacement History</a>
         </div>
 
         <div class="top-right">
@@ -1064,7 +1064,7 @@
         }
 
         function navigateHome() {
-            window.location.href = '/';
+            window.location.href = '/my-timetable-ui';
         }
 
         function populateWeekDropdown() {
