@@ -29,6 +29,8 @@
 | 2026-07-20 19:15 | Lines 1150, 1152 | Bug fix | Empty state: `gridWrapper` and `summaryBar` now hidden (`'none'`) when filtered results are empty — previously showed table header + stacked summary cards alongside empty state message. |
 | 2026-07-20 19:29 | Lines 896–904, 1127–1132, 1464–1474 | Feature | Added `Hide Completed` toggle (default: on) — filters out Completed entries from table and summary. Added `✕ Clear` button in toolbar-right — resets search, status filter, week filter, and completed toggle to defaults. |
 | 2026-07-20 19:32 | Lines 896, 899, 904 | UX | Renamed `Hide Completed` → `Exclude Completed`, `✕ Clear` → `Reset Filters`. Moved button to toolbar-left after the toggle. |
+| 2026-07-21 07:35 | Lines 637–640, 927–944 | UX | Swapped summary colors: Total now uses `--color-on-primary-container` (neutral), Rejected now uses `--color-error` (red). Added visual wrapper to Total card: `border: 2px solid var(--color-primary)` + `background: var(--color-primary-container)`. |
+| 2026-07-21 07:35 | Lines 732–736, 969–978, 1435–1449 | Feature | Added `Cancel Request` button in modal footer-left for Pending status only (hidden for other statuses). Button shows red danger styling, prompts browser confirmation dialog on click, then alerts and closes modal. Modal footer now uses flex layout with `modal-footer-left` and `modal-footer-right` sections. |
 
 ### `routes/web.php`
 

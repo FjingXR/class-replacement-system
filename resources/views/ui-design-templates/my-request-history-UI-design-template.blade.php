@@ -634,10 +634,14 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .summary-card.card-total .summary-value { color: var(--color-error); }
+        .summary-card.card-total .summary-value { color: var(--color-on-primary-container); }
         .summary-card.card-approved .summary-value { color: var(--color-secondary); }
         .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
-        .summary-card.card-rejected .summary-value { color: var(--color-on-primary-container); }
+        .summary-card.card-rejected .summary-value { color: var(--color-error); }
+        .summary-card.card-total {
+            border: 2px solid var(--color-primary);
+            background: var(--color-primary-container);
+        }
 
         /* ───── Modal ───── */
         .modal-overlay {
@@ -732,7 +736,33 @@
         .modal-footer {
             padding: 12px 24px;
             border-top: 1px solid var(--color-outline);
-            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-footer-left {
+            display: flex;
+            gap: 8px;
+        }
+        .modal-footer-right {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-danger {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--color-error);
+            background: transparent;
+            color: var(--color-error);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .btn-danger:hover {
+            background: var(--color-error);
+            color: #fff;
         }
         .btn-outline {
             padding: 8px 20px;
@@ -967,7 +997,12 @@
             </div>
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
-                <button class="btn-outline" onclick="closeModal()">Close</button>
+                <div class="modal-footer-left">
+                    <button class="btn-danger" id="cancelRequestBtn" style="display:none" onclick="confirmCancelRequest()">Cancel Request</button>
+                </div>
+                <div class="modal-footer-right">
+                    <button class="btn-outline" onclick="closeModal()">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1399,10 +1434,18 @@
 
             body.innerHTML = html;
             document.getElementById('modalOverlay').classList.add('show');
+            document.getElementById('cancelRequestBtn').style.display = r.status === 'Pending' ? 'inline-block' : 'none';
         }
 
         function closeModal() {
             document.getElementById('modalOverlay').classList.remove('show');
+        }
+
+        function confirmCancelRequest() {
+            if (confirm('Are you sure you want to cancel this replacement request? This action cannot be undone.')) {
+                alert('Your replacement request has been cancelled.');
+                closeModal();
+            }
         }
 
         // ═══════════════════════════════════════
