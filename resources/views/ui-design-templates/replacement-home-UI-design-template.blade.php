@@ -317,7 +317,7 @@
         .timetable {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1270px;
+            min-width: 1350px;
         }
         .timetable th, .timetable td {
             border: 1px solid var(--color-outline);
@@ -354,6 +354,7 @@
         .col-no { width: 50px; }
         .col-code { width: 200px; }
         .col-type { width: 90px; }
+        .col-week { width: 80px; }
         .col-date { width: 110px; }
         .col-day { width: 80px; }
         .col-urgency { width: 100px; }
@@ -372,13 +373,34 @@
 
         /* ───── Sort Hint ───── */
         .sort-hint {
-            text-align: right;
+            text-align: left;
             font-size: 12px;
             color: var(--color-on-surface-variant);
             opacity: 0.5;
             margin-top: 8px;
             margin-bottom: -4px;
             font-style: italic;
+        }
+
+        /* ───── Week Filter ───── */
+        .filter-select {
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+        }
+        .filter-select option {
+            background: var(--color-surface);
+            color: var(--color-on-surface);
+        }
+        html.dark .filter-select {
+            color-scheme: dark;
         }
 
         /* ───── Sort Arrow ───── */
@@ -566,6 +588,7 @@
             .toolbar { flex-direction: column; align-items: stretch; }
             .toolbar-left { justify-content: flex-start; }
             .search-input { width: 100%; }
+            .filter-select { width: auto; flex: 0 0 auto; }
         }
         @media (max-width: 768px) {
             .app-container { padding: 10px 12px; padding-top: 66px; }
@@ -577,6 +600,7 @@
             .toolbar-left { width: 100%; }
             .search-wrapper { width: 100%; }
             .search-input { width: 100%; box-sizing: border-box; }
+            .filter-select { width: 100%; }
             .toolbar-right { width: 100%; justify-content: center; }
         }
     </style>
@@ -661,6 +685,9 @@
                     <option value="Emergency Leave">Emergency Leave</option>
                 </select>
                 -->
+                <select class="filter-select" id="weekFilter">
+                    <option value="all">All Weeks</option>
+                </select>
             </div>
             <div class="toolbar-right">
                 <span class="result-count" id="resultCount">Showing 14 of 14 classes</span>
@@ -787,6 +814,13 @@
             return 'urgency-low';
         }
 
+        function computeWeek(isoDate) {
+            const semesterStart = new Date('2026-08-31');
+            const date = new Date(isoDate + 'T00:00:00');
+            const diff = Math.floor((date - semesterStart) / (1000 * 60 * 60 * 24));
+            return Math.floor(diff / 7) + 1;
+        }
+
         // ═══════════════════════════════════════
         //  State Variables
         // ═══════════════════════════════════════
@@ -803,13 +837,15 @@
         function buildTable() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const reason = 'all';
+            const weekVal = document.getElementById('weekFilter').value;
 
             let filtered = conflictedClasses.filter(function(c) {
                 const matchesSearch = query === '' ||
                     c.code.toLowerCase().includes(query) ||
                     c.name.toLowerCase().includes(query);
                 const matchesReason = reason === 'all' || c.conflictReason === reason;
-                return matchesSearch && matchesReason;
+                const matchesWeek = weekVal === 'all' || String(computeWeek(c.date)) === weekVal;
+                return matchesSearch && matchesReason && matchesWeek;
             });
 
             if (sortState.field) {
@@ -844,6 +880,7 @@
                 { label: '#', cls: 'col-no', sortable: false },
                 { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'code' },
                 { label: 'Type', cls: 'col-type', sortable: false },
+                { label: 'Week', cls: 'col-week', sortable: false },
                 { label: 'Date', cls: 'col-date', sortable: true, field: 'date' },
                 { label: 'Day', cls: 'col-day', sortable: false },
                 { label: 'Days Left', cls: 'col-urgency', sortable: false },
@@ -893,6 +930,7 @@
                         { html: String(offset + i + 1), cls: 'col-no' },
                         { html: '<span class="cell-code">' + c.code + '</span><span class="cell-name">' + c.name + '</span>', cls: 'col-code' },
                         { html: c.type === 'L' ? 'Lecture' : 'Tutorial', cls: 'col-type' },
+                        { html: 'Week ' + computeWeek(c.date), cls: 'col-week' },
                         { html: formatDate(c.date), cls: 'col-date' },
                         { html: c.day, cls: 'col-day' },
                         { html: '<span class="' + urgencyClass(daysLeft(c.date)) + '">' + daysLeft(c.date) + ' days</span>', cls: 'col-urgency' },
@@ -1029,6 +1067,18 @@
             window.location.href = '/';
         }
 
+        function populateWeekDropdown() {
+            const weeks = new Set(conflictedClasses.map(function(c) { return computeWeek(c.date); }));
+            const sel = document.getElementById('weekFilter');
+            sel.innerHTML = '<option value="all">All Weeks</option>';
+            Array.from(weeks).sort(function(a, b) { return a - b; }).forEach(function(w) {
+                const opt = document.createElement('option');
+                opt.value = String(w);
+                opt.textContent = 'Week ' + w;
+                sel.appendChild(opt);
+            });
+        }
+
         function goToReplacement() {
             window.location.href = '/replacement-arrangement';
         }
@@ -1042,9 +1092,14 @@
         // ═══════════════════════════════════════
 
         document.addEventListener('DOMContentLoaded', function() {
+            populateWeekDropdown();
             buildTable();
             updateIcon(document.documentElement.classList.contains('dark'));
             document.getElementById('searchInput').addEventListener('input', function() {
+                currentPage = 1;
+                buildTable();
+            });
+            document.getElementById('weekFilter').addEventListener('change', function() {
                 currentPage = 1;
                 buildTable();
             });

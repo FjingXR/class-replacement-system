@@ -21,6 +21,13 @@
 | Add Days Left / Urgency column | Inserted between Day and Time (13 columns total); computed from `c.date` relative to today; color-coded urgency (≤7d red, 8–30d teal, 31+ default); added `urgencyClass()` and `daysLeft()` helpers; added `.col-urgency` CSS |
 | Default sort by Date ascending | Changed `sortState` from `{ field: '', dir: 'asc' }` to `{ field: 'date', dir: 'asc' }` — Date column gets default sort arrow and data sorts earliest-first on page load |
 | Add sort hint | Added italic "Click **Date** or **Course Code & Name** to sort" between toolbar and table — names only the two sortable columns |
+| Move sort hint to left | Changed `.sort-hint` `text-align` from right to left |
+| Add Week column | Inserted between Type and Date (14 columns total); computed from `c.date` relative to semester start (Aug 31, 2026) via `computeWeek()` helper; added `.col-week { width: 80px }` CSS |
+| Add date range filter | Added From/To `<input type="date">` elements in toolbar with `filter-input` CSS; wired `change` events to re-run `buildTable()` |
+| Add week dropdown | Added `<select>` with dynamically populated week options via `populateWeekDropdown()`; filters by week number; added responsive CSS for all filter elements |
+| Remove date range filter | Removed From/To date inputs, `matchesDate` logic, date event listeners, `.filter-input`/`.filter-label` CSS, and responsive filter-input rules — week dropdown remains |
+| Fix weekFilter dark mode | Added `html.dark .filter-select { color-scheme: dark; }` to force browser native dark dropdown rendering, overriding system GTK green tint |
+| Fix week dropdown dark mode | Added `.filter-select option` with explicit `background`/`color` overrides so dropdown options render with proper contrast in dark mode (matching earlier reasonFilter fix) |
 
 ### `routes/web.php`
 
