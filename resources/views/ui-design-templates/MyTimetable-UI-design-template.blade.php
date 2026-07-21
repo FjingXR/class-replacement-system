@@ -228,6 +228,23 @@
             min-height: 100vh;
         }
 
+        /* ───── Page Header ───── */
+        .page-header {
+            margin-bottom: 20px;
+        }
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-on-bg);
+            margin: 0;
+        }
+        .page-desc {
+            font-size: 14px;
+            color: var(--color-on-surface-variant);
+            margin-top: 4px;
+            margin-bottom: 0;
+        }
+
         /* ───── Semester Bar ───── */
         .semester-bar {
             display: flex;
@@ -266,15 +283,15 @@
             font-size: 13px;
             font-weight: 600;
             padding: 4px 28px 4px 10px;
-            border-radius: 6px;
-            border: 1px solid var(--color-outline);
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
+            border-radius: var(--radius-sm);
+            border: none;
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2375757a' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 8px center;
             min-width: 140px;
@@ -897,6 +914,12 @@
 
     <!-- ═══ App Container ═══ -->
     <div class="app-container">
+
+        <!-- ─── Page Header ─── -->
+        <div class="page-header">
+            <h1 class="page-title">My Timetable</h1>
+            <p class="page-desc">View your weekly class schedule and manage replacement requests across all cohorts.</p>
+        </div>
 
         <!-- ─── Semester Bar ─── -->
         <div class="semester-bar">
