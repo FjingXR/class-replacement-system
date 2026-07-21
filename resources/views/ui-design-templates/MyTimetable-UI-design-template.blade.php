@@ -232,12 +232,15 @@
         .semester-bar {
             display: flex;
             align-items: center;
-            height: 44px;
-            background: var(--color-secondary-container);
-            color: var(--color-on-secondary-container);
-            padding: 0 20px;
+            padding: 12px 16px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
             gap: 8px;
             flex-shrink: 0;
+            color: var(--color-on-surface);
+            transition: background var(--transition), border-color var(--transition);
         }
         .week-arrow {
             width: 28px;
@@ -245,7 +248,7 @@
             border-radius: 6px;
             border: none;
             background: transparent;
-            color: var(--color-on-secondary-container);
+            color: var(--color-on-surface-variant);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -256,7 +259,7 @@
             flex-shrink: 0;
         }
         .week-arrow:hover {
-            background: rgba(12,51,33,0.1);
+            background: var(--color-surface-variant);
         }
         .week-select {
             font-family: inherit;
@@ -264,14 +267,14 @@
             font-weight: 600;
             padding: 4px 28px 4px 10px;
             border-radius: 6px;
-            border: 1px solid rgba(12,51,33,0.15);
-            background: rgba(12,51,33,0.06);
-            color: var(--color-on-secondary-container);
+            border: 1px solid var(--color-outline);
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface-variant);
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2375757a' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 8px center;
             min-width: 140px;
@@ -288,6 +291,9 @@
             opacity: 0.85;
             white-space: nowrap;
         }
+        html.dark .week-select {
+            color-scheme: dark;
+        }
 
         /* ───── Grid Wrapper ───── */
         .grid-wrapper {
@@ -297,14 +303,11 @@
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-sm);
             transition: background var(--transition), border-color var(--transition);
-            position: relative;
             overflow: hidden;
-            flex: 1;
         }
 
         .grid-scroll {
             overflow: auto;
-            padding-bottom: 0;
             max-height: calc(100vh - 196px);
         }
 
@@ -556,49 +559,42 @@
 
         /* ───── Weekly Summary Bar ───── */
         .summary-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 24px;
-            padding: 12px 24px;
-            flex-shrink: 0;
-            border-top: 1px solid var(--color-outline);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-top: 20px;
         }
         .summary-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 18px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
             border-radius: var(--radius-md);
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
-            min-width: 140px;
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
         }
-        .summary-card .num {
-            font-size: 22px;
+        .summary-value {
+            font-size: 24px;
             font-weight: 700;
-            line-height: 1;
+            line-height: 1.2;
         }
-        .summary-card .label {
+        .summary-label {
             font-size: 12px;
             font-weight: 500;
-            line-height: 1.3;
+            color: var(--color-on-surface-variant);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        .summary-card.card-total .summary-value { color: var(--color-secondary); }
+        .summary-card.card-replacement .summary-value { color: var(--color-primary); }
+        .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
+        .summary-card.card-conflict .summary-value { color: var(--color-error); }
         .summary-card.card-total {
-            background: var(--color-secondary-container);
-            color: var(--color-on-secondary-container);
-        }
-        .summary-card.card-replacement {
+            border: 2px solid var(--color-primary);
             background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
-        }
-        .summary-card.card-pending {
-            background: var(--color-tertiary-container);
-            color: var(--color-on-tertiary-container);
-        }
-        .summary-card.card-conflict {
-            background: var(--color-error-container);
-            color: var(--color-on-error-container);
         }
 
         /* ───── Modal ───── */
@@ -829,8 +825,7 @@
             .semester-bar { padding: 0 16px; }
             .legend-bar { padding: 0 16px; gap: 16px; flex-wrap: wrap; height: auto; min-height: 50px; padding: 8px 16px; }
             .nav-item { padding: 0 12px; font-size: 13px; }
-            .summary-bar { gap: 16px; padding: 10px 16px; flex-wrap: wrap; }
-            .summary-card { min-width: 120px; padding: 6px 14px; }
+            .summary-bar { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
@@ -844,10 +839,8 @@
             .hour-header, .timetable td.hour-cell { min-width: 60px; }
             .legend-bar { gap: 12px; font-size: 12px; }
             .session-text { font-size: 11px; }
-            .summary-bar { gap: 10px; padding: 8px 12px; }
-            .summary-card { min-width: 90px; padding: 6px 10px; }
-            .summary-card .num { font-size: 18px; }
-            .summary-card .label { font-size: 11px; }
+            .summary-value { font-size: 20px; }
+            .summary-label { font-size: 11px; }
         }
     </style>
 </head>
@@ -946,20 +939,20 @@
         <!-- ─── Weekly Summary Bar ─── -->
         <div class="summary-bar" id="summaryBar">
             <div class="summary-card card-total">
-                <span class="num" id="sumTotal">0</span>
-                <span class="label">Total<br>Classes</span>
+                <span class="summary-value" id="sumTotal">0</span>
+                <span class="summary-label">Total Classes</span>
             </div>
             <div class="summary-card card-replacement">
-                <span class="num" id="sumReplacement">0</span>
-                <span class="label">Confirmed<br>Replacement</span>
+                <span class="summary-value" id="sumReplacement">0</span>
+                <span class="summary-label">Confirmed Replacement</span>
             </div>
             <div class="summary-card card-pending">
-                <span class="num" id="sumPending">0</span>
-                <span class="label">Pending<br>Approval</span>
+                <span class="summary-value" id="sumPending">0</span>
+                <span class="summary-label">Pending Approval</span>
             </div>
             <div class="summary-card card-conflict">
-                <span class="num" id="sumConflict">0</span>
-                <span class="label">Conflicts/<br>Public Holiday</span>
+                <span class="summary-value" id="sumConflict">0</span>
+                <span class="summary-label">Conflicts / Public Holiday</span>
             </div>
         </div>
     </div>
