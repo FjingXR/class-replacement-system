@@ -11,12 +11,12 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: { DEFAULT: '#1A5FB4', hover: '#154d94', light: '#8DB5E6', container: '#A7C3E6', 'on-container': '#071B33' },
-                        secondary: { DEFAULT: '#2EC27E', hover: '#26a86d', light: '#97E6C2', container: '#AEE6CC', 'on-container': '#0C3321' },
-                        tertiary: { DEFAULT: '#E7EB63', light: '#E3E6AA', container: '#E4E6BB', 'on-container': '#323315' },
-                        error: { DEFAULT: '#B3261E', light: '#E69490', container: '#E6ACA9' },
-                        surface: { DEFAULT: '#313233', light: '#fbfcfc', variant: '#545c66', 'variant-light': '#d9dfe6' },
-                        outline: { DEFAULT: '#9fa8b3', light: '#7f8b99' },
+                        primary: { DEFAULT: '#004C99', hover: '#003d7a', light: '#6BA3D6', container: '#B3D4F0', 'on-container': '#00294D' },
+                        secondary: { DEFAULT: '#EDBC00', hover: '#c49e00', light: '#FFE066', container: '#FFF0B3', 'on-container': '#4D3E00' },
+                        tertiary: { DEFAULT: '#A70042', hover: '#8B0036', light: '#E0678A', container: '#F0B3C8', 'on-container': '#4D001E' },
+                        error: { DEFAULT: '#DB002C', hover: '#B30025', light: '#FF6B6B', container: '#FFB3B3' },
+                        surface: { DEFAULT: '#252540', light: '#f5f0e8', variant: '#35355a', 'variant-light': '#e8e0d4' },
+                        outline: { DEFAULT: '#c4bfb5', light: '#7a7580' },
                     }
                 }
             }
@@ -30,7 +30,7 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/theme-fcb.css">  <!-- SWAP to /css/theme.css to revert -->
     <style>
         :root {
             --input-bg: color-mix(in srgb, var(--color-surface-variant) 30%, transparent);
@@ -81,8 +81,8 @@
             inset: 0;
             background:
                 radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,0,0,0.25) 0%, transparent 100%),
-                radial-gradient(ellipse 40% 40% at 20% 20%, rgba(141, 181, 230, 0.06) 0%, transparent 100%),
-                radial-gradient(ellipse 40% 40% at 80% 80%, rgba(151, 230, 194, 0.06) 0%, transparent 100%);
+                radial-gradient(ellipse 40% 40% at 20% 20%, rgba(0, 76, 153, 0.06) 0%, transparent 100%),
+                radial-gradient(ellipse 40% 40% at 80% 80%, rgba(237, 188, 0, 0.06) 0%, transparent 100%);
             pointer-events: none;
         }
 
@@ -172,7 +172,7 @@
             font-size: 22px;
             font-weight: 700;
             letter-spacing: -0.5px;
-            box-shadow: 0 4px 16px rgba(141, 181, 230, 0.25);
+            box-shadow: 0 4px 16px rgba(0, 76, 153, 0.25);
             transition: background 0.3s, color 0.3s, box-shadow 0.3s;
             animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
             position: relative;
@@ -182,12 +182,12 @@
             position: absolute;
             inset: -2px;
             border-radius: 18px;
-            border: 1px solid rgba(141, 181, 230, 0.15);
+            border: 1px solid rgba(0, 76, 153, 0.15);
         }
         .light .logo-icon {
-            box-shadow: 0 4px 16px rgba(26, 95, 180, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 76, 153, 0.2);
         }
-        .light .logo-icon::after { border-color: rgba(26, 95, 180, 0.1); }
+        .light .logo-icon::after { border-color: rgba(0, 76, 153, 0.1); }
 
         .input-group {
             margin-bottom: 20px;
@@ -221,9 +221,9 @@
         .input-wrapper:focus-within {
             border-color: var(--color-primary);
             background: var(--input-bg);
-            box-shadow: 0 0 0 3px rgba(141, 181, 230, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 76, 153, 0.1);
         }
-        .light .input-wrapper:focus-within { box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.08); }
+        .light .input-wrapper:focus-within { box-shadow: 0 0 0 3px rgba(0, 76, 153, 0.08); }
 
         .input-icon {
             padding: 0 0 0 14px;
@@ -360,10 +360,10 @@
         }
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(151, 230, 194, 0.2);
-            background: #88dbb3;
+            box-shadow: 0 8px 25px rgba(237, 188, 0, 0.2);
+            background: #c49e00;
         }
-        .light .login-btn:hover { box-shadow: 0 8px 25px rgba(46, 194, 126, 0.2); background: #2db876; }
+        .light .login-btn:hover { box-shadow: 0 8px 25px rgba(237, 188, 0, 0.2); background: #c49e00; }
         .login-btn:active { transform: translateY(0) scale(0.99); }
         .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
