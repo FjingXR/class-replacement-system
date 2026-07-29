@@ -37,6 +37,13 @@
         .week-arrow:hover {
             background: var(--color-surface-variant);
         }
+        .week-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .week-arrow:disabled:hover {
+            background: transparent;
+        }
         .week-select {
             font-family: inherit;
             font-size: 13px;
@@ -938,6 +945,7 @@
             document.getElementById('sumReplacement').textContent = replacement;
             document.getElementById('sumPending').textContent = pending;
             document.getElementById('sumConflict').textContent = conflict;
+            updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
         }
 
         function prevWeek() {

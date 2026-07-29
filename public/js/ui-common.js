@@ -34,3 +34,10 @@ function formatDate(iso) {
     const parts = iso.split('-');
     return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
 }
+
+function updateWeekArrows(prevDisabled, nextDisabled) {
+    const prev = document.querySelector('.week-arrow[aria-label="Previous week"]');
+    const next = document.querySelector('.week-arrow[aria-label="Next week"]');
+    if (prev) prev.disabled = prevDisabled;
+    if (next) next.disabled = nextDisabled;
+}

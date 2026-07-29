@@ -128,6 +128,33 @@
         .selector-dropdown:hover { filter: brightness(1.1); }
         .selector-dropdown option { background: var(--color-surface); color: var(--color-on-surface); }
 
+        .week-arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .week-arrow:hover {
+            background: var(--color-surface-variant);
+        }
+        .week-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .week-arrow:disabled:hover {
+            background: transparent;
+        }
+
         .toolbar-center {
             text-align: center;
             flex: 1;
@@ -728,14 +755,15 @@
         </svg>
     </button>
 
-    <div class="app-container">
         <div class="toolbar">
             <div class="toolbar-left">
+                <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
                 <select class="selector-dropdown" id="weekSelector" onchange="onWeekChange()">
                     <option value="0">Week 11 (01-Sep-2026 ~ 07-Sep-2026)</option>
                     <option value="1">Week 10 (25-Aug-2026 ~ 31-Aug-2026)</option>
                     <option value="2">Week 9 (18-Aug-2026 ~ 24-Aug-2026)</option>
                 </select>
+                <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
             </div>
             <div class="toolbar-center">
                 <div class="toolbar-subtitle">BMIT6767 Kylian Mbappe Dembele (L)</div>
@@ -850,7 +878,6 @@
                 Occupied / Class on Public Holiday
             </div>
         </div>
-    </div>
 
     <div class="modal-overlay" id="confirmModal" style="display:none">
         <div class="modal">
@@ -1199,6 +1226,7 @@
 
             loadCurrentWeek();
             updateCounter();
+            updateWeekArrows(currentWeek >= weekData.length - 1, currentWeek <= 0);
         }
 
         function toggleCell(di, hi, el) {
@@ -1239,6 +1267,24 @@
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
             selectedSlotsByVenue[currentVenue][currentWeek] = [];
             updateCounter();
+        }
+
+        function prevWeek() {
+            if (currentWeek < weekData.length - 1) {
+                saveCurrentWeek();
+                currentWeek++;
+                document.getElementById('weekSelector').value = currentWeek;
+                buildTimetable();
+            }
+        }
+
+        function nextWeek() {
+            if (currentWeek > 0) {
+                saveCurrentWeek();
+                currentWeek--;
+                document.getElementById('weekSelector').value = currentWeek;
+                buildTimetable();
+            }
         }
 
         function onWeekChange() {
