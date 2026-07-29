@@ -7,7 +7,7 @@
         <a class="nav-item {{ $activeNav === 'dashboard' ? 'active' : '' }}" href="/dashboard">Dashboard</a>
         <a class="nav-item {{ $activeNav === 'my-timetable' ? 'active' : '' }}" href="/my-timetable-ui">My Timetable</a>
         <a class="nav-item {{ $activeNav === 'cohort-timetables' ? 'active' : '' }}" href="#">Cohort Timetables</a>
-        <a class="nav-item {{ $activeNav === 'replacement-arrangement' ? 'active' : '' }}" href="/replacement-arrangement">Replacement Arrangement</a>
+        <a class="nav-item {{ $activeNav === 'replacement-arrangement' ? 'active' : '' }}" href="/replacement-home-ui">Replacement Arrangement</a>
         <a class="nav-item {{ $activeNav === 'replacement-history' ? 'active' : '' }}" href="/my-request-history-ui">Replacement History</a>
     </div>
 

@@ -12,17 +12,20 @@ Route::get('/login/staff', function () {
     return view('auth.login-staff');
 })->name('login.staff');
 
-Route::get('/replacement-arrangement', function () {
-    return view('ui-design-templates.replacement-arrangement-UIdesign-template');
-});
-Route::get('/my-timetable-ui', function () {
-    return view('ui-design-templates.MyTimetable-UI-design-template');
-});
 Route::get('/replacement-home-ui', function () {
-    return view('ui-design-templates.replacement-home-UI-design-template');
+    return view('ui-design-templates.replacement-home-UI-design-template', ['activeNav' => 'replacement-arrangement']);
 });
+
+Route::get('/my-timetable-ui', function () {
+    return view('ui-design-templates.MyTimetable-UI-design-template', ['activeNav' => 'my-timetable']);
+});
+
 Route::get('/my-request-history-ui', function () {
-    return view('ui-design-templates.my-request-history-UI-design-template');
+    return view('ui-design-templates.my-request-history-UI-design-template', ['activeNav' => 'replacement-history']);
+});
+
+Route::get('/replacement-arrangement', function () {
+    return view('ui-design-templates.replacement-arrangement-UIdesign-template', ['activeNav' => 'replacement-arrangement']);
 });
 
 Route::middleware(['auth'])->group(function () {

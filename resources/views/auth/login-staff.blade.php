@@ -4,24 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Staff Login — Class Replacement System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: { DEFAULT: '#1A5FB4', hover: '#154d94', light: '#8DB5E6', container: '#A7C3E6', 'on-container': '#071B33' },
-                        secondary: { DEFAULT: '#2EC27E', hover: '#26a86d', light: '#97E6C2', container: '#AEE6CC', 'on-container': '#0C3321' },
-                        tertiary: { DEFAULT: '#E7EB63', light: '#E3E6AA', container: '#E4E6BB', 'on-container': '#323315' },
-                        error: { DEFAULT: '#B3261E', light: '#E69490', container: '#E6ACA9' },
-                        surface: { DEFAULT: '#313233', light: '#fbfcfc', variant: '#545c66', 'variant-light': '#d9dfe6' },
-                        outline: { DEFAULT: '#9fa8b3', light: '#7f8b99' },
-                    }
-                }
-            }
-        }
-    </script>
     <script>
         (function() {
             var saved = localStorage.getItem('theme');
@@ -30,6 +12,7 @@
             }
         })();
     </script>
+    <script src="/js/ui-common.js"></script>
     <link rel="stylesheet" href="/css/theme.css">
     <style>
         :root {
@@ -442,23 +425,6 @@
             eye.innerHTML = isHidden
                 ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>'
                 : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-        }
-
-        function updateIcon(isDark) {
-            const icon = document.getElementById('theme-icon');
-            if (!icon) return;
-            icon.innerHTML = isDark
-                ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
-                : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const isDark = html.classList.contains('dark');
-            html.classList.toggle('light');
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-            updateIcon(!isDark);
         }
 
         function ripple(e, btn) {

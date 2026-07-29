@@ -1,249 +1,8 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Timetable</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        (function() {
-            var saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                document.documentElement.className = 'light';
-            }
-        })();
-    </script>
-    <link rel="stylesheet" href="/css/theme.css">
-    <style>
+@extends('layouts.ui-template', ['activeNav' => 'my-timetable'])
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--color-bg);
-            color: var(--color-on-bg);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background var(--transition), color var(--transition);
-        }
+@section('title', 'My Timetable')
 
-        /* ───── Top Navigation Bar ───── */
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            background: var(--color-primary-container);
-            padding: 0 20px;
-            gap: 0;
-        }
-
-        .top-logo {
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            cursor: pointer;
-            margin-right: 24px;
-        }
-        .top-logo img {
-            height: 48px;
-            width: auto;
-            display: block;
-        }
-
-        .nav-items {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            flex: 1;
-            height: 100%;
-        }
-        .nav-item {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--color-on-primary-container);
-            text-decoration: none;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.15s, opacity 0.15s;
-            white-space: nowrap;
-            opacity: 0.75;
-            border-radius: 0;
-        }
-        .nav-item:hover {
-            opacity: 1;
-            background: rgba(7,27,51,0.06);
-        }
-        .nav-item.active {
-            opacity: 1;
-            font-weight: 600;
-            background: var(--color-tertiary-container);
-        }
-
-        .top-right {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-            padding-left: 20px;
-            height: 100%;
-        }
-
-        .theme-toggle {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            transition: background 0.15s, transform 0.15s, opacity 0.15s;
-            flex-shrink: 0;
-        }
-        .theme-toggle:hover {
-            opacity: 0.85;
-            transform: scale(1.08);
-        }
-        .theme-toggle:active {
-            transform: scale(0.95);
-        }
-
-        .notif-btn {
-            position: relative;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s, opacity 0.15s;
-            flex-shrink: 0;
-        }
-        .notif-btn:hover {
-            opacity: 0.85;
-        }
-        .notif-badge {
-            position: absolute;
-            top: 3px;
-            right: 3px;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--color-error);
-            color: var(--color-on-error);
-            font-size: 9px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 0 2px var(--color-primary-container);
-        }
-
-        .user-panel {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            background: var(--color-secondary-container);
-            border-radius: 50px;
-            padding: 3px 4px 3px 8px;
-            border: 1px solid rgba(12,51,33,0.12);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--color-on-secondary-container);
-            user-select: none;
-        }
-        .user-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--color-on-secondary-container);
-            color: var(--color-secondary-container);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
-        .user-name {
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .user-role {
-            font-size: 10px;
-            opacity: 0.7;
-        }
-
-        .logout-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: none;
-            background: transparent;
-            color: var(--color-on-secondary-container);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s, color 0.15s;
-            flex-shrink: 0;
-        }
-        .logout-btn:hover {
-            background: rgba(12,51,33,0.1);
-            color: var(--color-error);
-        }
-
-        /* ───── App Container ───── */
-        .app-container {
-            width: 100%;
-            max-width: 100%;
-            padding: 16px 24px;
-            padding-top: 72px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* ───── Page Header ───── */
-        .page-header {
-            margin-bottom: 20px;
-        }
-        .page-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--color-on-bg);
-            margin: 0;
-        }
-        .page-desc {
-            font-size: 14px;
-            color: var(--color-on-surface-variant);
-            margin-top: 4px;
-            margin-bottom: 0;
-        }
+@section('page-styles')
 
         /* ───── Semester Bar ───── */
         .semester-bar {
@@ -312,58 +71,7 @@
             color-scheme: dark;
         }
 
-        /* ───── Grid Wrapper ───── */
-        .grid-wrapper {
-            margin-top: 14px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            transition: background var(--transition), border-color var(--transition);
-            overflow: hidden;
-        }
-
-        .grid-scroll {
-            overflow: auto;
-            max-height: calc(100vh - 196px);
-        }
-
-        .timetable {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            min-width: 900px;
-        }
-
-        .timetable th, .timetable td {
-            border: 1px solid var(--color-outline);
-            text-align: center;
-            vertical-align: middle;
-            font-size: 13px;
-            transition: background var(--transition), border-color var(--transition);
-        }
-
-        .timetable th {
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
-            font-weight: 600;
-            position: sticky;
-            z-index: 10;
-        }
-
-        .timetable thead th {
-            top: 0;
-            z-index: 20;
-        }
-
-        .time-header-col {
-            width: 130px;
-            min-width: 130px;
-            left: 0;
-            z-index: 30 !important;
-        }
-        thead .time-header-col { z-index: 40 !important; }
-
+        /* ───── Time Column ───── */
         .time-col {
             width: 130px;
             min-width: 130px;
@@ -421,6 +129,7 @@
             color: var(--color-on-error-container);
         }
 
+        /* ───── Hour Header ───── */
         .hour-header {
             padding: 6px 4px;
             font-size: 12px;
@@ -439,6 +148,7 @@
             margin-top: 1px;
         }
 
+        /* ───── Hour Cells ───── */
         .timetable td.hour-cell {
             padding: 0;
             height: 80px;
@@ -465,6 +175,7 @@
             color: var(--color-on-error-container);
         }
 
+        /* ───── Event Block ───── */
         .event-block {
             width: 100%;
             height: 100%;
@@ -547,7 +258,7 @@
             background: rgba(26,95,180,0.04) !important;
         }
 
-        /* ───── Footer / Legend ───── */
+        /* ───── Legend Bar ───── */
         .legend-bar {
             height: 50px;
             display: flex;
@@ -574,37 +285,7 @@
             border: 1px solid var(--color-outline-strong);
         }
 
-        /* ───── Weekly Summary Bar ───── */
-        .summary-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
-            margin-top: 20px;
-        }
-        .summary-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            padding: 14px 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-        }
-        .summary-value {
-            font-size: 24px;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-        .summary-label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--color-on-surface-variant);
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        /* ───── Summary Card Colors ───── */
         .summary-card.card-total .summary-value { color: var(--color-secondary); }
         .summary-card.card-replacement .summary-value { color: var(--color-primary); }
         .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
@@ -837,83 +518,9 @@
             transform: scale(0.97);
         }
 
-        /* ───── Responsive ───── */
-        @media (max-width: 1024px) {
-            .semester-bar { padding: 0 16px; }
-            .legend-bar { padding: 0 16px; gap: 16px; flex-wrap: wrap; height: auto; min-height: 50px; padding: 8px 16px; }
-            .nav-item { padding: 0 12px; font-size: 13px; }
-            .summary-bar { grid-template-columns: repeat(2, 1fr); }
-        }
+@endsection
 
-        @media (max-width: 768px) {
-            .top-bar { padding: 0 12px; }
-            .nav-items { gap: 2px; }
-            .nav-item { padding: 0 8px; font-size: 12px; }
-            .top-logo { margin-right: 12px; }
-            .user-info { display: none; }
-            .semester-bar { flex-wrap: wrap; height: auto; padding: 8px 16px; gap: 6px; }
-            .time-header-col, .time-col { width: 120px; min-width: 120px; }
-            .hour-header, .timetable td.hour-cell { min-width: 60px; }
-            .legend-bar { gap: 12px; font-size: 12px; }
-            .session-text { font-size: 11px; }
-            .summary-value { font-size: 20px; }
-            .summary-label { font-size: 11px; }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- ═══ Top Navigation Bar ═══ -->
-    <div class="top-bar">
-        <div class="top-logo" onclick="navigateHome()">
-            <img src="/images/logo_banner.png" alt="TAR UMT">
-        </div>
-
-        <div class="nav-items">
-            <a class="nav-item" href="/dashboard">Dashboard</a>
-            <a class="nav-item active" href="/my-timetable-ui">My Timetable</a>
-            <a class="nav-item" href="#">Cohort Timetables</a>
-            <a class="nav-item" href="/replacement-arrangement">Replacement Arrangement</a>
-            <a class="nav-item" href="/my-request-history-ui">Replacement History</a>
-        </div>
-
-        <div class="top-right">
-            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                </svg>
-            </button>
-
-            <button class="notif-btn" onclick="alert('Notifications panel')" aria-label="Notifications">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
-                <span class="notif-badge">3</span>
-            </button>
-
-            <div class="user-panel">
-                <div class="user-profile">
-                    <div class="user-avatar">KL</div>
-                    <div class="user-info">
-                        <span class="user-name">Kylian Mbappe</span>
-                        <span class="user-role">Lecturer</span>
-                    </div>
-                </div>
-
-                <button class="logout-btn" onclick="alert('Logout')" aria-label="Logout">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══ App Container ═══ -->
-    <div class="app-container">
+@section('content')
 
         <!-- ─── Page Header ─── -->
         <div class="page-header">
@@ -960,25 +567,14 @@
         </div>
 
         <!-- ─── Weekly Summary Bar ─── -->
-        <div class="summary-bar" id="summaryBar">
-            <div class="summary-card card-total">
-                <span class="summary-value" id="sumTotal">0</span>
-                <span class="summary-label">Total Classes</span>
-            </div>
-            <div class="summary-card card-replacement">
-                <span class="summary-value" id="sumReplacement">0</span>
-                <span class="summary-label">Confirmed Replacement</span>
-            </div>
-            <div class="summary-card card-pending">
-                <span class="summary-value" id="sumPending">0</span>
-                <span class="summary-label">Pending Approval</span>
-            </div>
-            <div class="summary-card card-conflict">
-                <span class="summary-value" id="sumConflict">0</span>
-                <span class="summary-label">Conflicts / Public Holiday</span>
-            </div>
-        </div>
-    </div>
+        @include('partials.ui-summary-bar', [
+            'cards' => [
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
+                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Confirmed Replacement'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending Approval'],
+                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts / Public Holiday'],
+            ]
+        ])
 
     <!-- ═══ Class Detail Modal ═══ -->
     <div class="modal-overlay" id="classModal" style="display:none" onclick="closeModalOutside(event)">
@@ -1025,11 +621,9 @@
         </div>
     </div>
 
-    <script>
-        // ═══════════════════════════════════════
-        //  Mock Data
-        // ═══════════════════════════════════════
+@endsection
 
+@section('page-scripts')
         const hours = [
             '08:00', '08:30', '09:00', '09:30',
             '10:00', '10:30', '11:00', '11:30',
@@ -1096,19 +690,17 @@
             }
         ];
 
-        // Events: [weekIndex][]
-        // { di: dayIndex, start: hourIndex, end: hourIndex, code, type, venue, lecturer, cohort, status, name, remarks }
         const eventsData = {
-            0: [ // Week 9
+            0: [
                 { di: 0, start: 4, end: 7, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', status: 'normal', name: 'Object-Oriented Programming', remarks: '' },
                 { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2 (S1)', status: 'normal', name: 'Database Systems', remarks: '' },
             ],
-            1: [ // Week 10
+            1: [
                 { di: 0, start: 4, end: 7, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', status: 'normal', name: 'Object-Oriented Programming', remarks: '' },
                 { di: 2, start: 2, end: 5, code: 'BMIT9012', type: 'L', venue: 'B106', lecturer: 'Pn. Surayaini Basri', cohort: 'RSD2 (S1)', status: 'normal', name: 'Computer Networks', remarks: '' },
                 { di: 4, start: 0, end: 3, code: 'BMIT3456', type: 'L', venue: 'B103', lecturer: 'Dr. Chang Foo Chung', cohort: 'RAF2 (S1)', status: 'normal', name: 'Artificial Intelligence', remarks: '' },
             ],
-            2: [ // Week 11
+            2: [
                 { di: 0, start: 4, end: 7, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', studentCount: 24, status: 'normal', name: 'Object-Oriented Programming', remarks: '' },
                 { di: 0, start: 12, end: 14, code: 'BMIT1234', type: 'T', venue: 'B104', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', studentCount: 22, status: 'normal', name: 'Data Structures', remarks: '' },
                 { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2 (S1)', studentCount: 28, status: 'normal', name: 'Database Systems', remarks: '' },
@@ -1125,10 +717,6 @@
         };
 
         let currentWeek = 2;
-
-        // ═══════════════════════════════════════
-        //  Modal
-        // ═══════════════════════════════════════
 
         function openModal(event) {
             document.getElementById('modalTitle').textContent = event.code || 'Class Details';
@@ -1214,10 +802,6 @@
             if (e.key === 'Escape') closeModal();
         });
 
-        // ═══════════════════════════════════════
-        //  Timetable Builder
-        // ═══════════════════════════════════════
-
         function buildTimetable() {
             const head = document.getElementById('tableHead');
             const body = document.getElementById('tableBody');
@@ -1228,7 +812,6 @@
             const days = data.days;
             const events = eventsData[currentWeek] || [];
 
-            // ── Header row ──
             const timeHeaderRow = document.createElement('tr');
             const cornerTh = document.createElement('th');
             cornerTh.className = 'time-header-col';
@@ -1245,7 +828,6 @@
             });
             head.appendChild(timeHeaderRow);
 
-            // ── Day rows ──
             days.forEach((day, di) => {
                 const tr = document.createElement('tr');
 
@@ -1262,10 +844,8 @@
                 dayTd.innerHTML = dayHtml;
                 tr.appendChild(dayTd);
 
-                // ── Find events for this day ──
                 const dayEvents = events.filter(e => e.di === di);
 
-                // Build slot map
                 const slotMap = {};
                 hours.forEach((_, hi) => { slotMap[hi] = null; });
 
@@ -1342,10 +922,6 @@
             updateSummary();
         }
 
-        // ═══════════════════════════════════════
-        //  Weekly Summary
-        // ═══════════════════════════════════════
-
         function updateSummary() {
             const events = eventsData[currentWeek] || [];
             const days = weekData[currentWeek].days;
@@ -1363,10 +939,6 @@
             document.getElementById('sumPending').textContent = pending;
             document.getElementById('sumConflict').textContent = conflict;
         }
-
-        // ═══════════════════════════════════════
-        //  Week Navigation
-        // ═══════════════════════════════════════
 
         function prevWeek() {
             if (currentWeek > 0) {
@@ -1389,38 +961,11 @@
             buildTimetable();
         }
 
-        // ═══════════════════════════════════════
-        //  Theme
-        // ═══════════════════════════════════════
-
-        function updateIcon(isDark) {
-            const icon = document.getElementById('theme-icon');
-            if (!icon) return;
-            icon.innerHTML = isDark
-                ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
-                : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const isDark = html.classList.contains('dark');
-            html.classList.toggle('light');
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-            updateIcon(!isDark);
-        }
-
         function goToReplacement() {
             window.location.href = '/replacement-arrangement';
         }
 
-        function navigateHome() {
-            window.location.href = '/my-timetable-ui';
-        }
-
-        // ── Init ──
         document.addEventListener('DOMContentLoaded', function() {
-            // Populate week dropdown
             const sel = document.getElementById('weekSelect');
             sel.innerHTML = weekData.map((w, i) =>
                 `<option value="${i}">${w.label} · ${w.range}</option>`
@@ -1428,8 +973,5 @@
             sel.selectedIndex = currentWeek;
 
             buildTimetable();
-            updateIcon(document.documentElement.classList.contains('dark'));
         });
-    </script>
-</body>
-</html>
+@endsection

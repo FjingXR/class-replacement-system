@@ -1,354 +1,8 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Replacement Arrangement — Class Replacement System</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        (function() {
-            var saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                document.documentElement.className = 'light';
-            }
-        })();
-    </script>
-    <link rel="stylesheet" href="/css/theme.css">
-    <style>
+@extends('layouts.ui-template', ['activeNav' => 'replacement-arrangement'])
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--color-bg);
-            color: var(--color-on-bg);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background var(--transition), color var(--transition);
-        }
+@section('title', 'Replacement Arrangement — Class Replacement System')
 
-        /* ───── Top Navigation Bar ───── */
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            background: var(--color-primary-container);
-            padding: 0 20px;
-            gap: 0;
-        }
-
-        .top-logo {
-            display: flex;
-            align-items: center;
-            flex-shrink: 0;
-            cursor: pointer;
-            margin-right: 24px;
-        }
-        .top-logo img {
-            height: 48px;
-            width: auto;
-            display: block;
-        }
-
-        .nav-items {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            flex: 1;
-            height: 100%;
-        }
-        .nav-item {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--color-on-primary-container);
-            text-decoration: none;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.15s, opacity 0.15s;
-            white-space: nowrap;
-            opacity: 0.75;
-            border-radius: 0;
-        }
-        .nav-item:hover {
-            opacity: 1;
-            background: rgba(7,27,51,0.06);
-        }
-        .nav-item.active {
-            opacity: 1;
-            font-weight: 600;
-            background: var(--color-tertiary-container);
-        }
-
-        .top-right {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-            padding-left: 20px;
-            height: 100%;
-        }
-
-        .theme-toggle {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            transition: background 0.15s, transform 0.15s, opacity 0.15s;
-            flex-shrink: 0;
-        }
-        .theme-toggle:hover {
-            opacity: 0.85;
-            transform: scale(1.08);
-        }
-        .theme-toggle:active {
-            transform: scale(0.95);
-        }
-
-        .notif-btn {
-            position: relative;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s, opacity 0.15s;
-            flex-shrink: 0;
-        }
-        .notif-btn:hover {
-            opacity: 0.85;
-        }
-        .notif-badge {
-            position: absolute;
-            top: 3px;
-            right: 3px;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--color-error);
-            color: var(--color-on-error);
-            font-size: 9px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 0 2px var(--color-primary-container);
-        }
-
-        .user-panel {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            background: var(--color-secondary-container);
-            border-radius: 50px;
-            padding: 3px 4px 3px 8px;
-            border: 1px solid rgba(12,51,33,0.12);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--color-on-secondary-container);
-            user-select: none;
-        }
-        .user-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--color-on-secondary-container);
-            color: var(--color-secondary-container);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
-        .user-name {
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .user-role {
-            font-size: 10px;
-            opacity: 0.7;
-        }
-
-        .logout-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: none;
-            background: transparent;
-            color: var(--color-on-secondary-container);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s, color 0.15s;
-            flex-shrink: 0;
-        }
-        .logout-btn:hover {
-            background: rgba(12,51,33,0.1);
-            color: var(--color-error);
-        }
-
-        /* ───── App Container ───── */
-        .app-container {
-            width: 100%;
-            max-width: 100%;
-            padding: 16px 24px;
-            padding-top: 72px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* ───── Page Header ───── */
-        .page-header {
-            margin-bottom: 20px;
-        }
-        .page-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--color-on-bg);
-            margin: 0;
-        }
-        .page-desc {
-            font-size: 14px;
-            color: var(--color-on-surface-variant);
-            margin-top: 4px;
-            margin-bottom: 0;
-        }
-
-        /* ───── Toolbar ───── */
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .toolbar-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .search-wrapper {
-            position: relative;
-        }
-        .search-input {
-            padding: 8px 12px 8px 36px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
-            font-family: inherit;
-            font-size: 13px;
-            width: 420px;
-            outline: none;
-        }
-        .search-input::placeholder {
-            color: var(--color-on-surface-variant);
-            opacity: 0.5;
-        }
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            opacity: 0.4;
-            color: var(--color-on-surface-variant);
-        }
-        .toolbar-right {
-            display: flex;
-            align-items: center;
-        }
-        .result-count {
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-            font-weight: 500;
-        }
-
-        /* ───── Grid Wrapper ───── */
-        .grid-wrapper {
-            margin-top: 14px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-        }
-        .grid-scroll {
-            overflow-x: auto;
-        }
-        .timetable {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1350px;
-        }
-        .timetable th, .timetable td {
-            border: 1px solid var(--color-outline);
-            text-align: left;
-            vertical-align: middle;
-            font-size: 13px;
-            padding: 10px 12px;
-            white-space: nowrap;
-            transition: background var(--transition), border-color var(--transition);
-        }
-        .timetable th {
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        .timetable th.sortable {
-            cursor: pointer;
-            user-select: none;
-        }
-        .timetable th.sortable:hover {
-            background: rgba(0,0,0,0.05);
-        }
-        .timetable tbody tr:hover td {
-            background: rgba(0,0,0,0.03);
-        }
-        .timetable tbody tr:nth-child(even) td {
-            background: rgba(0,0,0,0.015);
-        }
+@section('page-styles')
 
         /* ───── Column Widths ───── */
         .col-no { width: 50px; }
@@ -371,65 +25,7 @@
         .urgency-mid { color: var(--color-secondary); font-weight: 600; }
         .urgency-low { color: var(--color-on-surface-variant); font-weight: 500; }
 
-        /* ───── Sort Hint ───── */
-        .sort-hint {
-            text-align: left;
-            font-size: 12px;
-            color: var(--color-on-surface-variant);
-            opacity: 0.5;
-            margin-top: 8px;
-            margin-bottom: -4px;
-            font-style: italic;
-        }
-
-        /* ───── Week Filter ───── */
-        .filter-select {
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background: var(--color-secondary-container);
-            color: var(--color-on-secondary-container);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 500;
-            outline: none;
-            cursor: pointer;
-        }
-        .filter-select option {
-            background: var(--color-surface);
-            color: var(--color-on-surface);
-        }
-        html.dark .filter-select {
-            color-scheme: dark;
-        }
-
-        /* ───── Sort Arrow ───── */
-        .sort-arrow {
-            display: inline-block;
-            margin-left: 4px;
-            font-size: 11px;
-            opacity: 0.6;
-        }
-
-        /* ───── Cell Styles ───── */
-        .cell-code {
-            font-weight: 700;
-        }
-        .cell-name {
-            font-weight: 400;
-            opacity: 0.7;
-            display: block;
-            font-size: 12px;
-        }
-
         /* ───── Reason Badges ───── */
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-        }
         .badge-holiday {
             background: var(--color-error-container);
             color: var(--color-on-error-container);
@@ -451,213 +47,135 @@
             color: white;
         }
 
-        /* ───── Action Button ───── */
-        .btn-action {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            background: var(--color-secondary);
-            color: var(--color-on-secondary);
-            font-family: inherit;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: transform 0.15s, filter 0.15s;
-        }
-        .btn-action:hover {
-            filter: brightness(1.08);
-        }
-        .btn-action:active {
-            transform: scale(0.97);
-        }
+        /* ───── Summary Card Colors ───── */
+        .summary-card.card-conflicted .summary-value { color: var(--color-error); }
+        .summary-card.card-venues .summary-value { color: var(--color-primary); }
+        .summary-card.card-students .summary-value { color: var(--color-tertiary); }
+        .summary-card.card-duration .summary-value { color: var(--color-secondary); }
+        .summary-card.card-courses .summary-value { color: var(--color-on-primary-container); }
 
-        /* ───── Pagination ───── */
-        .pagination-bar {
-            display: flex;
-            justify-content: space-between;
+        /* ───── Modal ───── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
             align-items: center;
-            padding: 12px 16px;
-            border-top: 1px solid var(--color-outline);
+            justify-content: center;
         }
-        .pagination-info {
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal {
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            max-width: 520px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--color-outline);
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-on-surface);
+            margin: 0;
+        }
+        .modal-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: background 0.15s;
+        }
+        .modal-close:hover {
+            background: var(--color-surface-variant);
+        }
+        .modal-body {
+            padding: 20px 24px;
+        }
+        .modal-field {
+            display: flex;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--color-outline);
+            border-bottom-width: 0.5px;
+        }
+        .modal-field:last-child {
+            border-bottom: none;
+        }
+        .modal-field-label {
+            width: 130px;
+            flex-shrink: 0;
             font-size: 13px;
+            font-weight: 600;
             color: var(--color-on-surface-variant);
         }
-        .pagination-controls {
-            display: flex;
-            gap: 4px;
+        .modal-field-value {
+            flex: 1;
+            font-size: 13px;
+            color: var(--color-on-surface);
         }
-        .page-btn {
-            min-width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            border: 1px solid transparent;
+        .modal-footer {
+            padding: 12px 24px;
+            border-top: 1px solid var(--color-outline);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .btn-close-modal {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--color-outline-strong);
             background: transparent;
             color: var(--color-on-surface-variant);
             font-family: inherit;
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
+            transition: background 0.15s;
         }
-        .page-btn:hover {
+        .btn-close-modal:hover {
             background: var(--color-surface-variant);
         }
-        .page-btn.active {
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
-            border-color: var(--color-primary);
+        .btn-replace-now {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: none;
+            background: var(--color-secondary);
+            color: var(--color-on-secondary);
+            font-family: inherit;
+            font-size: 13px;
             font-weight: 600;
-        }
-        .page-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        /* ───── Empty State ───── */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--color-on-surface-variant);
-        }
-        .empty-icon {
-            opacity: 0.25;
-            margin-bottom: 16px;
-        }
-        .empty-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--color-on-surface);
-            margin: 0 0 6px 0;
-        }
-        .empty-text {
-            font-size: 14px;
-            opacity: 0.7;
-            margin: 0;
-        }
-
-        /* ───── Summary Dashboard ───── */
-        .summary-bar {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 4px;
-            margin-top: 20px;
-        }
-        .summary-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            padding: 14px 12px;
+            cursor: pointer;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
+            gap: 6px;
+            transition: filter 0.15s;
         }
-        .summary-value {
-            font-size: 24px;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-        .summary-label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--color-on-surface-variant);
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .summary-card.card-conflicted .summary-value { color: var(--color-error); }
-        .summary-card.card-venues .summary-value { color: var(--color-primary); }
-        .summary-card.card-students .summary-value { color: var(--color-tertiary); }
-        .summary-card.card-duration .summary-value { color: var(--color-secondary); }
-        .summary-card.card-courses .summary-value { color: var(--color-on-primary-container); }
-        @media (max-width: 768px) {
-            .summary-bar { grid-template-columns: repeat(2, 1fr); }
+        .btn-replace-now:hover {
+            filter: brightness(1.08);
         }
 
-        /* ───── Responsive ───── */
-        @media (max-width: 1024px) {
-            .grid-scroll { overflow-x: auto; }
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar-left { justify-content: flex-start; }
-            .search-input { width: 100%; }
-            .filter-select { width: auto; flex: 0 0 auto; }
-        }
-        @media (max-width: 768px) {
-            .app-container { padding: 10px 12px; padding-top: 66px; }
-            .top-logo { margin-right: 12px; }
-            .nav-items { gap: 2px; }
-            .nav-item { padding: 0 8px; font-size: 12px; }
-            .user-info { display: none; }
-            .pagination-bar { flex-direction: column; gap: 8px; align-items: center; }
-            .toolbar-left { width: 100%; }
-            .search-wrapper { width: 100%; }
-            .search-input { width: 100%; box-sizing: border-box; }
-            .filter-select { width: 100%; }
-            .toolbar-right { width: 100%; justify-content: center; }
-        }
-    </style>
-</head>
-<body>
+@endsection
 
-    <!-- ═══ Top Navigation Bar ═══ -->
-    <div class="top-bar">
-        <div class="top-logo" onclick="navigateHome()">
-            <img src="/images/logo_banner.png" alt="TAR UMT">
-        </div>
-
-        <div class="nav-items">
-            <a class="nav-item" href="/dashboard">Dashboard</a>
-            <a class="nav-item" href="/my-timetable-ui">My Timetable</a>
-            <a class="nav-item" href="#">Cohort Timetables</a>
-            <a class="nav-item active" href="/replacement-home-ui">Replacement Arrangement</a>
-            <a class="nav-item" href="/my-request-history-ui">Replacement History</a>
-        </div>
-
-        <div class="top-right">
-            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                </svg>
-            </button>
-
-            <button class="notif-btn" onclick="alert('Notifications panel')" aria-label="Notifications">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
-                <span class="notif-badge">3</span>
-            </button>
-
-            <div class="user-panel">
-                <div class="user-profile">
-                    <div class="user-avatar">KL</div>
-                    <div class="user-info">
-                        <span class="user-name">Kylian Mbappe</span>
-                        <span class="user-role">Lecturer</span>
-                    </div>
-                </div>
-
-                <button class="logout-btn" onclick="alert('Logout')" aria-label="Logout">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══ App Container ═══ -->
-    <div class="app-container">
+@section('content')
 
         <!-- ─── Page Header ─── -->
         <div class="page-header">
@@ -675,16 +193,6 @@
                     </svg>
                     <input class="search-input" id="searchInput" placeholder="Search by course code or name...">
                 </div>
-                <!-- filter-dropdown commented out — search covers all needs
-                <select class="filter-dropdown" id="reasonFilter">
-                    <option value="all">All Reasons</option>
-                    <option value="Public Holiday">Public Holiday</option>
-                    <option value="Annual Leave">Annual Leave</option>
-                    <option value="Medical Leave">Medical Leave</option>
-                    <option value="Official Event">Official Event</option>
-                    <option value="Emergency Leave">Emergency Leave</option>
-                </select>
-                -->
                 <select class="filter-select" id="weekFilter">
                     <option value="all">All Weeks</option>
                 </select>
@@ -713,28 +221,15 @@
         </div>
 
         <!-- ─── Summary Dashboard ─── -->
-        <div class="summary-bar" id="summaryBar">
-            <div class="summary-card card-conflicted">
-                <span class="summary-value" id="summaryConflicted">0</span>
-                <span class="summary-label">Total Conflicted</span>
-            </div>
-            <div class="summary-card card-venues">
-                <span class="summary-value" id="summaryVenues">0</span>
-                <span class="summary-label">Venues Affected</span>
-            </div>
-            <div class="summary-card card-students">
-                <span class="summary-value" id="summaryStudents">0</span>
-                <span class="summary-label">Students Affected</span>
-            </div>
-            <div class="summary-card card-duration">
-                <span class="summary-value" id="summaryDuration">0</span>
-                <span class="summary-label">Duration Hours</span>
-            </div>
-            <div class="summary-card card-courses">
-                <span class="summary-value" id="summaryCourses">0</span>
-                <span class="summary-label">Distinct Courses</span>
-            </div>
-        </div>
+        @include('partials.ui-summary-bar', [
+            'cards' => [
+                ['class' => 'card-conflicted', 'valueId' => 'summaryConflicted', 'label' => 'Total Conflicted'],
+                ['class' => 'card-venues', 'valueId' => 'summaryVenues', 'label' => 'Venues Affected'],
+                ['class' => 'card-students', 'valueId' => 'summaryStudents', 'label' => 'Students Affected'],
+                ['class' => 'card-duration', 'valueId' => 'summaryDuration', 'label' => 'Duration Hours'],
+                ['class' => 'card-courses', 'valueId' => 'summaryCourses', 'label' => 'Distinct Courses'],
+            ]
+        ])
 
         <!-- ─── Empty State ─── -->
         <div class="empty-state" id="emptyState" style="display:none">
@@ -748,13 +243,9 @@
             <p class="empty-text">Try adjusting your search or filter criteria.</p>
         </div>
 
-    </div>
+@endsection
 
-    <script>
-        // ═══════════════════════════════════════
-        //  Mock Data
-        // ═══════════════════════════════════════
-
+@section('page-scripts')
         const conflictedClasses = [
             { id: 1, code: 'BMIT5555', name: 'Software Engineering', type: 'L', date: '2026-09-04', day: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 35, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Public Holiday' },
             { id: 2, code: 'BMIT5555', name: 'Software Engineering', type: 'T', date: '2026-09-04', day: 'Thursday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B111', totalStudents: 28, cohorts: ['DFT2 (S1)'], conflictReason: 'Public Holiday' },
@@ -771,24 +262,6 @@
             { id: 13, code: 'BMIT7777', name: 'Cybersecurity', type: 'L', date: '2026-09-25', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Medical Leave' },
             { id: 14, code: 'BMIT3333', name: 'Embedded Systems', type: 'T', date: '2026-09-28', day: 'Monday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B202', totalStudents: 12, cohorts: ['DSF2 (S1)'], conflictReason: 'Emergency Leave' },
         ];
-
-        // ═══════════════════════════════════════
-        //  Helper Functions
-        // ═══════════════════════════════════════
-
-        function to12h(t) {
-            const [hStr, m] = t.split(':');
-            const h = parseInt(hStr);
-            const ampm = h >= 12 ? 'PM' : 'AM';
-            const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-            return h12 + ':' + m + ' ' + ampm;
-        }
-
-        function formatDate(iso) {
-            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            const parts = iso.split('-');
-            return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
-        }
 
         function badgeClass(reason) {
             const map = {
@@ -821,18 +294,10 @@
             return Math.floor(diff / 7) + 1;
         }
 
-        // ═══════════════════════════════════════
-        //  State Variables
-        // ═══════════════════════════════════════
-
         let currentPage = 1;
         const pageSize = 10;
         let sortState = { field: 'date', dir: 'asc' };
         let currentFiltered = [];
-
-        // ═══════════════════════════════════════
-        //  Table Builder
-        // ═══════════════════════════════════════
 
         function buildTable() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -874,7 +339,6 @@
             head.innerHTML = '';
             body.innerHTML = '';
 
-            // ── Thead ──
             const tr = document.createElement('tr');
             const columns = [
                 { label: '#', cls: 'col-no', sortable: false },
@@ -919,7 +383,6 @@
             });
             head.appendChild(tr);
 
-            // ── Tbody ──
             if (pageData.length === 0) {
                 document.getElementById('emptyState').style.display = 'block';
             } else {
@@ -956,10 +419,6 @@
             updateResultCount();
             updateSummary();
         }
-
-        // ═══════════════════════════════════════
-        //  Pagination
-        // ═══════════════════════════════════════
 
         function updatePagination() {
             const totalPages = Math.ceil(currentFiltered.length / pageSize);
@@ -1019,10 +478,6 @@
             count.textContent = 'Showing ' + currentFiltered.length + ' of ' + conflictedClasses.length + ' classes';
         }
 
-        // ═══════════════════════════════════════
-        //  Summary
-        // ═══════════════════════════════════════
-
         function updateSummary() {
             const total = conflictedClasses.length;
             const filtered = currentFiltered;
@@ -1040,31 +495,6 @@
 
             const show = filtered.length > 0;
             document.getElementById('summaryBar').style.display = show ? 'grid' : 'none';
-        }
-
-        // ═══════════════════════════════════════
-        //  Theme
-        // ═══════════════════════════════════════
-
-        function updateIcon(isDark) {
-            const icon = document.getElementById('theme-icon');
-            if (!icon) return;
-            icon.innerHTML = isDark
-                ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
-                : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const isDark = html.classList.contains('dark');
-            html.classList.toggle('light');
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-            updateIcon(!isDark);
-        }
-
-        function navigateHome() {
-            window.location.href = '/my-timetable-ui';
         }
 
         function populateWeekDropdown() {
@@ -1087,14 +517,9 @@
             window.location.href = '/replacement-arrangement?code=' + encodeURIComponent(code) + '&date=' + encodeURIComponent(date);
         }
 
-        // ═══════════════════════════════════════
-        //  Initialization
-        // ═══════════════════════════════════════
-
         document.addEventListener('DOMContentLoaded', function() {
             populateWeekDropdown();
             buildTable();
-            updateIcon(document.documentElement.classList.contains('dark'));
             document.getElementById('searchInput').addEventListener('input', function() {
                 currentPage = 1;
                 buildTable();
@@ -1104,6 +529,4 @@
                 buildTable();
             });
         });
-    </script>
-</body>
-</html>
+@endsection

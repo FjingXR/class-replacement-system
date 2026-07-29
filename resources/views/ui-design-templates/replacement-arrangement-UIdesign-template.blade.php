@@ -1,30 +1,8 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Replacement Arrangement — Class Replacement System</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        (function() {
-            var saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                document.documentElement.className = 'light';
-            }
-        })();
-    </script>
-    <link rel="stylesheet" href="/css/theme.css">
-    <style>
+@extends('layouts.ui-template', ['activeNav' => 'replacement-arrangement', 'hideNav' => true])
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--color-bg);
-            color: var(--color-on-bg);
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background var(--transition), color var(--transition);
-        }
+@section('title', 'Replacement Arrangement — Class Replacement System')
+
+@section('page-styles')
 
         .top-bar {
             position: fixed;
@@ -73,6 +51,7 @@
             height: 32px;
             width: auto;
             display: block;
+            cursor: pointer;
         }
         .top-title {
             font-size: 22px;
@@ -462,8 +441,6 @@
             filter: brightness(1.1);
         }
 
-        .top-logo { cursor: pointer; }
-
         .modal-overlay {
             position: fixed; inset: 0; z-index: 999;
             background: rgba(0,0,0,0.55);
@@ -728,9 +705,10 @@
             .sel-summary-grid { grid-template-columns: 1fr; }
             .sel-summary-info .info-rows { flex-direction: column; gap: 10px; }
         }
-    </style>
-</head>
-<body>
+
+@endsection
+
+@section('content')
     <div class="top-bar">
         <button class="back-btn" onclick="goBack()" aria-label="Back">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -888,7 +866,9 @@
         </div>
     </div>
 
-    <script>
+@endsection
+
+@section('page-scripts')
         const MAX_SELECTION = 4;
 
         const hours = [
@@ -1396,27 +1376,7 @@
             }
         }
 
-        function updateIcon(isDark) {
-            const icon = document.getElementById('theme-icon');
-            if (!icon) return;
-            icon.innerHTML = isDark
-                ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
-                : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const isDark = html.classList.contains('dark');
-            html.classList.toggle('light');
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-            updateIcon(!isDark);
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             buildTimetable();
-            updateIcon(document.documentElement.classList.contains('dark'));
         });
-    </script>
-</body>
-</html>
+@endsection
