@@ -26,6 +26,7 @@ The "Cohort Timetables" nav item has been a placeholder (`href="#"`) since the n
 - Real cohort enrolment data — mock cohort list hardcoded for display
 - Multi-week data persistence — week navigation loads static mock data per week
 - Role-based access control — the page is accessible via the route without authentication middleware
+- Degree/diploma program type filter — the cohort naming convention (e.g., `DFT2` = diploma) already distinguishes program types; a dedicated filter can be added in a future iteration if needed
 
 ## Impact Scope
 

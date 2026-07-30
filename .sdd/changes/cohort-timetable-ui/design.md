@@ -100,7 +100,7 @@ const facultyData = {
     'FOCS': {
         label: 'Faculty of Computing and Information Technology',
         cohorts: {
-            'DFT2 (S1)': {
+            'DFT2 (S1)': {              // diploma
                 label: 'DFT2 (S1)',
                 weeks: {
                     0: [ /* events for Week 9 */ ],
@@ -108,8 +108,8 @@ const facultyData = {
                     2: [ /* events for Week 11 */ ],
                 }
             },
-            'DSF2 (S1)': { ... },
-            'DIT2 (S1)': { ... },
+            'DSF2 (S1)': { ... },      // diploma
+            'RSD2 (S1)': { ... },      // degree
         }
     },
     'FOE': { ... },

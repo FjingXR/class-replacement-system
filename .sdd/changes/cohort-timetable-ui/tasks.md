@@ -30,7 +30,7 @@
 
 - [ ] Add `weekData` array (3 weeks: Week 9–11, same structure as MyTimetable) with day arrays including `abbr`, `date`, optional `today`/`holiday`/`sunday` flags
 - [ ] Add `facultyData` object: `{ facultyKey: { label, cohorts: { cohortKey: { label, weeks: { 0: [events], 1: [events], 2: [events] } } } } }`
-  - FOCS with 3 cohorts (DFT2, DSF2, DIT2) — 5–7 events/week each
+  - FOCS with 3 cohorts (DFT2 diploma, DSF2 diploma, RSD2 degree) — 5–7 events/week each
   - FOE with 2 cohorts (EEE2, MEC2) — 5–7 events/week each
   - FOB with 2 cohorts (BAF2, IBM2) — 5–7 events/week each
   - FAFB with 2 cohorts (AFT2, ACC2) — 5–7 events/week each
