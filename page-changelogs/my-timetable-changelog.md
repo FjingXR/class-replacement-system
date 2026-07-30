@@ -17,3 +17,4 @@
 | 2026-07-21 08:09 | Line 588 | Total card color | Changed `.summary-card.card-total .summary-value` color from `var(--color-on-primary-container)` to `var(--color-secondary)` — matches Normal Class legend swatch. |
 | 2026-07-21 08:15 | Lines 231–246, 900–903 | Page header | Added `page-header` / `page-title` / `page-desc` CSS and HTML — matches my-request-history page header style. Title: "My Timetable", description: "View your weekly class schedule and manage replacement requests across all cohorts." |
 | 2026-07-21 08:15 | Lines 264–280 | Week select restyle | Changed from `border: outline`, `background: surface-variant`, `color: on-surface-variant` to `border: none`, `background: secondary-container`, `color: on-secondary-container` — matches replacement-arrangement week selector style. |
+| 2026-07-21 08:15 | Line 82 | Time column center | Added `text-align: center` to `.time-col`. |

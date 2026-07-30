@@ -114,6 +114,7 @@
             z-index: 15;
             background: var(--color-surface);
             font-weight: 600;
+            text-align: center;
         }
         .time-col .day-label {
             display: block;

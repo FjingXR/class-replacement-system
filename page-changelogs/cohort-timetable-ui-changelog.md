@@ -13,7 +13,7 @@
 |-----------|----------|--------|--------|
 | 2026-07-30 | — | Semester bar | `.semester-bar` (flex, surface bg, border, gap 8px), `.week-arrow` (28×28, transparent → hover bg, disabled state), `.week-select` (secondary-container bg, custom SVG chevron, min-width 160px), `.session-text` (flex 1, weight 600) |
 | 2026-07-30 | — | Faculty/cohort selects | `.semester-bar select:not(.week-select)` — same styling as week-select but larger padding for standalone selects |
-| 2026-07-30 | — | Time column | `.time-col` (130px, sticky left, z-15), `.today`/`.holiday-col`/`.sunday-col` variants matching MyTimetable, `.hour-header` with `.hour-top`/`.hour-bottom` spans |
+| 2026-07-30 | — | Time column | `.time-col` (130px, sticky left, z-15, text-align center), `.today`/`.holiday-col`/`.sunday-col` variants matching MyTimetable, `.hour-header` with `.hour-top`/`.hour-bottom` spans |
 | 2026-07-30 | — | Hour cells | `.hour-cell` (80px height, cursor default), `.sunday-slot`/`.holiday-slot` (error-container bg), `.cell-empty` (surface bg) |
 | 2026-07-30 | — | Event blocks | `.event-block` (flex col, centered, hover brightness, box-shadow), `.event-normal` (secondary-container), `.event-replacement` (primary-container), `.event-pending` (tertiary-container), `.event-public-holiday` (error-container), `.ev-code`/`.ev-venue`/`.ev-time`/`.ev-note` text styles |
 | 2026-07-30 | — | Status badges | `.badge-normal` (secondary bg), `.badge-replacement` (amber/gold), `.badge-pending` (tertiary), `.badge-conflict` (error) — for use in modal and event labels |

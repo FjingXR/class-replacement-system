@@ -12,6 +12,7 @@
 | Summary cards show venue | Added `.card-venue` line in each summary card; info panel label changed to "Venue" |
 | Proceed confirmation | Venue name included in each line item |
 | clearAll | Extended to clear all venues' selections |
+| Time column center | Added `text-align: center` to `.time-col` |
 
 ### `routes/web.php`
 
