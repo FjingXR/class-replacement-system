@@ -92,6 +92,7 @@
         .time-col .day-label {
             display: block;
             font-size: 14px;
+            text-align: center;
         }
         .time-col .date-label {
             display: block;
@@ -99,6 +100,7 @@
             font-weight: 400;
             color: var(--color-on-surface-variant);
             margin-top: 2px;
+            text-align: center;
         }
         .time-col .holiday-label {
             display: block;
@@ -108,6 +110,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-top: 2px;
+            text-align: center;
         }
         .time-col.today {
             background: var(--color-primary-container);
