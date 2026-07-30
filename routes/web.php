@@ -28,6 +28,10 @@ Route::get('/replacement-arrangement', function () {
     return view('ui-design-templates.replacement-arrangement-UIdesign-template', ['activeNav' => 'replacement-arrangement']);
 });
 
+Route::get('/cohort-timetable-ui', function () {
+    return view('ui-design-templates.CohortTimetable-UI-design-template', ['activeNav' => 'cohort-timetables']);
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
