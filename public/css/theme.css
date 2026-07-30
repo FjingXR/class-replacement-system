@@ -448,16 +448,20 @@ body {
 
 /* ───── Week Filter ───── */
 .filter-select {
-    padding: 8px 12px;
+    padding: 8px 14px;
     border-radius: var(--radius-sm);
     border: none;
     background: var(--color-secondary-container);
     color: var(--color-on-secondary-container);
     font-family: inherit;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     outline: none;
     cursor: pointer;
+    transition: background var(--transition);
+}
+.filter-select:hover {
+    filter: brightness(1.1);
 }
 .filter-select option {
     background: var(--color-surface);
