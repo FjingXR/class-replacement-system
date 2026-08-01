@@ -12,6 +12,12 @@ Create a new **frontend-only UI page** for the TARUMT Class Replacement System.
 2. Read `../final/FR&NFR.md` for any FR/NFR this page satisfies.
 3. Read the existing page closest in pattern under `resources/views/ui-design-templates/` and the matching `page-changelogs/*.md` to learn house style before designing.
 
+## Discuss with the user BEFORE generating (do not skip)
+After reading the above, talk to the user first — do NOT jump straight to writing the proposal:
+1. **FR/NFR logic check:** list every FR/NFR that touches this page and say if each is logical for the mock phase. Flag anything that needs backend (defer it), and flag any contradiction between FR/NFR and CodingMAIN.md.
+2. **UI design details:** confirm with the user the legend items + colors, summary cards, modal pattern, week picker, what to copy from the closest page, and what to remove (action buttons, role-only logic, renamed labels).
+3. Only after the user says OK on (1) and (2), proceed to the "Page to create" and deliverables.
+
 ## Page to create
 - **Name:** `<e.g. Request Approval>`
 - **Template file:** `resources/views/ui-design-templates/<kebab-case>-UI-design-template.blade.php`

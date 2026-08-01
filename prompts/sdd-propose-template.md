@@ -7,19 +7,21 @@
 
 ---
 
-## Anatomy of the prompt (6 parts — always include all six)
+## Anatomy of the prompt (7 parts — always include all seven)
 
 | # | Part | What it does |
 |---|------|--------------|
 | 1 | **Command + goal** | `/sdd-propose`, then one line: "create a new frontend-only UI page". |
-| 2 | **Read-first list** | CodingMAIN.md (esp. §9 Page Inventory, §10.0 UI Design Rules), the spec file, the closest existing page + its changelog. |
-| 3 | **Page details** | 6 fields: name, file path, route, activeNav, role, purpose, mock scope. |
-| 4 | **Design rules** | Point to the 5 rules in §10.0 (do not rewrite them — say "follow §10.0 exactly"). |
-| 5 | **What to copy / what to remove** | Which existing page to copy the look from; which parts to delete (buttons, lecturer logic, renamed labels). |
-| 6 | **Deliverables + constraints** | 4 SDD files, route, changelog, lint check, commit prefix. |
+| 2 | **Read-first list** | CodingMAIN.md (esp. §9 Page Inventory, §10.0 UI Design Rules), `../final/FR&NFR.md`, the spec file, the closest existing page + its changelog. |
+| 3 | **Discuss before generating** | After reading FR&NFR.md, talk to the user: confirm which FRs/NFRs apply, check if the logic is sound, and agree on the UI design details (legend, cards, modal, what to remove). Only then write the proposal. |
+| 4 | **Page details** | 6 fields: name, file path, route, activeNav, role, purpose, mock scope. |
+| 5 | **Design rules** | Point to the 5 rules in §10.0 (do not rewrite them — say "follow §10.0 exactly"). |
+| 6 | **What to copy / what to remove** | Which existing page to copy the look from; which parts to delete (buttons, lecturer logic, renamed labels). |
+| 7 | **Deliverables + constraints** | 4 SDD files, route, changelog, lint check, commit prefix. |
 
-The two tricky parts are: (1) picking the **closest page**, and (2) listing **what to remove**.
+The tricky parts are: (1) picking the **closest page**, (2) listing **what to remove**, and (3) checking FR/NFR logic.
 Ask yourself: *what does the closest page have that my page should NOT have?* Delete those.
+For FR/NFR: read `../final/FR&NFR.md`, list every FR/NFR that touches this page, and ask the user whether each one is logical for the mock phase.
 
 ---
 
@@ -32,9 +34,15 @@ Create a new frontend-only UI page for the TARUMT Class Replacement System.
 
 Read first (mandatory):
 - CodingMAIN.md — single source of truth (esp. §9 Page Inventory, §10.0 UI Design Rules).
+- ../final/FR&NFR.md — the requirements; find every FR/NFR that touches this page.
 - prompts/sdd-propose-ui-page.md — the spec to follow.
 - resources/views/ui-design-templates/[CLOSEST EXISTING PAGE].blade.php — copy its look.
 - page-changelogs/[CLOSEST PAGE]-changelog.md — learn house style.
+
+Discuss with me BEFORE you generate the proposal (do not skip):
+1. List the FRs/NFRs that apply to this page and tell me if each one is logical for the mock phase (flag any contradiction or anything that needs backend, which we defer).
+2. Confirm the UI design details with me: legend items + colors, summary cards, modal pattern, week picker, what to copy and what to remove.
+3. Wait for my OK on (1) and (2) before writing the SDD proposal/design/tasks.
 
 Page to create
 - Name: [PAGE NAME]
@@ -66,10 +74,16 @@ Create a new frontend-only UI page for the TARUMT Class Replacement System.
 
 Read first (mandatory):
 - CodingMAIN.md — single source of truth (esp. §9 Page Inventory, §10.0 UI Design Rules).
+- ../final/FR&NFR.md — the requirements; find every FR/NFR that touches this page.
 - prompts/sdd-propose-ui-page.md — the spec to follow.
 - resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php — copy its look.
 - resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php — copy its view-only modal pattern.
 - page-changelogs/my-timetable-changelog.md — learn house style.
+
+Discuss with me BEFORE you generate the proposal (do not skip):
+1. List the FRs/NFRs that apply to this page (e.g. FR 1.2 view timetable, FR 1.4 view-only, FR 1.5 email on updates — but email is backend, defer) and tell me if each one is logical for the mock phase.
+2. Confirm the UI design details with me: legend 4 items (Normal/Replacement/Pending/Conflict), 5 summary cards (Total Classes, Class Hours, Replacements, Pending, Conflicts), view-only modal with Close button, week picker, remove Replace Now + Cancel Class.
+3. Wait for my OK on (1) and (2) before writing the SDD proposal/design/tasks.
 
 Page to create
 - Name: Student My Timetable
