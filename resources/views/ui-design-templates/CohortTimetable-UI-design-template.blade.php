@@ -66,13 +66,15 @@
             background: var(--color-surface);
             color: var(--color-on-surface);
         }
-        .session-text {
-            flex: 1;
-            text-align: center;
-            font-size: 16px;
+        .semester-chip {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 600;
-            opacity: 0.85;
-            white-space: nowrap;
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
         }
         html.dark .week-select {
             color-scheme: dark;
@@ -350,6 +352,11 @@
         .summary-card.card-replacement .summary-value { color: var(--color-primary); }
         .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
         .summary-card.card-conflict .summary-value { color: var(--color-error); }
+        .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
+        .summary-card.card-hours {
+            border: 1px dashed var(--color-outline-strong);
+            background: var(--color-surface-variant);
+        }
         .summary-card.card-total {
             border: 2px solid var(--color-primary);
             background: var(--color-primary-container);
@@ -465,62 +472,20 @@
 
         /* ───── Empty State (shared from theme.css) ───── */
 
-        /* ───── Search Toolbar ───── */
-        .search-wrapper {
-            position: relative;
-        }
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            opacity: 0.4;
-            color: var(--color-on-surface-variant);
-        }
-        .search-input {
-            padding: 8px 12px 8px 36px;
-            border-radius: var(--radius-sm);
-            border: none;
+        /* ───── Disabled Selects ───── */
+        .semester-bar select:disabled,
+        .semester-bar select:disabled:hover {
+            opacity: 0.5;
+            cursor: not-allowed;
             background: var(--color-surface-variant);
             color: var(--color-on-surface-variant);
-            font-family: inherit;
-            font-size: 13px;
-            width: 420px;
-            outline: none;
-        }
-        .search-input::placeholder {
-            color: var(--color-on-surface-variant);
-            opacity: 0.5;
-        }
-        .filter-select {
-            padding: 8px 12px;
-            border-radius: var(--radius-sm);
-            border: none;
-            background: var(--color-secondary-container);
-            color: var(--color-on-secondary-container);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 500;
-            outline: none;
-            cursor: pointer;
-        }
-        .filter-select option {
-            background: var(--color-surface);
-            color: var(--color-on-surface);
-        }
-        html.dark .filter-select {
-            color-scheme: dark;
         }
 
         /* ───── Responsive ───── */
         @media (max-width: 1024px) {
             .grid-scroll { overflow-x: auto; }
             .toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar-left { justify-content: flex-start; }
-            .search-input { width: 100%; }
-            .filter-select { width: auto; flex: 0 0 auto; }
+            .toolbar-right { justify-content: flex-start; }
         }
         @media (max-width: 768px) {
             .app-container { padding: 10px 12px; padding-top: 66px; }
@@ -528,10 +493,6 @@
             .nav-items { gap: 2px; }
             .nav-item { padding: 0 8px; font-size: 12px; }
             .user-info { display: none; }
-            .toolbar-left { width: 100%; }
-            .search-wrapper { width: 100%; }
-            .search-input { width: 100%; box-sizing: border-box; }
-            .filter-select { width: 100%; }
             .toolbar-right { width: 100%; justify-content: center; }
         }
 
@@ -542,6 +503,7 @@
         <!-- ─── Page Header ─── -->
         <div class="page-header">
             <h1 class="page-title">Cohort Timetable</h1>
+            <span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>
             <p class="page-desc">View the weekly timetable for any cohort across all faculties.</p>
         </div>
 
@@ -550,33 +512,16 @@
             <select id="facultySelect" onchange="onFacultyChange()">
                 <option value="">Select Faculty</option>
             </select>
-            <select id="cohortSelect" onchange="onCohortChange()">
+            <select id="cohortSelect" onchange="onCohortChange()" disabled>
                 <option value="">Select Cohort</option>
             </select>
-            <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
-            <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)"></select>
-            <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
-            <span class="session-text">202605 Semester (Monday, 15-Jun-2026 ~ Sunday, 20-Sep-2026)</span>
+            <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week" disabled>&#8249;</button>
+            <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)" disabled></select>
+            <button class="week-arrow" onclick="nextWeek()" aria-label="Next week" disabled>&#8250;</button>
         </div>
 
-        <!-- ─── Toolbar ─── -->
+        <!-- ─── Result Count ─── -->
         <div class="toolbar">
-            <div class="toolbar-left">
-                <div class="search-wrapper">
-                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                    </svg>
-                    <input class="search-input" id="searchInput" oninput="applyFilters()" placeholder="Search by course code, name or lecturer...">
-                </div>
-                <select class="filter-select" id="statusFilter" onchange="applyFilters()">
-                    <option value="all">All Status</option>
-                    <option value="normal">Normal</option>
-                    <option value="replacement">Replacement</option>
-                    <option value="pending">Pending</option>
-                    <option value="conflict">Conflict</option>
-                </select>
-            </div>
             <div class="toolbar-right">
                 <span class="result-count" id="resultCount">Showing 0 of 0 events</span>
             </div>
@@ -591,16 +536,6 @@
                 </table>
             </div>
         </div>
-
-        <!-- ─── Summary Bar ─── -->
-        @include('partials.ui-summary-bar', [
-            'cards' => [
-                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
-                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements'],
-                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
-                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts'],
-            ]
-        ])
 
         <!-- ─── Legend Bar ─── -->
         <div class="legend-bar">
@@ -622,6 +557,17 @@
             </div>
         </div>
 
+        <!-- ─── Summary Bar ─── -->
+        @include('partials.ui-summary-bar', [
+            'cards' => [
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
+                ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Teaching Hours'],
+                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
+                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts'],
+            ]
+        ])
+
         <!-- ─── Empty State ─── -->
         <div class="empty-state" id="emptyState" style="display:none">
             <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
@@ -630,8 +576,8 @@
                 <line x1="8" y1="2" x2="8" y2="6"/>
                 <line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
-            <h3 class="empty-title" id="emptyTitle">No classes scheduled</h3>
-            <p class="empty-text" id="emptyText">No classes scheduled for this cohort in the selected week.</p>
+            <h3 class="empty-title" id="emptyTitle">Select a faculty first</h3>
+            <p class="empty-text" id="emptyText">Choose a faculty, then pick a cohort to view its weekly timetable.</p>
         </div>
 
         <!-- ─── Event Modal ─── -->
@@ -721,8 +667,8 @@
                         abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
                         date: fmt(dt),
                         sunday: d === 6,
-                        today: d === 0 && w === 11,
-                        holiday: d === 3 && w === 11,
+                        today: d === 0 && w === 3,
+                        holiday: d === 3 && w === 3,
                     });
                 }
                 arr.push({ label: `Week ${w + 8}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, days });
@@ -744,33 +690,11 @@
                 ]
             },
             {
-                id: 'fol',
-                name: 'Faculty of Law (FOL)',
-                cohorts: [
-                    { id: 'rsdl2s1g1', name: 'RSD2 (S1) G1 — Bachelor of Law' },
-                    { id: 'rsdl2s1g2', name: 'RSD2 (S1) G2 — Bachelor of Law' },
-                    { id: 'dlf2s1', name: 'DLF2 (S1) — Diploma in Law' },
-                    { id: 'dlm2s1', name: 'DLM2 (S1) — Diploma in Legal Management' },
-                ]
-            },
-            {
-                id: 'fod',
-                name: 'Faculty of Design (FOD)',
-                cohorts: [
-                    { id: 'rsdds1', name: 'RSD2 (S1) — Bachelor of Design (Multimedia)' },
-                    { id: 'rsdd3s1', name: 'RSD3 (S1) — Bachelor of Design (Graphic)' },
-                    { id: 'ddm2s1', name: 'DDM2 (S1) — Diploma in Digital Media' },
-                    { id: 'dfm2s1', name: 'DFM2 (S1) — Diploma in Fashion Merchandising' },
-                ]
-            },
-            {
                 id: 'fcci',
                 name: 'Faculty of Creative Industries (FCCI)',
                 cohorts: [
-                    { id: 'rbu2s1', name: 'RBU2 (S1) — Bachelor of Business (Marketing)' },
                     { id: 'dmc2s1', name: 'DMC2 (S1) — Diploma in Mass Communication' },
                     { id: 'dit2s1', name: 'DIT2 (S1) — Diploma in Interior Design' },
-                    { id: 'dcm2s1', name: 'DCM2 (S1) — Diploma in Creative Multimedia' },
                 ]
             }
         ];
@@ -785,67 +709,131 @@
             allEvents[cohortId][weekIdx].push(event);
         }
 
-        // ── FOCS / RSD2 (S1) ──
+        /* ═══ FOCS / RSD2 (S1) — 6 courses ═══ */
         addEvent('rsd2s1', 0, { di:0, start:4, end:7, code:'BMIT6767', type:'L', venue:'B103', lecturer:'Dr. Christopher Lazarus', status:'normal', name:'Object-Oriented Programming', remarks:'' });
         addEvent('rsd2s1', 0, { di:1, start:0, end:3, code:'BMIT5678', type:'L', venue:'B105', lecturer:'En. Lim Jia Zheng', status:'normal', name:'Database Systems', remarks:'' });
+        addEvent('rsd2s1', 0, { di:2, start:12, end:15, code:'BMIT5555', type:'L', venue:'B110', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Software Engineering', remarks:'' });
         addEvent('rsd2s1', 0, { di:3, start:6, end:9, code:'BMIT9012', type:'L', venue:'B106', lecturer:'Pn. Surayaini Basri', status:'normal', name:'Computer Networks', remarks:'' });
         addEvent('rsd2s1', 0, { di:4, start:10, end:13, code:'BMIT3456', type:'T', venue:'B103', lecturer:'Dr. Chang Foo Chung', status:'normal', name:'Artificial Intelligence', remarks:'' });
+        addEvent('rsd2s1', 0, { di:4, start:16, end:19, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
 
         addEvent('rsd2s1', 1, { di:0, start:4, end:7, code:'BMIT6767', type:'L', venue:'B103', lecturer:'Dr. Christopher Lazarus', status:'normal', name:'Object-Oriented Programming', remarks:'' });
-        addEvent('rsd2s1', 1, { di:2, start:0, end:3, code:'BMIT5678', type:'L', venue:'B105', lecturer:'En. Lim Jia Zheng', status:'replacement', name:'Database Systems', remarks:'24-Aug-2026' });
+        addEvent('rsd2s1', 1, { di:1, start:0, end:3, code:'BMIT5678', type:'L', venue:'B105', lecturer:'En. Lim Jia Zheng', status:'replacement', name:'Database Systems', remarks:'24-Aug-2026' });
+        addEvent('rsd2s1', 1, { di:2, start:12, end:15, code:'BMIT5555', type:'L', venue:'B110', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Software Engineering', remarks:'' });
         addEvent('rsd2s1', 1, { di:3, start:6, end:9, code:'BMIT9012', type:'L', venue:'B106', lecturer:'Pn. Surayaini Basri', status:'normal', name:'Computer Networks', remarks:'' });
-        addEvent('rsd2s1', 1, { di:5, start:0, end:3, code:'BMIT3456', type:'T', venue:'B103', lecturer:'Dr. Chang Foo Chung', status:'normal', name:'Artificial Intelligence', remarks:'' });
+        addEvent('rsd2s1', 1, { di:4, start:10, end:13, code:'BMIT3456', type:'T', venue:'B103', lecturer:'Dr. Chang Foo Chung', status:'normal', name:'Artificial Intelligence', remarks:'' });
+        addEvent('rsd2s1', 1, { di:5, start:0, end:3, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
 
         addEvent('rsd2s1', 2, { di:0, start:4, end:7, code:'BMIT6767', type:'L', venue:'B103', lecturer:'Dr. Christopher Lazarus', status:'normal', name:'Object-Oriented Programming', remarks:'' });
         addEvent('rsd2s1', 2, { di:1, start:0, end:3, code:'BMIT5678', type:'L', venue:'B105', lecturer:'En. Lim Jia Zheng', status:'normal', name:'Database Systems', remarks:'' });
         addEvent('rsd2s1', 2, { di:2, start:10, end:13, code:'BMIT9999', type:'T', venue:'B202', lecturer:'Dr. Tan Ah Meng', status:'pending', name:'Machine Learning', remarks:'', requestedAt:'03 Sep 2026, 10:30 AM', requestedBy:'Dr. Tan Ah Meng' });
         addEvent('rsd2s1', 2, { di:3, start:6, end:9, code:'BMIT9012', type:'L', venue:'B106', lecturer:'Pn. Surayaini Basri', status:'replacement', name:'Computer Networks', remarks:'26-Aug-2026' });
+        addEvent('rsd2s1', 2, { di:3, start:12, end:15, code:'BMIT5555', type:'L', venue:'B110', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Software Engineering', remarks:'' });
         addEvent('rsd2s1', 2, { di:4, start:10, end:13, code:'BMIT3456', type:'T', venue:'B103', lecturer:'Dr. Chang Foo Chung', status:'normal', name:'Artificial Intelligence', remarks:'' });
+        addEvent('rsd2s1', 2, { di:4, start:16, end:19, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
 
-        // ── FOCS / DSF2 (S1) ──
+        /* ═══ FOCS / RSD3 (S1) G1 — 5 courses ═══ */
+        addEvent('rsd3s1g1', 0, { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', status:'normal', name:'Advanced Software Engineering', remarks:'' });
+        addEvent('rsd3s1g1', 0, { di:1, start:12, end:15, code:'BMIT7072', type:'L', venue:'A104', lecturer:'Prof. Dr. Suresh', status:'normal', name:'Capstone Project', remarks:'' });
+        addEvent('rsd3s1g1', 0, { di:2, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', status:'normal', name:'Cloud Architecture', remarks:'' });
+        addEvent('rsd3s1g1', 0, { di:3, start:4, end:7, code:'BMIT7071', type:'T', venue:'A103', lecturer:'Dr. Koh Li May', status:'normal', name:'Research Methods', remarks:'' });
+        addEvent('rsd3s1g1', 0, { di:4, start:0, end:3, code:'BMIT7073', type:'L', venue:'A105', lecturer:'Ms. Lim Pei Shan', status:'normal', name:'IT Ethics', remarks:'' });
+
+        addEvent('rsd3s1g1', 1, { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', status:'normal', name:'Advanced Software Engineering', remarks:'' });
+        addEvent('rsd3s1g1', 1, { di:1, start:12, end:15, code:'BMIT7072', type:'L', venue:'A104', lecturer:'Prof. Dr. Suresh', status:'replacement', name:'Capstone Project', remarks:'25-Aug-2026' });
+        addEvent('rsd3s1g1', 1, { di:2, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', status:'normal', name:'Cloud Architecture', remarks:'' });
+        addEvent('rsd3s1g1', 1, { di:3, start:4, end:7, code:'BMIT7071', type:'T', venue:'A103', lecturer:'Dr. Koh Li May', status:'normal', name:'Research Methods', remarks:'' });
+        addEvent('rsd3s1g1', 1, { di:4, start:0, end:3, code:'BMIT7073', type:'L', venue:'A105', lecturer:'Ms. Lim Pei Shan', status:'normal', name:'IT Ethics', remarks:'' });
+
+        addEvent('rsd3s1g1', 2, { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', status:'normal', name:'Advanced Software Engineering', remarks:'' });
+        addEvent('rsd3s1g1', 2, { di:1, start:12, end:15, code:'BMIT7072', type:'L', venue:'A104', lecturer:'Prof. Dr. Suresh', status:'normal', name:'Capstone Project', remarks:'' });
+        addEvent('rsd3s1g1', 2, { di:2, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', status:'normal', name:'Cloud Architecture', remarks:'' });
+        addEvent('rsd3s1g1', 2, { di:3, start:4, end:7, code:'BMIT7071', type:'T', venue:'A103', lecturer:'Dr. Koh Li May', status:'pending', name:'Research Methods', remarks:'', requestedAt:'02 Sep 2026, 02:00 PM', requestedBy:'Dr. Koh Li May' });
+        addEvent('rsd3s1g1', 2, { di:4, start:0, end:3, code:'BMIT7073', type:'L', venue:'A105', lecturer:'Ms. Lim Pei Shan', status:'normal', name:'IT Ethics', remarks:'' });
+
+        /* ═══ FOCS / RSD3 (S1) G2 — 7 courses (+45%, was 5), weeks 1–14 ═══ */
+        const rsd3g2Base = [
+            { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', name:'Advanced Software Engineering' },
+            { di:1, start:4, end:7, code:'BMIT7071', type:'T', venue:'A103', lecturer:'Dr. Koh Li May', name:'Research Methods' },
+            { di:2, start:12, end:15, code:'BMIT7072', type:'L', venue:'A104', lecturer:'Prof. Dr. Suresh', name:'Capstone Project' },
+            { di:3, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', name:'Cloud Architecture' },
+            { di:4, start:0, end:3, code:'BMIT7073', type:'L', venue:'A105', lecturer:'Ms. Lim Pei Shan', name:'IT Ethics' },
+            { di:1, start:8, end:11, code:'BMIT7074', type:'T', venue:'A106', lecturer:'Dr. Koh Li May', name:'Software Testing' },
+            { di:3, start:12, end:15, code:'BMIT7075', type:'L', venue:'A106', lecturer:'Ms. Lim Pei Shan', name:'Mobile Application Development' },
+        ];
+        for (let w = 0; w < 14; w++) {
+            rsd3g2Base.forEach(c => addEvent('rsd3s1g2', w, { ...c, status: 'normal', remarks: '' }));
+        }
+        const rsd3g2Flags = {
+            1: [['BMIT7072', 'replacement', '26-Aug-2026'], ['BMIT7074', 'replacement', '25-Aug-2026']],
+            2: [['BMIT7073', 'pending', ''], ['BMIT7075', 'pending', '']],
+            3: [['BMIT7070', 'replacement', '27-Aug-2026']],
+            4: [['BMIT7071', 'pending', '']],
+            7: [['BMIT7074', 'replacement', '01-Sep-2026']],
+            9: [['BMIT7075', 'pending', '']],
+            11: [['BMIT7072', 'replacement', '08-Sep-2026']],
+            13: [['BMIT7071', 'pending', '']],
+        };
+        Object.entries(rsd3g2Flags).forEach(([w, list]) => {
+            list.forEach(([code, status, remarks]) => {
+                const ev = allEvents['rsd3s1g2'][w].find(e => e.code === code);
+                if (ev) {
+                    ev.status = status;
+                    ev.remarks = remarks;
+                    if (status === 'pending') { ev.requestedAt = '01 Sep 2026, 09:15 AM'; ev.requestedBy = ev.lecturer; }
+                }
+            });
+        });
+
+        /* ═══ FOCS / DSF2 (S1) — 5 courses ═══ */
         addEvent('dsf2s1', 0, { di:0, start:0, end:3, code:'BMIT1010', type:'L', venue:'B201', lecturer:'Ms. Nurul Aini', status:'normal', name:'Introduction to Computing', remarks:'' });
+        addEvent('dsf2s1', 0, { di:1, start:12, end:15, code:'BMIT1111', type:'L', venue:'B204', lecturer:'Mr. Tan Kok Wai', status:'normal', name:'Operating Systems', remarks:'' });
         addEvent('dsf2s1', 0, { di:2, start:4, end:7, code:'BMIT2020', type:'L', venue:'B202', lecturer:'Mr. Ravi Kumar', status:'normal', name:'Programming Fundamentals', remarks:'' });
+        addEvent('dsf2s1', 0, { di:3, start:0, end:3, code:'BMIT2222', type:'L', venue:'B205', lecturer:'Dr. Wong Mei Ling', status:'normal', name:'Mathematics for Computing', remarks:'' });
         addEvent('dsf2s1', 0, { di:4, start:8, end:11, code:'BMIT3030', type:'T', venue:'B203', lecturer:'Ms. Siti Aminah', status:'normal', name:'Data Structures', remarks:'' });
 
         addEvent('dsf2s1', 1, { di:0, start:0, end:3, code:'BMIT1010', type:'L', venue:'B201', lecturer:'Ms. Nurul Aini', status:'normal', name:'Introduction to Computing', remarks:'' });
+        addEvent('dsf2s1', 1, { di:1, start:12, end:15, code:'BMIT1111', type:'L', venue:'B204', lecturer:'Mr. Tan Kok Wai', status:'normal', name:'Operating Systems', remarks:'' });
         addEvent('dsf2s1', 1, { di:2, start:4, end:7, code:'BMIT2020', type:'L', venue:'B202', lecturer:'Mr. Ravi Kumar', status:'replacement', name:'Programming Fundamentals', remarks:'26-Aug-2026' });
+        addEvent('dsf2s1', 1, { di:3, start:0, end:3, code:'BMIT2222', type:'L', venue:'B205', lecturer:'Dr. Wong Mei Ling', status:'normal', name:'Mathematics for Computing', remarks:'' });
         addEvent('dsf2s1', 1, { di:4, start:8, end:11, code:'BMIT3030', type:'T', venue:'B203', lecturer:'Ms. Siti Aminah', status:'normal', name:'Data Structures', remarks:'' });
 
-        // ── FOCS / DFT2 (S1) ──
-        addEvent('dft2s1', 0, { di:1, start:2, end:5, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
-        addEvent('dft2s1', 0, { di:3, start:6, end:9, code:'BMIT5050', type:'L', venue:'B302', lecturer:'Pn. Farah Hanum', status:'normal', name:'Database Design', remarks:'' });
+        addEvent('dsf2s1', 2, { di:0, start:0, end:3, code:'BMIT1010', type:'L', venue:'B201', lecturer:'Ms. Nurul Aini', status:'normal', name:'Introduction to Computing', remarks:'' });
+        addEvent('dsf2s1', 2, { di:1, start:12, end:15, code:'BMIT1111', type:'L', venue:'B204', lecturer:'Mr. Tan Kok Wai', status:'normal', name:'Operating Systems', remarks:'' });
+        addEvent('dsf2s1', 2, { di:2, start:4, end:7, code:'BMIT2020', type:'L', venue:'B202', lecturer:'Mr. Ravi Kumar', status:'normal', name:'Programming Fundamentals', remarks:'' });
+        addEvent('dsf2s1', 2, { di:3, start:0, end:3, code:'BMIT2222', type:'L', venue:'B205', lecturer:'Dr. Wong Mei Ling', status:'pending', name:'Mathematics for Computing', remarks:'', requestedAt:'01 Sep 2026, 09:15 AM', requestedBy:'Dr. Wong Mei Ling' });
+        addEvent('dsf2s1', 2, { di:4, start:8, end:11, code:'BMIT3030', type:'T', venue:'B203', lecturer:'Ms. Siti Aminah', status:'normal', name:'Data Structures', remarks:'' });
 
+        /* ═══ FOCS / DFT2 (S1) — 5 courses ═══ */
+        addEvent('dft2s1', 0, { di:0, start:12, end:15, code:'BMIT6061', type:'T', venue:'B304', lecturer:'Ms. Chen Hui Xin', status:'normal', name:'UI/UX Design', remarks:'' });
+        addEvent('dft2s1', 0, { di:1, start:2, end:5, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
+        addEvent('dft2s1', 0, { di:2, start:12, end:15, code:'BMIT6062', type:'L', venue:'B305', lecturer:'En. Zulkifli', status:'normal', name:'Networking Basics', remarks:'' });
+        addEvent('dft2s1', 0, { di:3, start:6, end:9, code:'BMIT5050', type:'L', venue:'B302', lecturer:'Pn. Farah Hanum', status:'normal', name:'Database Design', remarks:'' });
+        addEvent('dft2s1', 0, { di:4, start:0, end:3, code:'BMIT6060', type:'L', venue:'B303', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Cybersecurity Fundamentals', remarks:'' });
+
+        addEvent('dft2s1', 1, { di:0, start:12, end:15, code:'BMIT6061', type:'T', venue:'B304', lecturer:'Ms. Chen Hui Xin', status:'normal', name:'UI/UX Design', remarks:'' });
         addEvent('dft2s1', 1, { di:1, start:2, end:5, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
+        addEvent('dft2s1', 1, { di:2, start:12, end:15, code:'BMIT6062', type:'L', venue:'B305', lecturer:'En. Zulkifli', status:'normal', name:'Networking Basics', remarks:'' });
         addEvent('dft2s1', 1, { di:3, start:6, end:9, code:'BMIT5050', type:'L', venue:'B302', lecturer:'Pn. Farah Hanum', status:'normal', name:'Database Design', remarks:'' });
         addEvent('dft2s1', 1, { di:4, start:0, end:3, code:'BMIT6060', type:'L', venue:'B303', lecturer:'Dr. Lim Wei Ming', status:'pending', name:'Cybersecurity Fundamentals', remarks:'', requestedAt:'01 Sep 2026, 09:15 AM', requestedBy:'Dr. Lim Wei Ming' });
 
-        // ── FOCS / RSD3 (S1) G1 ──
-        addEvent('rsd3s1g1', 0, { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', status:'normal', name:'Advanced Software Engineering', remarks:'' });
-        addEvent('rsd3s1g1', 0, { di:2, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', status:'normal', name:'Cloud Architecture', remarks:'' });
+        addEvent('dft2s1', 2, { di:0, start:12, end:15, code:'BMIT6061', type:'T', venue:'B304', lecturer:'Ms. Chen Hui Xin', status:'normal', name:'UI/UX Design', remarks:'' });
+        addEvent('dft2s1', 2, { di:1, start:2, end:5, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'replacement', name:'Web Development', remarks:'25-Aug-2026' });
+        addEvent('dft2s1', 2, { di:2, start:12, end:15, code:'BMIT6062', type:'L', venue:'B305', lecturer:'En. Zulkifli', status:'normal', name:'Networking Basics', remarks:'' });
+        addEvent('dft2s1', 2, { di:3, start:6, end:9, code:'BMIT5050', type:'L', venue:'B302', lecturer:'Pn. Farah Hanum', status:'normal', name:'Database Design', remarks:'' });
+        addEvent('dft2s1', 2, { di:4, start:0, end:3, code:'BMIT6060', type:'L', venue:'B303', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Cybersecurity Fundamentals', remarks:'' });
 
-        // ── FOCS / RSD3 (S1) G2 ──
-        addEvent('rsd3s1g2', 0, { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', status:'normal', name:'Advanced Software Engineering', remarks:'' });
-        addEvent('rsd3s1g2', 0, { di:3, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', status:'normal', name:'Cloud Architecture', remarks:'' });
-
-        // ── FOL / RSDL2 (S1) G1 ──
-        addEvent('rsdl2s1g1', 0, { di:0, start:2, end:5, code:'LAW1001', type:'L', venue:'C101', lecturer:'Prof. Dato\' Siva', status:'normal', name:'Contract Law', remarks:'' });
-        addEvent('rsdl2s1g1', 0, { di:2, start:6, end:9, code:'LAW2002', type:'L', venue:'C102', lecturer:'Ms. Rachel Wong', status:'normal', name:'Criminal Law', remarks:'' });
-        addEvent('rsdl2s1g1', 0, { di:4, start:0, end:3, code:'LAW3003', type:'T', venue:'C103', lecturer:'En. Haris Iskandar', status:'normal', name:'Tort Law', remarks:'' });
-
-        addEvent('rsdl2s1g1', 1, { di:0, start:2, end:5, code:'LAW1001', type:'L', venue:'C101', lecturer:'Prof. Dato\' Siva', status:'normal', name:'Contract Law', remarks:'' });
-        addEvent('rsdl2s1g1', 1, { di:2, start:6, end:9, code:'LAW2002', type:'L', venue:'C102', lecturer:'Ms. Rachel Wong', status:'replacement', name:'Criminal Law', remarks:'26-Aug-2026' });
-
-        // ── FOD / RSD2 (S1) (Design) ──
-        addEvent('rsdds1', 0, { di:1, start:4, end:7, code:'DESN101', type:'L', venue:'D101', lecturer:'Ms. Amanda Teo', status:'normal', name:'Visual Communication', remarks:'' });
-        addEvent('rsdds1', 0, { di:3, start:0, end:3, code:'DESN202', type:'L', venue:'D102', lecturer:'Mr. Ben Lee', status:'normal', name:'Digital Illustration', remarks:'' });
-
-        // ── FCCI / DMC2 (S1) ──
+        /* ═══ FCCI / DMC2 (S1) — 3 courses ═══ */
         addEvent('dmc2s1', 0, { di:0, start:6, end:9, code:'COM1001', type:'L', venue:'E101', lecturer:'Ms. Elaine Chen', status:'normal', name:'Introduction to Mass Comm', remarks:'' });
         addEvent('dmc2s1', 0, { di:2, start:2, end:5, code:'COM2002', type:'L', venue:'E102', lecturer:'Mr. Jason Tan', status:'normal', name:'Journalism', remarks:'' });
         addEvent('dmc2s1', 0, { di:4, start:4, end:7, code:'COM3003', type:'T', venue:'E103', lecturer:'Ms. Karen Lim', status:'pending', name:'Public Relations', remarks:'' });
 
+        addEvent('dmc2s1', 2, { di:0, start:6, end:9, code:'COM1001', type:'L', venue:'E101', lecturer:'Ms. Elaine Chen', status:'normal', name:'Introduction to Mass Comm', remarks:'' });
+        addEvent('dmc2s1', 2, { di:2, start:2, end:5, code:'COM2002', type:'L', venue:'E102', lecturer:'Mr. Jason Tan', status:'replacement', name:'Journalism', remarks:'28-Aug-2026' });
+        addEvent('dmc2s1', 2, { di:4, start:4, end:7, code:'COM3003', type:'T', venue:'E103', lecturer:'Ms. Karen Lim', status:'pending', name:'Public Relations', remarks:'' });
+
         /* ───── State ───── */
-        let currentWeek = 0;
+        let currentWeek = 2; // Week 11 — current week (today column highlighted)
         let selectedCohortId = null;
 
         /* ════════════════════════════════════════════
@@ -869,15 +857,18 @@
         function onFacultyChange() {
             const fid = document.getElementById('facultySelect').value;
             const cohortSel = document.getElementById('cohortSelect');
+            const weekSel = document.getElementById('weekSelect');
             if (!fid) {
                 cohortSel.innerHTML = '<option value="">Select Cohort</option>';
                 cohortSel.disabled = true;
+                weekSel.disabled = true;
                 document.getElementById('emptyState').style.display = 'block';
-                document.getElementById('emptyTitle').textContent = 'Select a cohort';
-                document.getElementById('emptyText').textContent = 'Choose a faculty and cohort to view timetable.';
+                document.getElementById('emptyTitle').textContent = 'Select a faculty first';
+                document.getElementById('emptyText').textContent = 'Choose a faculty, then pick a cohort to view its weekly timetable.';
                 document.getElementById('timetable').querySelector('thead').innerHTML = '';
                 document.getElementById('timetable').querySelector('tbody').innerHTML = '';
                 document.getElementById('sumTotal').textContent = '0';
+                document.getElementById('sumHours').textContent = '0';
                 document.getElementById('sumReplacement').textContent = '0';
                 document.getElementById('sumPending').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
@@ -890,18 +881,34 @@
             cohortSel.disabled = false;
             cohortSel.innerHTML = '<option value="">Select Cohort</option>' +
                 faculty.cohorts.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            weekSel.disabled = true;
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('emptyTitle').textContent = 'Select a cohort';
+            document.getElementById('emptyText').textContent = 'Pick a cohort from ' + faculty.name + ' to view its weekly timetable.';
+            document.getElementById('timetable').querySelector('thead').innerHTML = '';
+            document.getElementById('timetable').querySelector('tbody').innerHTML = '';
+            document.getElementById('sumTotal').textContent = '0';
+            document.getElementById('sumReplacement').textContent = '0';
+            document.getElementById('sumPending').textContent = '0';
+            document.getElementById('sumConflict').textContent = '0';
+            document.getElementById('resultCount').textContent = 'Showing 0 of 0 events';
+            updateWeekArrows(true, true);
+            selectedCohortId = null;
         }
 
         function onCohortChange() {
             const cid = document.getElementById('cohortSelect').value;
+            const weekSel = document.getElementById('weekSelect');
             if (!cid) {
                 selectedCohortId = null;
+                weekSel.disabled = true;
                 document.getElementById('emptyState').style.display = 'block';
                 document.getElementById('emptyTitle').textContent = 'Select a cohort';
-                document.getElementById('emptyText').textContent = 'Choose a cohort to view timetable.';
+                document.getElementById('emptyText').textContent = 'Choose a faculty, then pick a cohort to view its weekly timetable.';
                 document.getElementById('timetable').querySelector('thead').innerHTML = '';
                 document.getElementById('timetable').querySelector('tbody').innerHTML = '';
                 document.getElementById('sumTotal').textContent = '0';
+                document.getElementById('sumHours').textContent = '0';
                 document.getElementById('sumReplacement').textContent = '0';
                 document.getElementById('sumPending').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
@@ -910,8 +917,9 @@
                 return;
             }
             selectedCohortId = cid;
-            currentWeek = 0;
-            document.getElementById('weekSelect').selectedIndex = 0;
+            weekSel.disabled = false;
+            currentWeek = 2; // default to current week (Week 11) so today column is highlighted
+            document.getElementById('weekSelect').selectedIndex = 2;
             buildTimetable();
         }
 
@@ -951,9 +959,10 @@
             body.innerHTML = '';
 
             if (!selectedCohortId) {
+                document.getElementById('weekSelect').disabled = true;
                 document.getElementById('emptyState').style.display = 'block';
-                document.getElementById('emptyTitle').textContent = 'Select a cohort';
-                document.getElementById('emptyText').textContent = 'Choose a faculty and cohort to view timetable.';
+                document.getElementById('emptyTitle').textContent = 'Select a faculty first';
+                document.getElementById('emptyText').textContent = 'Choose a faculty, then pick a cohort to view its weekly timetable.';
                 updateWeekArrows(true, true);
                 return;
             }
@@ -968,6 +977,7 @@
                 document.getElementById('emptyTitle').textContent = 'No classes scheduled';
                 document.getElementById('emptyText').textContent = 'No classes scheduled for this cohort in the selected week.';
                 document.getElementById('sumTotal').textContent = '0';
+                document.getElementById('sumHours').textContent = '0';
                 document.getElementById('sumReplacement').textContent = '0';
                 document.getElementById('sumPending').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
@@ -1095,153 +1105,6 @@
         }
 
         /* ════════════════════════════════════════════
-           SEARCH & FILTER
-           ════════════════════════════════════════════ */
-
-        function applyFilters() {
-            if (!selectedCohortId) return;
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const statusFilter = document.getElementById('statusFilter').value;
-            const weekEvents = allEvents[selectedCohortId]?.[currentWeek] || [];
-            const data = weekData[currentWeek];
-            const days = data ? data.days : [];
-
-            const filtered = weekEvents.filter(e => {
-                const matchesStatus = statusFilter === 'all' || e.status === statusFilter || (statusFilter === 'conflict' && days[e.di] && days[e.di].holiday);
-                if (statusFilter === 'conflict' && e.status !== 'conflict') {
-                    if (!(days[e.di] && days[e.di].holiday)) return false;
-                }
-                const matchesSearch = !query ||
-                    (e.code && e.code.toLowerCase().includes(query)) ||
-                    (e.name && e.name.toLowerCase().includes(query)) ||
-                    (e.lecturer && e.lecturer.toLowerCase().includes(query)) ||
-                    (e.venue && e.venue.toLowerCase().includes(query));
-                return matchesSearch && matchesStatus;
-            });
-
-            document.getElementById('resultCount').textContent = `Showing ${filtered.length} of ${weekEvents.length} events`;
-
-            // Rebuild grid with filtered events
-            const head = document.getElementById('tableHead');
-            const body = document.getElementById('tableBody');
-            head.innerHTML = '';
-            body.innerHTML = '';
-
-            if (filtered.length === 0) {
-                document.getElementById('emptyState').style.display = 'block';
-                document.getElementById('emptyTitle').textContent = 'No matching events';
-                document.getElementById('emptyText').textContent = 'Try adjusting your search or filter.';
-                updateSummaries(weekEvents);
-                updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
-                return;
-            }
-
-            document.getElementById('emptyState').style.display = 'none';
-
-            // Build grid using filtered events
-            const timeHeaderRow = document.createElement('tr');
-            const cornerTh = document.createElement('th');
-            cornerTh.className = 'time-header-col';
-            cornerTh.style.cssText = 'position: sticky; left: 0; z-index: 40;';
-            cornerTh.innerHTML = '<span style="font-size:13px;font-weight:600;">Day / Time</span>';
-            timeHeaderRow.appendChild(cornerTh);
-
-            hours.forEach(h => {
-                const th = document.createElement('th');
-                th.className = 'hour-header';
-                const end = add30min(h);
-                th.innerHTML = `<span class="hour-top">${h}</span><span class="hour-bottom">${end}</span>`;
-                timeHeaderRow.appendChild(th);
-            });
-            head.appendChild(timeHeaderRow);
-
-            days.forEach((day, di) => {
-                const tr = document.createElement('tr');
-
-                const dayTd = document.createElement('td');
-                let dayColClass = 'time-col';
-                if (day.today) dayColClass += ' today';
-                if (day.holiday) dayColClass += ' holiday-col';
-                if (day.sunday) dayColClass += ' sunday-col';
-                dayTd.className = dayColClass;
-                let dayHtml = `<span class="day-label">${day.abbr}</span><span class="date-label">${day.date}</span>`;
-                if (day.holiday) dayHtml += `<span class="holiday-label">Public Holiday</span>`;
-                dayTd.innerHTML = dayHtml;
-                tr.appendChild(dayTd);
-
-                const dayEvents = filtered.filter(e => e.di === di);
-
-                const slotMap = {};
-                hours.forEach((_, hi) => { slotMap[hi] = null; });
-
-                dayEvents.forEach(e => {
-                    for (let hi = e.start; hi <= e.end; hi++) {
-                        if (hi === e.start) {
-                            slotMap[hi] = { event: e, span: e.end - e.start + 1 };
-                        } else {
-                            slotMap[hi] = { event: null, span: 0, occupied: true };
-                        }
-                    }
-                });
-
-                hours.forEach((h, hi) => {
-                    const td = document.createElement('td');
-                    let cellClass = 'hour-cell';
-                    if (day.sunday) cellClass += ' sunday-slot';
-                    if (day.holiday) cellClass += ' holiday-slot';
-                    td.className = cellClass;
-
-                    const info = slotMap[hi];
-
-                    if (info && info.event) {
-                        const e = info.event;
-                        const isConflict = day.holiday;
-                        const div = document.createElement('div');
-                        div.className = 'event-block span-' + info.span;
-                        if (isConflict) div.classList.add('event-public-holiday');
-                        else if (e.status === 'normal') div.classList.add('event-normal');
-                        else if (e.status === 'replacement') div.classList.add('event-replacement');
-                        else if (e.status === 'pending') div.classList.add('event-pending');
-
-                        const startTime = (typeof to12h === 'function' ? to12h(hours[e.start]) : hours[e.start]);
-                        const endTime = (typeof to12h === 'function' ? to12h(hours[e.end + 1] || add30min(hours[e.end])) : hours[e.end + 1] || add30min(hours[e.end]));
-
-                        let extraHtml = '';
-                        if (e.status === 'replacement' && e.remarks) {
-                            extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
-                        } else if (e.status === 'pending') {
-                            extraHtml = `<span class="ev-note">(Pending Approval)</span>`;
-                        }
-
-                        div.innerHTML = `
-                            <span class="ev-code">${e.code}(${e.type})</span>
-                            <span class="ev-venue">${e.venue}</span>
-                            <span class="ev-time">${startTime} - ${endTime}</span>
-                            ${extraHtml}
-                        `;
-
-                        div.addEventListener('click', function() { openModal(e, di); });
-                        td.appendChild(div);
-
-                        if (info.span > 1) td.colSpan = info.span;
-                    } else if (info && info.occupied) {
-                        td.style.display = 'none';
-                    } else {
-                        const div = document.createElement('div');
-                        div.className = 'cell-empty';
-                        td.appendChild(div);
-                    }
-
-                    tr.appendChild(td);
-                });
-
-                body.appendChild(tr);
-            });
-
-            updateSummaries(weekEvents);
-        }
-
-        /* ════════════════════════════════════════════
            SUMMARY
            ════════════════════════════════════════════ */
 
@@ -1249,15 +1112,17 @@
             const data = weekData[currentWeek];
             const days = data ? data.days : [];
             let total = events.length;
-            let replacement = 0, pending = 0, conflict = 0;
+            let replacement = 0, pending = 0, conflict = 0, hours = 0;
 
             events.forEach(e => {
                 if (e.status === 'replacement') replacement++;
                 if (e.status === 'pending') pending++;
                 if (days[e.di] && days[e.di].holiday) conflict++;
+                hours += (e.end - e.start + 1) * 0.5;
             });
 
             document.getElementById('sumTotal').textContent = total;
+            document.getElementById('sumHours').textContent = (hours % 1 === 0 ? hours : hours.toFixed(1));
             document.getElementById('sumReplacement').textContent = replacement;
             document.getElementById('sumPending').textContent = pending;
             document.getElementById('sumConflict').textContent = conflict;
@@ -1319,10 +1184,12 @@
             populateWeeks();
             populateFaculties();
 
-            // Show initial empty state
+            // Show initial empty state with guidance
             document.getElementById('emptyState').style.display = 'block';
-            document.getElementById('emptyTitle').textContent = 'Select a cohort';
-            document.getElementById('emptyText').textContent = 'Choose a faculty and cohort to view timetable.';
+            document.getElementById('emptyTitle').textContent = 'Select a faculty first';
+            document.getElementById('emptyText').textContent = 'Choose a faculty, then pick a cohort to view its weekly timetable.';
+            document.getElementById('cohortSelect').disabled = true;
+            document.getElementById('weekSelect').disabled = true;
             updateWeekArrows(true, true);
         });
 @endsection

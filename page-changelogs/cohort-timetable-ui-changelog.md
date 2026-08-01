@@ -54,6 +54,51 @@
 | 2026-07-30 | — | openModal()/closeModal() | View-only modal: fills course/name/lecturer/venue/cohort/time (with day+date+12h range)/status badge/remarks. Status badge uses `.badge-*` classes. Escape key closes |
 | 2026-07-30 | — | Init | DOMContentLoaded: populate weeks + faculties, show empty state "Select a cohort", arrows disabled |
 
+### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php` — UI refinements (search removal, legend reorder, faculty-first flow)
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-01 | `@section('page-styles')` | Removed search/filter CSS | Deleted `.search-wrapper`, `.search-icon`, `.search-input`, `.search-input::placeholder`, `.filter-select`, `.filter-select option`, `html.dark .filter-select` — ~50 lines |
+| 2026-08-01 | `@section('page-styles')` | Added disabled select CSS | `.semester-bar select:disabled, select:disabled:hover` — opacity 0.5, `cursor: not-allowed`, surface-variant bg — clear visual cue that cohort/week controls are locked until a faculty is chosen |
+| 2026-08-01 | `@section('page-styles')` | Responsive cleanup | Removed `.toolbar-left`, `.search-input`, `.filter-select`, `.search-wrapper` rules from both `@media` breakpoints; `.toolbar-right` left-aligned at 1024px |
+| 2026-08-01 | `@section('content')` | Removed search bar & status filter | Toolbar-left (search wrapper + filter select) deleted entirely; toolbar now contains only the result-count span in `.toolbar-right` |
+| 2026-08-01 | `@section('content')` | Legend above summary bar | Moved `.legend-bar` block to directly after grid-wrapper, before the `@include('partials.ui-summary-bar')` — legend now sits above the summary cards |
+| 2026-08-01 | `@section('content')` | Faculty-first disabled states | `#cohortSelect` and `#weekSelect` now render with `disabled` attribute in HTML; prev/next arrows also start disabled — user cannot pick a cohort or week before choosing a faculty |
+| 2026-08-01 | `@section('content')` | Guidance empty state | Default empty state text changed from "No classes scheduled" → title "Select a faculty first" + "Choose a faculty, then pick a cohort to view its weekly timetable." |
+| 2026-08-01 | `@section('page-scripts')` | Removed applyFilters() | Entire `applyFilters()` (~140 lines) deleted along with its search/status-filter wiring (`oninput="applyFilters()"`, `onchange="applyFilters()"`) — no filtering on this page |
+| 2026-08-01 | `@section('page-scripts')` | onFacultyChange() | Now also disables `#weekSelect`; when a faculty is picked, enables `#cohortSelect` only, keeps week locked, shows guidance "Pick a cohort from {faculty name}…". On reset → re-disables cohort + week, restores initial guidance |
+| 2026-08-01 | `@section('page-scripts')` | onCohortChange() | Now enables `#weekSelect` only after a cohort is selected; on reset → disables week, shows guidance |
+| 2026-08-01 | `@section('page-scripts')` | buildTimetable() | No-cohort branch also disables `#weekSelect` before showing guidance |
+| 2026-08-01 | `@section('page-scripts')` | Init | DOMContentLoaded now explicitly disables `#cohortSelect` + `#weekSelect` and shows "Select a faculty first" guidance |
+
+### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php` — semester chip, today column, maximized FOCS mock data, 2 faculties
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-01 | `@section('page-styles')` | Added `.semester-chip` | Replaced `.session-text` CSS with `.semester-chip` — inline-block pill (secondary-container bg, 12px, weight 600, radius 20px) for the semester info in the page header |
+| 2026-08-01 | `@section('content')` | Semester info moved to header | Removed `202605 Semester (Monday, 15-Jun-2026 ~ Sunday, 20-Sep-2026)` `.session-text` span from semester bar; added `<span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>` under the page title |
+| 2026-08-01 | `@section('page-scripts')` | Fixed today/holiday week bug | weekData generator used `w === 11` (which maps to **Week 19** since label = w+8) — corrected to `w === 3` (Week 11, index 2). Today column + public holiday now render on the correct week |
+| 2026-08-01 | `@section('page-scripts')` | Default week → Week 11 | `currentWeek = 2` (was 0) and `onCohortChange()` selects week index 2 — matches MyTimetable, so the today column is immediately visible on cohort select |
+| 2026-08-01 | `@section('page-scripts')` | facultyData reduced to 2 | Removed FOL (4 cohorts) and FOD (4 cohorts); kept FOCS (5 cohorts) + FCCI (reduced to 2 cohorts: DMC2, DIT2) = 7 cohorts total (was 17) |
+| 2026-08-01 | `@section('page-scripts')` | Maximized FOCS mock data | All 5 FOCS cohorts now have 3 full weeks of data (weeks 0/1/2): RSD2 (6/6/7 events, 6 courses), RSD3 G1 (5/5/5), RSD3 G2 (5/5/5, shifted days), DSF2 (5/5/5), DFT2 (5/5/5). ~80 events total with replacement + pending statuses spread across weeks |
+| 2026-08-01 | `@section('page-scripts')` | FCCI DMC2 data | Kept week 0 (3 events incl. pending) + added week 2 (3 events incl. replacement + pending) so the default week shows data; DIT2 left empty to demo the "No classes scheduled" state |
+
+### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php` — new "Teaching Hours" summary card (staff)
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-01 | `@section('page-styles')` | Added `.summary-card.card-hours` | Neutral styling distinct from count cards: `--color-on-surface` value, `--color-surface-variant` background, dashed `--color-outline-strong` border |
+| 2026-08-01 | `@section('content')` | New summary card | Added `['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Teaching Hours']` after Total Classes — summary bar now 5 cards (grid already supports 5 columns) |
+| 2026-08-01 | `@section('page-scripts')` | updateSummaries() | Computes `hours += (e.end - e.start + 1) * 0.5` per event (slots are 0.5h each); displays integer or 1-decimal (e.g. RSD2 Week 11 = 14h). All 4 reset branches now zero `sumHours` too |
+
+### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php` — RSD3 G2 maximized to full semester (weeks 1–14, +45%)
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — 5 → 7 courses (+45%) | Added `rsd3g2Base` array: existing 5 courses + BMIT7074 Software Testing (T, Tue 8-11, A106) + BMIT7075 Mobile Application Development (L, Thu 12-15, A106) |
+| 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — weeks 1–3 → weeks 1–14 | Replaced 3 explicit week blocks with a `for` loop generating all 14 dropdown weeks (indexes 0–13 = Week 9…22) → every week now shows 7 events / 14h |
+| 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — status flags | `rsd3g2Flags` map sets realistic replacement/pending statuses per week (e.g. W1 Capstone+Testing replaced, W2 IT Ethics pending, W4/W9/W13 pending, W3/W7/W11 replacement) — visible on non-holiday days; Thu events on the Week 11 public-holiday render as conflicts by design |
+
 ### `resources/views/partials/ui-nav-bar.blade.php`
 
 | Timestamp | Location | Change | Detail |
