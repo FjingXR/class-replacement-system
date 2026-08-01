@@ -875,6 +875,7 @@
                 document.getElementById('resultCount').textContent = 'Showing 0 of 0 events';
                 updateWeekArrows(true, true);
                 selectedCohortId = null;
+                saveState();
                 return;
             }
             const faculty = facultyData.find(f => f.id === fid);
@@ -894,6 +895,7 @@
             document.getElementById('resultCount').textContent = 'Showing 0 of 0 events';
             updateWeekArrows(true, true);
             selectedCohortId = null;
+            saveState();
         }
 
         function onCohortChange() {
@@ -914,6 +916,7 @@
                 document.getElementById('sumConflict').textContent = '0';
                 document.getElementById('resultCount').textContent = 'Showing 0 of 0 events';
                 updateWeekArrows(true, true);
+                saveState();
                 return;
             }
             selectedCohortId = cid;
@@ -921,6 +924,7 @@
             currentWeek = 2; // default to current week (Week 11) so today column is highlighted
             document.getElementById('weekSelect').selectedIndex = 2;
             buildTimetable();
+            saveState();
         }
 
         /* ════════════════════════════════════════════
@@ -932,6 +936,7 @@
                 currentWeek--;
                 buildTimetable();
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
+                saveState();
             }
         }
 
@@ -940,12 +945,50 @@
                 currentWeek++;
                 buildTimetable();
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
+                saveState();
             }
         }
 
         function selectWeek(index) {
             currentWeek = parseInt(index);
             buildTimetable();
+            saveState();
+        }
+
+        /* ════════════════════════════════════════════
+           STATE PERSISTENCE (localStorage)
+           ════════════════════════════════════════════ */
+
+        const STATE_KEY = 'cohortTimetableState';
+
+        function saveState() {
+            try {
+                localStorage.setItem(STATE_KEY, JSON.stringify({
+                    faculty: document.getElementById('facultySelect').value,
+                    cohort: document.getElementById('cohortSelect').value,
+                    week: currentWeek
+                }));
+            } catch (e) { /* storage unavailable — ignore */ }
+        }
+
+        function restoreState() {
+            let state = null;
+            try { state = JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { state = null; }
+            if (!state || !state.faculty) return;
+            const faculty = facultyData.find(f => f.id === state.faculty);
+            if (!faculty) return;
+            document.getElementById('facultySelect').value = faculty.id;
+            onFacultyChange();
+            if (state.cohort && faculty.cohorts.some(c => c.id === state.cohort)) {
+                document.getElementById('cohortSelect').value = state.cohort;
+                onCohortChange();
+                const w = parseInt(state.week);
+                if (!isNaN(w) && w >= 0 && w < weekData.length) {
+                    currentWeek = w;
+                    document.getElementById('weekSelect').selectedIndex = w;
+                    buildTimetable();
+                }
+            }
         }
 
         /* ════════════════════════════════════════════
@@ -1191,5 +1234,8 @@
             document.getElementById('cohortSelect').disabled = true;
             document.getElementById('weekSelect').disabled = true;
             updateWeekArrows(true, true);
+
+            // Restore last selection (faculty / cohort / week) — overrides the empty state above if present
+            restoreState();
         });
 @endsection

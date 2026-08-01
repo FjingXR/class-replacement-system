@@ -99,6 +99,15 @@
 | 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — weeks 1–3 → weeks 1–14 | Replaced 3 explicit week blocks with a `for` loop generating all 14 dropdown weeks (indexes 0–13 = Week 9…22) → every week now shows 7 events / 14h |
 | 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — status flags | `rsd3g2Flags` map sets realistic replacement/pending statuses per week (e.g. W1 Capstone+Testing replaced, W2 IT Ethics pending, W4/W9/W13 pending, W3/W7/W11 replacement) — visible on non-holiday days; Thu events on the Week 11 public-holiday render as conflicts by design |
 
+### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php` — selection persists across refresh (localStorage)
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-01 | `@section('page-scripts')` | `saveState()` | Writes `{ faculty, cohort, week }` to `localStorage` key `cohortTimetableState` (try/catch — safe when storage unavailable) |
+| 2026-08-01 | `@section('page-scripts')` | `restoreState()` | On DOMContentLoaded: re-validates saved faculty/cohort against `facultyData` (graceful fallback if a faculty/cohort was removed), re-selects via `onFacultyChange()`/`onCohortChange()`, then applies saved week — else normal empty-state flow |
+| 2026-08-01 | `@section('page-scripts')` | saveState() wired in | Called at the end of `onFacultyChange()` (both branches), `onCohortChange()` (both branches), `selectWeek()`, `prevWeek()`, `nextWeek()` — any selection change is persisted |
+| 2026-08-01 | `@section('page-scripts')` | Init | `restoreState()` called last in DOMContentLoaded (after empty-state setup, which it overrides). localStorage = longest lifespan (survives refresh + browser restarts) |
+
 ### `resources/views/partials/ui-nav-bar.blade.php`
 
 | Timestamp | Location | Change | Detail |
