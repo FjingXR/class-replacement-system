@@ -799,6 +799,29 @@
             </div>
         </div>
 
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-swatch" style="background: var(--color-secondary);"></div>
+                Available
+            </div>
+            <div class="legend-item">
+                <div class="legend-swatch" style="background: var(--color-primary);"></div>
+                Your Current Selection
+            </div>
+            <div class="legend-item">
+                <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
+                Pending (You)
+            </div>
+            <div class="legend-item">
+                <div class="legend-swatch" style="background: var(--color-surface-variant);"></div>
+                Reserved by Others
+            </div>
+            <div class="legend-item">
+                <div class="legend-swatch" style="background: var(--color-error);"></div>
+                Occupied / Class on Public Holiday
+            </div>
+        </div>
+
         <div class="sel-summary" id="selSummary">
             <div class="sel-summary-header">
                 <span class="sel-summary-title">Selection Summary</span>
@@ -862,29 +885,6 @@
                         <polyline points="12 5 19 12 12 19"/>
                     </svg>
                 </button>
-            </div>
-        </div>
-
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-secondary);"></div>
-                Available
-            </div>
-            <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-primary);"></div>
-                Your Current Selection
-            </div>
-            <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
-                Pending (You)
-            </div>
-            <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-surface-variant);"></div>
-                Reserved by Others
-            </div>
-            <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-error);"></div>
-                Occupied / Class on Public Holiday
             </div>
         </div>
 
