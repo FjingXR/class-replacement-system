@@ -301,6 +301,11 @@
         .summary-card.card-replacement .summary-value { color: var(--color-primary); }
         .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
         .summary-card.card-conflict .summary-value { color: var(--color-error); }
+        .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
+        .summary-card.card-hours {
+            border: 1px dashed var(--color-outline-strong);
+            background: var(--color-surface-variant);
+        }
         .summary-card.card-total {
             border: 2px solid var(--color-primary);
             background: var(--color-primary-container);
@@ -581,6 +586,7 @@
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
+                ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Teaching Hours'],
                 ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Confirmed Replacement'],
                 ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending Approval'],
                 ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts / Public Holiday'],
@@ -937,15 +943,17 @@
             const events = eventsData[currentWeek] || [];
             const days = weekData[currentWeek].days;
             let total = events.length;
-            let replacement = 0, pending = 0, conflict = 0;
+            let replacement = 0, pending = 0, conflict = 0, hours = 0;
 
             events.forEach(e => {
                 if (e.status === 'replacement') replacement++;
                 if (e.status === 'pending') pending++;
                 if (days[e.di] && days[e.di].holiday) conflict++;
+                hours += (e.end - e.start + 1) * 0.5;
             });
 
             document.getElementById('sumTotal').textContent = total;
+            document.getElementById('sumHours').textContent = (hours % 1 === 0 ? hours : hours.toFixed(1));
             document.getElementById('sumReplacement').textContent = replacement;
             document.getElementById('sumPending').textContent = pending;
             document.getElementById('sumConflict').textContent = conflict;
