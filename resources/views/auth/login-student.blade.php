@@ -417,30 +417,6 @@
     </div>
 
     <script>
-        function togglePassword() {
-            const pw = document.getElementById('password');
-            const eye = document.getElementById('eye-icon');
-            const isHidden = pw.type === 'password';
-            pw.type = isHidden ? 'text' : 'password';
-            eye.innerHTML = isHidden
-                ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>'
-                : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-        }
-
-        function ripple(e, btn) {
-            const rect = btn.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            const el = document.createElement('span');
-            el.className = 'ripple';
-            el.style.width = el.style.height = size + 'px';
-            el.style.left = x + 'px';
-            el.style.top = y + 'px';
-            btn.appendChild(el);
-            setTimeout(() => el.remove(), 500);
-        }
-
         function validateStudent() {
             const loginId = document.getElementById('login_id').value.trim();
             const password = document.getElementById('password').value;

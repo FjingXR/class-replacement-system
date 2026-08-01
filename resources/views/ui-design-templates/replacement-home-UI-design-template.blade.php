@@ -294,7 +294,7 @@
             return Math.floor(diff / 7) + 1;
         }
 
-        let currentPage = 1;
+        const pageState = { currentPage: 1 };
         const pageSize = 10;
         let sortState = { field: 'date', dir: 'asc' };
         let currentFiltered = [];
@@ -323,15 +323,13 @@
                         va = a.code;
                         vb = b.code;
                     }
-                    if (va < vb) return sortState.dir === 'asc' ? -1 : 1;
-                    if (va > vb) return sortState.dir === 'asc' ? 1 : -1;
-                    return 0;
+                    return compareBy(sortState, va, vb);
                 });
             }
 
             currentFiltered = filtered;
 
-            const offset = (currentPage - 1) * pageSize;
+            const offset = (pageState.currentPage - 1) * pageSize;
             const pageData = filtered.slice(offset, offset + pageSize);
 
             const head = document.getElementById('tableHead');
@@ -357,29 +355,10 @@
                 { label: 'Action', cls: 'col-action', sortable: false },
             ];
             columns.forEach(function(col) {
-                const th = document.createElement('th');
-                th.className = col.cls;
-                if (col.sortable) {
-                    th.classList.add('sortable');
-                    var arrow = '';
-                    if (sortState.field === col.field) {
-                        arrow = '<span class="sort-arrow">' + (sortState.dir === 'asc' ? '&#9650;' : '&#9660;') + '</span>';
-                    }
-                    th.innerHTML = col.label + arrow;
-                    th.addEventListener('click', function() {
-                        if (sortState.field === col.field) {
-                            sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
-                        } else {
-                            sortState.field = col.field;
-                            sortState.dir = 'asc';
-                        }
-                        currentPage = 1;
-                        buildTable();
-                    });
-                } else {
-                    th.textContent = col.label;
-                }
-                tr.appendChild(th);
+                tr.appendChild(makeSortableHeader(col, sortState, function() {
+                    pageState.currentPage = 1;
+                    buildTable();
+                }));
             });
             head.appendChild(tr);
 
@@ -415,67 +394,9 @@
                 });
             }
 
-            updatePagination();
-            updateResultCount();
+            paginate({ data: currentFiltered, pageSize: pageSize, state: pageState, infoId: 'paginationInfo', controlsId: 'paginationControls', render: buildTable });
+            updateResultCount({ elId: 'resultCount', data: currentFiltered, total: conflictedClasses.length, label: 'classes' });
             updateSummary();
-        }
-
-        function updatePagination() {
-            const totalPages = Math.ceil(currentFiltered.length / pageSize);
-            const info = document.getElementById('paginationInfo');
-            if (currentFiltered.length === 0) {
-                info.textContent = 'Showing 0 of 0';
-            } else {
-                const from = (currentPage - 1) * pageSize + 1;
-                const to = Math.min(currentPage * pageSize, currentFiltered.length);
-                info.textContent = 'Showing ' + from + '-' + to + ' of ' + currentFiltered.length;
-            }
-
-            const controls = document.getElementById('paginationControls');
-            controls.innerHTML = '';
-
-            const prev = document.createElement('button');
-            prev.className = 'page-btn';
-            prev.textContent = '\u2039';
-            prev.disabled = currentPage <= 1;
-            prev.addEventListener('click', function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    buildTable();
-                }
-            });
-            controls.appendChild(prev);
-
-            for (var p = 1; p <= totalPages; p++) {
-                (function(page) {
-                    const btn = document.createElement('button');
-                    btn.className = 'page-btn';
-                    if (page === currentPage) btn.classList.add('active');
-                    btn.textContent = String(page);
-                    btn.addEventListener('click', function() {
-                        currentPage = page;
-                        buildTable();
-                    });
-                    controls.appendChild(btn);
-                })(p);
-            }
-
-            const next = document.createElement('button');
-            next.className = 'page-btn';
-            next.textContent = '\u203A';
-            next.disabled = currentPage >= totalPages;
-            next.addEventListener('click', function() {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    buildTable();
-                }
-            });
-            controls.appendChild(next);
-        }
-
-        function updateResultCount() {
-            const count = document.getElementById('resultCount');
-            count.textContent = 'Showing ' + currentFiltered.length + ' of ' + conflictedClasses.length + ' classes';
         }
 
         function updateSummary() {
@@ -509,10 +430,6 @@
             });
         }
 
-        function goToReplacement() {
-            window.location.href = '/replacement-arrangement';
-        }
-
         function goToReplacementWith(code, date) {
             window.location.href = '/replacement-arrangement?code=' + encodeURIComponent(code) + '&date=' + encodeURIComponent(date);
         }
@@ -521,11 +438,11 @@
             populateWeekDropdown();
             buildTable();
             document.getElementById('searchInput').addEventListener('input', function() {
-                currentPage = 1;
+                pageState.currentPage = 1;
                 buildTable();
             });
             document.getElementById('weekFilter').addEventListener('change', function() {
-                currentPage = 1;
+                pageState.currentPage = 1;
                 buildTable();
             });
         });

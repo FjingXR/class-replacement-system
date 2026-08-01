@@ -902,21 +902,6 @@
 @section('page-scripts')
         const MAX_SELECTION = 4;
 
-        const hours = [
-            '08:00', '08:30', '09:00', '09:30',
-            '10:00', '10:30', '11:00', '11:30',
-            '12:00', '12:30',
-            '13:00', '13:30', '14:00', '14:30',
-            '15:00', '15:30', '16:00', '16:30',
-            '17:00', '17:30', '18:00', '18:30'
-        ];
-
-        function add30min(t) {
-            const [h, m] = t.split(':').map(Number);
-            const total = h * 60 + m + 30;
-            return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
-        }
-
         const weekData = [
             {
                 label: 'Week 11',
@@ -1340,14 +1325,6 @@
             confirmCallback = null;
         }
 
-        function formatHour(t) {
-            const [hStr, m] = t.split(':');
-            const h = parseInt(hStr);
-            const ampm = h >= 12 ? 'PM' : 'AM';
-            const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-            return `${h12}:${m} ${ampm}`;
-        }
-
         function proceed() {
             if (selectedCells.length === 0) {
                 showConfirmModal('No Selection', 'Please select at least one timeslot before proceeding.', null);
@@ -1359,7 +1336,7 @@
                 const day = days[c.day];
                 const startStr = hours[c.hour];
                 const endStr = add30min(startStr);
-                return `<div style="padding:3px 0;font-size:13px;">${currentVenue} · (${weekLabel}) ${day.abbr}, ${day.date} — ${formatHour(startStr)} ~ ${formatHour(endStr)}</div>`;
+                return `<div style="padding:3px 0;font-size:13px;">${currentVenue} · (${weekLabel}) ${day.abbr}, ${day.date} — ${to12h(startStr)} ~ ${to12h(endStr)}</div>`;
             }).join('');
             showConfirmModal(
                 'Confirm Your Selection',
@@ -1415,15 +1392,7 @@
         }
 
         function navigateHome() {
-            if (selectedCells.length > 0) {
-                showConfirmModal(
-                    'Unsaved Changes',
-                    'You have selected time slots that will be lost if you leave this page. Are you sure you want to leave?',
-                    function() { hideConfirmModal(); window.location.href = '/my-timetable-ui'; }
-                );
-            } else {
-                window.location.href = '/my-timetable-ui';
-            }
+            navigateTo('/');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
