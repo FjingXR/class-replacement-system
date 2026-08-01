@@ -351,7 +351,7 @@ Each page's development history is logged in `page-changelogs/*.md` — **update
 The project applies **OOP principles at every layer**; FYP rubric evaluates this. Keep it consistent:
 
 ### 0. UI Design Rules (user-mandated 2026-08-01)
-These five rules are **non-negotiable** for every page and every future change:
+These six rules are **non-negotiable** for every page and every future change:
 
 1. **Colors must be consistent across all pages.**
    - ALL colors come from the CSS custom-property token set in `public/css/theme.css` (`--color-bg`, `--color-surface`, `--color-primary`/`secondary`/`tertiary`/`error` + their `-container`/`-on-*` variants, defined once for dark + once for light).
@@ -403,6 +403,12 @@ These five rules are **non-negotiable** for every page and every future change:
 5. **Don't overwhelm the user — push detail/secondary/冷门 info into modals.**
    - The page surface shows only what's needed to scan & act: the grid/table, its filters, summary cards, and primary actions. Everything else (full request details, audit history, rejection-reason form, validation breakdown, room/cohort breakdowns, raw slot data) opens in a **modal** on click, not inline.
    - Rule of thumb: if a column/field is "nice to know" rather than "need to scan", it belongs behind an icon button that opens a modal. Keep the default view scannable.
+6. **Promote-on-3rd-duplication (DRY / OOP).** When building any page, if a markup block / CSS class / JS helper / mock-data slice is **now the same across 3+ pages** (e.g. the `.legend-bar`, the `.summary-bar` + `.summary-card` pattern, the week picker, the detail modal shell), promote it to a shared file and refactor the duplicates away:
+   - shared markup → a new Blade partial in `resources/views/partials/` (then `@include` it on every page);
+   - shared CSS → a class in `public/css/theme.css`;
+   - shared JS → a helper in `public/js/ui-common.js`;
+   - shared mock data → a section in `public/js/mock-data.js`.
+   Replace the inline copies in the **new page AND the existing pages** with `@include` / `var(--color-...)` / `helper()` / `MockData.*`. Never leave 3 copies of the same thing — that breaks the OOP/DRY concept the FYP rubric scores. Record every promotion in the SDD `design.md` "Promoted to shared" section.
 
 ### 1. Inheritance
 - **Blade layout inheritance:** every page `@extends('layouts.ui-template')` and fills `@section('content')`, `@section('page-styles')`, `@section('page-scripts')`, `@yield('title')`. See `resources/views/layouts/ui-template.blade.php` (42 lines).

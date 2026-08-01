@@ -53,14 +53,16 @@ Page to create
 - Purpose: [1-2 sentences what it does]
 - Mock-data scope: [what mock JS objects / columns / cards it needs]
 
-Design rules: follow CodingMAIN.md §10.0 exactly (color tokens only; same name+same color per the canonical legend/status→color map; OOP @extends/@include/shared theme.css+ui-common.js+mock-data.js; mock data in mock-data.js NOT inline; icon over text; detail in modals).
+Design rules: follow CodingMAIN.md §10.0 exactly (color tokens only; same name+same color per the canonical legend/status→color map; OOP @extends/@include/shared theme.css+ui-common.js+mock-data.js; mock data in mock-data.js NOT inline; icon over text; detail in modals; **on 3rd duplication promote element to shared partial/theme.css/ui-common.js/mock-data.js and refactor existing pages too**).
 
 Copy from [CLOSEST PAGE]: [list the parts to reuse — page header, legend, grid, summary cards, modal pattern, week picker, etc.].
 Remove/change: [list parts to delete — action buttons, lecturer-only logic, renamed labels, statuses to hide].
 
 Mock data: read from window.MockData.* in the page's @section('page-scripts') (do NOT inline). If the page needs NEW mock data, add ONE section to public/js/mock-data.js (e.g. MockData.[pageName] = {...}) and reference it. Treat MockData as read-only; slice()/spread before mutating.
 
-Deliverables: .sdd/changes/[change-name]/ (sdd.yaml, proposal.md, design.md, tasks.md — model the format on .sdd/changes/cohort-timetable-ui/), the Blade template (render logic only in @section('page-scripts'); no inline mock data), route in routes/web.php, page-changelogs/[change-name]-changelog.md. After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: ui:.
+Promote-on-3rd-duplication: while building, if any markup block / CSS class / JS helper ends up the SAME across 3+ pages, promote it to a shared file (partial `resources/views/partials/`, `theme.css`, `ui-common.js`, or `mock-data.js`) and replace the inline copies in the new page AND existing pages with @include / var() / helper() / MockData.*. List every promotion in design.md under "Promoted to shared".
+
+Deliverables: .sdd/changes/[change-name]/ (sdd.yaml, proposal.md, design.md, tasks.md — model the format on .sdd/changes/; design.md MUST include a "Promoted to shared" section listing any element moved out on 3rd duplication), the Blade template (render logic only in @section('page-scripts'); no inline mock data), route in routes/web.php, page-changelogs/[change-name]-changelog.md. After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: ui:.
 
 Constraints: no migrations/models/backend logic (frontend mock phase); no new dependencies; under ~1500 lines (split into partials if larger).
 ```
@@ -97,14 +99,16 @@ Page to create
 - Purpose: A student views their own cohort's weekly timetable. Shows all statuses (Normal, Replacement, Pending, Conflict) EXCEPT cancelled classes, which are fully hidden.
 - Mock-data scope: read from window.MockData.* — reuse MockData.myTimetable, MockData.cohorts, MockData.semester, MockData.holidays. Hardcode the active cohort = RSD3(S1)G2. Before render and before counting summaries, filter out any event with status === 'cancelled'.
 
-Design rules: follow CodingMAIN.md §10.0 exactly (color tokens only; same name+same color per the canonical legend/status→color map; OOP @extends/@include/shared theme.css+ui-common.js+mock-data.js; mock data in mock-data.js NOT inline; icon over text; detail in modals).
+Design rules: follow CodingMAIN.md §10.0 exactly (color tokens only; same name+same color per the canonical legend/status→color map; OOP @extends/@include/shared theme.css+ui-common.js+mock-data.js; mock data in mock-data.js NOT inline; icon over text; detail in modals; on 3rd duplication promote element to shared partial/theme.css/ui-common.js/mock-data.js and refactor existing pages too).
 
 Copy from MyTimetable-UI-design-template: page header + .semester-chip; .semester-bar week picker (prev/next arrows + week <select>); .grid-wrapper > .grid-scroll > table.timetable grid; .legend-bar with 4 items (Normal Class=--color-secondary, Replacement=--color-primary, Pending=--color-tertiary, Conflict=--color-error); 5 summary cards via @include('partials.ui-summary-bar').
 Remove/change: remove the "Replace Now" button and goToReplacement(); remove the "Cancel Class" button, cancelClass(), and #cancelConfirmOverlay; rename "Teaching Hours" card to "Class Hours". Cancelled = NO legend item, NO summary card, never counted.
 
 Mock data: read from window.MockData.myTimetable (and MockData.semester/cohorts/holidays) in the page's @section('page-scripts') — do NOT inline an eventsData array. Derive a local per-week copy (slice) before mutating; treat MockData as read-only.
 
-Deliverables: .sdd/changes/student-my-timetable-ui/ (sdd.yaml, proposal.md, design.md, tasks.md — model format on .sdd/changes/cohort-timetable-ui/), the Blade template (render logic only in @section('page-scripts'); no inline mock data), route in routes/web.php, page-changelogs/student-my-timetable-changelog.md. After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: ui:.
+Promote-on-3rd-duplication: the .legend-bar (Normal Class/Replacement/Pending/Conflict) already appears on MyTimetable + CohortTimetable → this student page makes it the 3rd copy. Promote the legend bar to a new Blade partial `resources/views/partials/ui-legend-bar.blade.php` (or a shared class in theme.css) and refactor all three pages to @include it. Record this in design.md under "Promoted to shared".
+
+Deliverables: .sdd/changes/student-my-timetable-ui/ (sdd.yaml, proposal.md, design.md, tasks.md — model format on .sdd/changes/cohort-timetable-ui/; design.md MUST include a "Promoted to shared" section), the Blade template (render logic only in @section('page-scripts'); no inline mock data), route in routes/web.php, page-changelogs/student-my-timetable-changelog.md. After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: ui:.
 
 Constraints: no migrations/models/backend logic (frontend mock phase); no new dependencies; under ~1500 lines (split into partials if larger).
 ```
