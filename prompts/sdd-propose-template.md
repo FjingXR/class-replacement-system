@@ -62,7 +62,9 @@ Mock data: read from window.MockData.* in the page's @section('page-scripts') (d
 
 Promote-on-3rd-duplication: while building, if any markup block / CSS class / JS helper ends up the SAME across 3+ pages, promote it to a shared file (partial `resources/views/partials/`, `theme.css`, `ui-common.js`, or `mock-data.js`) and replace the inline copies in the new page AND existing pages with @include / var() / helper() / MockData.*. List every promotion in design.md under "Promoted to shared".
 
-Deliverables: .sdd/changes/[change-name]/ (sdd.yaml, proposal.md, design.md, tasks.md — model the format on .sdd/changes/; design.md MUST include a "Promoted to shared" section listing any element moved out on 3rd duplication), the Blade template (render logic only in @section('page-scripts'); no inline mock data), route in routes/web.php, page-changelogs/[change-name]-changelog.md. After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: ui:.
+Changelog (generate BEFORE the proposal, keep updating as you build): create `page-changelogs/[change-name]-changelog.md` now (even if only header + empty Files Changed). Follow the exact format of an existing file in `page-changelogs/` (read one to learn house style): `# Changelog — <Page Name>` → `## Files Changed` → one `### \`<file path>\`` per changed file → per-file table `| Timestamp | Location | Change | Detail |`. Log every touched file. Use server-local ISO-ish timestamps.
+
+Deliverables: .sdd/changes/[change-name]/ (sdd.yaml, proposal.md, design.md, tasks.md — model the format on .sdd/changes/; design.md MUST include a "Promoted to shared" section listing any element moved out on 3rd duplication), the Blade template (render logic only in @section('page-scripts'); no inline mock data), route in routes/web.php, page-changelogs/[change-name]-changelog.md (created now, filled as you build). After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: ui:.
 
 Constraints: no migrations/models/backend logic (frontend mock phase); no new dependencies; under ~1500 lines (split into partials if larger).
 ```
@@ -108,7 +110,9 @@ Mock data: read from window.MockData.myTimetable (and MockData.semester/cohorts/
 
 Promote-on-3rd-duplication: the .legend-bar (Normal Class/Replacement/Pending/Conflict) already appears on MyTimetable + CohortTimetable → this student page makes it the 3rd copy. Promote the legend bar to a new Blade partial `resources/views/partials/ui-legend-bar.blade.php` (or a shared class in theme.css) and refactor all three pages to @include it. Record this in design.md under "Promoted to shared".
 
-Deliverables: .sdd/changes/student-my-timetable-ui/ (sdd.yaml, proposal.md, design.md, tasks.md — model format on .sdd/changes/cohort-timetable-ui/; design.md MUST include a "Promoted to shared" section), the Blade template (render logic only in @section('page-scripts'); no inline mock data), route in routes/web.php, page-changelogs/student-my-timetable-changelog.md. After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: ui:.
+Changelog (generate BEFORE the proposal, keep updating as you build): create `page-changelogs/student-my-timetable-ui-changelog.md` now (even if only header + empty Files Changed). Follow the exact format of `page-changelogs/my-timetable-changelog.md` / `cohort-timetable-ui-changelog.md`: `# Changelog — Student My Timetable` → `## Files Changed` → one `### \`<file path>\`` per changed file → per-file table `| Timestamp | Location | Change | Detail |`. Log every touched file. Use server-local ISO-ish timestamps.
+
+Deliverables: .sdd/changes/student-my-timetable-ui/ (sdd.yaml, proposal.md, design.md, tasks.md — model format on .sdd/changes/cohort-timetable-ui/; design.md MUST include a "Promoted to shared" section), the Blade template (render logic only in @section('page-scripts'); no inline mock data), route in routes/web.php, page-changelogs/student-my-timetable-ui-changelog.md (created now, filled as you build). After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: ui:.
 
 Constraints: no migrations/models/backend logic (frontend mock phase); no new dependencies; under ~1500 lines (split into partials if larger).
 ```

@@ -47,7 +47,7 @@ After reading the above, talk to the user first — do NOT jump straight to writ
 1. `.sdd/changes/<change-name>/` with `sdd.yaml`, `proposal.md`, `design.md`, `tasks.md`.
 2. The Blade template (render logic in `@section('page-scripts')`; NO inline mock data — read from `window.MockData.*`). If new mock data is needed, add it to `public/js/mock-data.js`.
 3. The route added to `routes/web.php`.
-4. A matching `page-changelogs/<change-name>-changelog.md`.
+4. **A changelog file `page-changelogs/<change-name>-changelog.md` created BEFORE the proposal** (even if it only has the header + an empty `## Files Changed` section), then kept updated as you build. Follow the exact format of an existing file in `page-changelogs/` (e.g. `my-timetable-changelog.md`): top `# Changelog — <Page Name>`, a `## Files Changed` section, one `### \`<file path>\`` heading per changed file, and per-file a table `| Timestamp | Location | Change | Detail |`. Log every touched file (template, mock-data.js, routes/web.php, shared partials/theme.css refactors). Use server-local ISO-ish timestamps.
 5. After apply, run `composer run lint:check` + `composer run types:check` and confirm no new failures.
 
 ## Constraints / out of scope
