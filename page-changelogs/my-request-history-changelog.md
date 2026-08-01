@@ -31,6 +31,9 @@
 | 2026-07-20 19:32 | Lines 896, 899, 904 | UX | Renamed `Hide Completed` → `Exclude Completed`, `✕ Clear` → `Reset Filters`. Moved button to toolbar-left after the toggle. |
 | 2026-07-21 07:35 | Lines 637–640, 927–944 | UX | Swapped summary colors: Total now uses `--color-on-primary-container` (neutral), Rejected now uses `--color-error` (red). Added visual wrapper to Total card: `border: 2px solid var(--color-primary)` + `background: var(--color-primary-container)`. |
 | 2026-07-21 07:35 | Lines 732–736, 969–978, 1435–1449 | Feature | Added `Cancel Request` button in modal footer-left for Pending status only (hidden for other statuses). Button shows red danger styling, prompts browser confirmation dialog on click, then alerts and closes modal. Modal footer now uses flex layout with `modal-footer-left` and `modal-footer-right` sections. |
+| 2026-08-01 14:31 | Lines 164–175 | New summary card | Added `Replacement Hours` summary card (2nd position, after Total Requests) — sums `duration` across all requests (shows 40 hrs for 20 × 2-hr requests). Card style: `1px dashed outline-strong` border + `surface-variant` background, value color `on-surface` — matches `card-hours` pattern on timetable pages. |
+| 2026-08-01 14:31 | Lines 390–399 | Summary bar 5 cards | Added `card-hours` entry to `@include('partials.ui-summary-bar')` — summary bar now has 5 cards (Total Requests, Replacement Hours, Approved, Pending, Rejected). Base grid in `theme.css` already uses `repeat(5, 1fr)`. |
+| 2026-08-01 14:31 | Lines 744–759 | Summary logic | `updateSummary()` now sums `r.duration` across all requests (consistent with Total counting all 20, independent of Exclude Completed toggle) and updates `summaryHours`. |
 
 ### `routes/web.php`
 

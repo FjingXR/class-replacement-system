@@ -166,6 +166,11 @@
         .summary-card.card-approved .summary-value { color: var(--color-secondary); }
         .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
         .summary-card.card-rejected .summary-value { color: var(--color-error); }
+        .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
+        .summary-card.card-hours {
+            border: 1px dashed var(--color-outline-strong);
+            background: var(--color-surface-variant);
+        }
         .summary-card.card-total {
             border: 2px solid var(--color-primary);
             background: var(--color-primary-container);
@@ -391,6 +396,7 @@
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests'],
+                ['class' => 'card-hours', 'valueId' => 'summaryHours', 'label' => 'Replacement Hours'],
                 ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved'],
                 ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending'],
                 ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected'],
@@ -746,8 +752,11 @@
             const approved = mockRequests.filter(function(r) { return r.status === 'Approved'; }).length;
             const pending = mockRequests.filter(function(r) { return r.status === 'Pending'; }).length;
             const rejected = mockRequests.filter(function(r) { return r.status === 'Rejected'; }).length;
+            let hours = 0;
+            mockRequests.forEach(function(r) { hours += r.duration || 0; });
 
             document.getElementById('summaryTotal').textContent = total;
+            document.getElementById('summaryHours').textContent = hours;
             document.getElementById('summaryApproved').textContent = approved;
             document.getElementById('summaryPending').textContent = pending;
             document.getElementById('summaryRejected').textContent = rejected;
