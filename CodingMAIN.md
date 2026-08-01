@@ -358,10 +358,40 @@ These three rules are **non-negotiable** for every page and every future change:
    - **NEVER hardcode hex/rgb/rgba** in a page's `@section('page-styles')`. Use `var(--color-...)`. If a new color is needed, add the token to `theme.css` once.
    - Slot-grid colors are fixed token-mapped: Green=`--color-secondary`, Red=`--color-error`, Yellow=`--color-tertiary`, Grey=`--color-outline-strong`, Blue=`--color-primary`. Status badges use the same mapping on every page.
 
-2. **Use the same name for the same thing everywhere.**
-   - Identical UI = identical class name across all pages (`.badge`, `.summary-card`, `.filter-select`, `.cell-code`, `.cell-name`, `.btn-action`, `.timetable`, `.empty-state`, `.page-header`, etc., defined once in `theme.css`).
-   - Same component = same structure (e.g. the `.summary-bar` + `.summary-card` pattern via `@include('partials.ui-summary-bar')`). State/status label strings are unified ("Pending", "Approved", "Rejected", "Cancelled", "Completed") — no per-page synonyms.
-   - A new component = add ONE class to `theme.css` + ONE partial, then `@include` it everywhere. Do NOT invent a parallel class name on another page.
+2. **Use the same name + same color for the same meaning everywhere.**
+   - A status/legend label and its color are a **canonical pair defined once below**; every page must use that exact pair. Never give the same concept a different label or a different color on another page (e.g. if Cohort Timetable shows "Conflict" in red, My Timetable must also show "Conflict" in red — not "Occupied" in red).
+   - Identical component = identical class name across pages (`.badge`, `.legend-item`, `.summary-card`, `.filter-select`, `.cell-code`, `.empty-state`, etc.), defined once in `theme.css`.
+
+   #### Canonical legend / status → color map (single source of truth)
+   Two semantic contexts share one palette — green=free/ok, red=conflict/occupied, yellow=pending, blue=primary, grey=reserved/neutral.
+
+   **A. Read-only timetable legend** (My Timetable, Cohort Timetable, master views):
+   | Label | Token | Meaning |
+   |-------|-------|---------|
+   | Normal Class | `--color-secondary` (green) | scheduled class |
+   | Replacement | `--color-primary` (blue) | approved replacement session |
+   | Pending | `--color-tertiary` (yellow) | awaiting PL approval |
+   | Conflict | `--color-error` (red) | clashing block |
+
+   **B. Replacement-arrangement slot grid legend** (booking interface, slot states):
+   | Label | Token | Meaning |
+   |-------|-------|---------|
+   | Available | `--color-secondary` (green) | satisfies all constraints |
+   | Your Current Selection | `--color-primary` (blue) | active pick |
+   | Pending (You) | `--color-tertiary` (yellow) | your submitted request awaiting PL |
+   | Reserved by Others | `--color-surface-variant` (grey) | another lecturer's pending request |
+   | Occupied / Class on Public Holiday | `--color-error` (red) | locked / blocked |
+
+   **C. Request-history status badges** (`.status-*`):
+   | Label | Container tokens |
+   |-------|------------------|
+   | Pending | `--color-tertiary-container` / `-on-tertiary-container` |
+   | Approved | `--color-secondary-container` / `-on-secondary-container` |
+   | Rejected | `--color-error-container` / `-on-error-container` |
+   | Cancelled | `--color-surface-variant` / `-on-surface-variant` |
+   | Completed | `--color-primary-container` / `-on-primary-container` |
+
+   Adding a new status/legend item = add ONE row to the relevant table above + ONE class to `theme.css`, then reuse it everywhere. Do not invent a synonym.
 
 3. **Utilise OOP concepts** (see §10.1–10.4 below — Inheritance, Composition, Encapsulation/DRY, service classes). No copy-paste; reuse layout/partial/shared-module.
 
