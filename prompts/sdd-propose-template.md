@@ -53,7 +53,7 @@ Page to create
 - Purpose: [1-2 sentences what it does]
 - Mock-data scope: [what mock JS objects / columns / cards it needs]
 
-Design rules: follow CodingMAIN.md §10.0 exactly (color tokens only; same name+same color per the canonical legend/status→color map; OOP @extends/@include/shared theme.css+ui-common.js+mock-data.js; mock data in mock-data.js NOT inline; icon over text; detail in modals; **on 3rd duplication promote element to shared partial/theme.css/ui-common.js/mock-data.js and refactor existing pages too**).
+Design rules: follow CodingMAIN.md §10.0 exactly (color tokens only; same name+same color per the canonical legend/status→color map; OOP @extends/@include/shared theme.css+ui-common.js+mock-data.js; mock data in mock-data.js NOT inline; icon over text; detail/secondary info in modals; **on 3rd duplication promote element to shared partial/theme.css/ui-common.js/mock-data.js and refactor existing pages too**; minimise steps/fewest clicks (pre-select defaults, don't hop pages; rethink if >~3 clicks); confirm critical actions (delete/submit/cancel/approve/reject) with a popup so users dare to explore).
 
 Copy from [CLOSEST PAGE]: [list the parts to reuse — page header, legend, grid, summary cards, modal pattern, week picker, etc.].
 Remove/change: [list parts to delete — action buttons, lecturer-only logic, renamed labels, statuses to hide].

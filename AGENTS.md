@@ -19,8 +19,10 @@ That spec enforces, for every new UI page:
 3. OOP concepts — `@extends('layouts.ui-template')`, `@include` partials, shared `theme.css` + `ui-common.js` + `mock-data.js`; no copy-paste.
 4. **Mock data: read from `window.MockData` in `public/js/mock-data.js` (single source).** Never re-declare cohorts/lecturers/venues/semester or duplicate page datasets inline. New data → add ONE section to `mock-data.js`. Treat `MockData` as read-only; `slice()`/spread before mutating.
 5. Minimise plain text, maximise icon buttons (reuse `resources/views/flux/icon/`).
-6. Don't overwhelm — detail/冷门 info goes in modals, not the page surface.
+6. Don't overwhelm — detail/secondary info goes in modals, not the page surface.
 7. **Promote-on-3rd-duplication (DRY/OOP)** — if a markup block / CSS class / JS helper / mock-data slice ends up the SAME across 3+ pages, promote it to a shared file (Blade partial `resources/views/partials/`, `theme.css`, `ui-common.js`, or `mock-data.js`) and refactor the new page AND existing pages to use it. Record every promotion in the SDD `design.md` under "Promoted to shared".
+8. Minimise steps — fewest clicks possible; pre-select defaults, don't hop pages for one task; if a flow exceeds ~3 clicks, rethink it.
+9. Confirm critical actions (delete/submit/cancel/approve/reject) with a popup ("Are you sure?") so users dare to explore unfamiliar features and can always back out.
 
 The agent must also read the closest existing template under `resources/views/ui-design-templates/`
 and the matching `page-changelogs/*.md` to learn house style before designing.
