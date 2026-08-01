@@ -350,6 +350,21 @@ Each page's development history is logged in `page-changelogs/*.md` — **update
 
 The project applies **OOP principles at every layer**; FYP rubric evaluates this. Keep it consistent:
 
+### 0. UI Design Rules (user-mandated 2026-08-01)
+These three rules are **non-negotiable** for every page and every future change:
+
+1. **Colors must be consistent across all pages.**
+   - ALL colors come from the CSS custom-property token set in `public/css/theme.css` (`--color-bg`, `--color-surface`, `--color-primary`/`secondary`/`tertiary`/`error` + their `-container`/`-on-*` variants, defined once for dark + once for light).
+   - **NEVER hardcode hex/rgb/rgba** in a page's `@section('page-styles')`. Use `var(--color-...)`. If a new color is needed, add the token to `theme.css` once.
+   - Slot-grid colors are fixed token-mapped: Green=`--color-secondary`, Red=`--color-error`, Yellow=`--color-tertiary`, Grey=`--color-outline-strong`, Blue=`--color-primary`. Status badges use the same mapping on every page.
+
+2. **Use the same name for the same thing everywhere.**
+   - Identical UI = identical class name across all pages (`.badge`, `.summary-card`, `.filter-select`, `.cell-code`, `.cell-name`, `.btn-action`, `.timetable`, `.empty-state`, `.page-header`, etc., defined once in `theme.css`).
+   - Same component = same structure (e.g. the `.summary-bar` + `.summary-card` pattern via `@include('partials.ui-summary-bar')`). State/status label strings are unified ("Pending", "Approved", "Rejected", "Cancelled", "Completed") — no per-page synonyms.
+   - A new component = add ONE class to `theme.css` + ONE partial, then `@include` it everywhere. Do NOT invent a parallel class name on another page.
+
+3. **Utilise OOP concepts** (see §10.1–10.4 below — Inheritance, Composition, Encapsulation/DRY, service classes). No copy-paste; reuse layout/partial/shared-module.
+
 ### 1. Inheritance
 - **Blade layout inheritance:** every page `@extends('layouts.ui-template')` and fills `@section('content')`, `@section('page-styles')`, `@section('page-scripts')`, `@yield('title')`. See `resources/views/layouts/ui-template.blade.php` (42 lines).
 - PHP: Eloquent models inherit `Model`; `User` extends `Authenticatable`; middleware extends base classes; migrations use anonymous `class extends Migration`.
