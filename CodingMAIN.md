@@ -415,7 +415,12 @@ These five rules are **non-negotiable** for every page and every future change:
 ### 3. Encapsulation & DRY — shared modules
 - **`public/css/theme.css`** (655 lines) — ALL shared CSS (nav bar, app container, page header, toolbar, tables, badges, pagination, summary cards, empty states, responsive breakpoints, color tokens via CSS custom properties). Page-specific styles stay in `@section('page-styles')`.
 - **`public/js/ui-common.js`** (197 lines) — shared JS helpers: `updateIcon`, `toggleTheme`, `navigateHome`, `to12h`, `formatDate`, plus consolidated table/sort/pagination/urgency helpers. Page-specific logic stays in `@section('page-scripts')`.
-- **NEVER copy-paste** nav bar, tables, or helpers into a new page — reuse the layout/partials/shared modules.
+- **`public/js/mock-data.js`** — the **single source of truth for ALL mock data** across every UI page (`window.MockData`). Contains shared registries (`cohorts`, `lecturers`, `venues`, `semester`, `holidays`) and per-page datasets (`myTimetable`, `cohortTimetable`, `requests`, `conflictedClasses`, etc.). Throwaway-by-design: deleted when Sprint 3 wires real Livewire/DB data.
+  - **Rule:** every UI page MUST read mock data from `window.MockData.*` — NEVER re-declare cohorts/lecturers/venues/semester or duplicate page datasets inline in a `<script>` block.
+  - **Read-only:** pages MUST treat `MockData` as immutable. Derive a local copy (`slice()`/spread) before mutating per-week/per-session state — never mutate `MockData` directly (it contaminates other pages).
+  - **New page needs new data?** Add ONE new section to `public/js/mock-data.js` (e.g. `MockData.studentTimetable = {...}`), then reference it from the page. Do NOT inline it.
+  - The page still loads via `<script src="/js/mock-data.js"></script>` (already included by `layouts/ui-template`); the page's own `@section('page-scripts')` holds only render logic, no data.
+- **NEVER copy-paste** nav bar, tables, helpers, or mock data into a new page — reuse the layout/partials/shared modules.
 - Theme toggle: `localStorage('theme')` = `dark`/`light`, `<html class="dark">` default; login pages use `.login-theme-toggle` (avoid class collision with nav `.theme-toggle`).
 
 ### 4. General PHP/Laravel conventions
@@ -489,10 +494,12 @@ resources/views/layouts/ui-template.blade.php   ← shared layout (inheritance)
 resources/views/partials/ui-nav-bar.blade.php   ← shared nav (composition)
 resources/views/partials/ui-summary-bar.blade.php
 public/css/theme.css                 ← ALL shared CSS
-public/js/ui-common.js               ← ALL shared JS
+public/js/ui-common.js               ← ALL shared JS helpers
+public/js/mock-data.js               ← ALL mock data (window.MockData), single source — pages READ ONLY
 resources/views/ui-design-templates/ ← 5 mock templates
 page-changelogs/                     ← per-page change logs
 .sdd/changes/                        ← SDD change proposals
+prompts/                             ← sdd-propose template + spec (auto-read via AGENTS.md)
 ```
 
 ---

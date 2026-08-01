@@ -30,18 +30,19 @@ After reading the above, talk to the user first — do NOT jump straight to writ
 ## Mandated design rules (from CodingMAIN.md §10.0) — every rule must be followed
 1. **Color consistency** — consume ONLY `public/css/theme.css` CSS custom-property tokens (`--color-*`). NEVER hardcode hex/rgb/rgba in `@section('page-styles')`. If a new color is needed, add ONE token to `theme.css` once.
 2. **Same name + same color = same meaning** — use the canonical legend/status→color map in §10.0 exactly. No synonyms, no recoloring. A status shown on another page reuses the same label + token here.
-3. **OOP concepts** — `@extends('layouts.ui-template')`; reuse `@include('partials.ui-nav-bar'...)` and `@include('partials.ui-summary-bar'...)`; shared JS in `public/js/ui-common.js`; shared CSS in `theme.css`. NEVER copy-paste nav bar / table / helpers into the new page.
-4. **Minimise plain text, maximise icon buttons** — actions are icon buttons (✎ ✕ ✓ 👁 ‹ › ▲▼) with `title`/`aria-label`, not verbose text labels. Visible text limited to titles, headers, badges, key data. Reuse SVGs from `resources/views/flux/icon/`.
-5. **Don't overwhelm — 冷门/detail info in modals** — the page surface shows only scannable essentials (grid/table + filters + summary cards + primary actions). Full request details, audit history, rejection-reason form, validation breakdown etc. open in a **modal** on click.
+3. **OOP concepts + DRY** — `@extends('layouts.ui-template')`; reuse `@include('partials.ui-nav-bar'...)` and `@include('partials.ui-summary-bar'...)`; shared JS helpers in `public/js/ui-common.js`; shared CSS in `theme.css`; **shared mock data in `public/js/mock-data.js` (`window.MockData`)**. NEVER copy-paste nav bar / table / helpers / mock data into the new page.
+4. **Mock data: one source of truth (`public/js/mock-data.js`)** — the page MUST read mock data from `window.MockData.*`, NOT re-declare cohorts/lecturers/venues/semester or duplicate page datasets inline. `MockData` is READ-ONLY: derive a local copy (`slice()`/spread) before mutating per-week/per-session state. If the page needs NEW mock data, add ONE new section to `mock-data.js` (e.g. `MockData.studentTimetable = {...}`) and reference it — do NOT inline it in the page's `<script>`. (Throwaway-by-design: deleted in Sprint 3 when real Livewire/DB data is wired.)
+5. **Minimise plain text, maximise icon buttons** — actions are icon buttons (✎ ✕ ✓ 👁 ‹ › ▲▼) with `title`/`aria-label`, not verbose text labels. Visible text limited to titles, headers, badges, key data. Reuse SVGs from `resources/views/flux/icon/`.
+6. **Don't overwhelm — 冷门/detail info in modals** — the page surface shows only scannable essentials (grid/table + filters + summary cards + primary actions). Full request details, audit history, rejection-reason form, validation breakdown etc. open in a **modal** on click.
 
 ## Deliverables (SDD: proposal → design → tasks)
 1. `.sdd/changes/<change-name>/` with `sdd.yaml`, `proposal.md`, `design.md`, `tasks.md`.
-2. The Blade template (mock data in inline `<script>`, no backend wiring — frontend-only phase).
+2. The Blade template (render logic in `@section('page-scripts')`; NO inline mock data — read from `window.MockData.*`). If new mock data is needed, add it to `public/js/mock-data.js`.
 3. The route added to `routes/web.php`.
 4. A matching `page-changelogs/<change-name>-changelog.md`.
 5. After apply, run `composer run lint:check` + `composer run types:check` and confirm no new failures.
 
 ## Constraints / out of scope
 - No new migrations, models, or backend logic (frontend mock phase).
-- No new dependencies; reuse existing Flux/Livewire/Tailwind + `theme.css` + `ui-common.js`.
+- No new dependencies; reuse existing Flux/Livewire/Tailwind + `theme.css` + `ui-common.js` + `mock-data.js`.
 - Keep the page under ~1500 lines (split into partials if larger).

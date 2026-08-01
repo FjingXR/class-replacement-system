@@ -16,9 +16,10 @@ how to work in this repo and what to read before generating output.
 That spec enforces, for every new UI page:
 1. Color consistency — only `public/css/theme.css` CSS custom-property tokens; never hardcode hex/rgb.
 2. Same name + same color for the same meaning — follow the canonical legend/status→color map in §10.0.
-3. OOP concepts — `@extends('layouts.ui-template')`, `@include` partials, shared `theme.css` + `ui-common.js`; no copy-paste.
-4. Minimise plain text, maximise icon buttons (reuse `resources/views/flux/icon/`).
-5. Don't overwhelm — detail/冷门 info goes in modals, not the page surface.
+3. OOP concepts — `@extends('layouts.ui-template')`, `@include` partials, shared `theme.css` + `ui-common.js` + `mock-data.js`; no copy-paste.
+4. **Mock data: read from `window.MockData` in `public/js/mock-data.js` (single source).** Never re-declare cohorts/lecturers/venues/semester or duplicate page datasets inline. New data → add ONE section to `mock-data.js`. Treat `MockData` as read-only; `slice()`/spread before mutating.
+5. Minimise plain text, maximise icon buttons (reuse `resources/views/flux/icon/`).
+6. Don't overwhelm — detail/冷门 info goes in modals, not the page surface.
 
 The agent must also read the closest existing template under `resources/views/ui-design-templates/`
 and the matching `page-changelogs/*.md` to learn house style before designing.
