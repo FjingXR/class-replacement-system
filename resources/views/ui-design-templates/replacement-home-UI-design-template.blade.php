@@ -173,6 +173,65 @@
             filter: brightness(1.08);
         }
 
+        /* ───── Week Picker (matches My Timetable) ───── */
+        .week-picker {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .week-arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .week-arrow:hover {
+            background: var(--color-surface-variant);
+        }
+        .week-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .week-arrow:disabled:hover {
+            background: transparent;
+        }
+        .week-select {
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 28px 4px 10px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            min-width: 140px;
+        }
+        .week-select option {
+            background: var(--color-surface);
+            color: var(--color-on-surface);
+        }
+        html.dark .week-select {
+            color-scheme: dark;
+        }
+
 @endsection
 
 @section('content')
@@ -194,9 +253,11 @@
                     </svg>
                     <input class="search-input" id="searchInput" placeholder="Search by course code or name...">
                 </div>
-                <select class="filter-select" id="weekFilter">
-                    <option value="all">All Weeks</option>
-                </select>
+                <div class="week-picker">
+                    <button class="week-arrow" onclick="prevWeekFilter()" aria-label="Previous week">&#8249;</button>
+                    <select class="week-select" id="weekFilter" onchange="weekFilterChanged(this.value)"></select>
+                    <button class="week-arrow" onclick="nextWeekFilter()" aria-label="Next week">&#8250;</button>
+                </div>
             </div>
             <div class="toolbar-right">
                 <span class="result-count" id="resultCount">Showing 14 of 14 classes</span>
@@ -293,6 +354,15 @@
             const date = new Date(isoDate + 'T00:00:00');
             const diff = Math.floor((date - semesterStart) / (1000 * 60 * 60 * 24));
             return Math.floor(diff / 7) + 1;
+        }
+
+        function weekRangeLabel(weekNum) {
+            const start = new Date('2026-08-31');
+            start.setDate(start.getDate() + (weekNum - 1) * 7);
+            const end = new Date(start);
+            end.setDate(end.getDate() + 6);
+            const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            return 'Week ' + weekNum + ' · ' + formatDate(iso(start)) + ' ~ ' + formatDate(iso(end));
         }
 
         const pageState = { currentPage: 1 };
@@ -426,7 +496,7 @@
             Array.from(weeks).sort(function(a, b) { return a - b; }).forEach(function(w) {
                 const opt = document.createElement('option');
                 opt.value = String(w);
-                opt.textContent = 'Week ' + w;
+                opt.textContent = weekRangeLabel(w);
                 sel.appendChild(opt);
             });
         }
@@ -435,16 +505,41 @@
             window.location.href = '/replacement-arrangement?code=' + encodeURIComponent(code) + '&date=' + encodeURIComponent(date);
         }
 
+        function weekFilterChanged() {
+            pageState.currentPage = 1;
+            buildTable();
+            updateWeekArrowState();
+        }
+
+        function prevWeekFilter() {
+            const sel = document.getElementById('weekFilter');
+            if (sel.selectedIndex > 0) {
+                sel.selectedIndex--;
+                sel.dispatchEvent(new Event('change'));
+            }
+        }
+
+        function nextWeekFilter() {
+            const sel = document.getElementById('weekFilter');
+            if (sel.selectedIndex < sel.options.length - 1) {
+                sel.selectedIndex++;
+                sel.dispatchEvent(new Event('change'));
+            }
+        }
+
+        function updateWeekArrowState() {
+            const sel = document.getElementById('weekFilter');
+            updateWeekArrows(sel.selectedIndex <= 0, sel.selectedIndex >= sel.options.length - 1);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             populateWeekDropdown();
             buildTable();
+            updateWeekArrowState();
             document.getElementById('searchInput').addEventListener('input', function() {
                 pageState.currentPage = 1;
                 buildTable();
             });
-            document.getElementById('weekFilter').addEventListener('change', function() {
-                pageState.currentPage = 1;
-                buildTable();
-            });
+            document.getElementById('weekFilter').addEventListener('change', weekFilterChanged);
         });
 @endsection

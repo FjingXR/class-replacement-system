@@ -133,10 +133,11 @@
         }
 
         /* ───── Hour Header ───── */
-        .hour-header {
+        .timetable thead th.hour-header {
             padding: 6px 4px;
             font-size: 12px;
             min-width: 80px;
+            text-align: center;
         }
         .hour-header .hour-top {
             display: block;
@@ -804,13 +805,13 @@
             cornerTh.innerHTML = '<span style="font-size:13px;font-weight:600;">Day / Time</span>';
             timeHeaderRow.appendChild(cornerTh);
 
-            hours.forEach(h => {
+            for (let i = 0; i < hours.length; i += 2) {
                 const th = document.createElement('th');
                 th.className = 'hour-header';
-                const end = add30min(h);
-                th.innerHTML = `<span class="hour-top">${h}</span><span class="hour-bottom">${end}</span>`;
+                th.colSpan = 2;
+                th.innerHTML = `<span class="hour-top">${hours[i]}</span><span class="hour-bottom">${hours[i + 2] || add30min(hours[i + 1])}</span>`;
                 timeHeaderRow.appendChild(th);
-            });
+            }
             head.appendChild(timeHeaderRow);
 
             days.forEach((day, di) => {
