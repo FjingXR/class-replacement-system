@@ -759,6 +759,10 @@
         </svg>
     </button>
 
+    <div class="page-header">
+        <span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>
+    </div>
+
         <div class="toolbar">
             <div class="toolbar-left">
                 <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>

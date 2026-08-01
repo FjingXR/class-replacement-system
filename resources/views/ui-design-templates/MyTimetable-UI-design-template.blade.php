@@ -66,16 +66,6 @@
             background: var(--color-surface);
             color: var(--color-on-surface);
         }
-        .semester-chip {
-            display: inline-block;
-            margin-top: 6px;
-            padding: 3px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            background: var(--color-secondary-container);
-            color: var(--color-on-secondary-container);
-        }
         html.dark .week-select {
             color-scheme: dark;
         }

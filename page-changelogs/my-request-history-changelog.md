@@ -34,6 +34,7 @@
 | 2026-08-01 14:31 | Lines 164–175 | New summary card | Added `Replacement Hours` summary card (2nd position, after Total Requests) — sums `duration` across all requests (shows 40 hrs for 20 × 2-hr requests). Card style: `1px dashed outline-strong` border + `surface-variant` background, value color `on-surface` — matches `card-hours` pattern on timetable pages. |
 | 2026-08-01 14:31 | Lines 390–399 | Summary bar 5 cards | Added `card-hours` entry to `@include('partials.ui-summary-bar')` — summary bar now has 5 cards (Total Requests, Replacement Hours, Approved, Pending, Rejected). Base grid in `theme.css` already uses `repeat(5, 1fr)`. |
 | 2026-08-01 14:31 | Lines 744–759 | Summary logic | `updateSummary()` now sums `r.duration` across all requests (consistent with Total counting all 20, independent of Exclude Completed toggle) and updates `summaryHours`. |
+| 2026-08-01 15:01 | Line 341 | Semester chip | Added `semester-chip` pill (`202605 Semester · 15-Jun-2026 ~ 20-Sep-2026`) after page title — same style/position as my-timetable and cohort-timetable. CSS moved to shared `theme.css`. |
 
 ### `routes/web.php`
 

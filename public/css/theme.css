@@ -329,6 +329,16 @@ body {
     margin-top: 4px;
     margin-bottom: 0;
 }
+.semester-chip {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--color-secondary-container);
+    color: var(--color-on-secondary-container);
+}
 
 /* ───── Toolbar ───── */
 .toolbar {

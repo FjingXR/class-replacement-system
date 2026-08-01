@@ -338,6 +338,7 @@
         <!-- ─── Page Header ─── -->
         <div class="page-header">
             <h1 class="page-title">My Request History</h1>
+            <span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>
             <p class="page-desc">View and monitor all replacement requests submitted during the current semester.</p>
         </div>
 
