@@ -351,7 +351,7 @@ Each page's development history is logged in `page-changelogs/*.md` — **update
 The project applies **OOP principles at every layer**; FYP rubric evaluates this. Keep it consistent:
 
 ### 0. UI Design Rules (user-mandated 2026-08-01)
-These three rules are **non-negotiable** for every page and every future change:
+These five rules are **non-negotiable** for every page and every future change:
 
 1. **Colors must be consistent across all pages.**
    - ALL colors come from the CSS custom-property token set in `public/css/theme.css` (`--color-bg`, `--color-surface`, `--color-primary`/`secondary`/`tertiary`/`error` + their `-container`/`-on-*` variants, defined once for dark + once for light).
@@ -394,6 +394,15 @@ These three rules are **non-negotiable** for every page and every future change:
    Adding a new status/legend item = add ONE row to the relevant table above + ONE class to `theme.css`, then reuse it everywhere. Do not invent a synonym.
 
 3. **Utilise OOP concepts** (see §10.1–10.4 below — Inheritance, Composition, Encapsulation/DRY, service classes). No copy-paste; reuse layout/partial/shared-module.
+
+4. **Minimise plain text, maximise icon buttons.**
+   - Prefer **icon buttons** over text labels where the action is self-evident (edit ✎, cancel ✕, approve ✓, view 👁, chevrons ‹ ›, sort ▲▼, theme-toggle, notifications). Use `title`/`aria-label` for accessibility instead of visible text.
+   - Keep visible text to essentials: page title, table headers, status badges, and the key data the user came for. Long action verbs ("Approve Request", "View Details", "Cancel Request") → icon button + tooltip.
+   - Reusable inline SVG icon set lives in `resources/views/flux/icon/` (`book-open-text`, `chevrons-up-down`, etc.); reuse those — don't paste ad-hoc SVGs per page.
+
+5. **Don't overwhelm the user — push detail/secondary/冷门 info into modals.**
+   - The page surface shows only what's needed to scan & act: the grid/table, its filters, summary cards, and primary actions. Everything else (full request details, audit history, rejection-reason form, validation breakdown, room/cohort breakdowns, raw slot data) opens in a **modal** on click, not inline.
+   - Rule of thumb: if a column/field is "nice to know" rather than "need to scan", it belongs behind an icon button that opens a modal. Keep the default view scannable.
 
 ### 1. Inheritance
 - **Blade layout inheritance:** every page `@extends('layouts.ui-template')` and fills `@section('content')`, `@section('page-styles')`, `@section('page-scripts')`, `@yield('title')`. See `resources/views/layouts/ui-template.blade.php` (42 lines).
