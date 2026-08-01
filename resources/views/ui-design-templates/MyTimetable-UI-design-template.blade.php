@@ -66,13 +66,15 @@
             background: var(--color-surface);
             color: var(--color-on-surface);
         }
-        .session-text {
-            flex: 1;
-            text-align: center;
-            font-size: 16px;
+        .semester-chip {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 600;
-            opacity: 0.85;
-            white-space: nowrap;
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
         }
         html.dark .week-select {
             color-scheme: dark;
@@ -541,6 +543,7 @@
         <!-- ─── Page Header ─── -->
         <div class="page-header">
             <h1 class="page-title">My Timetable</h1>
+            <span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>
             <p class="page-desc">View your weekly class schedule and manage replacement requests across all cohorts.</p>
         </div>
 
@@ -549,7 +552,6 @@
             <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
             <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)"></select>
             <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
-            <span class="session-text">202605 Semester (Monday, 15-Jun-2026 ~ Sunday, 20-Sep-2026)</span>
         </div>
 
         <!-- ─── Grid Wrapper ─── -->
