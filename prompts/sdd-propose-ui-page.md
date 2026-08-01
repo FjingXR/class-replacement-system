@@ -1,11 +1,9 @@
-# Reusable Prompt: /sdd-propose for a new UI frontend-only page
+# Spec: /sdd-propose for a new UI frontend-only page
 
-> Paste the block below into a fresh chat (or fork) when running `/sdd-propose` for any
-> new **frontend-only UI page**. Replace the `<...>` placeholders before sending.
-
----
-
-/sdd-propose
+> **This file is auto-referenced.** `AGENTS.md` instructs any agent to read this spec
+> BEFORE generating `/sdd-propose` output for a new **frontend-only UI page**.
+> Fill the `<...>` placeholders in the "Page to create" section, then proceed to generate
+> the SDD proposal/design/tasks following the rules below.
 
 Create a new **frontend-only UI page** for the TARUMT Class Replacement System.
 
