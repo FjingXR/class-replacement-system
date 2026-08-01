@@ -511,13 +511,6 @@
             <button class="week-arrow" onclick="nextWeek()" aria-label="Next week" disabled>&#8250;</button>
         </div>
 
-        <!-- ─── Result Count ─── -->
-        <div class="toolbar">
-            <div class="toolbar-right">
-                <span class="result-count" id="resultCount">Showing 0 of 0 events</span>
-            </div>
-        </div>
-
         <!-- ─── Grid Wrapper ─── -->
         <div class="grid-wrapper">
             <div class="grid-scroll" id="gridScroll">
@@ -631,6 +624,7 @@
         const weekData = (function() {
             const start = new Date(2026, 5, 15); // 15-Jun-2026
             const arr = [];
+            const todayMs = (function() { const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             for (let w = 1; w <= 14; w++) {
                 const ms = start.getTime() + (w - 1) * 7 * 86400000;
                 const mon = new Date(ms);
@@ -643,11 +637,11 @@
                         abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
                         date: fmt(dt),
                         sunday: d === 6,
-                        today: d === 0 && w === 3,
+                        today: dt.getTime() === todayMs,
                         holiday: d === 3 && w === 3,
                     });
                 }
-                arr.push({ label: `Week ${w + 8}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, days });
+                arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, days });
             }
             return arr;
         })();
@@ -809,7 +803,14 @@
         addEvent('dmc2s1', 2, { di:4, start:4, end:7, code:'COM3003', type:'T', venue:'E103', lecturer:'Ms. Karen Lim', status:'pending', name:'Public Relations', remarks:'' });
 
         /* ───── State ───── */
-        let currentWeek = 2; // Week 11 — current week (today column highlighted)
+        function currentWeekIndex() {
+            const semesterStart = new Date(2026, 5, 15);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const idx = Math.floor((today - semesterStart) / 86400000 / 7);
+            return Math.max(0, Math.min(weekData.length - 1, idx));
+        }
+        let currentWeek = currentWeekIndex();
         let selectedCohortId = null;
 
         /* ════════════════════════════════════════════
@@ -848,7 +849,6 @@
                 document.getElementById('sumReplacement').textContent = '0';
                 document.getElementById('sumPending').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
-                document.getElementById('resultCount').textContent = 'Showing 0 of 0 events';
                 updateWeekArrows(true, true);
                 selectedCohortId = null;
                 saveState();
@@ -868,7 +868,6 @@
             document.getElementById('sumReplacement').textContent = '0';
             document.getElementById('sumPending').textContent = '0';
             document.getElementById('sumConflict').textContent = '0';
-            document.getElementById('resultCount').textContent = 'Showing 0 of 0 events';
             updateWeekArrows(true, true);
             selectedCohortId = null;
             saveState();
@@ -890,15 +889,14 @@
                 document.getElementById('sumReplacement').textContent = '0';
                 document.getElementById('sumPending').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
-                document.getElementById('resultCount').textContent = 'Showing 0 of 0 events';
                 updateWeekArrows(true, true);
                 saveState();
                 return;
             }
             selectedCohortId = cid;
             weekSel.disabled = false;
-            currentWeek = 2; // default to current week (Week 11) so today column is highlighted
-            document.getElementById('weekSelect').selectedIndex = 2;
+            currentWeek = currentWeekIndex();
+            document.getElementById('weekSelect').selectedIndex = currentWeek;
             buildTimetable();
             saveState();
         }
@@ -1000,7 +998,6 @@
                 document.getElementById('sumReplacement').textContent = '0';
                 document.getElementById('sumPending').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
-                document.getElementById('resultCount').textContent = 'Showing 0 of 0 events';
                 updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
                 return;
             }
@@ -1089,7 +1086,7 @@
                         if (e.status === 'replacement' && e.remarks) {
                             extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
                         } else if (e.status === 'pending') {
-                            extraHtml = `<span class="ev-note">(Pending Approval)</span>`;
+                            extraHtml = `<span class="ev-note">(Pending)</span>`;
                         }
 
                         div.innerHTML = `
@@ -1119,7 +1116,6 @@
                 body.appendChild(tr);
             });
 
-            document.getElementById('resultCount').textContent = 'Showing ' + weekEvents.length + ' of ' + weekEvents.length + ' events';
             updateSummaries(weekEvents);
         }
 

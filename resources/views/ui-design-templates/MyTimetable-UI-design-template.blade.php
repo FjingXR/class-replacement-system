@@ -563,15 +563,15 @@
             </div>
             <div class="legend-item">
                 <div class="legend-swatch" style="background: var(--color-primary);"></div>
-                Confirmed Replacement
+                Replacement
             </div>
             <div class="legend-item">
                 <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
-                Pending Approval
+                Pending
             </div>
             <div class="legend-item">
                 <div class="legend-swatch" style="background: var(--color-error);"></div>
-                Public Holiday / Conflict
+                Conflict
             </div>
         </div>
 
@@ -580,9 +580,9 @@
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
                 ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Teaching Hours'],
-                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Confirmed Replacement'],
-                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending Approval'],
-                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts / Public Holiday'],
+                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
+                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts'],
             ]
         ])
 
@@ -636,59 +636,30 @@
 @section('page-scripts')
         const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
-        const weekData = [
-            {
-                label: 'Week 9',
-                range: '18 Aug – 24 Aug 2026',
-                days: [
-                    { abbr: 'Mon', date: '18 Aug 2026' },
-                    { abbr: 'Tue', date: '19 Aug 2026' },
-                    { abbr: 'Wed', date: '20 Aug 2026' },
-                    { abbr: 'Thu', date: '21 Aug 2026' },
-                    { abbr: 'Fri', date: '22 Aug 2026' },
-                    { abbr: 'Sat', date: '23 Aug 2026' },
-                    { abbr: 'Sun', date: '24 Aug 2026', sunday: true },
-                ]
-            },
-            {
-                label: 'Week 10',
-                range: '25 Aug – 31 Aug 2026',
-                days: [
-                    { abbr: 'Mon', date: '25 Aug 2026' },
-                    { abbr: 'Tue', date: '26 Aug 2026' },
-                    { abbr: 'Wed', date: '27 Aug 2026' },
-                    { abbr: 'Thu', date: '28 Aug 2026' },
-                    { abbr: 'Fri', date: '29 Aug 2026' },
-                    { abbr: 'Sat', date: '30 Aug 2026' },
-                    { abbr: 'Sun', date: '31 Aug 2026', sunday: true },
-                ]
-            },
-            {
-                label: 'Week 11',
-                range: '01 Sep – 07 Sep 2026',
-                days: [
-                    { abbr: 'Mon', date: '01 Sep 2026', today: true },
-                    { abbr: 'Tue', date: '02 Sep 2026' },
-                    { abbr: 'Wed', date: '03 Sep 2026' },
-                    { abbr: 'Thu', date: '04 Sep 2026', holiday: true },
-                    { abbr: 'Fri', date: '05 Sep 2026' },
-                    { abbr: 'Sat', date: '06 Sep 2026' },
-                    { abbr: 'Sun', date: '07 Sep 2026', sunday: true },
-                ]
+        const weekData = (function() {
+            const start = new Date(2026, 5, 15); // 15-Jun-2026 (semester start, Monday)
+            const arr = [];
+            const todayMs = (function() { const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime(); })();
+            const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
+            for (let w = 1; w <= 14; w++) {
+                const ms = start.getTime() + (w - 1) * 7 * 86400000;
+                const days = [];
+                for (let d = 0; d < 7; d++) {
+                    const dt = new Date(ms + d * 86400000);
+                    days.push({
+                        abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
+                        date: fmt(dt),
+                        sunday: d === 6,
+                        today: dt.getTime() === todayMs,
+                    });
+                }
+                arr.push({ label: `Week ${w}`, range: `${fmt(new Date(ms))} ~ ${fmt(new Date(ms + 6 * 86400000))}`, days });
             }
-        ];
+            return arr;
+        })();
 
         const eventsData = {
-            0: [
-                { di: 0, start: 4, end: 7, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', status: 'normal', name: 'Object-Oriented Programming', remarks: '' },
-                { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2 (S1)', status: 'normal', name: 'Database Systems', remarks: '' },
-            ],
-            1: [
-                { di: 0, start: 4, end: 7, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', status: 'normal', name: 'Object-Oriented Programming', remarks: '' },
-                { di: 2, start: 2, end: 5, code: 'BMIT9012', type: 'L', venue: 'B106', lecturer: 'Pn. Surayaini Basri', cohort: 'RSD2 (S1)', status: 'normal', name: 'Computer Networks', remarks: '' },
-                { di: 4, start: 0, end: 3, code: 'BMIT3456', type: 'L', venue: 'B103', lecturer: 'Dr. Chang Foo Chung', cohort: 'RAF2 (S1)', status: 'normal', name: 'Artificial Intelligence', remarks: '' },
-            ],
-            2: [
+            11: [
                 { di: 0, start: 4, end: 7, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', studentCount: 24, status: 'normal', name: 'Object-Oriented Programming', remarks: '' },
                 { di: 0, start: 12, end: 14, code: 'BMIT1234', type: 'T', venue: 'B104', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', studentCount: 22, status: 'normal', name: 'Data Structures', remarks: '' },
                 { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2 (S1)', studentCount: 28, status: 'normal', name: 'Database Systems', remarks: '' },
@@ -704,7 +675,21 @@
             ]
         };
 
-        let currentWeek = 2;
+        /* ───── Weekly repeating schedule: every week copies Week 12's normal classes ───── */
+        const weeklyTemplate = eventsData[11].filter(function(e) { return e.status === 'normal'; });
+        for (let i = 0; i < weekData.length; i++) {
+            if (i === 11) continue;
+            eventsData[i] = weeklyTemplate.slice();
+        }
+
+        function currentWeekIndex() {
+            const semesterStart = new Date(2026, 5, 15);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const idx = Math.floor((today - semesterStart) / 86400000 / 7);
+            return Math.max(0, Math.min(weekData.length - 1, idx));
+        }
+        let currentWeek = currentWeekIndex();
 
         function openModal(event) {
             document.getElementById('modalTitle').textContent = event.code || 'Class Details';
