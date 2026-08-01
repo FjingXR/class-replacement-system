@@ -691,6 +691,18 @@
         }
         let currentWeek = currentWeekIndex();
 
+        /* ───── Week persistence: keep the user's chosen week across refresh ───── */
+        const WEEK_KEY = 'myTimetableWeek';
+        function loadSavedWeek() {
+            const saved = parseInt(localStorage.getItem(WEEK_KEY));
+            if (!isNaN(saved) && saved >= 0 && saved < weekData.length) {
+                currentWeek = saved;
+            }
+        }
+        function saveWeek() {
+            try { localStorage.setItem(WEEK_KEY, String(currentWeek)); } catch (e) { /* storage unavailable — ignore */ }
+        }
+
         function openModal(event) {
             document.getElementById('modalTitle').textContent = event.code || 'Class Details';
 
@@ -919,6 +931,7 @@
                 currentWeek--;
                 buildTimetable();
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
+                saveWeek();
             }
         }
 
@@ -927,15 +940,18 @@
                 currentWeek++;
                 buildTimetable();
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
+                saveWeek();
             }
         }
 
         function selectWeek(index) {
             currentWeek = parseInt(index);
             buildTimetable();
+            saveWeek();
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            loadSavedWeek();
             const sel = document.getElementById('weekSelect');
             sel.innerHTML = weekData.map((w, i) =>
                 `<option value="${i}">${w.label} · ${w.range}</option>`

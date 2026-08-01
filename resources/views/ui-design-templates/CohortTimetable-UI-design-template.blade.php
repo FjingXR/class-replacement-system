@@ -961,6 +961,7 @@
                     currentWeek = w;
                     document.getElementById('weekSelect').selectedIndex = w;
                     buildTimetable();
+                    saveState();
                 }
             }
         }
