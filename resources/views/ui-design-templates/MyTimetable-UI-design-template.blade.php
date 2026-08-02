@@ -135,6 +135,12 @@
             <p class="page-desc">View your weekly class schedule and manage replacement requests across all cohorts.</p>
         </div>
 
+        <!-- ─── Semester Progress ─── -->
+        <div class="semester-progress" id="semesterProgress">
+            <div class="progress-label" id="progressLabel"></div>
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+
         <!-- ─── Semester Bar ─── -->
         <div class="semester-bar">
             <div class="week-nav">
@@ -142,7 +148,18 @@
                 <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)"></select>
                 <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
             </div>
+            <button class="today-btn" id="todayBtn" title="Jump to current week" aria-label="Jump to current week">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="6"/>
+                    <circle cx="12" cy="12" r="2"/>
+                </svg>
+                Today
+            </button>
         </div>
+
+        <!-- ─── Week Subtitle ─── -->
+        <div class="week-subtitle" id="weekSubtitle"></div>
 
         <!-- ─── Grid Wrapper ─── -->
         <div class="grid-wrapper">
@@ -151,6 +168,19 @@
                     <thead id="tableHead"></thead>
                     <tbody id="tableBody"></tbody>
                 </table>
+            </div>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <div class="empty-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                        <line x1="10" y1="14" x2="14" y2="18"/>
+                        <line x1="14" y1="14" x2="10" y2="18"/>
+                    </svg>
+                </div>
+                <div class="empty-title">No classes this week<br>All classes for this week have been cancelled.</div>
             </div>
         </div>
 
@@ -210,8 +240,11 @@
                 <button class="btn-cancel-secondary" onclick="closeCancelConfirm(false)">No, Keep It</button>
                 <button class="btn-cancel-danger" onclick="closeCancelConfirm(true)">Yes, Cancel Class</button>
             </div>
+            </div>
         </div>
-    </div>
+
+    <!-- ═══ Copy Toast ═══ -->
+    <div class="copy-toast" id="copyToast"></div>
 
 @endsection
 
@@ -220,6 +253,7 @@
 
         const weekData = (function() {
             const start = new Date(MockData.semester.startDate); // semester start, Monday
+            start.setHours(0, 0, 0, 0);
             const arr = [];
             const todayMs = (function() { const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
@@ -229,11 +263,21 @@
                 const days = [];
                 for (let d = 0; d < 7; d++) {
                     const dt = new Date(ms + d * 86400000);
+                    let holiday = false;
+                    let holidayLabel = '';
+                    MockData.holidays.forEach(function(h) {
+                        if (h.week === w && h.dayIndex === d) {
+                            holiday = true;
+                            holidayLabel = h.label;
+                        }
+                    });
                     days.push({
                         abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
                         date: fmt(dt),
                         sunday: d === 6,
                         today: dt.getTime() === todayMs,
+                        holiday: holiday,
+                        holidayLabel: holidayLabel,
                     });
                 }
                 arr.push({ label: `Week ${w}`, range: `${fmt(new Date(ms))} ~ ${fmt(new Date(ms + 6 * 86400000))}`, rangeShort: `${fmtShort(new Date(ms))} ~ ${fmtShort(new Date(ms + 6 * 86400000))}`, days });
@@ -271,6 +315,21 @@
             try { localStorage.setItem(WEEK_KEY, String(currentWeek)); } catch (e) { /* storage unavailable — ignore */ }
         }
 
+        function updateProgress() {
+            const pct = ((currentWeek + 1) / MockData.semester.weeks) * 100;
+            const fill = document.getElementById('progressFill');
+            const label = document.getElementById('progressLabel');
+            if (fill) fill.style.width = pct + '%';
+            if (label) label.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks;
+        }
+
+        function updateWeekSubtitle() {
+            const el = document.getElementById('weekSubtitle');
+            if (el) {
+                el.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks + ' \u00B7 ' + weekData[currentWeek].range;
+            }
+        }
+
         function openModal(event) {
             document.getElementById('modalTitle').textContent = event.code || 'Class Details';
 
@@ -299,6 +358,15 @@
                 studentValue = event.studentCounts.join('+') + ' = ' + event.studentCounts.reduce((a, b) => a + b, 0);
             }
 
+            let timelineHtml = '';
+            if (event.status === 'pending') {
+                timelineHtml = '<div class="status-timeline">' +
+                    '<div class="step completed">Submitted \u2713</div>' +
+                    '<div class="step active">Under Review</div>' +
+                    '<div class="step">Awaiting Replacement</div>' +
+                '</div>';
+            }
+
             const fields = [
                 { label: 'Subject Code', value: event.code },
                 { label: 'Subject Name', value: event.name },
@@ -321,7 +389,7 @@
                 );
             }
 
-            document.getElementById('modalBody').innerHTML = fields.map(f =>
+            document.getElementById('modalBody').innerHTML = timelineHtml + fields.map(f =>
                 `<div class="modal-field">
                     <span class="field-label">${f.label}</span>
                     <span class="field-value">${f.value}</span>
@@ -356,12 +424,24 @@
         function buildTimetable() {
             const head = document.getElementById('tableHead');
             const body = document.getElementById('tableBody');
+            const tableEl = document.getElementById('timetable');
+            const emptyEl = document.getElementById('emptyState');
             head.innerHTML = '';
             body.innerHTML = '';
 
             const data = weekData[currentWeek];
             const days = data.days;
             const events = eventsData[currentWeek] || [];
+
+            if (events.length === 0) {
+                tableEl.style.display = 'none';
+                emptyEl.style.display = 'flex';
+                updateSummary();
+                return;
+            }
+
+            tableEl.style.display = '';
+            emptyEl.style.display = 'none';
 
             const timeHeaderRow = document.createElement('tr');
             const cornerTh = document.createElement('th');
@@ -385,12 +465,13 @@
                 const dayTd = document.createElement('td');
                 let dayColClass = 'time-col';
                 if (day.today) dayColClass += ' today';
-                if (day.holiday) dayColClass += ' holiday-col';
-                if (day.sunday) dayColClass += ' sunday-col';
+                if (day.holiday) dayColClass += ' offday';
                 dayTd.className = dayColClass;
                 let dayHtml = `<span class="day-label">${day.abbr}</span><span class="date-label">${day.date}</span>`;
                 if (day.holiday) {
                     dayHtml += `<span class="holiday-label">Public Holiday</span>`;
+                } else if (day.sunday) {
+                    dayHtml += `<span class="date-label off-label">OFF</span>`;
                 }
                 dayTd.innerHTML = dayHtml;
                 tr.appendChild(dayTd);
@@ -413,8 +494,7 @@
                 hours.forEach((h, hi) => {
                     const td = document.createElement('td');
                     let cellClass = 'hour-cell';
-                    if (day.sunday) cellClass += ' sunday-slot';
-                    if (day.holiday) cellClass += ' holiday-slot';
+                    if (day.sunday || day.holiday) cellClass += ' offday-slot';
                     td.className = cellClass;
                     td.dataset.day = di;
                     td.dataset.hour = hi;
@@ -426,6 +506,10 @@
                         const isConflict = day.holiday;
                         const div = document.createElement('div');
                         div.className = 'event-block span-' + info.span;
+                        div.setAttribute('tabindex', '0');
+                        div.__eventData = e;
+                        div.dataset.name = e.name || '';
+                        div.dataset.venue = e.venue || '';
                         if (isConflict) {
                             div.classList.add('event-public-holiday');
                         } else if (e.status === 'normal') {
@@ -499,6 +583,8 @@
                 currentWeek--;
                 buildTimetable();
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
+                updateWeekSubtitle();
+                updateProgress();
                 saveWeek();
             }
         }
@@ -508,6 +594,8 @@
                 currentWeek++;
                 buildTimetable();
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
+                updateWeekSubtitle();
+                updateProgress();
                 saveWeek();
             }
         }
@@ -515,6 +603,8 @@
         function selectWeek(index) {
             currentWeek = parseInt(index);
             buildTimetable();
+            updateWeekSubtitle();
+            updateProgress();
             saveWeek();
         }
 
@@ -532,6 +622,39 @@
             sel.selectedIndex = currentWeek;
 
             buildTimetable();
+            updateWeekSubtitle();
+            updateProgress();
+        });
+
+        document.getElementById('todayBtn').addEventListener('click', function() {
+            currentWeek = currentWeekIndex();
+            buildTimetable();
+            document.getElementById('weekSelect').selectedIndex = currentWeek;
+            updateWeekSubtitle();
+            updateProgress();
+            saveWeek();
+            document.querySelector('.grid-wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'SELECT' || document.getElementById('classModal').style.display === 'flex') return;
+            if (e.key === 'ArrowLeft') { prevWeek(); }
+            if (e.key === 'ArrowRight') { nextWeek(); }
+            if (e.key === 'Enter' && e.target.classList.contains('event-block')) {
+                const eventData = e.target.__eventData;
+                if (eventData) openModal(eventData);
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('ev-code')) {
+                navigator.clipboard.writeText(e.target.textContent).then(function() {
+                    const toast = document.getElementById('copyToast');
+                    toast.textContent = 'Copied ' + e.target.textContent;
+                    toast.classList.add('show');
+                    setTimeout(function() { toast.classList.remove('show'); }, 1500);
+                });
+            }
         });
 
         // Mobile swipe gestures for week navigation
