@@ -670,10 +670,15 @@
         }
         MockData.cohortTimetable.rsd3g2Flags && Object.keys(MockData.cohortTimetable.rsd3g2Flags).forEach(function(w) {
             var weekIdx = parseInt(w);
-            MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(idx) {
-                var copy = Object.assign({}, MockData.cohortTimetable.rsd3g2Base[idx]);
-                copy.status = 'pending';
-                allEvents[rsd3g2Cohort][weekIdx].push(copy);
+            MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(entry) {
+                var flagCode = entry[0], flagStatus = entry[1], flagDate = entry[2] || '';
+                var weekEvents = allEvents[rsd3g2Cohort][weekIdx];
+                weekEvents.forEach(function(evt) {
+                    if (evt.code === flagCode) {
+                        evt.status = flagStatus;
+                        if (flagDate) evt.remarks = flagDate;
+                    }
+                });
             });
         });
 

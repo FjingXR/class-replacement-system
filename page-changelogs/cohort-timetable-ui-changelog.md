@@ -99,6 +99,7 @@
 | 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — weeks 1–3 → weeks 1–14 | Replaced 3 explicit week blocks with a `for` loop generating all 14 dropdown weeks (indexes 0–13 = Week 9…22) → every week now shows 7 events / 14h |
 | 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — status flags | `rsd3g2Flags` map sets realistic replacement/pending statuses per week (e.g. W1 Capstone+Testing replaced, W2 IT Ethics pending, W4/W9/W13 pending, W3/W7/W11 replacement) — visible on non-holiday days; Thu events on the Week 11 public-holiday render as conflicts by design |
 | 2026-08-02 | `@section('page-scripts')` | Centralised mock data (Task 9) | Migrated facultyData, allEvents, and weekData to `public/js/mock-data.js` — page now reads from `window.MockData.cohortTimetable`. RSD3 G2 reconstructed from shared data via `rsd3g2Base`/`rsd3g2Flags`. Holiday rule now reads `MockData.holidays` instead of hardcoded map. Semester chip text reads `MockData.semester.chipText`. |
+| 2026-08-02 | `@section('page-scripts')` lines 660-683 | Fix RSD3 G2 reconstruction after centralisation | Three bugs: (1) Only flagged weeks created → week 0 (default) had no events. Fix: loop all 14 weeks first. (2) `rsd3g2Base` lacks `status` field → `event-normal` class not applied → transparent background. Fix: default `status: 'normal'`. (3) `rsd3g2Flags` format is `[code, status, date]` tuples but code treated entries as numeric indices → ghost entries with no code/status. Fix: match by `evt.code === flagCode` and set status/remarks in-place |
 
 ### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php` — selection persists across refresh (localStorage)
 
@@ -113,6 +114,7 @@
 
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
+| 2026-08-02 | JS lines 660-683 | Fix RSD3 G2 reconstruction | (1) Populate all 14 weeks with base events first (was only flagged weeks → week 0 missing). (2) Default `status: 'normal'` on base copies (rsd3g2Base lacks status → event-normal class not applied → no color). (3) Apply flags by matching code instead of numeric index (flags are `[code, status, date]` tuples, not indices → ghost entries with no code) |
 | 2026-07-30 | Line 9 | Nav link | Changed `Cohort Timetables` href from `#` → `/cohort-timetable-ui`, active class on `activeNav === 'cohort-timetables'` |
 
 ### `routes/web.php`
