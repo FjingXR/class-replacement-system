@@ -736,6 +736,42 @@
             .header-logo { height: 44px; }
             .sel-summary-grid { grid-template-columns: 1fr; }
             .sel-summary-info .info-rows { flex-direction: column; gap: 10px; }
+
+            /* Compact selection summary cards on mobile */
+            .sel-summary-card {
+                padding: 10px 12px;
+            }
+            .card-venue { font-size: 12px; }
+            .card-day { font-size: 13px; }
+            .card-date { font-size: 10px; margin-bottom: 4px; }
+            .card-time { font-size: 11px; }
+
+            /* Compact timetable grid on mobile */
+            .timetable {
+                min-width: 0;
+                width: 100%;
+            }
+            .timetable td.time-col {
+                width: 100%;
+                min-width: 0;
+            }
+            .timetable td.hour-cell {
+                min-width: 0;
+                width: auto;
+                height: 28px;
+                padding: 1px;
+                display: inline-block;
+            }
+            .timetable tbody tr {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2px;
+            }
+            .cell-content {
+                min-height: 24px;
+                font-size: 9px;
+                padding: 2px;
+            }
         }
 
 @endsection

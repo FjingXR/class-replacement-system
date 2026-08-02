@@ -1205,6 +1205,12 @@ html.dark .semester-bar select:not(.week-select) {
 @media (max-width: 768px) {
     .grid-scroll { overflow-x: hidden; }
 
+    /* FIX: Reset min-width so cards fit mobile viewport */
+    .timetable {
+        min-width: 0;
+        width: 100%;
+    }
+
     .timetable,
     .timetable thead,
     .timetable tbody,
@@ -1215,6 +1221,11 @@ html.dark .semester-bar select:not(.week-select) {
     }
 
     .timetable thead { display: none; }
+
+    /* FIX: Hide empty hour cells so cards aren't 30+ cells tall */
+    .timetable td.hour-cell:has(.cell-empty) {
+        display: none;
+    }
 
     .timetable tbody tr {
         background: var(--color-surface);
