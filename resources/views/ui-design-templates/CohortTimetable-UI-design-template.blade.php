@@ -203,6 +203,7 @@
                 const mon = new Date(ms);
                 const sun = new Date(ms + 6 * 86400000);
                 const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
+                const fmtShort = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
                 const days = [];
                 for (let d = 0; d < 7; d++) {
                     const dt = new Date(ms + d * 86400000);
@@ -214,7 +215,7 @@
                         holiday: MockData.holidays.some(function(h) { return h.week === w && h.dayIndex === d; }),
                     });
                 }
-                arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, days });
+                arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, rangeShort: `${fmtShort(mon)} ~ ${fmtShort(sun)}`, days });
             }
             return arr;
         })();
@@ -272,9 +273,13 @@
 
         function populateWeeks() {
             const sel = document.getElementById('weekSelect');
-            sel.innerHTML = weekData.map((w, i) =>
-                `<option value="${i}">${w.label} · ${w.range}</option>`
-            ).join('');
+            const isMobile = window.innerWidth <= 768;
+            sel.innerHTML = weekData.map((w, i) => {
+                const label = isMobile
+                    ? `${w.label} · ${w.rangeShort}`
+                    : `${w.label} · ${w.range}`;
+                return `<option value="${i}">${label}</option>`;
+            }).join('');
             sel.selectedIndex = currentWeek;
         }
 
