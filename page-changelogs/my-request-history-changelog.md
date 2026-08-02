@@ -59,6 +59,9 @@
 | 2026-08-02 15:00 | Lines 586–631 | UX | Replaced JS `confirm()` with two dedicated modals: single cancel confirm (shows request details) + batch cancel confirm (shows list of selected requests) |
 | 2026-08-02 15:00 | Line 559 | UX | Renamed `bulkCancelBtn` → `btnBatchCancelRequest` to reduce ambiguity |
 | 2026-08-02 15:00 | Lines 558, 395–407 | UX | Added "Clear" button to bulk action bar (`.btn-bulk-clear`), wired to `clearAllSelections()` |
+| 2026-08-02 16:00 | Lines 483–524 | Feature | Added responsive card view (`.card-view`) — on mobile (<768px), table hidden and requests shown as stacked cards with code, status, date, time, venue, age |
+| 2026-08-02 16:00 | Lines 1309–1317 | Feature | Added deep link support — URL `?id=N` auto-opens modal for that request on page load |
+| 2026-08-02 16:00 | Lines 1175–1205 | Feature | Added `renderCards()` — builds card view from `currentFiltered` data, click/Enter opens modal |
 
 ### `routes/web.php`
 

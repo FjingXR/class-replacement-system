@@ -498,6 +498,61 @@
             filter: brightness(1.08);
         }
 
+        /* ───── Responsive Card View ───── */
+        .card-view { display: none; }
+        .request-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
+        .request-card:hover {
+            background: var(--color-surface-variant);
+            box-shadow: var(--shadow-sm);
+        }
+        .request-card:active {
+            transform: scale(0.99);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .card-code {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-on-surface);
+        }
+        .card-body {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            line-height: 1.6;
+        }
+        .card-body strong {
+            color: var(--color-on-surface);
+            font-weight: 600;
+        }
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--color-outline);
+            font-size: 11px;
+            color: var(--color-on-surface-variant);
+        }
+        .card-age { font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
+            .card-view { display: block; }
+        }
+
 @endsection
 
 @section('content')
@@ -553,6 +608,9 @@
                 </table>
             </div>
         </div>
+
+        <!-- ─── Card View (mobile) ─── -->
+        <div class="card-view" id="cardView"></div>
 
         <!-- ─── Pagination ─── -->
         <div class="pagination-bar" id="paginationBar">
@@ -998,6 +1056,40 @@
             updateResultCount({ elId: 'resultCount', data: currentFiltered, total: mockRequests.length, label: 'results' });
             updateSummary();
             updateBulkBar();
+            renderCards();
+        }
+
+        function renderCards() {
+            var container = document.getElementById('cardView');
+            if (!container) return;
+            container.innerHTML = '';
+            currentFiltered.forEach(function(r, i) {
+                var days = getRequestAge(r.requestedAt);
+                var ageCls = ageClass(days);
+                var card = document.createElement('div');
+                card.className = 'request-card';
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.addEventListener('click', function() { openModal(i); });
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(i); }
+                });
+                card.innerHTML =
+                    '<div class="card-header">' +
+                        '<span class="card-code">' + r.courseCode + ' (' + (r.classType === 'L' ? 'Lecture' : 'Tutorial') + ')</span>' +
+                        '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
+                    '</div>' +
+                    '<div class="card-body">' +
+                        '<strong>' + r.courseName + '</strong><br>' +
+                        dayAbbr(r.classDay) + ', ' + formatDate(r.classDate) + '<br>' +
+                        to12h(r.timeStart) + ' – ' + to12h(r.timeEnd) + ' · ' + r.venue +
+                    '</div>' +
+                    '<div class="card-footer">' +
+                        '<span class="' + ageCls + ' card-age">' + relativeTime(days) + '</span>' +
+                        '<span>' + r.cohorts.join(', ') + '</span>' +
+                    '</div>';
+                container.appendChild(card);
+            });
         }
 
         function highlightSelectedRows() {
@@ -1305,5 +1397,15 @@
                     clearFocusedRow(rows);
                 }
             });
+
+            /* ── Deep Link: ?id=N opens modal ── */
+            var urlParams = new URLSearchParams(window.location.search);
+            var deepLinkId = parseInt(urlParams.get('id'));
+            if (deepLinkId) {
+                var idx = currentFiltered.findIndex(function(r) { return r.id === deepLinkId; });
+                if (idx !== -1) {
+                    setTimeout(function() { openModal(idx); }, 100);
+                }
+            }
         });
 @endsection
