@@ -517,6 +517,7 @@ html.dark .filter-select {
     border-radius: 6px;
     font-size: 12px;
     font-weight: 600;
+    vertical-align: middle;
 }
 
 /* ───── Action Button ───── */

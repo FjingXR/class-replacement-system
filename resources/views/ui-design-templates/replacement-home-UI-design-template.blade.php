@@ -17,7 +17,7 @@
         .col-venue { width: 70px; }
         .col-students { width: 80px; }
         .col-cohort { width: 130px; }
-        .col-reason { width: 140px; }
+        .col-reason { width: 140px; vertical-align: middle; }
         .col-action { width: 150px; }
 
         /* ───── Urgency ───── */
