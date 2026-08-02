@@ -112,6 +112,10 @@
             return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' }) + ' ' + d.getFullYear();
         }
 
+        function fmtShort(d) {
+            return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' });
+        }
+
         const weekData = (function() {
             const start = new Date(MockData.semester.startDate);
             start.setHours(0, 0, 0, 0);
@@ -145,6 +149,7 @@
                     start: startDate,
                     end: endDate,
                     range: fmt(startDate) + ' ~ ' + fmt(endDate),
+                    rangeShort: fmtShort(startDate) + ' ~ ' + fmtShort(endDate),
                     days: days,
                 });
             }
@@ -226,8 +231,12 @@
 
         function buildWeekOptions() {
             const sel = document.getElementById('weekSelect');
+            var isMobile = window.innerWidth <= 768;
             sel.innerHTML = weekData.map(function(w, i) {
-                return '<option value="' + i + '">Week ' + (i + 1) + ' \u00B7 ' + fmt(w.start) + ' ~ ' + fmt(w.end) + '</option>';
+                var label = isMobile
+                    ? 'Week ' + (i + 1) + ' \u00B7 ' + w.rangeShort
+                    : 'Week ' + (i + 1) + ' \u00B7 ' + fmt(w.start) + ' ~ ' + fmt(w.end);
+                return '<option value="' + i + '">' + label + '</option>';
             }).join('');
             sel.selectedIndex = currentWeek;
         }

@@ -346,8 +346,13 @@
             start.setDate(start.getDate() + (weekNum - 1) * 7);
             const end = new Date(start);
             end.setDate(end.getDate() + 6);
-            const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-            return 'Week ' + weekNum + ' · ' + formatDate(iso(start)) + ' ~ ' + formatDate(iso(end));
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const fmtFull = d => String(d.getDate()).padStart(2, '0') + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+            const fmtShort = d => String(d.getDate()).padStart(2, '0') + ' ' + months[d.getMonth()];
+            if (window.innerWidth <= 768) {
+                return 'Week ' + weekNum + ' \u00B7 ' + fmtShort(start) + ' ~ ' + fmtShort(end);
+            }
+            return 'Week ' + weekNum + ' \u00B7 ' + fmtFull(start) + ' ~ ' + fmtFull(end);
         }
 
         const pageState = { currentPage: 1 };

@@ -221,6 +221,7 @@
             const arr = [];
             const todayMs = (function() { const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
+            const fmtShort = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
             for (let w = 1; w <= 14; w++) {
                 const ms = start.getTime() + (w - 1) * 7 * 86400000;
                 const days = [];
@@ -233,7 +234,7 @@
                         today: dt.getTime() === todayMs,
                     });
                 }
-                arr.push({ label: `Week ${w}`, range: `${fmt(new Date(ms))} ~ ${fmt(new Date(ms + 6 * 86400000))}`, days });
+                arr.push({ label: `Week ${w}`, range: `${fmt(new Date(ms))} ~ ${fmt(new Date(ms + 6 * 86400000))}`, rangeShort: `${fmtShort(new Date(ms))} ~ ${fmtShort(new Date(ms + 6 * 86400000))}`, days });
             }
             return arr;
         })();
@@ -519,9 +520,13 @@
             loadSavedWeek();
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             const sel = document.getElementById('weekSelect');
-            sel.innerHTML = weekData.map((w, i) =>
-                `<option value="${i}">${w.label} · ${w.range}</option>`
-            ).join('');
+            const isMobile = window.innerWidth <= 768;
+            sel.innerHTML = weekData.map((w, i) => {
+                const label = isMobile
+                    ? `${w.label} · ${w.rangeShort}`
+                    : `${w.label} · ${w.range}`;
+                return `<option value="${i}">${label}</option>`;
+            }).join('');
             sel.selectedIndex = currentWeek;
 
             buildTimetable();

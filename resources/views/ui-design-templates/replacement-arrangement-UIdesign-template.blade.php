@@ -814,9 +814,9 @@
             <div class="toolbar-left">
                 <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
                 <select class="selector-dropdown" id="weekSelector" onchange="onWeekChange()">
-                    <option value="0">Week 11 (01-Sep-2026 ~ 07-Sep-2026)</option>
-                    <option value="1">Week 10 (25-Aug-2026 ~ 31-Aug-2026)</option>
-                    <option value="2">Week 9 (18-Aug-2026 ~ 24-Aug-2026)</option>
+                    <option value="0">Week 11 · 01 Sep ~ 07 Sep</option>
+                    <option value="1">Week 10 · 25 Aug ~ 31 Aug</option>
+                    <option value="2">Week 9 · 18 Aug ~ 24 Aug</option>
                 </select>
                 <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
             </div>

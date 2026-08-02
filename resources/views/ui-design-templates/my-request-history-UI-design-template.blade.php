@@ -782,10 +782,10 @@
         const mockRequests = MockData.requests;
 
         const weekRanges = [
-            { value: '1', label: 'Week 1 \u00b7 31 Aug 2026 ~ 06 Sep 2026', start: '2026-08-31', end: '2026-09-06' },
-            { value: '2', label: 'Week 2 \u00b7 07 Sep 2026 ~ 13 Sep 2026', start: '2026-09-07', end: '2026-09-13' },
-            { value: '3', label: 'Week 3 \u00b7 14 Sep 2026 ~ 20 Sep 2026', start: '2026-09-14', end: '2026-09-20' },
-            { value: '4', label: 'Week 4 \u00b7 21 Sep 2026 ~ 27 Sep 2026', start: '2026-09-21', end: '2026-09-27' },
+            { value: '1', label: 'Week 1 \u00b7 31 Aug 2026 ~ 06 Sep 2026', labelShort: 'Week 1 \u00b7 31 Aug ~ 06 Sep', start: '2026-08-31', end: '2026-09-06' },
+            { value: '2', label: 'Week 2 \u00b7 07 Sep 2026 ~ 13 Sep 2026', labelShort: 'Week 2 \u00b7 07 Sep ~ 13 Sep', start: '2026-09-07', end: '2026-09-13' },
+            { value: '3', label: 'Week 3 \u00b7 14 Sep 2026 ~ 20 Sep 2026', labelShort: 'Week 3 \u00b7 14 Sep ~ 20 Sep', start: '2026-09-14', end: '2026-09-20' },
+            { value: '4', label: 'Week 4 \u00b7 21 Sep 2026 ~ 27 Sep 2026', labelShort: 'Week 4 \u00b7 21 Sep ~ 27 Sep', start: '2026-09-21', end: '2026-09-27' },
         ];
 
         function formatDateTime(iso) {
@@ -1375,10 +1375,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             var weekSel = document.getElementById('weekFilter');
             weekSel.innerHTML = '<option value="all">All Weeks</option>';
+            var isMobile = window.innerWidth <= 768;
             weekRanges.forEach(function(w) {
                 var opt = document.createElement('option');
                 opt.value = w.value;
-                opt.textContent = w.label;
+                opt.textContent = isMobile ? w.labelShort : w.label;
                 weekSel.appendChild(opt);
             });
 
