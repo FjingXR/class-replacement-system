@@ -441,7 +441,7 @@ body {
 .timetable tbody tr:hover td {
     background: rgba(0,0,0,0.03);
 }
-.timetable tbody tr:nth-child(even) td {
+.timetable tbody tr:nth-child(even) td:not(.time-col):not(.offday-slot) {
     background: rgba(0,0,0,0.015);
 }
 
