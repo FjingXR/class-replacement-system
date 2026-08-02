@@ -411,7 +411,25 @@ These nine rules are **non-negotiable** for every page and every future change:
    Replace the inline copies in the **new page AND the existing pages** with `@include` / `var(--color-...)` / `helper()` / `MockData.*`. Never leave 3 copies of the same thing — that breaks the OOP/DRY concept the FYP rubric scores. Record every promotion in the SDD `design.md` "Promoted to shared" section.
 7. **Minimise steps — fewest clicks possible.** Every common task must reach its outcome in the minimum number of clicks/screens. Prefer one inline action over multi-step forms, pre-select sensible defaults, and avoid hopping between pages for a single task. If a flow needs more than ~3 clicks to finish, rethink it.
 8. **Confirm critical actions.** Any destructive or irreversible action (delete, submit, cancel, approve, reject) MUST show a confirmation popup (`confirm()` or a styled overlay) before executing — e.g. "Are you sure?". This makes the system forgiving: users can explore unfamiliar features without fear, knowing a critical move can always be backed out.
-9. **Mobile responsive design.** Every page MUST include mobile layout (≤768px breakpoint). Convert data tables to **card layout** on mobile (each row = a card with essential columns only). Stack summary cards vertically (1 column). Full-width filters/toolbar. Modal = full-screen on mobile. Add CSS media queries in `@section('page-styles')` or `theme.css` (if shared). Document mobile layout in `design.md` under "Mobile view" section.
+9. **Mobile responsive design.** Every page MUST include mobile layout (≤768px breakpoint). The following enhancements are MANDATORY for all UI pages:
+   - **Nav drawer:** Hamburger icon (☰) replaces desktop links; slide-in drawer from left with overlay, close on tap/ESC/swipe; body scroll locked when open.
+   - **Card layout:** Convert data tables to card layout on mobile (each row = a card with essential columns only). No horizontal scroll.
+   - **Summary cards:** 2-column grid on mobile (5 cards → 3+2 layout).
+   - **Legend bar:** Flex-wrap, items flow naturally into 2 rows.
+   - **Semester bar:** Reduce select width, stack elements if needed, full-width.
+   - **Page header:** Chips stack vertically, title reduces font size.
+   - **Bottom sheet modals:** Modals slide up from bottom (not centered), 80vh max, drag handle, full-screen backdrop.
+   - **Touch targets:** All buttons/links ≥ 44×44px (WCAG 2.5.5).
+   - **Swipe gestures:** Swipe left/right to navigate weeks on timetable.
+   - **Collapsible cards:** Day cards collapse/expand on tap (chevron indicator).
+   - **Responsive typography:** Use `clamp()` for fluid font scaling (title 24→20px, day 14→13px, event 12→11px).
+   - **Safe area insets:** Respect iPhone notch/home indicator via `env(safe-area-inset-*)`.
+   - **Full-width inputs:** Selects, text inputs, buttons span full width on mobile.
+   - **Skeleton loading:** Grey placeholder shapes with shimmer animation while data loads.
+   - **Scroll restoration:** Remember scroll position on browser back/forward via `sessionStorage`.
+   - **Toast position:** Toasts at bottom-center on mobile (thumb-reachable).
+   - **Viewport meta:** `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">` in `<head>`.
+   Add CSS media queries in `theme.css` (shared). JS helpers in `ui-common.js`. Document mobile layout in `design.md` under "Mobile view" section.
 
 ### 1. Inheritance
 - **Blade layout inheritance:** every page `@extends('layouts.ui-template')` and fills `@section('content')`, `@section('page-styles')`, `@section('page-scripts')`, `@yield('title')`. See `resources/views/layouts/ui-template.blade.php` (42 lines).

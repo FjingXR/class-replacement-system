@@ -42,7 +42,25 @@ After reading the above, talk to the user first — do NOT jump straight to writ
    Then replace the inline copies in the **new page AND the existing pages** with `@include`/`var(...)`/`helper()`/`MockData.*`. Do NOT leave 3 copies of the same thing — that breaks the OOP/DRY concept the FYP rubric scores. List every promotion you do in the SDD `design.md` under a "Promoted to shared" section.
 8. **Minimise steps — fewest clicks possible** — every common task reaches its outcome in the minimum number of clicks/screens. Prefer one inline action over multi-step forms, pre-select sensible defaults, don't hop between pages for a single task. If a flow needs more than ~3 clicks, rethink it.
 9. **Confirm critical actions** — any destructive or irreversible action (delete, submit, cancel, approve, reject) MUST show a confirmation popup ("Are you sure?") before executing. This makes the system forgiving so users dare to try unfamiliar features, knowing a critical move can always be backed out.
-10. **Mobile responsive design** — every page MUST include mobile layout (≤768px breakpoint). Convert data tables to **card layout** on mobile (each row = a card with essential columns only). Stack summary cards vertically (1 column). Full-width filters/toolbar. Modal = full-screen on mobile. Add CSS media queries in `@section('page-styles')` or `theme.css` (if shared). Document mobile layout in `design.md` under "Mobile view" section.
+10. **Mobile responsive design** — every page MUST include mobile layout (≤768px breakpoint). The following enhancements are MANDATORY:
+    - **Nav drawer:** Hamburger icon (☰) replaces desktop links; slide-in drawer from left with overlay, close on tap/ESC/swipe; body scroll locked when open.
+    - **Card layout:** Convert data tables to card layout on mobile (each row = a card with essential columns only). No horizontal scroll.
+    - **Summary cards:** 2-column grid on mobile (5 cards → 3+2 layout).
+    - **Legend bar:** Flex-wrap, items flow naturally into 2 rows.
+    - **Semester bar:** Reduce select width, stack elements if needed, full-width.
+    - **Page header:** Chips stack vertically, title reduces font size.
+    - **Bottom sheet modals:** Modals slide up from bottom (not centered), 80vh max, drag handle, full-screen backdrop.
+    - **Touch targets:** All buttons/links ≥ 44×44px (WCAG 2.5.5).
+    - **Swipe gestures:** Swipe left/right to navigate weeks on timetable.
+    - **Collapsible cards:** Day cards collapse/expand on tap (chevron indicator).
+    - **Responsive typography:** Use `clamp()` for fluid font scaling (title 24→20px, day 14→13px, event 12→11px).
+    - **Safe area insets:** Respect iPhone notch/home indicator via `env(safe-area-inset-*)`.
+    - **Full-width inputs:** Selects, text inputs, buttons span full width on mobile.
+    - **Skeleton loading:** Grey placeholder shapes with shimmer animation while data loads.
+    - **Scroll restoration:** Remember scroll position on browser back/forward via `sessionStorage`.
+    - **Toast position:** Toasts at bottom-center on mobile (thumb-reachable).
+    - **Viewport meta:** `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">` in `<head>`.
+    Add CSS media queries in `theme.css` (shared). JS helpers in `ui-common.js`. Document mobile layout in `design.md` under "Mobile view" section.
 
 ## Deliverables (SDD: proposal → design → tasks)
 1. `.sdd/changes/<change-name>/` with `sdd.yaml`, `proposal.md`, `design.md`, `tasks.md`.
