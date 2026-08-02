@@ -32,7 +32,11 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // ──────────────────────────────────────────────────────────────────────
+    // [SESSION TIMEOUT]  NFR 2.4 requires 30 min. Set to 1 min for testing.
+    // Change `lifetime` below (and .env SESSION_LIFETIME) when ready for prod.
+    // ──────────────────────────────────────────────────────────────────────
+    'lifetime' => (int) env('SESSION_LIFETIME', 1),
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
