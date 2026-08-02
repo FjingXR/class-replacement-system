@@ -124,6 +124,44 @@
             transform: scale(0.97);
         }
 
+        /* ───── Today column highlight ───── */
+        .timetable td.today-cell {
+            background: rgba(141, 181, 230, 0.12) !important;
+        }
+        .timetable td.today-cell.hour-cell:hover {
+            background: rgba(141, 181, 230, 0.22) !important;
+        }
+
+        /* ───── Mobile: Today badge ───── */
+        .today-badge {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .timetable td.time-col.today {
+                background: var(--color-primary);
+            }
+            .timetable td.time-col.today .day-label {
+                color: var(--color-on-primary);
+            }
+            .timetable td.time-col.today .date-label {
+                color: var(--color-on-primary);
+            }
+            .today-cell {
+                background: transparent;
+            }
+        }
+
 @endsection
 
 @section('content')
@@ -255,7 +293,7 @@
             const start = new Date(MockData.semester.startDate); // semester start, Monday
             start.setHours(0, 0, 0, 0);
             const arr = [];
-            const todayMs = (function() { const t = new Date('2026-09-18'); t.setHours(0, 0, 0, 0); return t.getTime(); })();
+            const todayMs = (function() { const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
             const fmtShort = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
             for (let w = 1; w <= 14; w++) {
@@ -300,7 +338,7 @@
 
         function currentWeekIndex() {
             const semesterStart = new Date(MockData.semester.startDate);
-            const today = new Date('2026-09-18');
+            const today = new Date();
             today.setHours(0, 0, 0, 0);
             const idx = Math.floor((today - semesterStart) / 86400000 / 7);
             return Math.max(0, Math.min(weekData.length - 1, idx));
@@ -472,7 +510,7 @@
                 if (day.today) dayColClass += ' today';
                 if (day.holiday) dayColClass += ' offday';
                 dayTd.className = dayColClass;
-                let dayHtml = `<span class="day-label">${day.abbr}</span><span class="date-label">${day.date}</span>`;
+                let dayHtml = `<span class="day-label">${day.abbr}${day.today ? '<span class="today-badge">Today</span>' : ''}</span><span class="date-label">${day.date}</span>`;
                 if (day.holiday) {
                     dayHtml += `<span class="holiday-label">Public Holiday</span>`;
                 } else if (day.sunday) {
@@ -499,6 +537,7 @@
                 hours.forEach((h, hi) => {
                     const td = document.createElement('td');
                     let cellClass = 'hour-cell';
+                    if (day.today) cellClass += ' today-cell';
                     if (day.sunday || day.holiday) cellClass += ' offday-slot';
                     td.className = cellClass;
                     td.dataset.day = di;
