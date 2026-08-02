@@ -39,5 +39,12 @@
 
         @yield('page-scripts')
     </script>
+
+    <!-- Toast/Undo Bar (shared) -->
+    <div class="toast-bar" id="toastBar">
+        <span class="toast-message"></span>
+        <button class="toast-undo" style="display:none">Undo</button>
+        <button class="toast-close" onclick="dismissToast()">✕</button>
+    </div>
 </body>
 </html>

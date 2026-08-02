@@ -416,6 +416,7 @@
             document.getElementById('cancelConfirmOverlay').style.display = 'none';
             if (confirmed) {
                 closeModal();
+                showToast('Class cancelled.', null);
             }
         }
 

@@ -776,6 +776,7 @@
                 padding: 2px;
             }
             .cell-time-label {
+                display: block;
                 position: absolute;
                 bottom: 1px;
                 right: 2px;
@@ -784,6 +785,8 @@
                 line-height: 1;
                 opacity: 0.6;
                 pointer-events: none;
+                text-align: right;
+                white-space: pre-line;
             }
         }
 
@@ -1186,7 +1189,7 @@
 
                     const timeLabel = document.createElement('span');
                     timeLabel.className = 'cell-time-label';
-                    timeLabel.textContent = hours[hi];
+                    timeLabel.textContent = hours[hi] + '\n' + add30min(hours[hi]);
                     div.appendChild(timeLabel);
 
                     td.appendChild(div);
@@ -1329,6 +1332,7 @@
                 function() {
                     hideConfirmModal();
                     showConfirmModal('Submitted', 'Your replacement request has been submitted for approval.', null);
+                    showToast('Replacement request submitted.', null);
                 }
             );
         }
@@ -1339,6 +1343,8 @@
                 'Are you sure you want to clear all selections across <strong>ALL</strong> weeks? This action cannot be undone.',
                 function() {
                     hideConfirmModal();
+                    var savedCells = selectedCells.slice();
+                    var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
                     Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
                     selectedCells.forEach(c => {
                         c.el.classList.remove('cell-selected');
@@ -1347,6 +1353,16 @@
                     });
                     selectedCells = [];
                     updateCounter();
+                    showToast('All selections cleared.', function() {
+                        Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
+                        savedCells.forEach(c => {
+                            c.el.classList.remove('cell-available');
+                            c.el.classList.add('cell-selected');
+                            c.el.innerHTML = '✓';
+                        });
+                        selectedCells = savedCells;
+                        updateCounter();
+                    });
                 }
             );
         }
@@ -1356,7 +1372,18 @@
                 showConfirmModal(
                     'Unsaved Changes',
                     'You have selected time slots that will be lost if you leave this page. Are you sure you want to leave?',
-                    function() { hideConfirmModal(); window.location.href = url; }
+                    function() {
+                        var savedCells = selectedCells.slice();
+                        var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
+                        hideConfirmModal();
+                        selectedCells = [];
+                        Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
+                        showToast('Selections cleared.', function() {
+                            Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
+                            selectedCells = savedCells;
+                        });
+                        window.location.href = url;
+                    }
                 );
             } else {
                 window.location.href = url;

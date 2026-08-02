@@ -1163,12 +1163,18 @@
         document.getElementById('confirmCancelAction').addEventListener('click', function() {
             if (pendingCancelId !== null) {
                 var idx = mockRequests.findIndex(function(r) { return r.id === pendingCancelId; });
-                if (idx !== -1) mockRequests.splice(idx, 1);
-                selectedIds.delete(pendingCancelId);
-                pendingCancelId = null;
-                closeCancelConfirm();
-                closeModal();
-                renderTable();
+                if (idx !== -1) {
+                    var removed = mockRequests.splice(idx, 1)[0];
+                    selectedIds.delete(pendingCancelId);
+                    pendingCancelId = null;
+                    closeCancelConfirm();
+                    closeModal();
+                    renderTable();
+                    showToast('Request #' + removed.id + ' cancelled.', function() {
+                        mockRequests.splice(idx, 0, removed);
+                        renderTable();
+                    });
+                }
             }
         });
 
@@ -1201,10 +1207,16 @@
         }
 
         document.getElementById('confirmBatchCancelAction').addEventListener('click', function() {
+            var removed = mockRequests.filter(function(r) { return selectedIds.has(r.id); });
             mockRequests = mockRequests.filter(function(r) { return !selectedIds.has(r.id); });
+            var count = removed.length;
             selectedIds.clear();
             closeBatchCancelConfirm();
             renderTable();
+            showToast(count + ' request' + (count !== 1 ? 's' : '') + ' cancelled.', function() {
+                mockRequests.push.apply(mockRequests, removed);
+                renderTable();
+            });
         });
 
         function updateSummary() {

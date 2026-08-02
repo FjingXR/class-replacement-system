@@ -318,3 +318,44 @@ window.addEventListener('scroll', () => {
         if (pageKey) saveScrollPosition(pageKey);
     }, 200);
 }, { passive: true });
+
+// ───── Toast/Undo Bar ─────
+
+let _toastTimer = null;
+
+/**
+ * Show a toast/undo bar at bottom-left.
+ * @param {string} message - Success message to display
+ * @param {function|null} undoCallback - Function to call when Undo is clicked (null = no Undo button)
+ * @param {number} duration - Auto-dismiss time in ms (default 5000)
+ */
+function showToast(message, undoCallback, duration = 5000) {
+    const bar = document.getElementById('toastBar');
+    if (!bar) return;
+
+    const msgEl = bar.querySelector('.toast-message');
+    const undoBtn = bar.querySelector('.toast-undo');
+
+    msgEl.textContent = message;
+
+    if (undoCallback) {
+        undoBtn.style.display = 'inline-block';
+        undoBtn.onclick = function () {
+            undoCallback();
+            dismissToast();
+        };
+    } else {
+        undoBtn.style.display = 'none';
+    }
+
+    bar.classList.add('visible');
+
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(dismissToast, duration);
+}
+
+function dismissToast() {
+    const bar = document.getElementById('toastBar');
+    if (bar) bar.classList.remove('visible');
+    clearTimeout(_toastTimer);
+}

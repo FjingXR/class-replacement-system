@@ -65,6 +65,31 @@
 | 2026-08-02 | `@section('page-scripts')` | Centralised mock data (Task 9) | `mockRequests` array moved to `public/js/mock-data.js` — page now reads from `MockData.requests`. Semester chip now reads `MockData.semester.chipText` dynamically. |
 | 2026-08-02 | Lines 644–648, CSS | Week picker arrows | Replaced plain `<select class="filter-select">` for weekFilter with `<div class="week-picker">` containing prev/next arrow buttons + `week-select` dropdown (matching `replacement-home-ui`). Added CSS: `.week-picker`, `.week-arrow`, `.week-select`. Added JS: `weekFilterChanged()`, `prevWeekFilter()`, `nextWeekFilter()`, `updateWeekArrowState()`. Week filter now resets to "All Weeks" on page refresh (removed from `saveFilters()`/`restoreFilters()`). |
 
+### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-03 04:30 | End of file | Toast/Undo Bar CSS | Added `.toast-bar` styles (position fixed, bottom-left z-index 200, surface bg, outline border, shadow, radius-md). Added `.toast-message`, `.toast-undo` (outline primary button), `.toast-close` (borderless). Added `@keyframes toastSlideUp` (translateY 20px→0, 0.3s ease). |
+
+### `public/js/ui-common.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-03 04:30 | End of file | Toast/Undo Bar JS | Added `showToast(message, undoCallback, duration=5000)` — shows toast bar, sets undo onclick, starts 5s auto-dismiss timer. Added `dismissToast()` — hides toast, clears timer. |
+
+### `resources/views/layouts/ui-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-03 04:30 | Before `</body>` | Toast/Undo Bar HTML | Added `<div class="toast-bar" id="toastBar">` with `.toast-message`, `.toast-undo` (hidden by default), `.toast-close` ✕ button. |
+
+### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-03 04:30 | Lines 1163–1172 | Single cancel toast | Refactored `confirmCancelAction` click handler: saves removed item before splice, calls `showToast('Request #{id} cancelled.', undoCallback)` to allow re-insertion. |
+| 2026-08-03 04:30 | Lines 1203–1208 | Batch cancel toast | Refactored `confirmBatchCancelAction` click handler: saves removed items before filter, calls `showToast('{N} requests cancelled.', undoCallback)` to allow re-insertion. |
+
 ### `routes/web.php`
 
 | Timestamp | Location | Change | Detail |
