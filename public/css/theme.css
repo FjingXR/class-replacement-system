@@ -932,6 +932,16 @@ html.dark .semester-bar select:not(.week-select) {
     margin-top: 2px;
     text-align: center;
 }
+.time-col .off-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--color-outline);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+    text-align: center;
+}
 .time-col.offday {
     background: var(--color-error-container);
 }

@@ -350,6 +350,8 @@
                     dayHtml += '<span class="today-badge">Today</span>';
                 } else if (day.holiday) {
                     dayHtml += '<span class="holiday-label">' + (day.holidayLabel || 'Public Holiday') + '</span>';
+                } else if (day.sunday) {
+                    dayHtml += '<span class="date-label off-label">OFF</span>';
                 }
                 dayTd.innerHTML = dayHtml;
                 tr.appendChild(dayTd);
