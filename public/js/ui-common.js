@@ -42,6 +42,28 @@ function updateWeekArrows(prevDisabled, nextDisabled) {
     if (next) next.disabled = nextDisabled;
 }
 
+// ───── Today button (shared by all timetable pages) ─────
+// Each page must define: currentWeekIndex(), buildTimetable(), updateWeekSubtitle()
+// Optionally define: updateSummary(), updateProgress(), saveWeek()
+
+function jumpToToday() {
+    currentWeek = currentWeekIndex();
+    buildTimetable();
+    var sel = document.getElementById('weekSelect');
+    if (sel) sel.selectedIndex = currentWeek;
+    if (typeof updateWeekSubtitle === 'function') updateWeekSubtitle();
+    if (typeof updateSummary === 'function') updateSummary();
+    if (typeof updateProgress === 'function') updateProgress();
+    if (typeof saveWeek === 'function') saveWeek();
+    var grid = document.querySelector('.grid-wrapper');
+    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function initTodayBtn() {
+    var btn = document.getElementById('todayBtn');
+    if (btn) btn.addEventListener('click', jumpToToday);
+}
+
 // ───── Time slot helpers (shared by timetable pages) ─────
 
 const hours = [
