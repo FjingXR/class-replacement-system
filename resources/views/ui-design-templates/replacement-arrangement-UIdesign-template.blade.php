@@ -781,7 +781,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 13px;
+                font-size: 12px;
                 color: var(--color-on-surface-variant);
                 line-height: 1.2;
                 opacity: 0.7;
