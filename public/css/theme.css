@@ -959,10 +959,10 @@ html.dark .semester-bar select:not(.week-select) {
     background: rgba(141, 181, 230, 0.22) !important;
 }
 
-/* ── Today badge (inline pill in day-label) ───────────────── */
+/* ── Today badge (line below date-label) ─────────────────── */
 .today-badge {
-    display: inline-block;
-    margin-left: 6px;
+    display: block;
+    margin-top: 2px;
     padding: 1px 6px;
     border-radius: 4px;
     background: var(--color-primary);
@@ -971,7 +971,7 @@ html.dark .semester-bar select:not(.week-select) {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    vertical-align: middle;
+    text-align: center;
 }
 
 /* ── Hour header ───────────────────────────────────────────── */
