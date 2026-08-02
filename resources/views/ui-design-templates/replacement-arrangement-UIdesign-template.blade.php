@@ -728,7 +728,15 @@
             .toolbar-left, .toolbar-right { justify-content: center; }
             .footer-area { flex-direction: column; text-align: center; }
             .footer-left { justify-content: center; }
-            .footer-right { justify-content: center; }
+            .footer-right {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .footer-right .btn {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
             .time-header-col, .time-col { width: 100px; min-width: 100px; }
             .hour-header, .timetable td.hour-cell { min-width: 60px; }
             .header-logo { height: 44px; }

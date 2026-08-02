@@ -261,13 +261,15 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: var(--color-on-secondary-container);
-    color: var(--color-secondary-container);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
     font-weight: 600;
+    line-height: 1;
+    text-align: center;
 }
 .user-info {
     display: flex;
@@ -277,6 +279,11 @@ body {
 .user-name {
     font-size: 12px;
     font-weight: 600;
+}
+.user-id {
+    font-size: 10px;
+    opacity: 0.6;
+    font-family: monospace;
 }
 .user-role {
     font-size: 10px;
@@ -476,6 +483,9 @@ body {
 .filter-select option {
     background: var(--color-surface);
     color: var(--color-on-surface);
+}
+html.dark {
+    color-scheme: dark;
 }
 html.dark .filter-select {
     color-scheme: dark;

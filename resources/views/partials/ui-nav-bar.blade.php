@@ -39,6 +39,7 @@
                 <div class="user-avatar">KL</div>
                 <div class="user-info">
                     <span class="user-name">Kylian Mbappe</span>
+                    <span class="user-id">25SMR10186</span>
                     <span class="user-role">Lecturer</span>
                 </div>
             </div>
