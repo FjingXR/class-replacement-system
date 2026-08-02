@@ -772,6 +772,16 @@
                 font-size: 9px;
                 padding: 2px;
             }
+
+            /* Fix week selector overflow on mobile */
+            .toolbar-left {
+                min-width: 0;
+                overflow: hidden;
+            }
+            .selector-dropdown {
+                max-width: 100%;
+                min-width: 0;
+            }
         }
 
 @endsection

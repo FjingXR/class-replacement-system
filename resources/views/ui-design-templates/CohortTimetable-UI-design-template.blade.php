@@ -50,6 +50,19 @@
             .nav-item { padding: 0 8px; font-size: 12px; }
             .user-info { display: none; }
             .toolbar-right { width: 100%; justify-content: center; }
+
+            /* Fix semester-bar overflow on mobile */
+            .semester-bar {
+                flex-wrap: wrap;
+            }
+            .semester-bar select:not(.week-select) {
+                min-width: 0;
+                flex: 1 1 120px;
+            }
+            .week-select {
+                min-width: 0;
+                flex: 1 1 120px;
+            }
         }
 
 @endsection
