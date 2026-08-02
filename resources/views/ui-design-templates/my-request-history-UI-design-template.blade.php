@@ -1070,7 +1070,7 @@
                         { html: String(r.totalStudents), cls: 'col-students' },
                         { html: r.cohorts.join('<br>'), cls: 'col-cohort' },
                         { html: badgeHtml, cls: 'col-status' },
-                        { html: isPending ? '<button class="btn-inline-cancel" onclick="quickCancel(' + r.id + ')">Cancel</button>' : '', cls: 'col-actions' },
+                        { html: isPending ? '<button class="btn-inline-cancel" onclick="quickCancel(' + r.id + ')">Cancel</button>' : '<span style="color:var(--color-on-surface-variant)">-</span>', cls: 'col-actions' },
                     ];
                     cells.forEach(function(cell) {
                         const td = document.createElement('td');
