@@ -756,18 +756,21 @@
 
             /* Compact timetable grid on mobile — overrides theme.css card-block layout */
             .timetable td.hour-cell {
-                height: 28px;
-                padding: 1px;
+                width: 48px;
+                height: 48px;
+                padding: 0;
                 display: inline-block;
                 position: relative;
             }
             .timetable tbody tr {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 2px;
+                gap: 8px;
             }
             .cell-content {
-                min-height: 24px;
+                width: 48px;
+                height: 48px;
+                min-height: 48px;
                 font-size: 9px;
                 padding: 2px;
             }
