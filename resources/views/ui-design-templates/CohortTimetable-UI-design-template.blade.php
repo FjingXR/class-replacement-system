@@ -26,6 +26,13 @@
             color: var(--color-on-error);
         }
 
+        /* ───── Week Nav (arrows + week-select stay together) ───── */
+        .week-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* ───── Empty State (shared from theme.css) ───── */
 
         /* ───── Disabled Selects ───── */
@@ -59,6 +66,9 @@
                 min-width: 0;
                 flex: 1 1 120px;
             }
+            .week-nav {
+                width: 100%;
+            }
             .week-select {
                 min-width: 0;
                 flex: 1 1 120px;
@@ -84,9 +94,11 @@
             <select id="cohortSelect" onchange="onCohortChange()" disabled>
                 <option value="">Select Cohort</option>
             </select>
-            <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week" disabled>&#8249;</button>
-            <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)" disabled></select>
-            <button class="week-arrow" onclick="nextWeek()" aria-label="Next week" disabled>&#8250;</button>
+            <div class="week-nav">
+                <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week" disabled>&#8249;</button>
+                <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)" disabled></select>
+                <button class="week-arrow" onclick="nextWeek()" aria-label="Next week" disabled>&#8250;</button>
+            </div>
         </div>
 
         <!-- ─── Grid Wrapper ─── -->
