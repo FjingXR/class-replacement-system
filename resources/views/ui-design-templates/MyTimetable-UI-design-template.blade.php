@@ -463,7 +463,7 @@
                 const dayTd = document.createElement('td');
                 let dayColClass = 'time-col';
                 if (day.today) dayColClass += ' today';
-                if (day.holiday) dayColClass += ' offday';
+                if (day.holiday || day.sunday) dayColClass += ' offday';
                 dayTd.className = dayColClass;
                 let dayHtml = `<span class="day-label">${day.abbr}${day.today ? '<span class="today-badge">Today</span>' : ''}</span><span class="date-label">${day.date}</span>`;
                 if (day.holiday) {
