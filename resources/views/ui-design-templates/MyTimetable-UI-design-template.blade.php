@@ -255,7 +255,7 @@
             const start = new Date(MockData.semester.startDate); // semester start, Monday
             start.setHours(0, 0, 0, 0);
             const arr = [];
-            const todayMs = (function() { const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime(); })();
+            const todayMs = (function() { const t = new Date('2026-09-18'); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
             const fmtShort = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
             for (let w = 1; w <= 14; w++) {
@@ -300,7 +300,7 @@
 
         function currentWeekIndex() {
             const semesterStart = new Date(MockData.semester.startDate);
-            const today = new Date();
+            const today = new Date('2026-09-18');
             today.setHours(0, 0, 0, 0);
             const idx = Math.floor((today - semesterStart) / 86400000 / 7);
             return Math.max(0, Math.min(weekData.length - 1, idx));
