@@ -580,6 +580,9 @@ html.dark .filter-select {
 
 /* ───── Empty State ───── */
 .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
     padding: 60px 20px;
     color: var(--color-on-surface-variant);
@@ -922,13 +925,13 @@ html.dark .semester-bar select:not(.week-select) {
     color: var(--color-on-error-container);
 }
 .time-col.today {
-    background: var(--color-primary);
+    background: var(--color-primary-container);
 }
 .time-col.today .day-label {
-    color: var(--color-on-primary);
+    color: var(--color-on-primary-container);
 }
 .time-col.today .date-label {
-    color: var(--color-on-primary);
+    color: var(--color-on-primary-container);
 }
 
 /* ── Hour header ───────────────────────────────────────────── */

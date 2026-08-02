@@ -49,7 +49,10 @@ window.MockData = {
     // (page-specific) — NOT duplicated here, to avoid double-sourcing.
     // ─────────────────────────────────────────────────────────────────────
     holidays: [
-        { week: 3, dayIndex: 3, label: 'Public Holiday' }, // Week 3 Thursday (was CohortTimetable rule `holiday: d===3 && w===3`)
+        { week: 1, dayIndex: 0, label: 'Public Holiday' }, // Week 1 Monday
+        { week: 3, dayIndex: 1, label: 'Public Holiday' }, // Week 3 Tuesday
+        { week: 5, dayIndex: 2, label: 'Public Holiday' }, // Week 5 Wednesday
+        { week: 7, dayIndex: 4, label: 'Public Holiday' }, // Week 7 Friday
     ],
 
     // ─────────────────────────────────────────────────────────────────────
@@ -328,9 +331,9 @@ window.MockData = {
     studentTimetable: {
         activeCohort: 'rsd3s1g2',
         cancelledFlags: {
-            4: ['BMIT7070', 'BMIT7071', 'BMIT7072', 'BMIT8080', 'BMIT7073', 'BMIT7074', 'BMIT7075'],
-            5: ['BMIT8080'],
-            6: ['BMIT7073'],
+            3: ['BMIT7070', 'BMIT7071', 'BMIT7072', 'BMIT8080', 'BMIT7073', 'BMIT7074', 'BMIT7075'],
+            4: ['BMIT8080'],
+            5: ['BMIT7073'],
         },
         notificationCount: 3,
     },
