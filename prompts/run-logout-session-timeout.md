@@ -39,6 +39,7 @@ Discuss with me BEFORE you generate the proposal (do not skip):
    - [A3] Session expiry countdown: Blade partial + JS timer that shows "Session expires in X min" banner near timeout, with extend/Logout buttons. Auto-logouts when timer hits 0. Frontend design is TBD — use a simple placeholder banner for now.
    - [B1] Active session indicator: nav bar shows green dot or "Session active" text when logged in. Frontend design is TBD — use a simple placeholder for now.
    - Flag any other FR/NFR that touches auth/session.
+   - Staff login lockout: after 3 consecutive failed logins with same staff ID → lock for 10 min. After unlock, 3 fresh attempts → lock again. Show hint: "Forgot password? Reset at TARUMT intranet." Cache-based (no migration). Staff-only — skip for students.
 2. Confirm the implementation approach:
    - POST /logout route: already registered by Fortify — no route file changes needed.
    - Logout action: app/Livewire/Actions/Logout.php already does everything. No changes needed.
@@ -59,7 +60,7 @@ Discuss with me BEFORE you generate the proposal (do not skip):
 4. Wait for my OK on (1), (2), and (3) before writing the SDD proposal/design/tasks.
 
 Feature to implement
-- Name: Logout + Session Timeout + Login Redirect + User Panel + Remember Me + Session Countdown + Session Indicator + (Optional) Auto-Logout
+- Name: Logout + Session Timeout + Login Redirect + User Panel + Remember Me + Session Countdown + Session Indicator + Staff Lockout + (Optional) Auto-Logout
 - FR/NFR refs: NFR 2.4 (session timeout — 1 min for testing, 30 min prod), implicit FR 1.1 (login exists → logout + redirect must work)
 - What changes:
   - resources/views/partials/ui-nav-bar.blade.php — FIVE changes (user panel already exists at lines 29–45 with hardcoded data):
@@ -74,6 +75,12 @@ Feature to implement
   - NEW: resources/views/partials/ui-session-countdown.blade.php — [A3] New Blade partial for session expiry countdown banner/modal. Shows "Session expires in X min. Still here?" with extend/Logout buttons. Auto-hides when not near expiry. Design is placeholder — will be refined later.
   - NEW: public/js/session-countdown.js — [A3] JS timer that checks session lifetime periodically, shows countdown banner when near expiry, auto-submits logout when timer hits 0.
   - (Optional) C4: NEW public/js/auto-logout.js — JS that tracks mousemove/keydown/click activity. If idle for X min → show warning modal → auto-submit logout at 0. Can be combined with A3 session countdown or kept separate. Only if user wants it.
+  - Staff login lockout (cache-based):
+    - app/Providers/FortifyServiceProvider.php — in authenticateUsing, before returning $user: check Cache::get('login_lockout:{staff_id}'). If locked → return null + set error message "Account locked. Try again in X min. Forgot password? Reset at TARUMT intranet."
+    - app/Providers/FortifyServiceProvider.php — on failed login (when authenticateUsing returns null for staff): increment Cache::get('login_fail:{staff_id}'). If count >= 3 → Cache::put('login_lockout:{staff_id}', true, 10 minutes) + Cache::forget('login_fail:{staff_id}').
+    - app/Providers/FortifyServiceProvider.php — on successful login for staff: Cache::forget('login_fail:{staff_id}') + Cache::forget('login_lockout:{staff_id}').
+    - resources/views/auth/login-staff.blade.php — display lockout error message (already handles $errors bag). The hint text "Forgot password? Reset at TARUMT intranet" will appear in the error message.
+    - Students: NO lockout (view-only, low risk). Only apply to login_type === 'staff'.
   - config/fortify.php — change 'home' redirect logic to be role-based: student → /student-my-timetable-ui, staff → /my-timetable-ui. (Note: /student-my-timetable-ui does not exist yet — will 404 until that SDD is applied.)
   - config/session.php — already set to 1 min (look for [SESSION TIMEOUT] comment). This is the DEFAULT. Role-based override will be applied per-role (see "What to add" below).
   - .env — SESSION_LIFETIME=1 already set. No change needed — already done.
@@ -86,7 +93,7 @@ Feature to implement
   - User model — has student()/lecturer() relationships, loginId(), isStudent(), isLecturer() helpers. No PFP/avatar column in users table — always use dynamic initials from name.
   - config/session.php — SESSION_LIFETIME already set to 1 min (look for [SESSION TIMEOUT] block comment at line ~36)
   - .env — SESSION_LIFETIME=1 already set
-  - Fortify — has built-in `remember` feature for A1 (just needs checkbox in login form + `'remember' => true` in auth attempt)
+  - Fortify — has built-in `remember` feature for A1 (just needs checkbox in login form + `'remember' => true` in auth attempt). Also has rate limiting in configureRateLimiting() (per-IP, 5/min) — this is SEPARATE from the new per-user lockout.
 - What to add:
   - Wire user panel: replace 4 hardcoded values (avatar initials, name, role, logout button) with dynamic data from Auth::user()
   - Add student_id/staff_id display below role in user panel
@@ -99,6 +106,7 @@ Feature to implement
   - [A3] Create session countdown Blade partial + JS timer — shows banner when session is near expiry, auto-logouts on timeout
   - [B1] Add active session indicator to nav bar (green dot / "Session active" text)
   - (Optional) C4: Auto-logout on JS inactivity — track activity, warn at X min idle, auto-logout at 0
+  - Staff login lockout: cache-based consecutive failure tracking (key: `login_fail:{staff_id}`), lockout after 3 failures (key: `login_lockout:{staff_id}`, TTL 10 min), clear on success, hint about TARUMT intranet password reset
 
 Backend conventions: follow CodingMAIN.md §10 exactly. No new Actions needed (Logout action already exists). Config + Fortify changes only. Run composer run lint:check + composer run types:check after apply. Commit prefix: feat:.
 
@@ -113,7 +121,7 @@ What to reuse:
 
 Changelog (generate BEFORE the proposal, keep updating as you build): create `page-changelogs/logout-session-timeout-changelog.md` now (even if only header + empty Files Changed). Follow the exact format of `page-changelogs/my-timetable-changelog.md`: `# Changelog — Logout + Session Timeout + Login Redirect + User Profile` → `## Files Changed` → one `### \`<file path>\`` per changed file → per-file table `| Timestamp | Location | Change | Detail |`. Log every touched file (nav bar, config/fortify.php). Note: config/session.php and .env are already changed (no need to log those). Use server-local ISO-ish timestamps.
 
-Deliverables: .sdd/changes/logout-session-timeout/ (sdd.yaml, proposal.md, design.md, tasks.md — model format on .sdd/changes/), updated resources/views/partials/ui-nav-bar.blade.php (user panel wired + logout form + session indicator), updated resources/views/auth/login-student.blade.php + login-staff.blade.php (remember me checkbox), NEW resources/views/partials/ui-session-countdown.blade.php (placeholder), NEW public/js/session-countdown.js (placeholder), (optional) NEW public/js/auto-logout.js, config/fortify.php change (role-based redirect), session lifetime override logic (role-based: student 30 days, staff 30 min), page-changelogs/logout-session-timeout-changelog.md (created now, filled as you build). After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: feat:.
+Deliverables: .sdd/changes/logout-session-timeout/ (sdd.yaml, proposal.md, design.md, tasks.md — model format on .sdd/changes/), updated resources/views/partials/ui-nav-bar.blade.php (user panel wired + logout form + session indicator), updated resources/views/auth/login-student.blade.php + login-staff.blade.php (remember me checkbox + lockout error display), NEW resources/views/partials/ui-session-countdown.blade.php (placeholder), NEW public/js/session-countdown.js (placeholder), (optional) NEW public/js/auto-logout.js, updated app/Providers/FortifyServiceProvider.php (role-based redirect + staff lockout logic), config/fortify.php change (role-based redirect), session lifetime override logic (role-based: student 30 days, staff 30 min), page-changelogs/logout-session-timeout-changelog.md (created now, filled as you build). After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: feat:.
 
 Constraints: no new migrations (no DB changes), no new models, no new Livewire components, no new composer dependencies, no new frontend UI mock pages. A1/A3/B1/C4 frontend designs are PLACEHOLDER — will be refined in a separate frontend SDD later. /student-my-timetable-ui will 404 until that SDD is applied (acceptable — that page is next in queue). Session lifetime for students = 30 days (43200 min), staff = 30 min (or 1 min for testing).
 ```
@@ -137,3 +145,4 @@ These files were already modified outside of any SDD — no need to include them
 7. **A3 Session countdown** — decide: client-side timer (estimate based on SESSION_LIFETIME) or server-side AJAX endpoint (accurate but more work). For FYP, client-side estimation is fine. Create the Blade partial + JS file.
 8. **B1 Session indicator** — simple: check `auth()->check()` and show a green dot or text. Place near user panel in nav bar.
 9. **C4 Auto-logout (optional)** — if user wants it: track `mousemove`/`keydown`/`click` on `document`, reset idle timer on activity. At X min idle → show warning modal. At 0 → submit logout form. Can share the warning modal with A3 or keep separate. ~3-4 hours effort.
+10. **Staff login lockout** — cache keys: `login_fail:{staff_id}` (counter), `login_lockout:{staff_id}` (boolean, TTL 10 min). Check lockout in authenticateUsing before querying DB. Increment fail count on failed auth. Clear both on successful auth. Only for `login_type === 'staff'` — students are exempt. Hint text: "Forgot password? Reset at TARUMT intranet."

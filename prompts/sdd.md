@@ -29,7 +29,7 @@
 
 | # | SDD name | What it does | Depends on | Prompt file |
 |---|----------|-------------|------------|-------------|
-| 1 | `logout-session-timeout` | Logout + **role-based session lifetime (student 30 days, staff 30 min)** + role-based redirect + user panel wiring + **A1 remember me + A3 session countdown + B1 session indicator + (optional) C4 auto-logout** | student-my-timetable-ui (for student redirect target) | `prompts/run-logout-session-timeout.md` |
+| 1 | `logout-session-timeout` | Logout + **role-based session lifetime (student 30 days, staff 30 min)** + role-based redirect + user panel wiring + **A1 remember me + A3 session countdown + B1 session indicator + staff login lockout (3 fails → 10 min lock) + (optional) C4 auto-logout** | student-my-timetable-ui (for student redirect target) | `prompts/run-logout-session-timeout.md` |
 
 ## Deferred / Future
 
@@ -48,6 +48,7 @@
 | # | Feature | What it does | Frontend status |
 |---|---------|-------------|----------------|
 | — | **Role-based session lifetime** | Students (view-only, low risk): 30-day session. Staff (approve/reject, higher risk): 30-min session. | Backend config — no frontend needed |
+| — | **Staff login lockout** | 3 consecutive failed logins → lock for 10 min. Unlock → 3 fresh attempts → lock again. Hint: "Forgot password? Reset at TARUMT intranet." Cache-based, no migration. Staff-only. | Error message on login form (already has $errors display) |
 | — | **User panel wiring** | Replace 4 hardcoded values in .user-panel (avatar "KL", name "Kylian Mbappe", role "Lecturer", dummy logout) with dynamic data from Auth::user(). Add student_id/staff_id. | Existing HTML — just replace data |
 | A1 | **Remember me** | "Remember me" checkbox on login → longer session (e.g. 7 days) vs. default 1 min. Uses Fortify's built-in `remember` feature. | **TBD** — no design yet. SDD will include placeholder/mock UI on login forms. |
 | A3 | **Session expiry countdown** | Banner/modal that appears when session is about to timeout (e.g. "Session expires in 2 min. Still here?"). Auto-logout if no response. | **TBD** — no design yet. SDD will include placeholder/mock UI (likely a Blade partial + JS countdown). |
