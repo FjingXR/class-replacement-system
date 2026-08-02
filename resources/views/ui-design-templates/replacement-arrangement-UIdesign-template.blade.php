@@ -776,13 +776,13 @@
                 padding: 2px;
             }
             .cell-time-label {
-                display: block;
-                font-size: 8px;
+                position: absolute;
+                bottom: 1px;
+                right: 2px;
+                font-size: 7px;
                 color: var(--color-on-surface-variant);
-                text-align: center;
                 line-height: 1;
-                margin-top: 1px;
-                opacity: 0.7;
+                opacity: 0.6;
                 pointer-events: none;
             }
         }
@@ -1184,12 +1184,12 @@
                         div.addEventListener('click', () => toggleCell(di, hi, div));
                     }
 
-                    td.appendChild(div);
-
                     const timeLabel = document.createElement('span');
                     timeLabel.className = 'cell-time-label';
                     timeLabel.textContent = hours[hi];
-                    td.appendChild(timeLabel);
+                    div.appendChild(timeLabel);
+
+                    td.appendChild(div);
 
                     tr.appendChild(td);
                 });
