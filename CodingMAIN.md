@@ -351,7 +351,7 @@ Each page's development history is logged in `page-changelogs/*.md` — **update
 The project applies **OOP principles at every layer**; FYP rubric evaluates this. Keep it consistent:
 
 ### 0. UI Design Rules (user-mandated 2026-08-01)
-These eight rules are **non-negotiable** for every page and every future change:
+These nine rules are **non-negotiable** for every page and every future change:
 
 1. **Colors must be consistent across all pages.**
    - ALL colors come from the CSS custom-property token set in `public/css/theme.css` (`--color-bg`, `--color-surface`, `--color-primary`/`secondary`/`tertiary`/`error` + their `-container`/`-on-*` variants, defined once for dark + once for light).
@@ -411,6 +411,7 @@ These eight rules are **non-negotiable** for every page and every future change:
    Replace the inline copies in the **new page AND the existing pages** with `@include` / `var(--color-...)` / `helper()` / `MockData.*`. Never leave 3 copies of the same thing — that breaks the OOP/DRY concept the FYP rubric scores. Record every promotion in the SDD `design.md` "Promoted to shared" section.
 7. **Minimise steps — fewest clicks possible.** Every common task must reach its outcome in the minimum number of clicks/screens. Prefer one inline action over multi-step forms, pre-select sensible defaults, and avoid hopping between pages for a single task. If a flow needs more than ~3 clicks to finish, rethink it.
 8. **Confirm critical actions.** Any destructive or irreversible action (delete, submit, cancel, approve, reject) MUST show a confirmation popup (`confirm()` or a styled overlay) before executing — e.g. "Are you sure?". This makes the system forgiving: users can explore unfamiliar features without fear, knowing a critical move can always be backed out.
+9. **Mobile responsive design.** Every page MUST include mobile layout (≤768px breakpoint). Convert data tables to **card layout** on mobile (each row = a card with essential columns only). Stack summary cards vertically (1 column). Full-width filters/toolbar. Modal = full-screen on mobile. Add CSS media queries in `@section('page-styles')` or `theme.css` (if shared). Document mobile layout in `design.md` under "Mobile view" section.
 
 ### 1. Inheritance
 - **Blade layout inheritance:** every page `@extends('layouts.ui-template')` and fills `@section('content')`, `@section('page-styles')`, `@section('page-scripts')`, `@yield('title')`. See `resources/views/layouts/ui-template.blade.php` (42 lines).

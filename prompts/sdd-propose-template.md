@@ -55,6 +55,19 @@ Page to create
 
 Design rules: follow CodingMAIN.md §10.0 exactly (color tokens only; same name+same color per the canonical legend/status→color map; OOP @extends/@include/shared theme.css+ui-common.js+mock-data.js; mock data in mock-data.js NOT inline; icon over text; detail/secondary info in modals; **on 3rd duplication promote element to shared partial/theme.css/ui-common.js/mock-data.js and refactor existing pages too**; minimise steps/fewest clicks (pre-select defaults, don't hop pages; rethink if >~3 clicks); confirm critical actions (delete/submit/cancel/approve/reject) with a popup so users dare to explore).
 
+Mobile view design (mandatory for ALL new pages):
+- Design MUST include mobile responsive layout (max-width: 768px breakpoint).
+- Page header: stack title + description vertically, reduce font sizes.
+- Toolbar: stack filters vertically (full-width dropdowns/inputs), collapse to 1 column.
+- Data table: convert to **card layout** on mobile (each row = a card with key-value pairs). Hide non-essential columns (No., Type, Duration) on mobile. Show essential columns only: Course, Original Class, Status, Actions.
+- Summary cards: stack vertically (1 column) on mobile.
+- Modal: full-screen on mobile (100vw × 100vh, no overlay gap).
+- Week picker: full-width dropdown on mobile (hide prev/next arrows).
+- Pagination: full-width on mobile, center controls.
+- Empty state: full-width, centered text.
+- Add CSS media queries in `@section('page-styles')` or `theme.css` (if shared).
+- Document mobile layout in design.md under "Mobile view" section.
+
 Copy from [CLOSEST PAGE]: [list the parts to reuse — page header, legend, grid, summary cards, modal pattern, week picker, etc.].
 Remove/change: [list parts to delete — action buttons, lecturer-only logic, renamed labels, statuses to hide].
 
@@ -102,6 +115,8 @@ Page to create
 - Mock-data scope: read from window.MockData.* — reuse MockData.myTimetable, MockData.cohorts, MockData.semester, MockData.holidays. Hardcode the active cohort = RSD3(S1)G2. Before render and before counting summaries, filter out any event with status === 'cancelled'.
 
 Design rules: follow CodingMAIN.md §10.0 exactly (color tokens only; same name+same color per the canonical legend/status→color map; OOP @extends/@include/shared theme.css+ui-common.js+mock-data.js; mock data in mock-data.js NOT inline; icon over text; detail in modals; on 3rd duplication promote element to shared partial/theme.css/ui-common.js/mock-data.js and refactor existing pages too).
+
+Mobile view design (mandatory): convert timetable grid to **card layout** on mobile (≤768px): each class = a card with Course Code (bold), Day + Date, Time, Venue, Status badge. Stack summary cards vertically (1 column). Hide week arrows on mobile (full-width dropdown only). Modal = full-screen. Add CSS media queries in `@section('page-styles')`. Document mobile layout in design.md under "Mobile view".
 
 Copy from MyTimetable-UI-design-template: page header + .semester-chip; .semester-bar week picker (prev/next arrows + week <select>); .grid-wrapper > .grid-scroll > table.timetable grid; .legend-bar with 4 items (Normal Class=--color-secondary, Replacement=--color-primary, Pending=--color-tertiary, Conflict=--color-error); 5 summary cards via @include('partials.ui-summary-bar').
 Remove/change: remove the "Replace Now" button and goToReplacement(); remove the "Cancel Class" button, cancelClass(), and #cancelConfirmOverlay; rename "Teaching Hours" card to "Class Hours". Cancelled = NO legend item, NO summary card, never counted.
