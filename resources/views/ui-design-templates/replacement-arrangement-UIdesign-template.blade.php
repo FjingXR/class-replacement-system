@@ -753,6 +753,7 @@
             .card-day { font-size: 13px; }
             .card-date { font-size: 10px; margin-bottom: 4px; }
             .card-time { font-size: 11px; }
+            .theme-toggle { display: none; }
 
             /* Compact timetable grid on mobile — overrides theme.css card-block layout */
             .timetable td.hour-cell {

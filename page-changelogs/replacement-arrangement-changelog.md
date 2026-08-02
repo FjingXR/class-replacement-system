@@ -36,3 +36,4 @@
 | 2026-08-02 | `@media (max-width: 768px)` | Footer overflow fix | `.footer-area` stacks column on mobile; `.footer-right` gets `flex-wrap: wrap`, `gap: 8px`; buttons get smaller padding/font. Verified working at 375px width. |
 | 2026-08-02 | JS (`buildTimetable`) + CSS | Mobile time slot labels | Added `.cell-time-label` span inside each timetable cell showing the hour (e.g. "10:00"); hidden on desktop, visible on mobile at 8px font below each cell's content. |
 | 2026-08-02 | CSS (`@media 768px`) | Mobile cell sizing | `.hour-cell` and `.cell-content` set to 48×48px, row gap 8dp on mobile. |
+| 2026-08-02 | CSS (`@media 768px`) | Hide theme toggle mobile | `.theme-toggle { display: none }` on mobile view. |
