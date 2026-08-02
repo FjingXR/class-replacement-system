@@ -89,6 +89,7 @@
 |-----------|----------|--------|--------|
 | 2026-08-03 04:30 | Lines 1163–1172 | Single cancel toast | Refactored `confirmCancelAction` click handler: saves removed item before splice, calls `showToast('Request #{id} cancelled.', undoCallback)` to allow re-insertion. |
 | 2026-08-03 04:30 | Lines 1203–1208 | Batch cancel toast | Refactored `confirmBatchCancelAction` click handler: saves removed items before filter, calls `showToast('{N} requests cancelled.', undoCallback)` to allow re-insertion. |
+| 2026-08-03 05:30 | Line 775 | Bug fix | Changed `const mockRequests` to `let mockRequests` — batch cancel handler was reassigning the variable (`mockRequests = mockRequests.filter(...)`) which threw `TypeError: Assignment to constant variable`. |
 
 ### `routes/web.php`
 

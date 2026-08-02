@@ -37,3 +37,4 @@
 | 2026-08-02 | JS (`buildTimetable`) + CSS | Mobile time slot labels | Added `.cell-time-label` span inside each timetable cell showing start/end time (e.g. "10:00\n10:30"); hidden on desktop, visible on mobile at 7px font positioned bottom-right inside cell-content. |
 | 2026-08-02 | CSS (`@media 768px`) | Mobile cell sizing | `.hour-cell` and `.cell-content` set to 48×48px, row gap 8dp on mobile. |
 | 2026-08-02 | CSS (`@media 768px`) | Hide theme toggle mobile | `.theme-toggle { display: none }` on mobile view. |
+| 2026-08-03 05:30 | Lines 1398–1432 | Navigate-away toast | Refactored `goBack()` to show toast before navigating: saves selections, clears them, sets 5s navigation timer, calls `showToast('Selections cleared.', undoCallback)`. Undo cancels timer and restores selections. |

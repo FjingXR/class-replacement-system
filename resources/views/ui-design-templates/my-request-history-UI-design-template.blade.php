@@ -772,7 +772,7 @@
 @endsection
 
 @section('page-scripts')
-        const mockRequests = MockData.requests;
+        let mockRequests = MockData.requests;
 
         const weekRanges = [
             { value: '1', label: 'Week 1 \u00b7 31 Aug 2026 ~ 06 Sep 2026', labelShort: 'Week 1 \u00b7 31 Aug ~ 06 Sep', start: '2026-08-31', end: '2026-09-06' },

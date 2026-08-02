@@ -1400,7 +1400,31 @@
                 showConfirmModal(
                     'Unsaved Changes',
                     'You have selected time slots that will be lost if you leave this page. Are you sure you want to go back?',
-                    function() { hideConfirmModal(); window.location.href = '/replacement-home-ui'; }
+                    function() {
+                        hideConfirmModal();
+                        var savedCells = selectedCells.slice();
+                        var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
+                        Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
+                        selectedCells.forEach(c => {
+                            c.el.classList.remove('cell-selected');
+                            c.el.classList.add('cell-available');
+                            c.el.innerHTML = timeLabelHtml(c.hour);
+                        });
+                        selectedCells = [];
+                        updateCounter();
+                        var navTimer = setTimeout(function() { window.location.href = '/replacement-home-ui'; }, 5000);
+                        showToast('Selections cleared.', function() {
+                            clearTimeout(navTimer);
+                            Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
+                            savedCells.forEach(c => {
+                                c.el.classList.remove('cell-available');
+                                c.el.classList.add('cell-selected');
+                                c.el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(c.hour);
+                            });
+                            selectedCells = savedCells;
+                            updateCounter();
+                        });
+                    }
                 );
             } else {
                 window.location.href = '/replacement-home-ui';
