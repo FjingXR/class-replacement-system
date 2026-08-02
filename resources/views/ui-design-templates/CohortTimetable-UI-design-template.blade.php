@@ -657,15 +657,19 @@
             allEvents[entry.cohortId][entry.week].push(Object.assign({}, entry.event));
         });
 
-        // Apply RSD3 G2 base + flags (reconstructs the original for-loop)
+        // Reconstruct RSD3 G2: populate ALL 14 weeks with base events, then apply flag overrides.
         var rsd3g2Cohort = 'rsd3s1g2';
         if (!allEvents[rsd3g2Cohort]) allEvents[rsd3g2Cohort] = {};
+        for (var w = 0; w < 14; w++) {
+            allEvents[rsd3g2Cohort][w] = [];
+            MockData.cohortTimetable.rsd3g2Base.forEach(function(evt) {
+                var copy = Object.assign({}, evt);
+                if (!copy.status) copy.status = 'normal';
+                allEvents[rsd3g2Cohort][w].push(copy);
+            });
+        }
         MockData.cohortTimetable.rsd3g2Flags && Object.keys(MockData.cohortTimetable.rsd3g2Flags).forEach(function(w) {
             var weekIdx = parseInt(w);
-            if (!allEvents[rsd3g2Cohort][weekIdx]) allEvents[rsd3g2Cohort][weekIdx] = [];
-            MockData.cohortTimetable.rsd3g2Base.forEach(function(evt) {
-                allEvents[rsd3g2Cohort][weekIdx].push(Object.assign({}, evt));
-            });
             MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(idx) {
                 var copy = Object.assign({}, MockData.cohortTimetable.rsd3g2Base[idx]);
                 copy.status = 'pending';

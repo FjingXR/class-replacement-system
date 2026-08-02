@@ -110,7 +110,7 @@
 - [ ] Confirm no console errors on any page; confirm theme toggle, nav, week pickers, filters, sort, pagination, modals all functional
 - [ ] Confirm sibling route unaffected (if `/request-approval-ui` exists): loads, `approvalRequests`/`URGENCY_REFERENCE_DATE` globals resolve, no "Identifier already declared"
 - [ ] `composer run lint:check` — only the layout file is PHP-touched (1 idempotent line); confirm no new lint failures introduced
-- [ ] Commit the change (per the repo's conventional-commit style: `refactor: centralize UI mock data into public/js/mock-data.js`)
+- [x] Commit the change (per the repo's conventional-commit style: `refactor: centralize UI mock data into public/js/mock-data.js`)
 
 **Effort:** ~1h
 
