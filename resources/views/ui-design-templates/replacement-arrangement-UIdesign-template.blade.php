@@ -465,6 +465,8 @@
         }
         .btn-primary:disabled:hover { filter: none !important; box-shadow: none !important; }
 
+        .cell-time-label { display: none; }
+
         .btn-danger {
             background: var(--color-error-container);
             color: var(--color-on-error-container);
@@ -757,6 +759,7 @@
                 height: 28px;
                 padding: 1px;
                 display: inline-block;
+                position: relative;
             }
             .timetable tbody tr {
                 display: flex;
@@ -767,6 +770,16 @@
                 min-height: 24px;
                 font-size: 9px;
                 padding: 2px;
+            }
+            .cell-time-label {
+                display: block;
+                font-size: 8px;
+                color: var(--color-on-surface-variant);
+                text-align: center;
+                line-height: 1;
+                margin-top: 1px;
+                opacity: 0.7;
+                pointer-events: none;
             }
         }
 
@@ -1168,6 +1181,12 @@
                     }
 
                     td.appendChild(div);
+
+                    const timeLabel = document.createElement('span');
+                    timeLabel.className = 'cell-time-label';
+                    timeLabel.textContent = hours[hi];
+                    td.appendChild(timeLabel);
+
                     tr.appendChild(td);
                 });
 
