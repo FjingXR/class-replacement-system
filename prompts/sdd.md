@@ -28,46 +28,35 @@
 
 | # | SDD name | What it does | Depends on | Prompt file |
 |---|----------|-------------|------------|-------------|
-| 1 | `logout-session-timeout` | Logout button wiring + session timeout (1 min testing) + role-based login redirect + nav bar user profile | student-my-timetable-ui (for student redirect target) | `prompts/run-logout-session-timeout.md` |
+| 1 | `logout-session-timeout` | Logout + session timeout (1 min) + role-based redirect + nav bar user profile + **A1 remember me + A3 session countdown + B1 session indicator** | student-my-timetable-ui (for student redirect target) | `prompts/run-logout-session-timeout.md` |
 
 ## Deferred / Future
 
 | # | Feature | Why deferred | Target sprint |
 |---|---------|-------------|---------------|
 | 1 | Session timeout 30 min (production) | Set to 1 min for testing; will extend when ready for prod | Sprint 3 hardening |
-| 2 | Advanced auth features | Brainstorming phase — see discussion below | TBD |
 
 ---
 
-## Proposed advanced auth features (discuss with user)
+## Advanced auth features — final decisions
 
-> Excludes: forgot password, create new account (per user request).
+> Excludes: forgot password, create new account, password change (A2), 2FA (C1), session management (C2), password strength (C3), login audit trail (B3) — all skipped per user decision.
 
-### Tier 1 — Essential (should have for FYP demo)
+### Accepted (included in logout-session-timeout SDD)
 
-| # | Feature | What it does | Effort | FR/NFR ref |
-|---|---------|-------------|--------|------------|
-| A1 | **Remember me** | "Remember me" checkbox on login → longer session (e.g. 7 days) vs. default 1 min / 30 min. Uses Fortify's built-in `remember` feature. | Small | — |
-| A2 | **Password change** | Logged-in user can change their own password (current password + new password + confirm). Useful for demo + security. | Small | — |
-| A3 | **Session awareness banner** | Show a countdown or "Session expires in X min" warning when session is about to timeout. Prompt user to extend or auto-redirect to login. | Medium | NFR 2.4 |
+| # | Feature | What it does | Frontend status |
+|---|---------|-------------|----------------|
+| A1 | **Remember me** | "Remember me" checkbox on login → longer session (e.g. 7 days) vs. default 1 min. Uses Fortify's built-in `remember` feature. | **TBD** — no design yet. SDD will include placeholder/mock UI on login forms. |
+| A3 | **Session expiry countdown** | Banner/modal that appears when session is about to timeout (e.g. "Session expires in 2 min. Still here?"). Auto-logout if no response. | **TBD** — no design yet. SDD will include placeholder/mock UI (likely a Blade partial + JS countdown). |
+| B1 | **Active session indicator** | Nav bar shows green dot or "Session active" text when user is logged in and session is alive. | **TBD** — no design yet. SDD will include placeholder/mock UI in nav bar. |
 
-### Tier 2 — Nice to have (polish for demo)
+### Skipped (will NOT be implemented)
 
-| # | Feature | What it does | Effort | FR/NFR ref |
-|---|---------|-------------|--------|------------|
-| B1 | **Active session indicator** | Nav bar shows "Last active: X min ago" or green dot when session is alive. | Small | — |
-| B2 | **Role-based login landing** | After login, student → student timetable, staff → staff timetable, PL → PL dashboard. Already in logout-session-timeout SDD. | Done (in SDD) | — |
-| B3 | **Login audit trail** | Log every login attempt (success/fail) with timestamp, IP, user agent. Store in `login_log` table. Useful for demo + security. | Medium | — |
-
-### Tier 3 — Advanced (overkill for FYP but good to know)
-
-| # | Feature | What it does | Effort | FR/NFR ref |
-|---|---------|-------------|--------|------------|
-| C1 | **Two-factor auth (2FA)** | TOTP-based 2FA (Google Authenticator). Fortify has built-in support. | Large | — |
-| C2 | **Session management** | View all active sessions (device, IP, last active). Revoke individual or all sessions. | Large | — |
-| C3 | **Password strength indicator** | Real-time password strength meter on password change form. | Small | — |
-| C4 | **Auto-logout on inactivity** | JS-based countdown that redirects to logout after X min of no mouse/keyboard activity. Complements server-side session timeout. | Medium | NFR 2.4 |
-
-### Recommendation for this FYP
-
-**Do A1 + A2 + A3** (Tier 1). They're small-to-medium effort, add real value to the demo, and show security awareness without overcomplicating the project. B2 is already done in the logout-session-timeout SDD. Skip Tier 3 unless you have spare time.
+| # | Feature | Why skipped |
+|---|---------|-------------|
+| A2 | Password change | User decision — not needed for this FYP |
+| B3 | Login audit trail | Overkill — new migration + model + UI page for minimal demo value |
+| C1 | Two-factor auth (2FA) | User decision — too complex for this FYP |
+| C2 | Session management | User decision — too complex for this FYP |
+| C3 | Password strength indicator | User decision — not needed |
+| C4 | Auto-logout on JS inactivity | Explained to user; not explicitly accepted. Can revisit if needed. |
