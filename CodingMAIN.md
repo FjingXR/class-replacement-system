@@ -351,7 +351,7 @@ Each page's development history is logged in `page-changelogs/*.md` — **update
 The project applies **OOP principles at every layer**; FYP rubric evaluates this. Keep it consistent:
 
 ### 0. UI Design Rules (user-mandated 2026-08-01)
-These nine rules are **non-negotiable** for every page and every future change:
+These ten rules are **non-negotiable** for every page and every future change:
 
 1. **Colors must be consistent across all pages.**
    - ALL colors come from the CSS custom-property token set in `public/css/theme.css` (`--color-bg`, `--color-surface`, `--color-primary`/`secondary`/`tertiary`/`error` + their `-container`/`-on-*` variants, defined once for dark + once for light).
@@ -430,6 +430,7 @@ These nine rules are **non-negotiable** for every page and every future change:
    - **Toast position:** Toasts at bottom-center on mobile (thumb-reachable).
    - **Viewport meta:** `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">` in `<head>`.
    Add CSS media queries in `theme.css` (shared). JS helpers in `ui-common.js`. Document mobile layout in `design.md` under "Mobile view" section.
+10. **Toast/undo bar for critical actions.** After any critical action (delete, submit, cancel, approve, reject), show a temporary toast bar at **bottom-left** (same position as `.bulk-action-bar`: `position: fixed; bottom: 24px; left: 24px; z-index: 200`) with a success message and an **Undo** button. The toast auto-dismisses after **5 seconds** unless manually closed. The undo callback restores the previous state (re-insert cancelled items, revert status, etc.). CSS in `theme.css`, JS helper `showToast(message, undoCallback, duration)` in `ui-common.js`. Document every toast usage in `design.md` under "Toast/undo bar" section.
 
 ### 1. Inheritance
 - **Blade layout inheritance:** every page `@extends('layouts.ui-template')` and fills `@section('content')`, `@section('page-styles')`, `@section('page-scripts')`, `@yield('title')`. See `resources/views/layouts/ui-template.blade.php` (42 lines).
