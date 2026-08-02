@@ -36,6 +36,25 @@
 | 2026-08-01 14:31 | Lines 744–759 | Summary logic | `updateSummary()` now sums `r.duration` across all requests (consistent with Total counting all 20, independent of Exclude Completed toggle) and updates `summaryHours`. |
 | 2026-08-01 15:01 | Line 341 | Semester chip | Added `semester-chip` pill (`202605 Semester · 15-Jun-2026 ~ 20-Sep-2026`) after page title — same style/position as my-timetable and cohort-timetable. CSS moved to shared `theme.css`. |
 
+| 2026-08-02 14:00 | Lines 316–336 | F1: CSS | Added `.rows-per-page-wrapper`, `.rows-per-page-select` styles for rows-per-page dropdown in pagination bar |
+| 2026-08-02 14:00 | Lines 540–548 | F1: HTML | Added `<select>` with options 10/25/50/All in pagination bar (bottom-left) |
+| 2026-08-02 14:00 | Lines 712, 788–790 | F1: JS state | Added `rowsPerPage` state variable (reads from localStorage), `renderTable()` uses dynamic `effectivePageSize` |
+| 2026-08-02 14:00 | Lines 1103–1110 | F1: JS handler | Added `rowsPerPage` change handler — updates `rowsPerPage`, saves to localStorage, resets page, re-renders |
+| 2026-08-02 14:00 | Lines 338–388 | F2: CSS | Added `.bulk-checkbox`, `.col-checkbox`, `.row-selected`, `.bulk-action-bar`, `.btn-bulk-cancel` styles |
+| 2026-08-02 14:00 | Lines 553–557 | F2: HTML | Added floating bulk action bar with count text and "Cancel Selected" button |
+| 2026-08-02 14:00 | Lines 715, 798–820, 880–899 | F2: JS | Added `selectedIds` Set, checkbox column in header/rows, `toggleSelectAll`, `toggleSelectRow`, `highlightSelectedRows`, `updateBulkBar`, `bulkCancelSelected` |
+| 2026-08-02 14:00 | Lines 390–393 | F3: CSS | Added `.age-green`, `.age-amber`, `.age-red` text color classes |
+| 2026-08-02 14:00 | Lines 718–730, 877–878, 902 | F3: JS | Added `getRequestAge()` and `ageClass()` helpers; "Requested At" cell wrapped in age-colored span |
+| 2026-08-02 14:00 | Lines 395–414 | F4: CSS | Added `.col-actions`, `.btn-inline-cancel` styles (hidden by default, shown on row hover) |
+| 2026-08-02 14:00 | Lines 832, 911 | F4: HTML | Added empty actions column header + inline Cancel button in Pending rows |
+| 2026-08-02 14:00 | Lines 959–966 | F4: JS | Added `quickCancel(id)` — confirms then removes request from mock data |
+| 2026-08-02 14:00 | Lines 732–752 | F5: JS | Added `saveFilters()` and `restoreFilters()` — serializes filter state to localStorage |
+| 2026-08-02 14:00 | Lines 1087–1110 | F5: JS wiring | Added `saveFilters()` calls in all filter handlers; `restoreFilters()` on DOMContentLoaded; Reset Filters clears localStorage |
+| 2026-08-02 14:00 | Lines 416–462 | F6: CSS | Added `.timeline`, `.timeline-item`, `.timeline-dot-wrap`, `.timeline-dot`, `.timeline-line`, `.timeline-text`, `.timeline-label`, `.timeline-time` styles |
+| 2026-08-02 14:00 | Lines 1047–1057 | F6: JS | Added timeline section in modal for Pending/Approved/Rejected: Request Submitted → Under Review → Final Status |
+| 2026-08-02 14:00 | Lines 416–418 | F7: CSS | Added `.row-focused` outline style for keyboard focus indicator |
+| 2026-08-02 14:00 | Lines 716, 1116–1138 | F7: JS | Added `focusedRowIndex` state, `keydown` handler (ArrowDown/Up/Enter/Escape), `highlightFocusedRow()`, `clearFocusedRow()` |
+
 ### `routes/web.php`
 
 | Timestamp | Location | Change | Detail |

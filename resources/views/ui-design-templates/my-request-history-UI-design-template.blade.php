@@ -313,6 +313,157 @@
             background: var(--color-surface-variant);
         }
 
+        /* ───── F1: Rows Per Page Selector ───── */
+        .rows-per-page-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .rows-per-page-wrapper label {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            font-weight: 500;
+        }
+        .rows-per-page-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--color-outline);
+            background: var(--color-surface);
+            color: var(--color-on-surface);
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* ───── F2: Bulk Selection ───── */
+        .bulk-checkbox {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--color-primary);
+            cursor: pointer;
+            margin: 0 auto;
+            display: block;
+        }
+        .bulk-checkbox:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .col-checkbox { width: 40px; text-align: center; }
+        .row-selected { background: var(--color-primary-container) !important; }
+        .bulk-action-bar {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 50;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            padding: 10px 16px;
+            align-items: center;
+            gap: 12px;
+        }
+        .bulk-action-bar.visible { display: flex; }
+        .bulk-action-bar .bulk-count {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-on-surface);
+        }
+        .btn-bulk-cancel {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--color-error);
+            background: transparent;
+            color: var(--color-error);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .btn-bulk-cancel:hover {
+            background: var(--color-error);
+            color: #fff;
+        }
+
+        /* ───── F3: Request Age Indicator ───── */
+        .age-green { color: var(--color-secondary) !important; }
+        .age-amber { color: var(--color-tertiary) !important; }
+        .age-red { color: var(--color-error) !important; }
+
+        /* ───── F4: Quick Actions in Rows ───── */
+        .col-actions { width: 70px; text-align: center; }
+        .btn-inline-cancel {
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--color-error);
+            background: transparent;
+            color: var(--color-error);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.15s, background 0.15s, color 0.15s;
+        }
+        tr:hover .btn-inline-cancel { opacity: 1; }
+        .btn-inline-cancel:hover {
+            background: var(--color-error);
+            color: #fff;
+        }
+
+        /* ───── F6: Status History Timeline ───── */
+        .timeline {
+            padding: 8px 0 4px 0;
+        }
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            position: relative;
+            padding-bottom: 16px;
+        }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-dot-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            width: 20px;
+        }
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .timeline-line {
+            width: 2px;
+            flex: 1;
+            min-height: 16px;
+            background: var(--color-outline);
+            margin-top: 4px;
+        }
+        .timeline-item:last-child .timeline-line { display: none; }
+        .timeline-text {
+            flex: 1;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .timeline-label {
+            font-weight: 600;
+            color: var(--color-on-surface);
+        }
+        .timeline-time {
+            font-size: 11px;
+            color: var(--color-on-surface-variant);
+            margin-top: 1px;
+        }
+
+        /* ───── F7: Keyboard Shortcuts ───── */
+        .row-focused { outline: 2px solid var(--color-primary); outline-offset: -2px; }
+
         /* ───── Empty State CTA ───── */
         .empty-cta {
             margin-top: 16px;
@@ -389,8 +540,23 @@
 
         <!-- ─── Pagination ─── -->
         <div class="pagination-bar" id="paginationBar">
+            <div class="rows-per-page-wrapper">
+                <label for="rowsPerPage">Rows:</label>
+                <select class="rows-per-page-select" id="rowsPerPage">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="all">All</option>
+                </select>
+            </div>
             <span class="pagination-info" id="paginationInfo">Showing 1-10 of 20</span>
             <div class="pagination-controls" id="paginationControls"></div>
+        </div>
+
+        <!-- ─── Bulk Action Bar ─── -->
+        <div class="bulk-action-bar" id="bulkActionBar">
+            <span class="bulk-count" id="bulkCount">0 selected</span>
+            <button class="btn-bulk-cancel" id="bulkCancelBtn" onclick="bulkCancelSelected()">Cancel Selected</button>
         </div>
 
         <!-- ─── Summary Stat Cards ─── -->
@@ -440,26 +606,26 @@
 
 @section('page-scripts')
         const mockRequests = [
-            { id: 1, requestedAt: '2026-08-30T10:30:00', courseCode: 'BMIT5555', courseName: 'Software Engineering', classType: 'L', classDate: '2026-08-31', classDay: 'Monday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B104', totalStudents: 35, cohortCounts: [20, 15], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-02', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 2, requestedAt: '2026-08-31T14:15:00', courseCode: 'BMIT5555', courseName: 'Software Engineering', classType: 'T', classDate: '2026-09-02', classDay: 'Wednesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B105', totalStudents: 28, cohorts: ['DFT2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-04', replacementTime: '14:00 – 16:00', replacementVenue: 'B110', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-01T09:00:00', remarks: null },
-            { id: 3, requestedAt: '2026-09-01T08:45:00', courseCode: 'BMIT6767', courseName: 'Object-Oriented Programming', classType: 'L', classDate: '2026-09-03', classDay: 'Thursday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B103', totalStudents: 24, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-07', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 4, requestedAt: '2026-09-02T11:20:00', courseCode: 'BMIT6767', courseName: 'Object-Oriented Programming', classType: 'T', classDate: '2026-09-07', classDay: 'Monday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B106', totalStudents: 20, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-09', replacementTime: '11:00 – 13:00', replacementVenue: 'B201', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-03T16:30:00', remarks: null },
-            { id: 5, requestedAt: '2026-09-03T09:10:00', courseCode: 'BMIT5678', courseName: 'Database Systems', classType: 'T', classDate: '2026-09-08', classDay: 'Tuesday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B105', totalStudents: 30, cohortCounts: [15, 15], cohorts: ['DSF2 (S1)', 'DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-10', replacementTime: '11:00 – 13:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 6, requestedAt: '2026-09-04T15:00:00', courseCode: 'BMIT9012', courseName: 'Computer Networks', classType: 'L', classDate: '2026-09-10', classDay: 'Thursday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 22, cohorts: ['DFT2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-14', replacementTime: '08:00 – 10:00', replacementVenue: 'B202', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-07T10:00:00', remarks: null },
-            { id: 7, requestedAt: '2026-09-05T13:30:00', courseCode: 'BMIT3456', courseName: 'Artificial Intelligence', classType: 'T', classDate: '2026-09-11', classDay: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B103', totalStudents: 18, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Insufficient notice period. Requests must be submitted at least 5 working days in advance.', replacementDate: '2026-09-14', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-08T08:15:00', remarks: null },
-            { id: 8, requestedAt: '2026-09-06T10:00:00', courseCode: 'BMIT7890', courseName: 'Project Management', classType: 'L', classDate: '2026-09-14', classDay: 'Monday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 20, cohortCounts: [10, 10], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-16', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 9, requestedAt: '2026-09-07T16:45:00', courseCode: 'BMIT7890', courseName: 'Project Management', classType: 'T', classDate: '2026-09-15', classDay: 'Tuesday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B202', totalStudents: 15, cohorts: ['DFT2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-17', replacementTime: '08:00 – 10:00', replacementVenue: 'B103', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-09T14:00:00', remarks: 'Replacement conducted successfully.' },
-            { id: 10, requestedAt: '2026-09-08T07:30:00', courseCode: 'BMIT9999', courseName: 'Machine Learning', classType: 'T', classDate: '2026-09-16', classDay: 'Wednesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 15, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-18', replacementTime: '10:00 – 12:00', replacementVenue: 'B105', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-10T11:00:00', remarks: null },
-            { id: 11, requestedAt: '2026-09-09T12:15:00', courseCode: 'BMIT1234', courseName: 'Data Structures', classType: 'L', classDate: '2026-09-18', classDay: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 30, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Venue unavailable on the requested replacement date.', replacementDate: '2026-09-21', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-11T09:30:00', remarks: null },
-            { id: 12, requestedAt: '2026-09-10T14:00:00', courseCode: 'BMIT4567', courseName: 'Web Development', classType: 'L', classDate: '2026-09-21', classDay: 'Monday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 32, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-23', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 13, requestedAt: '2026-09-11T08:30:00', courseCode: 'BMIT4567', courseName: 'Web Development', classType: 'T', classDate: '2026-09-22', classDay: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, cohortCounts: [12, 13], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-24', replacementTime: '14:00 – 16:00', replacementVenue: 'B106', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-14T15:45:00', remarks: 'Replacement completed. Student attendance recorded.' },
-            { id: 14, requestedAt: '2026-09-12T10:45:00', courseCode: 'BMIT8888', courseName: 'Cloud Computing', classType: 'T', classDate: '2026-09-23', classDay: 'Wednesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B105', totalStudents: 20, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-25', replacementTime: '10:00 – 12:00', replacementVenue: 'B202', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-15T13:00:00', remarks: null },
-            { id: 15, requestedAt: '2026-09-13T09:00:00', courseCode: 'BMIT7777', courseName: 'Cybersecurity', classType: 'L', classDate: '2026-08-31', classDay: 'Monday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, cohortCounts: [10, 8], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Cancelled', rejectionReason: null, replacementDate: '2026-09-02', replacementTime: '08:00 – 10:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: 'Request withdrawn by lecturer.' },
-            { id: 16, requestedAt: '2026-09-14T11:30:00', courseCode: 'BMIT7777', courseName: 'Cybersecurity', classType: 'T', classDate: '2026-09-02', classDay: 'Wednesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B202', totalStudents: 12, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-04', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 17, requestedAt: '2026-09-15T15:30:00', courseCode: 'BMIT3344', courseName: 'Embedded Systems', classType: 'T', classDate: '2026-09-07', classDay: 'Monday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B103', totalStudents: 12, cohorts: ['DSF2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-10', replacementTime: '08:00 – 10:00', replacementVenue: 'B104', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-16T08:00:00', remarks: 'Replacement completed.' },
-            { id: 18, requestedAt: '2026-09-16T07:15:00', courseCode: 'BMIT2222', courseName: 'Mobile Computing', classType: 'L', classDate: '2026-09-09', classDay: 'Wednesday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 28, cohorts: ['DFT2 (S1)'], status: 'Cancelled', rejectionReason: null, replacementDate: '2026-09-11', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 19, requestedAt: '2026-09-17T13:00:00', courseCode: 'BMIT1111', courseName: 'Human-Computer Interaction', classType: 'L', classDate: '2026-09-15', classDay: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 22, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Scheduling conflict with another lecturer\'s booking.', replacementDate: '2026-09-17', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-18T10:30:00', remarks: null },
-            { id: 20, requestedAt: '2026-09-18T09:45:00', courseCode: 'BMIT4433', courseName: 'Information Security', classType: 'T', classDate: '2026-09-17', classDay: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 18, cohorts: ['DFT2 (S1)'], status: 'Rejected', rejectionReason: 'Lecturer unavailable on the requested date.', replacementDate: '2026-09-21', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-19T08:00:00', remarks: null },
+            { id: 1, requestedAt: '2026-09-18T10:30:00', courseCode: 'BMIT5555', courseName: 'Software Engineering', classType: 'L', classDate: '2026-08-31', classDay: 'Monday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B104', totalStudents: 35, cohortCounts: [20, 15], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-02', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 2, requestedAt: '2026-09-18T14:15:00', courseCode: 'BMIT5555', courseName: 'Software Engineering', classType: 'T', classDate: '2026-09-02', classDay: 'Wednesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B105', totalStudents: 28, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-04', replacementTime: '14:00 – 16:00', replacementVenue: 'B110', reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 3, requestedAt: '2026-09-14T08:45:00', courseCode: 'BMIT6767', courseName: 'Object-Oriented Programming', classType: 'L', classDate: '2026-09-03', classDay: 'Thursday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B103', totalStudents: 24, cohorts: ['DFT2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-07', replacementTime: '09:00 – 11:00', replacementVenue: 'B201', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-15T09:00:00', remarks: null },
+            { id: 4, requestedAt: '2026-09-14T11:20:00', courseCode: 'BMIT6767', courseName: 'Object-Oriented Programming', classType: 'T', classDate: '2026-09-07', classDay: 'Monday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B106', totalStudents: 20, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-09', replacementTime: '11:00 – 13:00', replacementVenue: 'B201', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-15T16:30:00', remarks: null },
+            { id: 5, requestedAt: '2026-09-15T09:10:00', courseCode: 'BMIT5678', courseName: 'Database Systems', classType: 'T', classDate: '2026-09-08', classDay: 'Tuesday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B105', totalStudents: 30, cohortCounts: [15, 15], cohorts: ['DSF2 (S1)', 'DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-10', replacementTime: '11:00 – 13:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 6, requestedAt: '2026-09-11T15:00:00', courseCode: 'BMIT9012', courseName: 'Computer Networks', classType: 'L', classDate: '2026-09-10', classDay: 'Thursday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 22, cohorts: ['DFT2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-14', replacementTime: '08:00 – 10:00', replacementVenue: 'B202', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-12T10:00:00', remarks: null },
+            { id: 7, requestedAt: '2026-09-10T13:30:00', courseCode: 'BMIT3456', courseName: 'Artificial Intelligence', classType: 'T', classDate: '2026-09-11', classDay: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B103', totalStudents: 18, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Insufficient notice period. Requests must be submitted at least 5 working days in advance.', replacementDate: '2026-09-14', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-11T08:15:00', remarks: null },
+            { id: 8, requestedAt: '2026-09-09T10:00:00', courseCode: 'BMIT7890', courseName: 'Project Management', classType: 'L', classDate: '2026-09-14', classDay: 'Monday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 20, cohortCounts: [10, 10], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-16', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 9, requestedAt: '2026-09-08T16:45:00', courseCode: 'BMIT7890', courseName: 'Project Management', classType: 'T', classDate: '2026-09-15', classDay: 'Tuesday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B202', totalStudents: 15, cohorts: ['DFT2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-17', replacementTime: '08:00 – 10:00', replacementVenue: 'B103', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-09T14:00:00', remarks: 'Replacement conducted successfully.' },
+            { id: 10, requestedAt: '2026-09-07T07:30:00', courseCode: 'BMIT9999', courseName: 'Machine Learning', classType: 'T', classDate: '2026-09-16', classDay: 'Wednesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 15, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-18', replacementTime: '10:00 – 12:00', replacementVenue: 'B105', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-08T11:00:00', remarks: null },
+            { id: 11, requestedAt: '2026-09-06T12:15:00', courseCode: 'BMIT1234', courseName: 'Data Structures', classType: 'L', classDate: '2026-09-18', classDay: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 30, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Venue unavailable on the requested replacement date.', replacementDate: '2026-09-21', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-07T09:30:00', remarks: null },
+            { id: 12, requestedAt: '2026-09-16T14:00:00', courseCode: 'BMIT4567', courseName: 'Web Development', classType: 'L', classDate: '2026-09-21', classDay: 'Monday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 32, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-23', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 13, requestedAt: '2026-09-05T08:30:00', courseCode: 'BMIT4567', courseName: 'Web Development', classType: 'T', classDate: '2026-09-22', classDay: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, cohortCounts: [12, 13], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-24', replacementTime: '14:00 – 16:00', replacementVenue: 'B106', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-06T15:45:00', remarks: 'Replacement completed. Student attendance recorded.' },
+            { id: 14, requestedAt: '2026-09-04T10:45:00', courseCode: 'BMIT8888', courseName: 'Cloud Computing', classType: 'T', classDate: '2026-09-23', classDay: 'Wednesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B105', totalStudents: 20, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-25', replacementTime: '10:00 – 12:00', replacementVenue: 'B202', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-05T13:00:00', remarks: null },
+            { id: 15, requestedAt: '2026-09-03T09:00:00', courseCode: 'BMIT7777', courseName: 'Cybersecurity', classType: 'L', classDate: '2026-08-31', classDay: 'Monday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, cohortCounts: [10, 8], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Cancelled', rejectionReason: null, replacementDate: '2026-09-02', replacementTime: '08:00 – 10:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: 'Request withdrawn by lecturer.' },
+            { id: 16, requestedAt: '2026-09-17T11:30:00', courseCode: 'BMIT7777', courseName: 'Cybersecurity', classType: 'T', classDate: '2026-09-02', classDay: 'Wednesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B202', totalStudents: 12, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-04', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 17, requestedAt: '2026-09-02T15:30:00', courseCode: 'BMIT3344', courseName: 'Embedded Systems', classType: 'T', classDate: '2026-09-07', classDay: 'Monday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B103', totalStudents: 12, cohorts: ['DSF2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-10', replacementTime: '08:00 – 10:00', replacementVenue: 'B104', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-03T08:00:00', remarks: 'Replacement completed.' },
+            { id: 18, requestedAt: '2026-09-01T07:15:00', courseCode: 'BMIT2222', courseName: 'Mobile Computing', classType: 'L', classDate: '2026-09-09', classDay: 'Wednesday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 28, cohorts: ['DFT2 (S1)'], status: 'Cancelled', rejectionReason: null, replacementDate: '2026-09-11', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 19, requestedAt: '2026-09-15T13:00:00', courseCode: 'BMIT1111', courseName: 'Human-Computer Interaction', classType: 'L', classDate: '2026-09-15', classDay: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 22, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Scheduling conflict with another lecturer\'s booking.', replacementDate: '2026-09-17', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-16T10:30:00', remarks: null },
+            { id: 20, requestedAt: '2026-09-16T09:45:00', courseCode: 'BMIT4433', courseName: 'Information Security', classType: 'T', classDate: '2026-09-17', classDay: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 18, cohorts: ['DFT2 (S1)'], status: 'Rejected', rejectionReason: 'Lecturer unavailable on the requested date.', replacementDate: '2026-09-21', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-17T08:00:00', remarks: null },
         ];
 
         const weekRanges = [
@@ -546,14 +712,54 @@
         }
 
         const pageState = { currentPage: 1 };
-        const pageSize = 10;
+        let rowsPerPage = parseInt(localStorage.getItem('mrh-rows-per-page')) || 10;
         let sortState = { field: 'requestedAt', dir: 'asc' };
         let currentFiltered = [];
+        let selectedIds = new Set();
+        let searchDebounce = null;
+        let focusedRowIndex = -1;
+
+        function getRequestAge(requestedAt) {
+            const now = new Date();
+            const then = new Date(requestedAt);
+            const diffMs = now - then;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            return Math.max(0, diffDays);
+        }
+
+        function ageClass(days) {
+            if (days <= 2) return 'age-green';
+            if (days <= 7) return 'age-amber';
+            return 'age-red';
+        }
+
+        function saveFilters() {
+            var filters = {
+                status: document.getElementById('statusFilter').value,
+                week: document.getElementById('weekFilter').value,
+                search: document.getElementById('searchInput').value,
+                excludeCompleted: document.getElementById('hideCompleted').checked
+            };
+            localStorage.setItem('mrh-filters', JSON.stringify(filters));
+        }
+
+        function restoreFilters() {
+            var raw = localStorage.getItem('mrh-filters');
+            if (!raw) return;
+            try {
+                var filters = JSON.parse(raw);
+                if (filters.status) document.getElementById('statusFilter').value = filters.status;
+                if (filters.week) document.getElementById('weekFilter').value = filters.week;
+                if (filters.search) document.getElementById('searchInput').value = filters.search;
+                if (typeof filters.excludeCompleted === 'boolean') document.getElementById('hideCompleted').checked = filters.excludeCompleted;
+            } catch (e) {}
+        }
 
         function renderTable() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const statusVal = document.getElementById('statusFilter').value;
             const weekVal = document.getElementById('weekFilter').value;
+            focusedRowIndex = -1;
 
             let filtered = mockRequests.filter(function(r) {
                 const matchesSearch = query === '' ||
@@ -584,8 +790,10 @@
 
             currentFiltered = filtered;
 
-            const offset = (pageState.currentPage - 1) * pageSize;
-            const pageData = filtered.slice(offset, offset + pageSize);
+            const isAll = rowsPerPage === 'all' || rowsPerPage === Infinity;
+            const effectivePageSize = isAll ? filtered.length : rowsPerPage;
+            const offset = (pageState.currentPage - 1) * effectivePageSize;
+            const pageData = filtered.slice(offset, offset + effectivePageSize);
 
             const head = document.getElementById('tableHead');
             const body = document.getElementById('tableBody');
@@ -593,8 +801,30 @@
             body.innerHTML = '';
 
             const tr = document.createElement('tr');
+            const thCheck = document.createElement('th');
+            thCheck.className = 'col-checkbox';
+            const headerCheck = document.createElement('input');
+            headerCheck.type = 'checkbox';
+            headerCheck.className = 'bulk-checkbox';
+            headerCheck.id = 'headerCheckbox';
+            headerCheck.addEventListener('change', function() {
+                var pendingRows = body.querySelectorAll('tr[data-pending="true"] .row-checkbox');
+                pendingRows.forEach(function(cb) {
+                    cb.checked = headerCheck.checked;
+                    var id = parseInt(cb.dataset.id);
+                    if (headerCheck.checked) {
+                        selectedIds.add(id);
+                    } else {
+                        selectedIds.delete(id);
+                    }
+                });
+                updateBulkBar();
+                highlightSelectedRows();
+            });
+            thCheck.appendChild(headerCheck);
+            tr.appendChild(thCheck);
+
             const columns = [
-                { label: '#', cls: 'col-no', sortable: false },
                 { label: 'Requested At', cls: 'col-requested-at', sortable: true, field: 'requestedAt' },
                 { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'courseCode' },
                 { label: 'Type', cls: 'col-type', sortable: false },
@@ -604,6 +834,7 @@
                 { label: 'Students', cls: 'col-students', sortable: false },
                 { label: 'Affected Cohort(s)', cls: 'col-cohort', sortable: false },
                 { label: 'Status (Click for detail)', cls: 'col-status', sortable: false },
+                { label: '', cls: 'col-actions', sortable: false },
             ];
             columns.forEach(function(col) {
                 tr.appendChild(makeSortableHeader(col, sortState, function() {
@@ -640,10 +871,40 @@
 
                 pageData.forEach(function(r, i) {
                     const row = document.createElement('tr');
-                    const badgeHtml = '<span class="badge ' + statusClass(r.status) + '" onclick="openModal(' + (offset + i) + ')">' + r.status + '</span>';
+                    row.dataset.id = r.id;
+                    row.dataset.pending = r.status === 'Pending' ? 'true' : 'false';
+                    if (selectedIds.has(r.id)) row.classList.add('row-selected');
+
+                    const globalIndex = offset + i;
+                    const isPending = r.status === 'Pending';
+                    const badgeHtml = '<span class="badge ' + statusClass(r.status) + '" onclick="openModal(' + globalIndex + ')">' + r.status + '</span>';
+
+                    const days = getRequestAge(r.requestedAt);
+                    const ageCls = ageClass(days);
+
+                    const checkTd = document.createElement('td');
+                    checkTd.className = 'col-checkbox';
+                    const rowCheck = document.createElement('input');
+                    rowCheck.type = 'checkbox';
+                    rowCheck.className = 'bulk-checkbox row-checkbox';
+                    rowCheck.dataset.id = r.id;
+                    rowCheck.disabled = !isPending;
+                    if (selectedIds.has(r.id)) rowCheck.checked = true;
+                    rowCheck.addEventListener('change', function() {
+                        var id = parseInt(this.dataset.id);
+                        if (this.checked) {
+                            selectedIds.add(id);
+                        } else {
+                            selectedIds.delete(id);
+                        }
+                        updateBulkBar();
+                        highlightSelectedRows();
+                    });
+                    checkTd.appendChild(rowCheck);
+                    row.appendChild(checkTd);
+
                     var cells = [
-                        { html: String(offset + i + 1), cls: 'col-no' },
-                        { html: formatDateTime(r.requestedAt), cls: 'col-requested-at' },
+                        { html: '<span class="' + ageCls + '">' + formatDateTime(r.requestedAt) + '</span>', cls: 'col-requested-at' },
                         { html: '<span class="cell-code">' + r.courseCode + '</span><span class="cell-name">' + r.courseName + '</span>', cls: 'col-code' },
                         { html: r.classType === 'L' ? 'Lecture' : 'Tutorial', cls: 'col-type' },
                         { html: formatClassBlock(r), cls: 'col-original' },
@@ -652,6 +913,7 @@
                         { html: String(r.totalStudents), cls: 'col-students' },
                         { html: r.cohorts.join('<br>'), cls: 'col-cohort' },
                         { html: badgeHtml, cls: 'col-status' },
+                        { html: isPending ? '<button class="btn-inline-cancel" onclick="quickCancel(' + r.id + ')">Cancel</button>' : '', cls: 'col-actions' },
                     ];
                     cells.forEach(function(cell) {
                         const td = document.createElement('td');
@@ -664,9 +926,57 @@
             }
 
             document.getElementById('gridWrapper').querySelector('.grid-scroll').scrollLeft = 0;
-            paginate({ data: currentFiltered, pageSize: pageSize, state: pageState, infoId: 'paginationInfo', controlsId: 'paginationControls', render: renderTable });
+
+            if (isAll) {
+                document.getElementById('paginationInfo').textContent = 'Showing all ' + filtered.length + ' requests';
+                document.getElementById('paginationControls').innerHTML = '';
+            } else {
+                paginate({ data: currentFiltered, pageSize: effectivePageSize, state: pageState, infoId: 'paginationInfo', controlsId: 'paginationControls', render: renderTable });
+            }
+
             updateResultCount({ elId: 'resultCount', data: currentFiltered, total: mockRequests.length, label: 'results' });
             updateSummary();
+            updateBulkBar();
+        }
+
+        function highlightSelectedRows() {
+            document.querySelectorAll('#tableBody tr').forEach(function(row) {
+                var id = parseInt(row.dataset.id);
+                if (selectedIds.has(id)) {
+                    row.classList.add('row-selected');
+                } else {
+                    row.classList.remove('row-selected');
+                }
+            });
+        }
+
+        function updateBulkBar() {
+            var bar = document.getElementById('bulkActionBar');
+            var countEl = document.getElementById('bulkCount');
+            if (selectedIds.size > 0) {
+                bar.classList.add('visible');
+                countEl.textContent = selectedIds.size + ' selected';
+            } else {
+                bar.classList.remove('visible');
+            }
+        }
+
+        function quickCancel(id) {
+            if (confirm('Are you sure you want to cancel this replacement request? This action cannot be undone.')) {
+                var idx = mockRequests.findIndex(function(r) { return r.id === id; });
+                if (idx !== -1) mockRequests.splice(idx, 1);
+                selectedIds.delete(id);
+                renderTable();
+            }
+        }
+
+        function bulkCancelSelected() {
+            var count = selectedIds.size;
+            if (count === 0) return;
+            if (!confirm('Cancel ' + count + ' selected request(s)? This action cannot be undone.')) return;
+            mockRequests = mockRequests.filter(function(r) { return !selectedIds.has(r.id); });
+            selectedIds.clear();
+            renderTable();
         }
 
         function updateSummary() {
@@ -739,6 +1049,18 @@
             html += field('Reviewed By', r.reviewedBy);
             html += field('Reviewed At', r.reviewedAt ? formatDateTime(r.reviewedAt) : null);
 
+            if (r.status === 'Pending' || r.status === 'Approved' || r.status === 'Rejected') {
+                html += '<div class="modal-section-title">Request Timeline</div>';
+                html += '<div class="timeline">';
+                var submittedTime = formatDateTime(r.requestedAt);
+                var reviewTime = r.reviewedAt ? formatDateTime(r.reviewedAt) : null;
+                var statusColor = r.status === 'Pending' ? 'var(--color-tertiary)' : r.status === 'Approved' ? 'var(--color-secondary)' : 'var(--color-error)';
+                html += '<div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--color-primary)"></div><div class="timeline-line"></div></div><div class="timeline-text"><div class="timeline-label">Request Submitted</div><div class="timeline-time">' + submittedTime + '</div></div></div>';
+                html += '<div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--color-outline)"></div><div class="timeline-line"></div></div><div class="timeline-text"><div class="timeline-label">Under Review</div><div class="timeline-time">' + (reviewTime || '—') + '</div></div></div>';
+                html += '<div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:' + statusColor + '"></div></div><div class="timeline-text"><div class="timeline-label">' + r.status + '</div><div class="timeline-time">' + (reviewTime || '—') + '</div></div></div>';
+                html += '</div>';
+            }
+
             body.innerHTML = html;
             document.getElementById('modalOverlay').classList.add('show');
             document.getElementById('cancelRequestBtn').style.display = r.status === 'Pending' ? 'inline-block' : 'none';
@@ -755,6 +1077,21 @@
             }
         }
 
+        function highlightFocusedRow(rows) {
+            rows.forEach(function(r, i) {
+                if (i === focusedRowIndex) {
+                    r.classList.add('row-focused');
+                    r.scrollIntoView({ block: 'nearest' });
+                } else {
+                    r.classList.remove('row-focused');
+                }
+            });
+        }
+
+        function clearFocusedRow(rows) {
+            rows.forEach(function(r) { r.classList.remove('row-focused'); });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const weekSel = document.getElementById('weekFilter');
             weekSel.innerHTML = '<option value="all">All Weeks</option>';
@@ -769,17 +1106,28 @@
 
             document.getElementById('searchInput').addEventListener('input', function() {
                 pageState.currentPage = 1;
+                saveFilters();
                 renderTable();
             });
             document.getElementById('statusFilter').addEventListener('change', function() {
                 pageState.currentPage = 1;
+                saveFilters();
                 renderTable();
             });
             document.getElementById('weekFilter').addEventListener('change', function() {
                 pageState.currentPage = 1;
+                saveFilters();
                 renderTable();
             });
             document.getElementById('hideCompleted').addEventListener('change', function() {
+                pageState.currentPage = 1;
+                saveFilters();
+                renderTable();
+            });
+            document.getElementById('rowsPerPage').addEventListener('change', function() {
+                var val = this.value;
+                rowsPerPage = val === 'all' ? Infinity : parseInt(val);
+                localStorage.setItem('mrh-rows-per-page', rowsPerPage === Infinity ? 'all' : rowsPerPage);
                 pageState.currentPage = 1;
                 renderTable();
             });
@@ -788,13 +1136,50 @@
                 document.getElementById('statusFilter').value = 'all';
                 document.getElementById('weekFilter').value = 'all';
                 document.getElementById('hideCompleted').checked = true;
+                localStorage.removeItem('mrh-filters');
                 pageState.currentPage = 1;
                 renderTable();
             });
+
+            restoreFilters();
+            var savedRows = localStorage.getItem('mrh-rows-per-page');
+            if (savedRows) {
+                rowsPerPage = savedRows === 'all' ? Infinity : parseInt(savedRows);
+                document.getElementById('rowsPerPage').value = savedRows === 'all' ? 'all' : savedRows;
+            }
 
             document.getElementById('modalOverlay').addEventListener('click', function(e) {
                 closeOnOverlayClick(e, closeModal);
             });
             closeOnEsc(closeModal);
+
+            /* ── F7: Keyboard Shortcuts ── */
+            document.addEventListener('keydown', function(e) {
+                if (document.getElementById('modalOverlay').classList.contains('show')) {
+                    if (e.key === 'Escape') closeModal();
+                    return;
+                }
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+
+                var rows = document.querySelectorAll('#tableBody tr');
+                if (rows.length === 0) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    focusedRowIndex = Math.min(focusedRowIndex + 1, rows.length - 1);
+                    highlightFocusedRow(rows);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    focusedRowIndex = Math.max(focusedRowIndex - 1, 0);
+                    highlightFocusedRow(rows);
+                } else if (e.key === 'Enter' && focusedRowIndex >= 0) {
+                    e.preventDefault();
+                    var badge = rows[focusedRowIndex].querySelector('.badge');
+                    if (badge) badge.click();
+                } else if (e.key === 'Escape') {
+                    focusedRowIndex = -1;
+                    clearFocusedRow(rows);
+                }
+            });
         });
 @endsection
