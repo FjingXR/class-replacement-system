@@ -218,7 +218,12 @@ function initMobileNav() {
         document.body.style.overflow = '';
     }
 
-    hamburger.addEventListener('click', openDrawer);
+    function toggleDrawer() {
+        if (drawer.classList.contains('open')) closeDrawer();
+        else openDrawer();
+    }
+
+    hamburger.addEventListener('click', toggleDrawer);
     closeBtn.addEventListener('click', closeDrawer);
     overlay.addEventListener('click', closeDrawer);
 
