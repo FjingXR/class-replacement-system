@@ -13,14 +13,6 @@
         <img src="/images/logo_banner.png" alt="TAR UMT">
     </div>
 
-    <button class="nav-hamburger" id="navHamburger" aria-label="Open navigation menu">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <line x1="3" y1="12" x2="21" y2="12"/>
-            <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-    </button>
-
     <div class="nav-items">
         @foreach ($items as $it)
         <a class="nav-item {{ $activeNav === $it['key'] ? 'active' : '' }}" href="{{ $it['href'] }}">{{ $it['label'] }}</a>
@@ -59,6 +51,14 @@
                 </svg>
             </button>
         </div>
+
+        <button class="nav-hamburger" id="navHamburger" aria-label="Open navigation menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
     </div>
 </div>
 
@@ -78,5 +78,23 @@
         @foreach ($items as $it)
         <a class="nav-drawer-item {{ $activeNav === $it['key'] ? 'active' : '' }}" href="{{ $it['href'] }}">{{ $it['label'] }}</a>
         @endforeach
+    </div>
+    <div class="nav-drawer-user">
+        <div class="nav-drawer-user-info">
+            <div class="nav-drawer-user-avatar">KL</div>
+            <div class="nav-drawer-user-details">
+                <span class="nav-drawer-user-name">Kylian Mbappe</span>
+                <span class="nav-drawer-user-id">25SMR10186</span>
+                <span class="nav-drawer-user-role">Lecturer</span>
+            </div>
+        </div>
+        <button class="nav-drawer-logout" onclick="alert('Logout')" aria-label="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Logout
+        </button>
     </div>
 </div>
