@@ -137,9 +137,11 @@
 
         <!-- ─── Semester Bar ─── -->
         <div class="semester-bar">
-            <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
-            <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)"></select>
-            <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
+            <div class="week-nav">
+                <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
+                <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)"></select>
+                <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
+            </div>
         </div>
 
         <!-- ─── Grid Wrapper ─── -->

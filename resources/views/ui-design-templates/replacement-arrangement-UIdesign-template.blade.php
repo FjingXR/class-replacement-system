@@ -723,10 +723,8 @@
         }
 
         @media (max-width: 768px) {
-            .app-container { padding: 10px 12px; padding-top: 64px; }
             .top-title { font-size: 16px; }
             .top-logo { height: 26px; }
-            .toolbar { flex-direction: column; align-items: stretch; }
             .toolbar-left, .toolbar-right { justify-content: center; }
             .footer-area { flex-direction: column; text-align: center; }
             .footer-left { justify-content: center; }
@@ -746,18 +744,8 @@
             .card-date { font-size: 10px; margin-bottom: 4px; }
             .card-time { font-size: 11px; }
 
-            /* Compact timetable grid on mobile */
-            .timetable {
-                min-width: 0;
-                width: 100%;
-            }
-            .timetable td.time-col {
-                width: 100%;
-                min-width: 0;
-            }
+            /* Compact timetable grid on mobile — overrides theme.css card-block layout */
             .timetable td.hour-cell {
-                min-width: 0;
-                width: auto;
                 height: 28px;
                 padding: 1px;
                 display: inline-block;
@@ -771,16 +759,6 @@
                 min-height: 24px;
                 font-size: 9px;
                 padding: 2px;
-            }
-
-            /* Fix week selector overflow on mobile */
-            .toolbar-left {
-                min-width: 0;
-                overflow: hidden;
-            }
-            .selector-dropdown {
-                max-width: 100%;
-                min-width: 0;
             }
         }
 
@@ -812,13 +790,11 @@
 
         <div class="toolbar">
             <div class="toolbar-left">
-                <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
-                <select class="selector-dropdown" id="weekSelector" onchange="onWeekChange()">
-                    <option value="0">Week 11 · 01 Sep ~ 07 Sep</option>
-                    <option value="1">Week 10 · 25 Aug ~ 31 Aug</option>
-                    <option value="2">Week 9 · 18 Aug ~ 24 Aug</option>
-                </select>
-                <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
+                <div class="week-nav">
+                    <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
+                    <select class="selector-dropdown" id="weekSelector" onchange="onWeekChange()"></select>
+                    <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
+                </div>
             </div>
             <div class="toolbar-center">
                 <div class="toolbar-subtitle">BMIT6767 Kylian Mbappe Dembele (L)</div>
@@ -1374,6 +1350,19 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
+            const sel = document.getElementById('weekSelector');
+            const isMobile = window.innerWidth <= 768;
+            sel.innerHTML = weekData.map((w, i) => {
+                const first = w.days[0].date;
+                const last = w.days[w.days.length - 1].date;
+                const shortFirst = first.replace(/ \d{4}$/, '');
+                const shortLast = last.replace(/ \d{4}$/, '');
+                const label = isMobile
+                    ? `${w.label} · ${shortFirst} ~ ${shortLast}`
+                    : `${w.label} · ${first} ~ ${last}`;
+                return `<option value="${i}">${label}</option>`;
+            }).join('');
+            sel.value = currentWeek;
             buildTimetable();
         });
 @endsection

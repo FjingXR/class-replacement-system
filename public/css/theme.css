@@ -830,6 +830,12 @@ html.dark .filter-select {
 .week-arrow:disabled:hover {
     background: transparent;
 }
+/* ── Week Nav: arrows + week-select stay together ── */
+.week-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 .week-select {
     font-family: inherit;
     font-size: 13px;
@@ -1341,6 +1347,7 @@ html.dark .semester-bar select:not(.week-select) {
     .event-block .ev-code { font-size: 14px; text-align: left; }
     .event-block .ev-venue { font-size: 12px; text-align: right; }
     .event-block .ev-time { font-size: 11px; text-align: right; }
+    .event-block .ev-note { display: none; }
 }
 
 /* ── Mobile: full-screen modal (bottom sheet style) ── */
@@ -1471,8 +1478,7 @@ body {
 /* ── Mobile: full-width form inputs ── */
 @media (max-width: 768px) {
     .filter-select,
-    .search-input,
-    .week-select {
+    .search-input {
         width: 100% !important;
     }
 
@@ -1484,6 +1490,24 @@ body {
     .toolbar {
         flex-direction: column;
         gap: 8px;
+    }
+
+    /* ── Week selector: arrows + select stay on one line ── */
+    .semester-bar {
+        flex-wrap: wrap;
+    }
+    .week-nav {
+        flex-shrink: 0;
+        min-width: 0;
+    }
+    .week-select,
+    .selector-dropdown {
+        flex: 1;
+        min-width: 0;
+        width: auto !important;
+    }
+    .week-arrow {
+        flex-shrink: 0;
     }
 }
 

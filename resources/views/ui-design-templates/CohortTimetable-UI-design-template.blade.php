@@ -26,12 +26,6 @@
             color: var(--color-on-error);
         }
 
-        /* ───── Week Nav (arrows + week-select stay together) ───── */
-        .week-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
 
         /* ───── Empty State (shared from theme.css) ───── */
 
@@ -51,27 +45,12 @@
             .toolbar-right { justify-content: flex-start; }
         }
         @media (max-width: 768px) {
-            .app-container { padding: 10px 12px; padding-top: 66px; }
-            .top-logo { margin-right: 12px; }
-            .nav-items { gap: 2px; }
-            .nav-item { padding: 0 8px; font-size: 12px; }
-            .user-info { display: none; }
-            .toolbar-right { width: 100%; justify-content: center; }
-
-            /* Fix semester-bar overflow on mobile */
-            .semester-bar {
-                flex-wrap: wrap;
-            }
             .semester-bar select:not(.week-select) {
                 min-width: 0;
                 flex: 1 1 120px;
             }
             .week-nav {
                 width: 100%;
-            }
-            .week-select {
-                min-width: 0;
-                flex: 1 1 120px;
             }
         }
 
@@ -542,8 +521,6 @@
                         let extraHtml = '';
                         if (e.status === 'replacement' && e.remarks) {
                             extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
-                        } else if (e.status === 'pending') {
-                            extraHtml = `<span class="ev-note">(Pending)</span>`;
                         }
 
                         div.innerHTML = `

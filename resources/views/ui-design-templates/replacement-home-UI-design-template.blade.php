@@ -173,13 +173,6 @@
             filter: brightness(1.08);
         }
 
-        /* ───── Week Picker (matches My Timetable) ───── */
-        .week-picker {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-shrink: 0;
-        }
         .week-arrow {
             width: 28px;
             height: 28px;
@@ -253,7 +246,7 @@
                     </svg>
                     <input class="search-input" id="searchInput" placeholder="Search by course code or name...">
                 </div>
-                <div class="week-picker">
+                <div class="week-nav">
                     <button class="week-arrow" onclick="prevWeekFilter()" aria-label="Previous week">&#8249;</button>
                     <select class="week-select" id="weekFilter" onchange="weekFilterChanged(this.value)"></select>
                     <button class="week-arrow" onclick="nextWeekFilter()" aria-label="Next week">&#8250;</button>
