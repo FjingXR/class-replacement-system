@@ -124,44 +124,6 @@
             transform: scale(0.97);
         }
 
-        /* ───── Today column highlight ───── */
-        .timetable td.today-cell {
-            background: rgba(141, 181, 230, 0.12) !important;
-        }
-        .timetable td.today-cell.hour-cell:hover {
-            background: rgba(141, 181, 230, 0.22) !important;
-        }
-
-        /* ───── Mobile: Today badge ───── */
-        .today-badge {
-            display: inline-block;
-            margin-left: 6px;
-            padding: 1px 6px;
-            border-radius: 4px;
-            background: var(--color-primary);
-            color: var(--color-on-primary);
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            vertical-align: middle;
-        }
-
-        @media (max-width: 768px) {
-            .timetable td.time-col.today {
-                background: var(--color-primary);
-            }
-            .timetable td.time-col.today .day-label {
-                color: var(--color-on-primary);
-            }
-            .timetable td.time-col.today .date-label {
-                color: var(--color-on-primary);
-            }
-            .today-cell {
-                background: transparent;
-            }
-        }
-
 @endsection
 
 @section('content')

@@ -469,7 +469,7 @@
                 if (day.today) dayColClass += ' today';
                 if (day.holiday || day.sunday) dayColClass += ' offday';
                 dayTd.className = dayColClass;
-                let dayHtml = `<span class="day-label">${day.abbr}</span><span class="date-label">${day.date}</span>`;
+                let dayHtml = `<span class="day-label">${day.abbr}${day.today ? '<span class="today-badge">Today</span>' : ''}</span><span class="date-label">${day.date}</span>`;
                 if (day.holiday) {
                     dayHtml += `<span class="holiday-label">Public Holiday</span>`;
                 }
@@ -494,6 +494,7 @@
                 hours.forEach((h, hi) => {
                     const td = document.createElement('td');
                     let cellClass = 'hour-cell';
+                    if (day.today) cellClass += ' today-cell';
                     if (day.sunday || day.holiday) cellClass += ' offday-slot';
                     td.className = cellClass;
                     td.dataset.day = di;
