@@ -22,7 +22,7 @@
 <body>
 
     @if(!isset($hideNav) || !$hideNav)
-        @include('partials.ui-nav-bar', ['activeNav' => $activeNav ?? ''])
+        @include('partials.ui-nav-bar', ['activeNav' => $activeNav ?? '', 'notifCount' => $notifCount ?? 3])
     @endif
 
 

@@ -100,3 +100,34 @@
 
 **Verdict: tasks.md re-frozen. All batches complete with enhanced scope (items 1–22).**
 
+## proposal/design/tasks Round 4 (unfreeze for items 23–25) — 2026-08-02
+### 🔴 Fixed
+ - *(none)*
+### 🟡 Addressed
+ - **§4.17 CSS selector mismatch** — corrected from `.grid-scroll.transition` to `.grid-scroll` + `.grid-scroll.grid-transitioning`.
+ - **Event tooltip mobile overflow** — added note: tooltip irrelevant on mobile (desktop-only for mock phase).
+### 🔴 Outstanding
+ - *(none — batch passes)*
+
+**Verdict: All artifacts re-frozen with items 1–25. Ready for implementation.**
+
+## proposal/design/tasks Round 5 (item 26) — 2026-08-02
+### 🔴 Fixed
+ - *(none)*
+### 🟡 Addressed
+ - *(none — clean pass)*
+### 🔴 Outstanding
+ - *(none)*
+
+**Verdict: All artifacts re-frozen with items 1–26. Ready for implementation.**
+
+## proposal/tasks Round 6 (mock data gap fix) — 2026-08-02
+### 🔴 Fixed
+ - **Empty-state untestable** — week 4 `cancelledFlags` expanded from 1 event to ALL 7 events (`BMIT7070/7071/7072/8080/7073/7074/7075`). Verified exact 1:1 match with `rsd3g2Base` codes.
+### 🟡 Addressed
+ - **Holidays comment stale** — Task 1 now explicitly updates header from "CONSUMED BY CohortTimetable ONLY" to "CONSUMED BY CohortTimetable + Student My Timetable".
+### 🔴 Outstanding
+ - *(none)*
+
+**Verdict: All artifacts re-frozen. Mock data coverage complete for all 26 features.**
+

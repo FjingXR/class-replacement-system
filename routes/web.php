@@ -32,6 +32,10 @@ Route::get('/cohort-timetable-ui', function () {
     return view('ui-design-templates.CohortTimetable-UI-design-template', ['activeNav' => 'cohort-timetables']);
 });
 
+Route::get('/student-my-timetable-ui', function () {
+    return view('ui-design-templates.student-my-timetable-UI-design-template', ['activeNav' => 'my-timetable']);
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });

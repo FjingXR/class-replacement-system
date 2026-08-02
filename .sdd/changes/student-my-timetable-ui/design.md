@@ -218,6 +218,59 @@ progressLabel.textContent = `Week ${currentWeek+1} of ${MockData.semester.weeks}
 ```
 CSS: `.semester-progress { margin: 4px 0; }` `.progress-track { height: 4px; background: var(--color-surface-variant); border-radius: 2px; overflow: hidden; }` `.progress-fill { height: 100%; background: var(--color-primary); border-radius: 2px; transition: width 0.3s; }` `.progress-label { font-size: 0.75rem; color: var(--color-on-surface-variant); margin-bottom: 2px; }`.
 
+### 1.19 Week-change transition
+CSS-only animation on the grid container. On week change, a `.grid-transitioning` class is toggled on `.grid-scroll`:
+```css
+.grid-scroll { transition: opacity 0.1s ease; }
+.grid-scroll.grid-transitioning { opacity: 0; }
+```
+In JS, during week change: add class → `requestAnimationFrame` → remove class (triggers fade-in). Total visual duration ~300ms. No layout shift; purely opacity.
+
+### 1.20 Event hover tooltip
+CSS `::after` pseudo-element on `.event-block` using `data-name` and `data-venue` attributes:
+```html
+<div class="event-block" data-name="Object-Oriented Programming" data-venue="Lab 3.01" ...>
+    <span class="ev-code">BMIT7070</span> ...
+</div>
+```
+```css
+.event-block { position: relative; }
+.event-block::after {
+    content: attr(data-name) ' · ' attr(data-venue);
+    position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    background: var(--color-inverse-surface); color: var(--color-on-inverse-surface);
+    padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 10;
+}
+.event-block:hover::after { opacity: 1; }
+```
+In `buildTimetable()`, set `data-name` and `data-venue` on each `.event-block` element from `event.name` and `event.venue`.
+
+### 1.21 Copy course code
+Click handler on `.ev-code` elements inside event blocks:
+```js
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('ev-code')) {
+        navigator.clipboard.writeText(e.target.textContent).then(() => {
+            const toast = document.getElementById('copyToast');
+            toast.textContent = `Copied ${e.target.textContent}`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 1500);
+        });
+    }
+});
+```
+Toast element in Blade: `<div class="copy-toast" id="copyToast"></div>` at bottom of page.
+CSS: `.copy-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--color-inverse-surface); color: var(--color-on-inverse-surface); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; }` `.copy-toast.show { opacity: 1; }`.
+`.ev-code` gets `cursor: pointer` to indicate clickability. Tooltip is irrelevant on mobile — `.event-block` is hidden per responsive card layout (mock phase: no mobile breakpoint needed; desktop-only).
+
+### 1.22 Smooth scroll to grid
+In the Today button handler (§1.9) and heatmap click handler (§1.12), after setting `currentWeek` and rebuilding the grid, add:
+```js
+document.querySelector('.grid-wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+```
+One line, no new CSS. Ensures the timetable is visible after a jump, especially on screens where the grid is below the fold.
+
 ## 2. Data Flow
 ```
 public/js/mock-data.js (window.MockData — READ ONLY)
@@ -235,7 +288,7 @@ prev/next/select week → currentWeek → rebuild + saveStud​entMyTimetableWee
 ## 3. Dependencies
 - `mock-data.js` — +`MockData.studentTimetable` (with `notificationCount`); §2.2 comment updated.
 - `ui-common.js` — read-only (`hours`, `to12h`, `add30min`, `closeOnEsc`, `closeOnOverlayClick`, `updateWeekArrows`); no changes.
-- `theme.css` — +promoted CSS blocks (see §4) + new enhancement CSS (heatmap, progress-bar, empty-state, status-timeline, keyboard-focus, today-btn, week-subtitle).
+- `theme.css` — +promoted CSS blocks (see §4) + new enhancement CSS (heatmap, progress-bar, empty-state, status-timeline, keyboard-focus, today-btn, week-subtitle, grid-transition, event-tooltip, copy-toast).
 - `partials/ui-nav-bar.blade.php` — +`$navItems` param + `$notifCount` param + `id="notifBadge"` on badge span.
 - `layouts/ui-template.blade.php` — forward `$notifCount ?? 3` to nav partial `@include`.
 - `partials/ui-summary-bar.blade.php` — unchanged (consumed as-is).
@@ -262,6 +315,9 @@ prev/next/select week → currentWeek → rebuild + saveStud​entMyTimetableWee
 | 4.14 | **Keyboard focus** CSS (`.event-block:focus-visible`) | Student only | `theme.css` | New for enhancement item 18 |
 | 4.15 | **Status timeline** CSS (`.status-timeline/.step/.step.completed/.step.active`) | Student only | `theme.css` | New for enhancement item 19 |
 | 4.16 | **Semester progress bar** CSS (`.semester-progress/.progress-track/.progress-fill/.progress-label`) | Student only | `theme.css` | New for enhancement item 22 |
+| 4.17 | **Week-change transition** CSS (`.grid-scroll` transition declaration, `.grid-scroll.grid-transitioning`) | Student only | `theme.css` | New for enhancement item 23 |
+| 4.18 | **Event hover tooltip** CSS (`.event-block::after`, `.ev-code` cursor) | Student only | `theme.css` | New for enhancement item 24 |
+| 4.19 | **Copy toast** CSS (`.copy-toast/.copy-toast.show`) | Student only | `theme.css` | New for enhancement item 25 |
 
 **Stays page-specific (intentional, not duplicated):**
 - MyT: `.btn-replace-now`, `.btn-cancel-class`, `.cancel-overlay` (+ sub-classes) — lecturer action modal CSS, not used elsewhere.
@@ -280,7 +336,7 @@ prev/next/select week → currentWeek → rebuild + saveStud​entMyTimetableWee
 | `resources/views/partials/ui-legend-bar.blade.php` | NEW |
 | `resources/views/partials/ui-nav-bar.blade.php` | + `$navItems` param (default = current 5 + hrefs) + `$notifCount` param (default = 3) + `id="notifBadge"` on badge span |
 | `resources/views/layouts/ui-template.blade.php` | forward `$notifCount ?? 3` to `@include('partials.ui-nav-bar', ...)` |
-| `public/css/theme.css` | + blocks 4.2–4.8 (promoted) + blocks 4.10–4.16 (new enhancement CSS) |
+| `public/css/theme.css` | + blocks 4.2–4.8 (promoted) + blocks 4.10–4.19 (new enhancement CSS) |
 | `public/js/mock-data.js` | + `MockData.studentTimetable` (with `activeCohort`, `cancelledFlags`, `notificationCount`); §2.2 holidays comment updated |
 | `page-changelogs/student-my-timetable-ui-changelog.md` | populated during apply |
 

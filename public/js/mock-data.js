@@ -43,7 +43,7 @@ window.MockData = {
     })(),
 
     // ─────────────────────────────────────────────────────────────────────
-    // §2.2  holidays — declarative; CONSUMED BY CohortTimetable ONLY.
+    // §2.2  holidays — declarative; CONSUMED BY CohortTimetable + Student My Timetable.
     // MyTimetable has no holiday render path today (explicit non-goal).
     // Replacement-arrangement's holiday stays embedded inside `arrangementWeeks`
     // (page-specific) — NOT duplicated here, to avoid double-sourcing.
@@ -317,7 +317,26 @@ window.MockData = {
     },
 
     // ─────────────────────────────────────────────────────────────────────
-    // §2.8  requests — was my-request-history inline `mockRequests` (verbatim,
+    // §2.8  studentTimetable — consumed by Student My Timetable page.
+    // `activeCohort` is the cohort ID to render by default (matches
+    // cohortTimetable faculties[].cohorts[].id).
+    // `cancelledFlags` maps 0-indexed week keys to arrays of cancelled
+    // course codes. Week 4 cancels ALL 7 events → triggers the empty state;
+    // weeks 5–6 cancel 1 event each (partial cancellation).
+    // `notificationCount` drives the nav-badge dot.
+    // ─────────────────────────────────────────────────────────────────────
+    studentTimetable: {
+        activeCohort: 'rsd3s1g2',
+        cancelledFlags: {
+            4: ['BMIT7070', 'BMIT7071', 'BMIT7072', 'BMIT8080', 'BMIT7073', 'BMIT7074', 'BMIT7075'],
+            5: ['BMIT8080'],
+            6: ['BMIT7073'],
+        },
+        notificationCount: 3,
+    },
+
+    // ─────────────────────────────────────────────────────────────────────
+    // §2.9  requests — was my-request-history inline `mockRequests` (verbatim,
     // 20 entries, `id` first). my-request-history aliases this as a same-name
     // page-local const so its render code is unchanged. The sibling
     // request-approval page reads its OWN `approvalRequests` global (distinct
@@ -347,7 +366,7 @@ window.MockData = {
     ],
 
     // ─────────────────────────────────────────────────────────────────────
-    // §2.9  conflictedClasses — was replacement-home inline array (14 rows,
+    // §2.10 conflictedClasses — was replacement-home inline array (14 rows,
     // verbatim). Read-only — the page does not mutate it.
     // ─────────────────────────────────────────────────────────────────────
     conflictedClasses: [

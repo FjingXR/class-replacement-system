@@ -1,14 +1,22 @@
+@php
+  $items = $navItems ?? [
+    ['key'=>'dashboard','label'=>'Dashboard','href'=>'/dashboard'],
+    ['key'=>'my-timetable','label'=>'My Timetable','href'=>'/my-timetable-ui'],
+    ['key'=>'cohort-timetables','label'=>'Cohort Timetables','href'=>'/cohort-timetable-ui'],
+    ['key'=>'replacement-arrangement','label'=>'Replacement Arrangement','href'=>'/replacement-home-ui'],
+    ['key'=>'replacement-history','label'=>'Replacement History','href'=>'/my-request-history-ui'],
+  ];
+@endphp
+
 <div class="top-bar">
     <div class="top-logo" onclick="navigateHome()">
         <img src="/images/logo_banner.png" alt="TAR UMT">
     </div>
 
     <div class="nav-items">
-        <a class="nav-item {{ $activeNav === 'dashboard' ? 'active' : '' }}" href="/dashboard">Dashboard</a>
-        <a class="nav-item {{ $activeNav === 'my-timetable' ? 'active' : '' }}" href="/my-timetable-ui">My Timetable</a>
-        <a class="nav-item {{ $activeNav === 'cohort-timetables' ? 'active' : '' }}" href="/cohort-timetable-ui">Cohort Timetables</a>
-        <a class="nav-item {{ $activeNav === 'replacement-arrangement' ? 'active' : '' }}" href="/replacement-home-ui">Replacement Arrangement</a>
-        <a class="nav-item {{ $activeNav === 'replacement-history' ? 'active' : '' }}" href="/my-request-history-ui">Replacement History</a>
+        @foreach ($items as $it)
+        <a class="nav-item {{ $activeNav === $it['key'] ? 'active' : '' }}" href="{{ $it['href'] }}">{{ $it['label'] }}</a>
+        @endforeach
     </div>
 
     <div class="top-right">
@@ -23,7 +31,7 @@
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                 <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            <span class="notif-badge">3</span>
+            <span class="notif-badge" id="notifBadge">{{ $notifCount ?? 3 }}</span>
         </button>
 
         <div class="user-panel">
