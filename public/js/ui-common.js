@@ -195,3 +195,121 @@ function ripple(e, btn) {
     btn.appendChild(el);
     setTimeout(() => el.remove(), 500);
 }
+
+// ───── Mobile Navigation ─────
+
+function initMobileNav() {
+    const hamburger = document.getElementById('navHamburger');
+    const drawer = document.getElementById('navDrawer');
+    const overlay = document.getElementById('navDrawerOverlay');
+    const closeBtn = document.getElementById('navDrawerClose');
+
+    if (!hamburger || !drawer || !overlay) return;
+
+    function openDrawer() {
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    hamburger.addEventListener('click', openDrawer);
+    closeBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    // Swipe left to close
+    let touchStartX = 0;
+    drawer.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    drawer.addEventListener('touchend', (e) => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (diff > 50) closeDrawer();
+    }, { passive: true });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+    });
+}
+
+// ───── Swipe Gesture ─────
+
+function initSwipeGesture(config) {
+    const { element, onSwipeLeft, onSwipeRight, threshold = 50 } = config;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let lastSwipeTime = 0;
+
+    element.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    element.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastSwipeTime < 300) return; // debounce
+
+        const diffX = touchStartX - e.changedTouches[0].clientX;
+        const diffY = Math.abs(touchStartY - e.changedTouches[0].clientY);
+
+        if (Math.abs(diffX) > threshold && diffY < 100) {
+            lastSwipeTime = now;
+            if (diffX > 0) onSwipeLeft();
+            else onSwipeRight();
+        }
+    }, { passive: true });
+}
+
+// ───── Collapsible Day Cards ─────
+
+function initCollapsibleCards() {
+    document.querySelectorAll('.day-card-header').forEach(header => {
+        header.addEventListener('click', () => {
+            header.classList.toggle('collapsed');
+            const content = header.nextElementSibling;
+            content.classList.toggle('collapsed');
+        });
+    });
+}
+
+// ───── Skeleton Loading ─────
+
+function showSkeleton(container, type = 'rows', count = 5) {
+    container.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = `skeleton skeleton-${type === 'rows' ? 'row' : 'card'}`;
+        container.appendChild(el);
+    }
+}
+
+function hideSkeleton(container) {
+    container.innerHTML = '';
+}
+
+// ───── Scroll Restoration ─────
+
+function saveScrollPosition(key) {
+    sessionStorage.setItem('scroll_' + key, window.scrollY);
+}
+
+function restoreScrollPosition(key) {
+    const pos = sessionStorage.getItem('scroll_' + key);
+    if (pos) window.scrollTo(0, parseInt(pos));
+}
+
+// Auto-save on scroll (debounced)
+let scrollTimer;
+window.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+        const pageKey = document.body.dataset.page;
+        if (pageKey) saveScrollPosition(pageKey);
+    }, 200);
+}, { passive: true });

@@ -1,4 +1,4 @@
-@extends('layouts.ui-template', ['activeNav' => 'cohort-timetables'])
+@extends('layouts.ui-template', ['activeNav' => 'cohort-timetables', 'pageKey' => 'cohortTimetable'])
 
 @section('title', 'Cohort Timetable — Class Replacement System')
 
@@ -638,4 +638,22 @@
             // Restore last selection (faculty / cohort / week) — overrides the empty state above if present
             restoreState();
         });
+
+        // Mobile swipe gestures for week navigation
+        if (window.innerWidth <= 768) {
+            const gridScroll = document.querySelector('.grid-scroll');
+            if (gridScroll) {
+                initSwipeGesture({
+                    element: gridScroll,
+                    onSwipeLeft: () => {
+                        const nextBtn = document.querySelector('[onclick*="nextWeek"], [data-action="next"]');
+                        if (nextBtn) nextBtn.click();
+                    },
+                    onSwipeRight: () => {
+                        const prevBtn = document.querySelector('[onclick*="prevWeek"], [data-action="prev"]');
+                        if (prevBtn) prevBtn.click();
+                    }
+                });
+            }
+        }
 @endsection

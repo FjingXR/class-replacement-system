@@ -13,6 +13,14 @@
         <img src="/images/logo_banner.png" alt="TAR UMT">
     </div>
 
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open navigation menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+
     <div class="nav-items">
         @foreach ($items as $it)
         <a class="nav-item {{ $activeNav === $it['key'] ? 'active' : '' }}" href="{{ $it['href'] }}">{{ $it['label'] }}</a>
@@ -51,5 +59,24 @@
                 </svg>
             </button>
         </div>
+    </div>
+</div>
+
+<div class="nav-drawer-overlay" id="navDrawerOverlay"></div>
+
+<div class="nav-drawer" id="navDrawer">
+    <div class="nav-drawer-header">
+        <span class="nav-drawer-title">Navigation</span>
+        <button class="nav-drawer-close" id="navDrawerClose" aria-label="Close navigation menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    </div>
+    <div class="nav-drawer-items">
+        @foreach ($items as $it)
+        <a class="nav-drawer-item {{ $activeNav === $it['key'] ? 'active' : '' }}" href="{{ $it['href'] }}">{{ $it['label'] }}</a>
+        @endforeach
     </div>
 </div>

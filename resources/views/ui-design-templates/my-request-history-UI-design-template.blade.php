@@ -1,4 +1,4 @@
-@extends('layouts.ui-template', ['activeNav' => 'replacement-history'])
+@extends('layouts.ui-template', ['activeNav' => 'replacement-history', 'pageKey' => 'myRequestHistory'])
 
 @section('title', 'My Request History — Class Replacement System')
 

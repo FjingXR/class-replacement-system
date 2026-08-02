@@ -1,0 +1,4 @@
+name: mobile-responsive
+created: 2026-08-02
+status: proposed
+constraint: desktop-preservation  # DO NOT disturb/change any existing desktop code/design

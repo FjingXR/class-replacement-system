@@ -1,4 +1,4 @@
-@extends('layouts.ui-template', ['activeNav' => 'replacement-arrangement', 'hideNav' => true])
+@extends('layouts.ui-template', ['activeNav' => 'replacement-arrangement', 'hideNav' => true, 'pageKey' => 'replacementArrangement'])
 
 @section('title', 'Replacement Arrangement — Class Replacement System')
 

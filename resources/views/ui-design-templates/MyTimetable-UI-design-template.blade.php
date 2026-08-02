@@ -1,4 +1,4 @@
-@extends('layouts.ui-template', ['activeNav' => 'my-timetable'])
+@extends('layouts.ui-template', ['activeNav' => 'my-timetable', 'pageKey' => 'myTimetable'])
 
 @section('title', 'My Timetable')
 
@@ -526,4 +526,22 @@
 
             buildTimetable();
         });
+
+        // Mobile swipe gestures for week navigation
+        if (window.innerWidth <= 768) {
+            const gridScroll = document.querySelector('.grid-scroll');
+            if (gridScroll) {
+                initSwipeGesture({
+                    element: gridScroll,
+                    onSwipeLeft: () => {
+                        const nextBtn = document.querySelector('[onclick*="nextWeek"], [data-action="next"]');
+                        if (nextBtn) nextBtn.click();
+                    },
+                    onSwipeRight: () => {
+                        const prevBtn = document.querySelector('[onclick*="prevWeek"], [data-action="prev"]');
+                        if (prevBtn) prevBtn.click();
+                    }
+                });
+            }
+        }
 @endsection

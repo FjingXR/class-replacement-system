@@ -1,5 +1,6 @@
 @extends('layouts.ui-template', [
     'activeNav' => 'my-timetable',
+    'pageKey' => 'studentMyTimetable',
     'navItems' => [
         ['key'=>'dashboard','label'=>'Dashboard','href'=>'/dashboard'],
         ['key'=>'my-timetable','label'=>'My Timetable','href'=>'/student-my-timetable-ui'],
@@ -530,4 +531,22 @@ document.getElementById('weekSelect').selectedIndex = currentWeek;
 updateWeekSubtitle();
             updateProgress();
         });
+
+        // Mobile swipe gestures for week navigation
+        if (window.innerWidth <= 768) {
+            const gridScroll = document.querySelector('.grid-scroll');
+            if (gridScroll) {
+                initSwipeGesture({
+                    element: gridScroll,
+                    onSwipeLeft: () => {
+                        const nextBtn = document.querySelector('[onclick*="nextWeek"], [data-action="next"]');
+                        if (nextBtn) nextBtn.click();
+                    },
+                    onSwipeRight: () => {
+                        const prevBtn = document.querySelector('[onclick*="prevWeek"], [data-action="prev"]');
+                        if (prevBtn) prevBtn.click();
+                    }
+                });
+            }
+        }
 @endsection

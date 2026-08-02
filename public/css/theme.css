@@ -1096,3 +1096,391 @@ html.dark .semester-bar select:not(.week-select) {
     --color-inverse-surface: #1e1f20;
     --color-on-inverse-surface: #ffffff;
 }
+
+/* ── Nav Hamburger (mobile only) ── */
+.nav-hamburger {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: transparent;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition);
+}
+.nav-hamburger:hover { background: var(--color-surface-variant); }
+
+/* ── Nav Drawer Overlay ── */
+.nav-drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.nav-drawer-overlay.open { display: block; opacity: 1; }
+
+/* ── Nav Drawer ── */
+.nav-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 999;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-outline);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-drawer.open { transform: translateX(0); }
+.nav-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid var(--color-outline);
+}
+.nav-drawer-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-on-surface);
+}
+.nav-drawer-close {
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: transparent;
+    color: var(--color-on-surface-variant);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+}
+.nav-drawer-close:hover { background: var(--color-surface-variant); }
+.nav-drawer-items {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+}
+.nav-drawer-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    color: var(--color-on-surface-variant);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background var(--transition), color var(--transition);
+    min-height: 48px;
+}
+.nav-drawer-item:hover { background: var(--color-surface-variant); color: var(--color-on-surface); }
+.nav-drawer-item.active {
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+    font-weight: 600;
+    border-left: 3px solid var(--color-primary);
+}
+
+/* ── Mobile Nav Overrides ── */
+@media (max-width: 768px) {
+    .nav-hamburger { display: flex; }
+    .nav-items { display: none; }
+    .user-info { display: none; }
+}
+
+/* ── Mobile card layout for timetable grid ── */
+@media (max-width: 768px) {
+    .grid-scroll { overflow-x: hidden; }
+
+    .timetable,
+    .timetable thead,
+    .timetable tbody,
+    .timetable tr,
+    .timetable td,
+    .timetable th {
+        display: block;
+    }
+
+    .timetable thead { display: none; }
+
+    .timetable tbody tr {
+        background: var(--color-surface);
+        border: 1px solid var(--color-outline);
+        border-radius: var(--radius-md);
+        margin-bottom: 12px;
+        padding: 12px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .timetable td.hour-cell {
+        height: auto;
+        min-width: 0;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--color-outline);
+    }
+    .timetable td.hour-cell:last-child { border-bottom: none; }
+
+    .timetable td.time-col {
+        position: static;
+        width: 100%;
+        min-width: 0;
+        background: var(--color-primary-container);
+        border-radius: var(--radius-sm);
+        margin-bottom: 8px;
+        padding: 8px;
+    }
+
+    .event-block {
+        width: 100%;
+        height: auto;
+        min-height: 60px;
+        padding: 10px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .event-block .ev-code { font-size: 14px; text-align: left; }
+    .event-block .ev-venue { font-size: 12px; text-align: right; }
+    .event-block .ev-time { font-size: 11px; text-align: right; }
+}
+
+/* ── Mobile: full-screen modal (bottom sheet style) ── */
+@media (max-width: 768px) {
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    .modal-box {
+        width: 100%;
+        max-width: 100%;
+        max-height: 90vh;
+        max-height: 90dvh;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        margin: 0;
+        overflow-y: auto;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .modal-actions {
+        padding: 12px 16px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal-actions .btn,
+    .modal-actions button {
+        width: 100%;
+        min-height: 48px;
+    }
+}
+
+/* ── Mobile: 44px minimum touch targets ── */
+@media (max-width: 768px) {
+    .btn,
+    .btn-sm,
+    .btn-icon,
+    .btn-pill,
+    button,
+    a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .btn-sm { min-height: 40px; }
+
+    .pill-tab {
+        padding: 10px 16px;
+        min-height: 44px;
+    }
+}
+
+/* ── Mobile: summary cards stack to 1 column ── */
+@media (max-width: 768px) {
+    .summary-bar {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .summary-card {
+        min-height: 56px;
+        padding: 12px;
+    }
+}
+
+/* ── Mobile: collapsible day cards ── */
+@media (max-width: 768px) {
+    .day-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        background: var(--color-surface-variant);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        min-height: 48px;
+    }
+
+    .day-card-header .chevron {
+        transition: transform 0.2s;
+    }
+    .day-card-header.collapsed .chevron {
+        transform: rotate(-90deg);
+    }
+
+    .day-card-content {
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.2s;
+        max-height: 500px;
+        opacity: 1;
+    }
+    .day-card-content.collapsed {
+        max-height: 0;
+        opacity: 0;
+    }
+}
+
+/* ── Mobile: responsive typography ── */
+@media (max-width: 768px) {
+    .page-title { font-size: clamp(18px, 4vw, 20px); }
+    .time-col .day-label { font-size: 13px; }
+    .event-block .ev-code { font-size: 12px; }
+    .event-block .ev-venue { font-size: 11px; }
+    .event-block .ev-time { font-size: 10px; }
+    .legend-item { font-size: 0.8rem; }
+    .modal-title { font-size: 16px; }
+}
+
+/* ── Safe area insets (all viewports, iPhone notch support) ── */
+body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+/* ── Mobile: full-width form inputs ── */
+@media (max-width: 768px) {
+    .filter-select,
+    .search-input,
+    .week-select {
+        width: 100% !important;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+        width: 100%;
+    }
+
+    .toolbar {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* ── Skeleton loading (all viewports) ── */
+.skeleton {
+    background: linear-gradient(90deg, var(--color-surface-variant) 25%, var(--color-outline) 50%, var(--color-surface-variant) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+}
+
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-row {
+    height: 60px;
+    margin-bottom: 8px;
+}
+
+.skeleton-card {
+    height: 80px;
+    margin-bottom: 12px;
+}
+
+.skeleton-text {
+    height: 14px;
+    margin-bottom: 8px;
+    width: 80%;
+}
+
+/* ── Mobile: toast position ── */
+@media (max-width: 768px) {
+    .copy-toast {
+        bottom: calc(24px + env(safe-area-inset-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(100vw - 32px);
+        text-align: center;
+    }
+}
+
+/* ── Tablet: navigation ── */
+@media (max-width: 1024px) {
+    .nav-item { padding: 0 10px; font-size: 13px; }
+    .user-info { display: none; }
+    .top-logo { margin-right: 12px; }
+}
+
+/* ── Tablet: summary cards 3-column ── */
+@media (max-width: 1024px) {
+    .summary-bar {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .summary-card:nth-child(4),
+    .summary-card:nth-child(5) {
+        grid-column: span 1;
+    }
+    .summary-value { font-size: 22px; }
+    .summary-label { font-size: 12px; }
+}
+
+/* ── Tablet: modal max-width ── */
+@media (max-width: 1024px) {
+    .modal {
+        max-width: 560px;
+    }
+}
+
+/* ── Tablet: 40px minimum touch targets ── */
+@media (max-width: 1024px) {
+    .nav-item,
+    .legend-item,
+    .week-arrow,
+    .today-btn,
+    .modal-close,
+    .btn-close-modal,
+    .page-btn,
+    .badge {
+        min-height: 40px;
+        min-width: 40px;
+    }
+}
