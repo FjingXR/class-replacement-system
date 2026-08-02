@@ -78,6 +78,14 @@
                 <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)" disabled></select>
                 <button class="week-arrow" onclick="nextWeek()" aria-label="Next week" disabled>&#8250;</button>
             </div>
+            <button class="today-btn" id="todayBtn" title="Jump to current week" aria-label="Jump to current week">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="6"/>
+                    <circle cx="12" cy="12" r="2"/>
+                </svg>
+                Today
+            </button>
         </div>
 
         <!-- ─── Grid Wrapper ─── -->
@@ -644,6 +652,15 @@
 
             // Restore last selection (faculty / cohort / week) — overrides the empty state above if present
             restoreState();
+        });
+
+        document.getElementById('todayBtn').addEventListener('click', function() {
+            currentWeek = currentWeekIndex();
+            buildTimetable();
+            document.getElementById('weekSelect').selectedIndex = currentWeek;
+            updateWeekSubtitle();
+            updateSummary();
+            document.querySelector('.grid-wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
         // Mobile swipe gestures for week navigation
