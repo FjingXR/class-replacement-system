@@ -24,6 +24,7 @@
 | 2026-07-20 15:30 | CSS (`.filter-select`) | Fix weekFilter dark mode | Added `html.dark .filter-select { color-scheme: dark; }` to force native dark dropdown rendering, overriding GTK green tint |
 | 2026-08-02 12:00 | HTML + JS (full page) | Centralised mock data (Task 6) | Removed 14-row inline `conflictedClasses` array; replaced with `MockData.conflictedClasses` reference; standardised `computeWeek()` and `weekRangeLabel()` to use `MockData.semester.startDate`; replaced static semester chip with dynamic `#semesterChip` populated from `MockData.semester.chipText` |
 | 2026-08-02 | `@section('page-scripts')` | Centralised mock data (Task 9) | `conflictedClasses` moved to `mock-data.js` (page-specific, not shared). Week computation standardized to `MockData.semester.startDate`. Semester chip now reads `MockData.semester.chipText` dynamically. |
+| 2026-08-02 | CSS + HTML + JS | Mobile card view | Added `.replacement-card` / `.rc-header` / `.rc-body` / `.rc-footer` card styles; added `#cardView` container; added `renderCards()` JS function; on mobile (≤768px) grid/pagination/sort-hint hidden, card-view shown; cards show course code, conflict reason badge, name, date/time/venue, days left, cohorts |
 
 ### `routes/web.php`
 

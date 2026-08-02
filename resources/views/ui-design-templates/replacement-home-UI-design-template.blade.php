@@ -225,6 +225,64 @@
             color-scheme: dark;
         }
 
+        /* ───── Responsive Card View ───── */
+        .card-view { display: none; }
+        .replacement-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
+        .replacement-card:hover {
+            background: var(--color-surface-variant);
+            box-shadow: var(--shadow-sm);
+        }
+        .replacement-card:active {
+            transform: scale(0.99);
+        }
+        .rc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .rc-code {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-on-surface);
+        }
+        .rc-body {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            line-height: 1.6;
+        }
+        .rc-body strong {
+            color: var(--color-on-surface);
+            font-weight: 600;
+        }
+        .rc-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--color-outline);
+            font-size: 11px;
+            color: var(--color-on-surface-variant);
+        }
+        .rc-footer .badge {
+            font-size: 11px;
+            padding: 3px 8px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
+            .card-view { display: block; }
+        }
+
 @endsection
 
 @section('content')
@@ -268,6 +326,9 @@
                 </table>
             </div>
         </div>
+
+        <!-- ─── Card View (mobile) ─── -->
+        <div class="card-view" id="cardView"></div>
 
         <!-- ─── Pagination ─── -->
         <div class="pagination-bar" id="paginationBar">
@@ -451,6 +512,39 @@
             paginate({ data: currentFiltered, pageSize: pageSize, state: pageState, infoId: 'paginationInfo', controlsId: 'paginationControls', render: buildTable });
             updateResultCount({ elId: 'resultCount', data: currentFiltered, total: conflictedClasses.length, label: 'classes' });
             updateSummary();
+            renderCards();
+        }
+
+        function renderCards() {
+            var container = document.getElementById('cardView');
+            if (!container) return;
+            container.innerHTML = '';
+            currentFiltered.forEach(function(c) {
+                var days = daysLeft(c.date);
+                var card = document.createElement('div');
+                card.className = 'replacement-card';
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.addEventListener('click', function() { goToReplacementWith(c.code, c.date); });
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToReplacementWith(c.code, c.date); }
+                });
+                card.innerHTML =
+                    '<div class="rc-header">' +
+                        '<span class="rc-code">' + c.code + ' <span style="font-weight:400;font-size:12px;color:var(--color-on-surface-variant)">(' + (c.type === 'L' ? 'Lecture' : 'Tutorial') + ')</span></span>' +
+                        '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>' +
+                    '</div>' +
+                    '<div class="rc-body">' +
+                        '<strong>' + c.name + '</strong><br>' +
+                        c.day + ', ' + formatDate(c.date) + ' · Week ' + computeWeek(c.date) + '<br>' +
+                        to12h(c.timeStart) + ' – ' + to12h(c.timeEnd) + ' · ' + c.venue +
+                    '</div>' +
+                    '<div class="rc-footer">' +
+                        '<span class="' + urgencyClass(days) + '">' + days + ' days left</span>' +
+                        '<span>' + c.cohorts.join(', ') + '</span>' +
+                    '</div>';
+                container.appendChild(card);
+            });
         }
 
         function updateSummary() {
