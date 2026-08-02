@@ -54,6 +54,11 @@
 | 2026-08-02 14:00 | Lines 1047–1057 | F6: JS | Added timeline section in modal for Pending/Approved/Rejected: Request Submitted → Under Review → Final Status |
 | 2026-08-02 14:00 | Lines 416–418 | F7: CSS | Added `.row-focused` outline style for keyboard focus indicator |
 | 2026-08-02 14:00 | Lines 716, 1116–1138 | F7: JS | Added `focusedRowIndex` state, `keydown` handler (ArrowDown/Up/Enter/Escape), `highlightFocusedRow()`, `clearFocusedRow()` |
+| 2026-08-02 15:00 | Lines 735–739, 394 | UX | Added `relativeTime(days)` helper + `.age-relative` CSS; "Requested At" cell now shows "(n days ago)" after formatted date |
+| 2026-08-02 15:00 | Line 837 | UX | Changed blank `col-actions` header label from empty to `'Quick Cancel'` |
+| 2026-08-02 15:00 | Lines 586–631 | UX | Replaced JS `confirm()` with two dedicated modals: single cancel confirm (shows request details) + batch cancel confirm (shows list of selected requests) |
+| 2026-08-02 15:00 | Line 559 | UX | Renamed `bulkCancelBtn` → `btnBatchCancelRequest` to reduce ambiguity |
+| 2026-08-02 15:00 | Lines 558, 395–407 | UX | Added "Clear" button to bulk action bar (`.btn-bulk-clear`), wired to `clearAllSelections()` |
 
 ### `routes/web.php`
 

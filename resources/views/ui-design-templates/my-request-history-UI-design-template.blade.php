@@ -386,11 +386,27 @@
             background: var(--color-error);
             color: #fff;
         }
+        .btn-bulk-clear {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--color-outline);
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-bulk-clear:hover {
+            background: var(--color-surface-variant);
+        }
 
         /* ───── F3: Request Age Indicator ───── */
         .age-green { color: var(--color-secondary) !important; }
         .age-amber { color: var(--color-tertiary) !important; }
         .age-red { color: var(--color-error) !important; }
+        .age-relative { font-size: 11px; opacity: 0.7; }
 
         /* ───── F4: Quick Actions in Rows ───── */
         .col-actions { width: 70px; text-align: center; }
@@ -556,7 +572,8 @@
         <!-- ─── Bulk Action Bar ─── -->
         <div class="bulk-action-bar" id="bulkActionBar">
             <span class="bulk-count" id="bulkCount">0 selected</span>
-            <button class="btn-bulk-cancel" id="bulkCancelBtn" onclick="bulkCancelSelected()">Cancel Selected</button>
+            <button class="btn-bulk-clear" onclick="clearAllSelections()">Clear</button>
+            <button class="btn-bulk-cancel" id="btnBatchCancelRequest" onclick="batchCancelSelected()">Cancel Selected Request(s)</button>
         </div>
 
         <!-- ─── Summary Stat Cards ─── -->
@@ -593,10 +610,48 @@
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
                 <div class="modal-footer-left">
-                    <button class="btn-danger" id="cancelRequestBtn" style="display:none" onclick="confirmCancelRequest()">Cancel Request</button>
+                    <button class="btn-danger" id="cancelRequestBtn" style="display:none" onclick="openCancelConfirm()">Cancel Request</button>
                 </div>
                 <div class="modal-footer-right">
                     <button class="btn-outline" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Cancel Confirmation Modal ═══ -->
+    <div class="modal-overlay" id="cancelConfirmOverlay" style="display:none">
+        <div class="modal" style="max-width:420px">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Cancellation</h3>
+                <button class="modal-close" onclick="closeCancelConfirm()">✕</button>
+            </div>
+            <div class="modal-body" id="cancelConfirmBody">
+                <p style="font-size:14px;color:var(--color-on-surface);line-height:1.5">Are you sure you want to cancel this replacement request? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-footer-left"></div>
+                <div class="modal-footer-right">
+                    <button class="btn-outline" onclick="closeCancelConfirm()">No, Keep It</button>
+                    <button class="btn-danger" id="confirmCancelAction">Yes, Cancel Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Batch Cancel Confirmation Modal ═══ -->
+    <div class="modal-overlay" id="batchCancelOverlay" style="display:none">
+        <div class="modal" style="max-width:440px">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Batch Cancellation</h3>
+                <button class="modal-close" onclick="closeBatchCancelConfirm()">✕</button>
+            </div>
+            <div class="modal-body" id="batchCancelBody"></div>
+            <div class="modal-footer">
+                <div class="modal-footer-left"></div>
+                <div class="modal-footer-right">
+                    <button class="btn-outline" onclick="closeBatchCancelConfirm()">No, Keep Them</button>
+                    <button class="btn-danger" id="confirmBatchCancelAction">Yes, Cancel All</button>
                 </div>
             </div>
         </div>
@@ -606,26 +661,26 @@
 
 @section('page-scripts')
         const mockRequests = [
-            { id: 1, requestedAt: '2026-09-18T10:30:00', courseCode: 'BMIT5555', courseName: 'Software Engineering', classType: 'L', classDate: '2026-08-31', classDay: 'Monday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B104', totalStudents: 35, cohortCounts: [20, 15], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-02', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 2, requestedAt: '2026-09-18T14:15:00', courseCode: 'BMIT5555', courseName: 'Software Engineering', classType: 'T', classDate: '2026-09-02', classDay: 'Wednesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B105', totalStudents: 28, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-04', replacementTime: '14:00 – 16:00', replacementVenue: 'B110', reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 3, requestedAt: '2026-09-14T08:45:00', courseCode: 'BMIT6767', courseName: 'Object-Oriented Programming', classType: 'L', classDate: '2026-09-03', classDay: 'Thursday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B103', totalStudents: 24, cohorts: ['DFT2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-07', replacementTime: '09:00 – 11:00', replacementVenue: 'B201', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-15T09:00:00', remarks: null },
-            { id: 4, requestedAt: '2026-09-14T11:20:00', courseCode: 'BMIT6767', courseName: 'Object-Oriented Programming', classType: 'T', classDate: '2026-09-07', classDay: 'Monday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B106', totalStudents: 20, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-09', replacementTime: '11:00 – 13:00', replacementVenue: 'B201', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-15T16:30:00', remarks: null },
-            { id: 5, requestedAt: '2026-09-15T09:10:00', courseCode: 'BMIT5678', courseName: 'Database Systems', classType: 'T', classDate: '2026-09-08', classDay: 'Tuesday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B105', totalStudents: 30, cohortCounts: [15, 15], cohorts: ['DSF2 (S1)', 'DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-10', replacementTime: '11:00 – 13:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 6, requestedAt: '2026-09-11T15:00:00', courseCode: 'BMIT9012', courseName: 'Computer Networks', classType: 'L', classDate: '2026-09-10', classDay: 'Thursday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 22, cohorts: ['DFT2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-14', replacementTime: '08:00 – 10:00', replacementVenue: 'B202', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-12T10:00:00', remarks: null },
-            { id: 7, requestedAt: '2026-09-10T13:30:00', courseCode: 'BMIT3456', courseName: 'Artificial Intelligence', classType: 'T', classDate: '2026-09-11', classDay: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B103', totalStudents: 18, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Insufficient notice period. Requests must be submitted at least 5 working days in advance.', replacementDate: '2026-09-14', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-11T08:15:00', remarks: null },
-            { id: 8, requestedAt: '2026-09-09T10:00:00', courseCode: 'BMIT7890', courseName: 'Project Management', classType: 'L', classDate: '2026-09-14', classDay: 'Monday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 20, cohortCounts: [10, 10], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-16', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 9, requestedAt: '2026-09-08T16:45:00', courseCode: 'BMIT7890', courseName: 'Project Management', classType: 'T', classDate: '2026-09-15', classDay: 'Tuesday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B202', totalStudents: 15, cohorts: ['DFT2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-17', replacementTime: '08:00 – 10:00', replacementVenue: 'B103', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-09T14:00:00', remarks: 'Replacement conducted successfully.' },
-            { id: 10, requestedAt: '2026-09-07T07:30:00', courseCode: 'BMIT9999', courseName: 'Machine Learning', classType: 'T', classDate: '2026-09-16', classDay: 'Wednesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 15, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-18', replacementTime: '10:00 – 12:00', replacementVenue: 'B105', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-08T11:00:00', remarks: null },
-            { id: 11, requestedAt: '2026-09-06T12:15:00', courseCode: 'BMIT1234', courseName: 'Data Structures', classType: 'L', classDate: '2026-09-18', classDay: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 30, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Venue unavailable on the requested replacement date.', replacementDate: '2026-09-21', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-07T09:30:00', remarks: null },
-            { id: 12, requestedAt: '2026-09-16T14:00:00', courseCode: 'BMIT4567', courseName: 'Web Development', classType: 'L', classDate: '2026-09-21', classDay: 'Monday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 32, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-23', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 13, requestedAt: '2026-09-05T08:30:00', courseCode: 'BMIT4567', courseName: 'Web Development', classType: 'T', classDate: '2026-09-22', classDay: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, cohortCounts: [12, 13], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-24', replacementTime: '14:00 – 16:00', replacementVenue: 'B106', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-06T15:45:00', remarks: 'Replacement completed. Student attendance recorded.' },
-            { id: 14, requestedAt: '2026-09-04T10:45:00', courseCode: 'BMIT8888', courseName: 'Cloud Computing', classType: 'T', classDate: '2026-09-23', classDay: 'Wednesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B105', totalStudents: 20, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-25', replacementTime: '10:00 – 12:00', replacementVenue: 'B202', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-05T13:00:00', remarks: null },
-            { id: 15, requestedAt: '2026-09-03T09:00:00', courseCode: 'BMIT7777', courseName: 'Cybersecurity', classType: 'L', classDate: '2026-08-31', classDay: 'Monday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, cohortCounts: [10, 8], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Cancelled', rejectionReason: null, replacementDate: '2026-09-02', replacementTime: '08:00 – 10:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: 'Request withdrawn by lecturer.' },
-            { id: 16, requestedAt: '2026-09-17T11:30:00', courseCode: 'BMIT7777', courseName: 'Cybersecurity', classType: 'T', classDate: '2026-09-02', classDay: 'Wednesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B202', totalStudents: 12, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-04', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 17, requestedAt: '2026-09-02T15:30:00', courseCode: 'BMIT3344', courseName: 'Embedded Systems', classType: 'T', classDate: '2026-09-07', classDay: 'Monday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B103', totalStudents: 12, cohorts: ['DSF2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-10', replacementTime: '08:00 – 10:00', replacementVenue: 'B104', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-03T08:00:00', remarks: 'Replacement completed.' },
-            { id: 18, requestedAt: '2026-09-01T07:15:00', courseCode: 'BMIT2222', courseName: 'Mobile Computing', classType: 'L', classDate: '2026-09-09', classDay: 'Wednesday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 28, cohorts: ['DFT2 (S1)'], status: 'Cancelled', rejectionReason: null, replacementDate: '2026-09-11', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
-            { id: 19, requestedAt: '2026-09-15T13:00:00', courseCode: 'BMIT1111', courseName: 'Human-Computer Interaction', classType: 'L', classDate: '2026-09-15', classDay: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 22, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Scheduling conflict with another lecturer\'s booking.', replacementDate: '2026-09-17', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-09-16T10:30:00', remarks: null },
-            { id: 20, requestedAt: '2026-09-16T09:45:00', courseCode: 'BMIT4433', courseName: 'Information Security', classType: 'T', classDate: '2026-09-17', classDay: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 18, cohorts: ['DFT2 (S1)'], status: 'Rejected', rejectionReason: 'Lecturer unavailable on the requested date.', replacementDate: '2026-09-21', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-09-17T08:00:00', remarks: null },
+            { id: 1, requestedAt: '2026-07-21T00:59:10', courseCode: 'BMIT5555', courseName: 'Software Engineering', classType: 'L', classDate: '2026-08-31', classDay: 'Monday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B104', totalStudents: 35, cohortCounts: [20, 15], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-02', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 2, requestedAt: '2026-06-25T09:42:36', courseCode: 'BMIT5555', courseName: 'Software Engineering', classType: 'T', classDate: '2026-09-02', classDay: 'Wednesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B105', totalStudents: 28, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-04', replacementTime: '14:00 – 16:00', replacementVenue: 'B110', reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 3, requestedAt: '2026-06-21T05:08:22', courseCode: 'BMIT6767', courseName: 'Object-Oriented Programming', classType: 'L', classDate: '2026-09-03', classDay: 'Thursday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B103', totalStudents: 24, cohorts: ['DFT2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-07', replacementTime: '09:00 – 11:00', replacementVenue: 'B201', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-06-22T09:00:00', remarks: null },
+            { id: 4, requestedAt: '2026-07-25T23:58:08', courseCode: 'BMIT6767', courseName: 'Object-Oriented Programming', classType: 'T', classDate: '2026-09-07', classDay: 'Monday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B106', totalStudents: 20, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-09', replacementTime: '11:00 – 13:00', replacementVenue: 'B201', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-07-26T16:30:00', remarks: null },
+            { id: 5, requestedAt: '2026-07-03T08:25:56', courseCode: 'BMIT5678', courseName: 'Database Systems', classType: 'T', classDate: '2026-09-08', classDay: 'Tuesday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B105', totalStudents: 30, cohortCounts: [15, 15], cohorts: ['DSF2 (S1)', 'DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-10', replacementTime: '11:00 – 13:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 6, requestedAt: '2026-07-01T21:19:10', courseCode: 'BMIT9012', courseName: 'Computer Networks', classType: 'L', classDate: '2026-09-10', classDay: 'Thursday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 22, cohorts: ['DFT2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-14', replacementTime: '08:00 – 10:00', replacementVenue: 'B202', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-07-02T10:00:00', remarks: null },
+            { id: 7, requestedAt: '2026-06-30T20:03:33', courseCode: 'BMIT3456', courseName: 'Artificial Intelligence', classType: 'T', classDate: '2026-09-11', classDay: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B103', totalStudents: 18, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Insufficient notice period. Requests must be submitted at least 5 working days in advance.', replacementDate: '2026-09-14', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-07-01T08:15:00', remarks: null },
+            { id: 8, requestedAt: '2026-06-26T18:34:24', courseCode: 'BMIT7890', courseName: 'Project Management', classType: 'L', classDate: '2026-09-14', classDay: 'Monday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 20, cohortCounts: [10, 10], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-16', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 9, requestedAt: '2026-07-25T18:03:04', courseCode: 'BMIT7890', courseName: 'Project Management', classType: 'T', classDate: '2026-09-15', classDay: 'Tuesday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B202', totalStudents: 15, cohorts: ['DFT2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-17', replacementTime: '08:00 – 10:00', replacementVenue: 'B103', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-07-26T14:00:00', remarks: 'Replacement conducted successfully.' },
+            { id: 10, requestedAt: '2026-06-24T23:24:55', courseCode: 'BMIT9999', courseName: 'Machine Learning', classType: 'T', classDate: '2026-09-16', classDay: 'Wednesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 15, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-18', replacementTime: '10:00 – 12:00', replacementVenue: 'B105', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-06-25T11:00:00', remarks: null },
+            { id: 11, requestedAt: '2026-07-22T20:24:43', courseCode: 'BMIT1234', courseName: 'Data Structures', classType: 'L', classDate: '2026-09-18', classDay: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 30, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Venue unavailable on the requested replacement date.', replacementDate: '2026-09-21', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-07-23T09:30:00', remarks: null },
+            { id: 12, requestedAt: '2026-07-25T22:56:25', courseCode: 'BMIT4567', courseName: 'Web Development', classType: 'L', classDate: '2026-09-21', classDay: 'Monday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 32, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-23', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 13, requestedAt: '2026-08-02T07:27:52', courseCode: 'BMIT4567', courseName: 'Web Development', classType: 'T', classDate: '2026-09-22', classDay: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, cohortCounts: [12, 13], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-24', replacementTime: '14:00 – 16:00', replacementVenue: 'B106', reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-08-02T15:45:00', remarks: 'Replacement completed. Student attendance recorded.' },
+            { id: 14, requestedAt: '2026-07-16T11:23:53', courseCode: 'BMIT8888', courseName: 'Cloud Computing', classType: 'T', classDate: '2026-09-23', classDay: 'Wednesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B105', totalStudents: 20, cohorts: ['DSF2 (S1)'], status: 'Approved', rejectionReason: null, replacementDate: '2026-09-25', replacementTime: '10:00 – 12:00', replacementVenue: 'B202', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-07-17T13:00:00', remarks: null },
+            { id: 15, requestedAt: '2026-06-24T05:17:27', courseCode: 'BMIT7777', courseName: 'Cybersecurity', classType: 'L', classDate: '2026-08-31', classDay: 'Monday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, cohortCounts: [10, 8], cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], status: 'Cancelled', rejectionReason: null, replacementDate: '2026-09-02', replacementTime: '08:00 – 10:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: 'Request withdrawn by lecturer.' },
+            { id: 16, requestedAt: '2026-07-18T15:58:25', courseCode: 'BMIT7777', courseName: 'Cybersecurity', classType: 'T', classDate: '2026-09-02', classDay: 'Wednesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B202', totalStudents: 12, cohorts: ['DFT2 (S1)'], status: 'Pending', rejectionReason: null, replacementDate: '2026-09-04', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 17, requestedAt: '2026-07-10T11:34:28', courseCode: 'BMIT3344', courseName: 'Embedded Systems', classType: 'T', classDate: '2026-09-07', classDay: 'Monday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B103', totalStudents: 12, cohorts: ['DSF2 (S1)'], status: 'Completed', rejectionReason: null, replacementDate: '2026-09-10', replacementTime: '08:00 – 10:00', replacementVenue: 'B104', reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-07-11T08:00:00', remarks: 'Replacement completed.' },
+            { id: 18, requestedAt: '2026-06-21T13:01:46', courseCode: 'BMIT2222', courseName: 'Mobile Computing', classType: 'L', classDate: '2026-09-09', classDay: 'Wednesday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 28, cohorts: ['DFT2 (S1)'], status: 'Cancelled', rejectionReason: null, replacementDate: '2026-09-11', replacementTime: '09:00 – 11:00', replacementVenue: null, reviewedBy: null, reviewedAt: null, remarks: null },
+            { id: 19, requestedAt: '2026-06-21T10:42:58', courseCode: 'BMIT1111', courseName: 'Human-Computer Interaction', classType: 'L', classDate: '2026-09-15', classDay: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 22, cohorts: ['DSF2 (S1)'], status: 'Rejected', rejectionReason: 'Scheduling conflict with another lecturer\'s booking.', replacementDate: '2026-09-17', replacementTime: '14:00 – 16:00', replacementVenue: null, reviewedBy: 'Dr. Lim (Dean)', reviewedAt: '2026-06-22T10:30:00', remarks: null },
+            { id: 20, requestedAt: '2026-06-24T13:09:46', courseCode: 'BMIT4433', courseName: 'Information Security', classType: 'T', classDate: '2026-09-17', classDay: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 18, cohorts: ['DFT2 (S1)'], status: 'Rejected', rejectionReason: 'Lecturer unavailable on the requested date.', replacementDate: '2026-09-21', replacementTime: '10:00 – 12:00', replacementVenue: null, reviewedBy: 'Dr. Ahmad (HOD)', reviewedAt: '2026-06-25T08:00:00', remarks: null },
         ];
 
         const weekRanges = [
@@ -713,7 +768,7 @@
 
         const pageState = { currentPage: 1 };
         let rowsPerPage = parseInt(localStorage.getItem('mrh-rows-per-page')) || 10;
-        let sortState = { field: 'requestedAt', dir: 'asc' };
+        let sortState = { field: 'requestedAt', dir: 'desc' };
         let currentFiltered = [];
         let selectedIds = new Set();
         let searchDebounce = null;
@@ -731,6 +786,12 @@
             if (days <= 2) return 'age-green';
             if (days <= 7) return 'age-amber';
             return 'age-red';
+        }
+
+        function relativeTime(days) {
+            if (days === 0) return 'Today';
+            if (days === 1) return '1 day ago';
+            return days + ' days ago';
         }
 
         function saveFilters() {
@@ -834,7 +895,7 @@
                 { label: 'Students', cls: 'col-students', sortable: false },
                 { label: 'Affected Cohort(s)', cls: 'col-cohort', sortable: false },
                 { label: 'Status (Click for detail)', cls: 'col-status', sortable: false },
-                { label: '', cls: 'col-actions', sortable: false },
+                { label: 'Quick Cancel', cls: 'col-actions', sortable: false },
             ];
             columns.forEach(function(col) {
                 tr.appendChild(makeSortableHeader(col, sortState, function() {
@@ -904,7 +965,7 @@
                     row.appendChild(checkTd);
 
                     var cells = [
-                        { html: '<span class="' + ageCls + '">' + formatDateTime(r.requestedAt) + '</span>', cls: 'col-requested-at' },
+                        { html: '<span class="' + ageCls + '">' + formatDateTime(r.requestedAt) + ' <span class="age-relative">(' + relativeTime(days) + ')</span></span>', cls: 'col-requested-at' },
                         { html: '<span class="cell-code">' + r.courseCode + '</span><span class="cell-name">' + r.courseName + '</span>', cls: 'col-code' },
                         { html: r.classType === 'L' ? 'Lecture' : 'Tutorial', cls: 'col-type' },
                         { html: formatClassBlock(r), cls: 'col-original' },
@@ -962,22 +1023,62 @@
         }
 
         function quickCancel(id) {
-            if (confirm('Are you sure you want to cancel this replacement request? This action cannot be undone.')) {
-                var idx = mockRequests.findIndex(function(r) { return r.id === id; });
-                if (idx !== -1) mockRequests.splice(idx, 1);
-                selectedIds.delete(id);
-                renderTable();
-            }
+            var r = mockRequests.find(function(r) { return r.id === id; });
+            if (!r) return;
+            pendingCancelId = id;
+            document.getElementById('cancelConfirmBody').innerHTML =
+                '<p style="font-size:14px;color:var(--color-on-surface);line-height:1.5;margin-bottom:12px">Are you sure you want to cancel this replacement request? This action cannot be undone.</p>' +
+                '<div style="background:var(--color-surface-variant);border-radius:8px;padding:12px;font-size:13px;line-height:1.6">' +
+                '<strong>' + r.courseCode + '</strong> — ' + r.courseName + '<br>' +
+                'Class: ' + r.classDay + ', ' + formatDate(r.classDate) + '<br>' +
+                'Status: <span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
+                '</div>';
+            document.getElementById('cancelConfirmOverlay').style.display = 'flex';
         }
 
-        function bulkCancelSelected() {
+        var pendingCancelId = null;
+        document.getElementById('confirmCancelAction').addEventListener('click', function() {
+            if (pendingCancelId !== null) {
+                var idx = mockRequests.findIndex(function(r) { return r.id === pendingCancelId; });
+                if (idx !== -1) mockRequests.splice(idx, 1);
+                selectedIds.delete(pendingCancelId);
+                pendingCancelId = null;
+                closeCancelConfirm();
+                closeModal();
+                renderTable();
+            }
+        });
+
+        function batchCancelSelected() {
             var count = selectedIds.size;
             if (count === 0) return;
-            if (!confirm('Cancel ' + count + ' selected request(s)? This action cannot be undone.')) return;
+            var rows = [];
+            mockRequests.forEach(function(r) {
+                if (selectedIds.has(r.id)) {
+                    rows.push(r);
+                }
+            });
+            var listHtml = rows.map(function(r) {
+                return '<div style="padding:6px 0;border-bottom:1px solid var(--color-outline);font-size:13px">' +
+                    '<strong>' + r.courseCode + '</strong> — ' + r.courseName +
+                    ' <span class="badge ' + statusClass(r.status) + '" style="font-size:10px;padding:2px 6px">' + r.status + '</span></div>';
+            }).join('');
+            document.getElementById('batchCancelBody').innerHTML =
+                '<p style="font-size:14px;color:var(--color-on-surface);line-height:1.5;margin-bottom:8px">Cancel ' + count + ' selected request(s)? This action cannot be undone.</p>' +
+                '<div style="max-height:200px;overflow-y:auto">' + listHtml + '</div>';
+            document.getElementById('batchCancelOverlay').style.display = 'flex';
+        }
+
+        function closeBatchCancelConfirm() {
+            document.getElementById('batchCancelOverlay').style.display = 'none';
+        }
+
+        document.getElementById('confirmBatchCancelAction').addEventListener('click', function() {
             mockRequests = mockRequests.filter(function(r) { return !selectedIds.has(r.id); });
             selectedIds.clear();
+            closeBatchCancelConfirm();
             renderTable();
-        }
+        });
 
         function updateSummary() {
             const total = mockRequests.length;
@@ -1077,6 +1178,23 @@
             }
         }
 
+        function openCancelConfirm() {
+            document.getElementById('cancelConfirmOverlay').style.display = 'flex';
+        }
+
+        function closeCancelConfirm() {
+            document.getElementById('cancelConfirmOverlay').style.display = 'none';
+        }
+
+        function clearAllSelections() {
+            selectedIds.clear();
+            document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.checked = false; });
+            var headerCheck = document.getElementById('headerCheckbox');
+            if (headerCheck) headerCheck.checked = false;
+            highlightSelectedRows();
+            updateBulkBar();
+        }
+
         function highlightFocusedRow(rows) {
             rows.forEach(function(r, i) {
                 if (i === focusedRowIndex) {
@@ -1150,6 +1268,12 @@
 
             document.getElementById('modalOverlay').addEventListener('click', function(e) {
                 closeOnOverlayClick(e, closeModal);
+            });
+            document.getElementById('cancelConfirmOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeCancelConfirm();
+            });
+            document.getElementById('batchCancelOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeBatchCancelConfirm();
             });
             closeOnEsc(closeModal);
 
