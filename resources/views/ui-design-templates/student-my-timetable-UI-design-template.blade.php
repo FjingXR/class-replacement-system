@@ -141,7 +141,7 @@
                         abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
                         date: fmt(dt),
                         sunday: d === 6,
-                        today: (function() { var t = new Date('2026-09-17'); t.setHours(0,0,0,0); return dt.getTime() === t.getTime(); })(),
+                        today: (function() { var t = new Date('2026-09-03'); t.setHours(0,0,0,0); return dt.getTime() === t.getTime(); })(),
                         holiday: holiday,
                         holidayLabel: holidayLabel,
                     });
@@ -197,8 +197,7 @@
 
         function currentWeekIndex() {
             const semesterStart = new Date(MockData.semester.startDate);
-            const today = new Date('2026-09-17');
-            today.setHours(0, 0, 0, 0);
+            const today = new Date('2026-09-03');
             today.setHours(0, 0, 0, 0);
             const idx = Math.floor((today - semesterStart) / 86400000 / 7);
             return Math.max(0, Math.min(weekData.length - 1, idx));
