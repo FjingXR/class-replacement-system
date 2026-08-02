@@ -14,7 +14,7 @@
 | `cohort-timetable-ui` | 2026-07-29 | Cohort timetable UI mock page |
 | `my-request-history` | 2026-07-20 | My request history UI mock page |
 | `replacement-home-dashboard` | — | Replacement home dashboard UI mock page |
-| `centralized-mock-data` | 2026-08-01 | Centralized mock data to mock-data.js |
+| `centralized-mock-data` | 2026-08-02 | Centralized mock data to mock-data.js — all 5 pages refactored, layout wired, 49/49 tasks checked, committed `61b016a` |
 | `mock-data-centralization` | 2026-08-01 | Mock data centralization (continued) |
 | `request-approval` | 2026-08-01 | Request approval UI mock page — PL side; frozen after 14 review rounds; globals `approvalRequests` + `URGENCY_REFERENCE_DATE` + Task 5 guard appended |
 | `student-my-timetable-ui` | 2026-08-02 | Student my timetable UI mock page — frontend-only; SDD artifacts frozen (proposal 2 rounds, design 1 round, tasks 1 round); ready for `/sdd-apply` |
