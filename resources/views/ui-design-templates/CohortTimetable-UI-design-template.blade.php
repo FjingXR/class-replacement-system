@@ -470,15 +470,7 @@
                 if (day.today) dayColClass += ' today';
                 if (day.holiday || day.sunday) dayColClass += ' offday';
                 dayTd.className = dayColClass;
-                let dayHtml = `<span class="day-label">${day.abbr}</span><span class="date-label">${day.date}</span>`;
-                if (day.today) {
-                    dayHtml += `<span class="today-badge">Today</span>`;
-                } else if (day.holiday) {
-                    dayHtml += `<span class="holiday-label">Public Holiday</span>`;
-                } else if (day.sunday) {
-                    dayHtml += `<span class="date-label off-label">OFF</span>`;
-                }
-                dayTd.innerHTML = dayHtml;
+                dayTd.innerHTML = buildDayHtml(day);
                 tr.appendChild(dayTd);
 
                 const dayEvents = weekEvents.filter(e => e.di === di);
