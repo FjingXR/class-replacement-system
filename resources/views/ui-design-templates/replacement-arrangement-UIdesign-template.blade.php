@@ -983,7 +983,7 @@
                 if (cellDiv && cellDiv.classList.contains('cell-available')) {
                     cellDiv.classList.remove('cell-available');
                     cellDiv.classList.add('cell-selected');
-                    cellDiv.innerHTML = '<span class="sel-text"></span>';
+                    cellDiv.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(s.hour);
                     selectedCells.push({ day: s.day, hour: s.hour, el: cellDiv });
                 }
             });
@@ -1112,7 +1112,7 @@
                     if (cell) {
                         cell.el.classList.remove('cell-selected');
                         cell.el.classList.add('cell-available');
-                        cell.el.innerHTML = '';
+                        cell.el.innerHTML = timeLabelHtml(hi);
                         selectedCells = selectedCells.filter(c => !(c.day === di && c.hour === hi));
                     }
                 }
@@ -1206,11 +1206,15 @@
             updateWeekArrows(currentWeek >= weekData.length - 1, currentWeek <= 0);
         }
 
+        function timeLabelHtml(hi) {
+            return '<span class="cell-time-label">' + hours[hi] + '\n' + add30min(hours[hi]) + '</span>';
+        }
+
         function toggleCell(di, hi, el) {
             if (el.classList.contains('cell-selected')) {
                 el.classList.remove('cell-selected');
                 el.classList.add('cell-available');
-                el.innerHTML = '';
+                el.innerHTML = timeLabelHtml(hi);
                 selectedCells = selectedCells.filter(c => !(c.day === di && c.hour === hi));
                 saveCurrentWeek();
                 updateCounter();
@@ -1227,7 +1231,7 @@
                 }
                 el.classList.remove('cell-available');
                 el.classList.add('cell-selected');
-                el.innerHTML = '<span class="sel-text"></span>';
+                el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(hi);
                 selectedCells.push({ day: di, hour: hi, el });
                 saveCurrentWeek();
                 updateCounter();
@@ -1238,7 +1242,7 @@
             selectedCells.forEach(c => {
                 c.el.classList.remove('cell-selected');
                 c.el.classList.add('cell-available');
-                c.el.innerHTML = '';
+                c.el.innerHTML = timeLabelHtml(c.hour);
             });
             selectedCells = [];
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
@@ -1350,7 +1354,7 @@
                     selectedCells.forEach(c => {
                         c.el.classList.remove('cell-selected');
                         c.el.classList.add('cell-available');
-                        c.el.innerHTML = '';
+                        c.el.innerHTML = timeLabelHtml(c.hour);
                     });
                     selectedCells = [];
                     updateCounter();
@@ -1359,7 +1363,7 @@
                         savedCells.forEach(c => {
                             c.el.classList.remove('cell-available');
                             c.el.classList.add('cell-selected');
-                            c.el.innerHTML = '✓';
+                            c.el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(c.hour);
                         });
                         selectedCells = savedCells;
                         updateCounter();
