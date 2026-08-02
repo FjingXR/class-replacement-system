@@ -62,6 +62,7 @@
 | 2026-08-02 16:00 | Lines 483–524 | Feature | Added responsive card view (`.card-view`) — on mobile (<768px), table hidden and requests shown as stacked cards with code, status, date, time, venue, age |
 | 2026-08-02 16:00 | Lines 1309–1317 | Feature | Added deep link support — URL `?id=N` auto-opens modal for that request on page load |
 | 2026-08-02 16:00 | Lines 1175–1205 | Feature | Added `renderCards()` — builds card view from `currentFiltered` data, click/Enter opens modal |
+| 2026-08-02 | `@section('page-scripts')` | Centralised mock data (Task 9) | `mockRequests` array moved to `public/js/mock-data.js` — page now reads from `MockData.requests`. Semester chip now reads `MockData.semester.chipText` dynamically. |
 
 ### `routes/web.php`
 

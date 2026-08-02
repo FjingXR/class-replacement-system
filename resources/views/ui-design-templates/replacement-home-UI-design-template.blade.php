@@ -239,7 +239,7 @@
         <!-- ─── Page Header ─── -->
         <div class="page-header">
             <h1 class="page-title">Replacement Arrangement</h1>
-            <span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>
+            <span class="semester-chip" id="semesterChip"></span>
             <p class="page-desc">The following classes require replacement arrangements. Select a class to submit a replacement request.</p>
         </div>
 
@@ -308,22 +308,7 @@
 @endsection
 
 @section('page-scripts')
-        const conflictedClasses = [
-            { id: 1, code: 'BMIT5555', name: 'Software Engineering', type: 'L', date: '2026-09-04', day: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 35, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Public Holiday' },
-            { id: 2, code: 'BMIT5555', name: 'Software Engineering', type: 'T', date: '2026-09-04', day: 'Thursday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B111', totalStudents: 28, cohorts: ['DFT2 (S1)'], conflictReason: 'Public Holiday' },
-            { id: 3, code: 'BMIT6767', name: 'Object-Oriented Programming', type: 'L', date: '2026-09-10', day: 'Thursday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B103', totalStudents: 24, cohorts: ['DFT2 (S1)'], conflictReason: 'Annual Leave' },
-            { id: 4, code: 'BMIT5678', name: 'Database Systems', type: 'T', date: '2026-09-10', day: 'Thursday', timeStart: '11:00', timeEnd: '13:00', duration: 2, venue: 'B105', totalStudents: 30, cohorts: ['DSF2 (S1)', 'DFT2 (S1)'], conflictReason: 'Medical Leave' },
-            { id: 5, code: 'BMIT9012', name: 'Computer Networks', type: 'L', date: '2026-09-11', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 22, cohorts: ['DFT2 (S1)'], conflictReason: 'Official Event' },
-            { id: 6, code: 'BMIT3456', name: 'Artificial Intelligence', type: 'T', date: '2026-09-12', day: 'Saturday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B103', totalStudents: 18, cohorts: ['DSF2 (S1)'], conflictReason: 'Annual Leave' },
-            { id: 7, code: 'BMIT7890', name: 'Project Management', type: 'L', date: '2026-09-15', day: 'Tuesday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 20, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Medical Leave' },
-            { id: 8, code: 'BMIT9999', name: 'Machine Learning', type: 'T', date: '2026-09-15', day: 'Tuesday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B202', totalStudents: 15, cohorts: ['DFT2 (S1)'], conflictReason: 'Emergency Leave' },
-            { id: 9, code: 'BMIT1234', name: 'Data Structures', type: 'L', date: '2026-09-18', day: 'Friday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B104', totalStudents: 30, cohorts: ['DSF2 (S1)'], conflictReason: 'Public Holiday' },
-            { id: 10, code: 'BMIT1234', name: 'Data Structures', type: 'T', date: '2026-09-18', day: 'Friday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B201', totalStudents: 25, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Public Holiday' },
-            { id: 11, code: 'BMIT4567', name: 'Web Development', type: 'L', date: '2026-09-20', day: 'Sunday', timeStart: '09:00', timeEnd: '11:00', duration: 2, venue: 'B110', totalStudents: 32, cohorts: ['DFT2 (S1)'], conflictReason: 'Official Event' },
-            { id: 12, code: 'BMIT8888', name: 'Cloud Computing', type: 'T', date: '2026-09-22', day: 'Tuesday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B105', totalStudents: 20, cohorts: ['DSF2 (S1)'], conflictReason: 'Annual Leave' },
-            { id: 13, code: 'BMIT7777', name: 'Cybersecurity', type: 'L', date: '2026-09-25', day: 'Friday', timeStart: '08:00', timeEnd: '10:00', duration: 2, venue: 'B106', totalStudents: 18, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Medical Leave' },
-            { id: 14, code: 'BMIT3333', name: 'Embedded Systems', type: 'T', date: '2026-09-28', day: 'Monday', timeStart: '14:00', timeEnd: '16:00', duration: 2, venue: 'B202', totalStudents: 12, cohorts: ['DSF2 (S1)'], conflictReason: 'Emergency Leave' },
-        ];
+        const conflictedClasses = MockData.conflictedClasses;
 
         function badgeClass(reason) {
             const map = {
@@ -350,14 +335,14 @@
         }
 
         function computeWeek(isoDate) {
-            const semesterStart = new Date('2026-08-31');
+            const semesterStart = new Date(MockData.semester.startDate);
             const date = new Date(isoDate + 'T00:00:00');
             const diff = Math.floor((date - semesterStart) / (1000 * 60 * 60 * 24));
             return Math.floor(diff / 7) + 1;
         }
 
         function weekRangeLabel(weekNum) {
-            const start = new Date('2026-08-31');
+            const start = new Date(MockData.semester.startDate);
             start.setDate(start.getDate() + (weekNum - 1) * 7);
             const end = new Date(start);
             end.setDate(end.getDate() + 6);
@@ -533,6 +518,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             populateWeekDropdown();
             buildTable();
             updateWeekArrowState();

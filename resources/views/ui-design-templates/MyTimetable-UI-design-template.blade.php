@@ -534,7 +534,7 @@
         <!-- ─── Page Header ─── -->
         <div class="page-header">
             <h1 class="page-title">My Timetable</h1>
-            <span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>
+            <span class="semester-chip" id="semesterChip"></span>
             <p class="page-desc">View your weekly class schedule and manage replacement requests across all cohorts.</p>
         </div>
 
@@ -637,7 +637,7 @@
         const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
         const weekData = (function() {
-            const start = new Date(2026, 5, 15); // 15-Jun-2026 (semester start, Monday)
+            const start = new Date(MockData.semester.startDate); // semester start, Monday
             const arr = [];
             const todayMs = (function() { const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
@@ -658,32 +658,17 @@
             return arr;
         })();
 
-        const eventsData = {
-            11: [
-                { di: 0, start: 4, end: 7, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', studentCount: 24, status: 'normal', name: 'Object-Oriented Programming', remarks: '' },
-                { di: 0, start: 12, end: 14, code: 'BMIT1234', type: 'T', venue: 'B104', lecturer: 'Dr. Christopher Lazarus', cohort: 'DFT2 (S1)', studentCount: 22, status: 'normal', name: 'Data Structures', remarks: '' },
-                { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2 (S1)', studentCount: 28, status: 'normal', name: 'Database Systems', remarks: '' },
-                { di: 1, start: 14, end: 16, code: 'BMIT5678', type: 'T', venue: 'B105', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2 (S1)', status: 'replacement', name: 'Database Systems', remarks: '31-Aug-2026' },
-                { di: 2, start: 2, end: 5, code: 'BMIT9012', type: 'L', venue: 'B106', lecturer: 'Pn. Surayaini Basri', cohort: 'RSD3(S1)G1 + RSD3(S1)G2', cohorts: ['RSD3(S1)G1', 'RSD3(S1)G2'], studentCounts: [16, 9], status: 'normal', name: 'Computer Networks', remarks: '' },
-                { di: 2, start: 12, end: 15, code: 'BMIT9012', type: 'T', venue: 'B106', lecturer: 'Pn. Surayaini Basri', cohort: 'RSD2 (S1)', status: 'replacement', name: 'Computer Networks', remarks: '26-Aug-2026' },
-                { di: 3, start: 4, end: 7, code: 'BMIT5555', type: 'L', venue: 'B110', lecturer: 'Dr. Lim Wei Ming', cohort: 'CSF2 (S1)', status: 'normal', name: 'Software Engineering', remarks: '' },
-                { di: 3, start: 10, end: 12, code: 'BMIT6666', type: 'T', venue: 'B111', lecturer: 'Pn. Sarah Tan', cohort: 'CSF2 (S1)', status: 'normal', name: 'Mobile App Development', remarks: '' },
-                { di: 4, start: 0, end: 3, code: 'BMIT3456', type: 'L', venue: 'B103', lecturer: 'Dr. Chang Foo Chung', cohort: 'RAF2 (S1)', status: 'normal', name: 'Artificial Intelligence', remarks: '' },
-                { di: 4, start: 5, end: 7, code: 'BMIT3456', type: 'T', venue: 'B103', lecturer: 'Dr. Chang Foo Chung', cohort: 'RAF2 (S1)', status: 'normal', name: 'Artificial Intelligence', remarks: '' },
-                { di: 5, start: 2, end: 5, code: 'BMIT7890', type: 'L', venue: 'B201', lecturer: 'En. Jefther Edward', cohort: 'RBU2 (S1)', status: 'normal', name: 'Project Management', remarks: '' },
-                { di: 5, start: 12, end: 14, code: 'BMIT9999', type: 'T', venue: 'B202', lecturer: 'Dr. Tan Ah Meng', cohort: 'DMF2 (S1)', status: 'pending', name: 'Machine Learning', remarks: '', requestedAt: '03 Sep 2026, 10:30 AM', requestedBy: 'Dr. Tan Ah Meng' },
-            ]
-        };
-
-        /* ───── Weekly repeating schedule: every week copies Week 12's normal classes ───── */
-        const weeklyTemplate = eventsData[11].filter(function(e) { return e.status === 'normal'; });
-        for (let i = 0; i < weekData.length; i++) {
-            if (i === 11) continue;
-            eventsData[i] = weeklyTemplate.slice();
+        const seedEvents = MockData.myTimetable.eventsByWeek[MockData.myTimetable.seedWeek];
+        const weeklyTemplate = seedEvents.filter(e => e.status === 'normal');
+        const eventsByWeek = {};
+        const sw = MockData.myTimetable.seedWeek;
+        for (let i = 0; i < MockData.semester.weeks; i++) {
+            eventsByWeek[i] = (i === sw) ? seedEvents.slice() : weeklyTemplate.slice();
         }
+        const eventsData = eventsByWeek;
 
         function currentWeekIndex() {
-            const semesterStart = new Date(2026, 5, 15);
+            const semesterStart = new Date(MockData.semester.startDate);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const idx = Math.floor((today - semesterStart) / 86400000 / 7);
@@ -952,6 +937,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             loadSavedWeek();
+            document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             const sel = document.getElementById('weekSelect');
             sel.innerHTML = weekData.map((w, i) =>
                 `<option value="${i}">${w.label} · ${w.range}</option>`

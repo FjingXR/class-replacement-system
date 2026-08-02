@@ -31,6 +31,7 @@
     </div>
 
     <script src="/js/ui-common.js"></script>
+    <script src="/js/mock-data.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             updateIcon(document.documentElement.classList.contains('dark'));

@@ -494,7 +494,7 @@
         <!-- ─── Page Header ─── -->
         <div class="page-header">
             <h1 class="page-title">Cohort Timetable</h1>
-            <span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>
+            <span class="semester-chip" id="semesterChip"></span>
             <p class="page-desc">View the weekly timetable for any cohort across all faculties.</p>
         </div>
 
@@ -622,7 +622,7 @@
            ════════════════════════════════════════════ */
 
         const weekData = (function() {
-            const start = new Date(2026, 5, 15); // 15-Jun-2026
+            const start = new Date(MockData.semester.startDate);
             const arr = [];
             const todayMs = (function() { const t = new Date(); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             for (let w = 1; w <= 14; w++) {
@@ -638,7 +638,7 @@
                         date: fmt(dt),
                         sunday: d === 6,
                         today: dt.getTime() === todayMs,
-                        holiday: d === 3 && w === 3,
+                        holiday: MockData.holidays.some(function(h) { return h.week === w && h.dayIndex === d; }),
                     });
                 }
                 arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, days });
@@ -646,165 +646,36 @@
             return arr;
         })();
 
-        /* ───── Faculty & Cohort Hierarchy ───── */
-        const facultyData = [
-            {
-                id: 'focs',
-                name: 'Faculty of Computing and Information Technology (FOCS)',
-                cohorts: [
-                    { id: 'rsd2s1', name: 'RSD2 (S1) — Bachelor of Computer Science (Soft. Eng.)' },
-                    { id: 'rsd3s1g1', name: 'RSD3 (S1) G1 — Bachelor of Computer Science (Soft. Eng.)' },
-                    { id: 'rsd3s1g2', name: 'RSD3 (S1) G2 — Bachelor of Computer Science (Soft. Eng.)' },
-                    { id: 'dsf2s1', name: 'DSF2 (S1) — Diploma in Computer Science' },
-                    { id: 'dft2s1', name: 'DFT2 (S1) — Diploma in Information Technology' },
-                ]
-            },
-            {
-                id: 'fcci',
-                name: 'Faculty of Creative Industries (FCCI)',
-                cohorts: [
-                    { id: 'dmc2s1', name: 'DMC2 (S1) — Diploma in Mass Communication' },
-                    { id: 'dit2s1', name: 'DIT2 (S1) — Diploma in Interior Design' },
-                ]
-            }
-        ];
+        /* ───── Read from centralized MockData ───── */
+        const facultyData = MockData.cohortTimetable.faculties;
 
-        /* ───── Mock Events (indexed by week, keyed by cohort id) ───── */
+        // Rebuild allEvents from centralized data
         const allEvents = {};
-        const cohorts = facultyData.flatMap(f => f.cohorts);
-        cohorts.forEach(c => { allEvents[c.id] = {}; });
+        MockData.cohortTimetable.events.forEach(function(entry) {
+            if (!allEvents[entry.cohortId]) allEvents[entry.cohortId] = {};
+            if (!allEvents[entry.cohortId][entry.week]) allEvents[entry.cohortId][entry.week] = [];
+            allEvents[entry.cohortId][entry.week].push(Object.assign({}, entry.event));
+        });
 
-        function addEvent(cohortId, weekIdx, event) {
-            if (!allEvents[cohortId][weekIdx]) allEvents[cohortId][weekIdx] = [];
-            allEvents[cohortId][weekIdx].push(event);
-        }
-
-        /* ═══ FOCS / RSD2 (S1) — 6 courses ═══ */
-        addEvent('rsd2s1', 0, { di:0, start:4, end:7, code:'BMIT6767', type:'L', venue:'B103', lecturer:'Dr. Christopher Lazarus', status:'normal', name:'Object-Oriented Programming', remarks:'' });
-        addEvent('rsd2s1', 0, { di:1, start:0, end:3, code:'BMIT5678', type:'L', venue:'B105', lecturer:'En. Lim Jia Zheng', status:'normal', name:'Database Systems', remarks:'' });
-        addEvent('rsd2s1', 0, { di:2, start:12, end:15, code:'BMIT5555', type:'L', venue:'B110', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Software Engineering', remarks:'' });
-        addEvent('rsd2s1', 0, { di:3, start:6, end:9, code:'BMIT9012', type:'L', venue:'B106', lecturer:'Pn. Surayaini Basri', status:'normal', name:'Computer Networks', remarks:'' });
-        addEvent('rsd2s1', 0, { di:4, start:10, end:13, code:'BMIT3456', type:'T', venue:'B103', lecturer:'Dr. Chang Foo Chung', status:'normal', name:'Artificial Intelligence', remarks:'' });
-        addEvent('rsd2s1', 0, { di:4, start:16, end:19, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
-
-        addEvent('rsd2s1', 1, { di:0, start:4, end:7, code:'BMIT6767', type:'L', venue:'B103', lecturer:'Dr. Christopher Lazarus', status:'normal', name:'Object-Oriented Programming', remarks:'' });
-        addEvent('rsd2s1', 1, { di:1, start:0, end:3, code:'BMIT5678', type:'L', venue:'B105', lecturer:'En. Lim Jia Zheng', status:'replacement', name:'Database Systems', remarks:'24-Aug-2026' });
-        addEvent('rsd2s1', 1, { di:2, start:12, end:15, code:'BMIT5555', type:'L', venue:'B110', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Software Engineering', remarks:'' });
-        addEvent('rsd2s1', 1, { di:3, start:6, end:9, code:'BMIT9012', type:'L', venue:'B106', lecturer:'Pn. Surayaini Basri', status:'normal', name:'Computer Networks', remarks:'' });
-        addEvent('rsd2s1', 1, { di:4, start:10, end:13, code:'BMIT3456', type:'T', venue:'B103', lecturer:'Dr. Chang Foo Chung', status:'normal', name:'Artificial Intelligence', remarks:'' });
-        addEvent('rsd2s1', 1, { di:5, start:0, end:3, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
-
-        addEvent('rsd2s1', 2, { di:0, start:4, end:7, code:'BMIT6767', type:'L', venue:'B103', lecturer:'Dr. Christopher Lazarus', status:'normal', name:'Object-Oriented Programming', remarks:'' });
-        addEvent('rsd2s1', 2, { di:1, start:0, end:3, code:'BMIT5678', type:'L', venue:'B105', lecturer:'En. Lim Jia Zheng', status:'normal', name:'Database Systems', remarks:'' });
-        addEvent('rsd2s1', 2, { di:2, start:10, end:13, code:'BMIT9999', type:'T', venue:'B202', lecturer:'Dr. Tan Ah Meng', status:'pending', name:'Machine Learning', remarks:'', requestedAt:'03 Sep 2026, 10:30 AM', requestedBy:'Dr. Tan Ah Meng' });
-        addEvent('rsd2s1', 2, { di:3, start:6, end:9, code:'BMIT9012', type:'L', venue:'B106', lecturer:'Pn. Surayaini Basri', status:'replacement', name:'Computer Networks', remarks:'26-Aug-2026' });
-        addEvent('rsd2s1', 2, { di:3, start:12, end:15, code:'BMIT5555', type:'L', venue:'B110', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Software Engineering', remarks:'' });
-        addEvent('rsd2s1', 2, { di:4, start:10, end:13, code:'BMIT3456', type:'T', venue:'B103', lecturer:'Dr. Chang Foo Chung', status:'normal', name:'Artificial Intelligence', remarks:'' });
-        addEvent('rsd2s1', 2, { di:4, start:16, end:19, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
-
-        /* ═══ FOCS / RSD3 (S1) G1 — 5 courses ═══ */
-        addEvent('rsd3s1g1', 0, { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', status:'normal', name:'Advanced Software Engineering', remarks:'' });
-        addEvent('rsd3s1g1', 0, { di:1, start:12, end:15, code:'BMIT7072', type:'L', venue:'A104', lecturer:'Prof. Dr. Suresh', status:'normal', name:'Capstone Project', remarks:'' });
-        addEvent('rsd3s1g1', 0, { di:2, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', status:'normal', name:'Cloud Architecture', remarks:'' });
-        addEvent('rsd3s1g1', 0, { di:3, start:4, end:7, code:'BMIT7071', type:'T', venue:'A103', lecturer:'Dr. Koh Li May', status:'normal', name:'Research Methods', remarks:'' });
-        addEvent('rsd3s1g1', 0, { di:4, start:0, end:3, code:'BMIT7073', type:'L', venue:'A105', lecturer:'Ms. Lim Pei Shan', status:'normal', name:'IT Ethics', remarks:'' });
-
-        addEvent('rsd3s1g1', 1, { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', status:'normal', name:'Advanced Software Engineering', remarks:'' });
-        addEvent('rsd3s1g1', 1, { di:1, start:12, end:15, code:'BMIT7072', type:'L', venue:'A104', lecturer:'Prof. Dr. Suresh', status:'replacement', name:'Capstone Project', remarks:'25-Aug-2026' });
-        addEvent('rsd3s1g1', 1, { di:2, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', status:'normal', name:'Cloud Architecture', remarks:'' });
-        addEvent('rsd3s1g1', 1, { di:3, start:4, end:7, code:'BMIT7071', type:'T', venue:'A103', lecturer:'Dr. Koh Li May', status:'normal', name:'Research Methods', remarks:'' });
-        addEvent('rsd3s1g1', 1, { di:4, start:0, end:3, code:'BMIT7073', type:'L', venue:'A105', lecturer:'Ms. Lim Pei Shan', status:'normal', name:'IT Ethics', remarks:'' });
-
-        addEvent('rsd3s1g1', 2, { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', status:'normal', name:'Advanced Software Engineering', remarks:'' });
-        addEvent('rsd3s1g1', 2, { di:1, start:12, end:15, code:'BMIT7072', type:'L', venue:'A104', lecturer:'Prof. Dr. Suresh', status:'normal', name:'Capstone Project', remarks:'' });
-        addEvent('rsd3s1g1', 2, { di:2, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', status:'normal', name:'Cloud Architecture', remarks:'' });
-        addEvent('rsd3s1g1', 2, { di:3, start:4, end:7, code:'BMIT7071', type:'T', venue:'A103', lecturer:'Dr. Koh Li May', status:'pending', name:'Research Methods', remarks:'', requestedAt:'02 Sep 2026, 02:00 PM', requestedBy:'Dr. Koh Li May' });
-        addEvent('rsd3s1g1', 2, { di:4, start:0, end:3, code:'BMIT7073', type:'L', venue:'A105', lecturer:'Ms. Lim Pei Shan', status:'normal', name:'IT Ethics', remarks:'' });
-
-        /* ═══ FOCS / RSD3 (S1) G2 — 7 courses (+45%, was 5), weeks 1–14 ═══ */
-        const rsd3g2Base = [
-            { di:0, start:8, end:11, code:'BMIT7070', type:'L', venue:'A101', lecturer:'Prof. Dr. Khoo Teik Huat', name:'Advanced Software Engineering' },
-            { di:1, start:4, end:7, code:'BMIT7071', type:'T', venue:'A103', lecturer:'Dr. Koh Li May', name:'Research Methods' },
-            { di:2, start:12, end:15, code:'BMIT7072', type:'L', venue:'A104', lecturer:'Prof. Dr. Suresh', name:'Capstone Project' },
-            { di:3, start:0, end:3, code:'BMIT8080', type:'L', venue:'A102', lecturer:'Dr. Patricia Gomez', name:'Cloud Architecture' },
-            { di:4, start:0, end:3, code:'BMIT7073', type:'L', venue:'A105', lecturer:'Ms. Lim Pei Shan', name:'IT Ethics' },
-            { di:1, start:8, end:11, code:'BMIT7074', type:'T', venue:'A106', lecturer:'Dr. Koh Li May', name:'Software Testing' },
-            { di:3, start:12, end:15, code:'BMIT7075', type:'L', venue:'A106', lecturer:'Ms. Lim Pei Shan', name:'Mobile Application Development' },
-        ];
-        for (let w = 0; w < 14; w++) {
-            rsd3g2Base.forEach(c => addEvent('rsd3s1g2', w, { ...c, status: 'normal', remarks: '' }));
-        }
-        const rsd3g2Flags = {
-            1: [['BMIT7072', 'replacement', '26-Aug-2026'], ['BMIT7074', 'replacement', '25-Aug-2026']],
-            2: [['BMIT7073', 'pending', ''], ['BMIT7075', 'pending', '']],
-            3: [['BMIT7070', 'replacement', '27-Aug-2026']],
-            4: [['BMIT7071', 'pending', '']],
-            7: [['BMIT7074', 'replacement', '01-Sep-2026']],
-            9: [['BMIT7075', 'pending', '']],
-            11: [['BMIT7072', 'replacement', '08-Sep-2026']],
-            13: [['BMIT7071', 'pending', '']],
-        };
-        Object.entries(rsd3g2Flags).forEach(([w, list]) => {
-            list.forEach(([code, status, remarks]) => {
-                const ev = allEvents['rsd3s1g2'][w].find(e => e.code === code);
-                if (ev) {
-                    ev.status = status;
-                    ev.remarks = remarks;
-                    if (status === 'pending') { ev.requestedAt = '01 Sep 2026, 09:15 AM'; ev.requestedBy = ev.lecturer; }
-                }
+        // Apply RSD3 G2 base + flags (reconstructs the original for-loop)
+        var rsd3g2Cohort = 'rsd3s1g2';
+        if (!allEvents[rsd3g2Cohort]) allEvents[rsd3g2Cohort] = {};
+        MockData.cohortTimetable.rsd3g2Flags && Object.keys(MockData.cohortTimetable.rsd3g2Flags).forEach(function(w) {
+            var weekIdx = parseInt(w);
+            if (!allEvents[rsd3g2Cohort][weekIdx]) allEvents[rsd3g2Cohort][weekIdx] = [];
+            MockData.cohortTimetable.rsd3g2Base.forEach(function(evt) {
+                allEvents[rsd3g2Cohort][weekIdx].push(Object.assign({}, evt));
+            });
+            MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(idx) {
+                var copy = Object.assign({}, MockData.cohortTimetable.rsd3g2Base[idx]);
+                copy.status = 'pending';
+                allEvents[rsd3g2Cohort][weekIdx].push(copy);
             });
         });
 
-        /* ═══ FOCS / DSF2 (S1) — 5 courses ═══ */
-        addEvent('dsf2s1', 0, { di:0, start:0, end:3, code:'BMIT1010', type:'L', venue:'B201', lecturer:'Ms. Nurul Aini', status:'normal', name:'Introduction to Computing', remarks:'' });
-        addEvent('dsf2s1', 0, { di:1, start:12, end:15, code:'BMIT1111', type:'L', venue:'B204', lecturer:'Mr. Tan Kok Wai', status:'normal', name:'Operating Systems', remarks:'' });
-        addEvent('dsf2s1', 0, { di:2, start:4, end:7, code:'BMIT2020', type:'L', venue:'B202', lecturer:'Mr. Ravi Kumar', status:'normal', name:'Programming Fundamentals', remarks:'' });
-        addEvent('dsf2s1', 0, { di:3, start:0, end:3, code:'BMIT2222', type:'L', venue:'B205', lecturer:'Dr. Wong Mei Ling', status:'normal', name:'Mathematics for Computing', remarks:'' });
-        addEvent('dsf2s1', 0, { di:4, start:8, end:11, code:'BMIT3030', type:'T', venue:'B203', lecturer:'Ms. Siti Aminah', status:'normal', name:'Data Structures', remarks:'' });
-
-        addEvent('dsf2s1', 1, { di:0, start:0, end:3, code:'BMIT1010', type:'L', venue:'B201', lecturer:'Ms. Nurul Aini', status:'normal', name:'Introduction to Computing', remarks:'' });
-        addEvent('dsf2s1', 1, { di:1, start:12, end:15, code:'BMIT1111', type:'L', venue:'B204', lecturer:'Mr. Tan Kok Wai', status:'normal', name:'Operating Systems', remarks:'' });
-        addEvent('dsf2s1', 1, { di:2, start:4, end:7, code:'BMIT2020', type:'L', venue:'B202', lecturer:'Mr. Ravi Kumar', status:'replacement', name:'Programming Fundamentals', remarks:'26-Aug-2026' });
-        addEvent('dsf2s1', 1, { di:3, start:0, end:3, code:'BMIT2222', type:'L', venue:'B205', lecturer:'Dr. Wong Mei Ling', status:'normal', name:'Mathematics for Computing', remarks:'' });
-        addEvent('dsf2s1', 1, { di:4, start:8, end:11, code:'BMIT3030', type:'T', venue:'B203', lecturer:'Ms. Siti Aminah', status:'normal', name:'Data Structures', remarks:'' });
-
-        addEvent('dsf2s1', 2, { di:0, start:0, end:3, code:'BMIT1010', type:'L', venue:'B201', lecturer:'Ms. Nurul Aini', status:'normal', name:'Introduction to Computing', remarks:'' });
-        addEvent('dsf2s1', 2, { di:1, start:12, end:15, code:'BMIT1111', type:'L', venue:'B204', lecturer:'Mr. Tan Kok Wai', status:'normal', name:'Operating Systems', remarks:'' });
-        addEvent('dsf2s1', 2, { di:2, start:4, end:7, code:'BMIT2020', type:'L', venue:'B202', lecturer:'Mr. Ravi Kumar', status:'normal', name:'Programming Fundamentals', remarks:'' });
-        addEvent('dsf2s1', 2, { di:3, start:0, end:3, code:'BMIT2222', type:'L', venue:'B205', lecturer:'Dr. Wong Mei Ling', status:'pending', name:'Mathematics for Computing', remarks:'', requestedAt:'01 Sep 2026, 09:15 AM', requestedBy:'Dr. Wong Mei Ling' });
-        addEvent('dsf2s1', 2, { di:4, start:8, end:11, code:'BMIT3030', type:'T', venue:'B203', lecturer:'Ms. Siti Aminah', status:'normal', name:'Data Structures', remarks:'' });
-
-        /* ═══ FOCS / DFT2 (S1) — 5 courses ═══ */
-        addEvent('dft2s1', 0, { di:0, start:12, end:15, code:'BMIT6061', type:'T', venue:'B304', lecturer:'Ms. Chen Hui Xin', status:'normal', name:'UI/UX Design', remarks:'' });
-        addEvent('dft2s1', 0, { di:1, start:2, end:5, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
-        addEvent('dft2s1', 0, { di:2, start:12, end:15, code:'BMIT6062', type:'L', venue:'B305', lecturer:'En. Zulkifli', status:'normal', name:'Networking Basics', remarks:'' });
-        addEvent('dft2s1', 0, { di:3, start:6, end:9, code:'BMIT5050', type:'L', venue:'B302', lecturer:'Pn. Farah Hanum', status:'normal', name:'Database Design', remarks:'' });
-        addEvent('dft2s1', 0, { di:4, start:0, end:3, code:'BMIT6060', type:'L', venue:'B303', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Cybersecurity Fundamentals', remarks:'' });
-
-        addEvent('dft2s1', 1, { di:0, start:12, end:15, code:'BMIT6061', type:'T', venue:'B304', lecturer:'Ms. Chen Hui Xin', status:'normal', name:'UI/UX Design', remarks:'' });
-        addEvent('dft2s1', 1, { di:1, start:2, end:5, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'normal', name:'Web Development', remarks:'' });
-        addEvent('dft2s1', 1, { di:2, start:12, end:15, code:'BMIT6062', type:'L', venue:'B305', lecturer:'En. Zulkifli', status:'normal', name:'Networking Basics', remarks:'' });
-        addEvent('dft2s1', 1, { di:3, start:6, end:9, code:'BMIT5050', type:'L', venue:'B302', lecturer:'Pn. Farah Hanum', status:'normal', name:'Database Design', remarks:'' });
-        addEvent('dft2s1', 1, { di:4, start:0, end:3, code:'BMIT6060', type:'L', venue:'B303', lecturer:'Dr. Lim Wei Ming', status:'pending', name:'Cybersecurity Fundamentals', remarks:'', requestedAt:'01 Sep 2026, 09:15 AM', requestedBy:'Dr. Lim Wei Ming' });
-
-        addEvent('dft2s1', 2, { di:0, start:12, end:15, code:'BMIT6061', type:'T', venue:'B304', lecturer:'Ms. Chen Hui Xin', status:'normal', name:'UI/UX Design', remarks:'' });
-        addEvent('dft2s1', 2, { di:1, start:2, end:5, code:'BMIT4040', type:'L', venue:'B301', lecturer:'En. Ahmad Faiz', status:'replacement', name:'Web Development', remarks:'25-Aug-2026' });
-        addEvent('dft2s1', 2, { di:2, start:12, end:15, code:'BMIT6062', type:'L', venue:'B305', lecturer:'En. Zulkifli', status:'normal', name:'Networking Basics', remarks:'' });
-        addEvent('dft2s1', 2, { di:3, start:6, end:9, code:'BMIT5050', type:'L', venue:'B302', lecturer:'Pn. Farah Hanum', status:'normal', name:'Database Design', remarks:'' });
-        addEvent('dft2s1', 2, { di:4, start:0, end:3, code:'BMIT6060', type:'L', venue:'B303', lecturer:'Dr. Lim Wei Ming', status:'normal', name:'Cybersecurity Fundamentals', remarks:'' });
-
-        /* ═══ FCCI / DMC2 (S1) — 3 courses ═══ */
-        addEvent('dmc2s1', 0, { di:0, start:6, end:9, code:'COM1001', type:'L', venue:'E101', lecturer:'Ms. Elaine Chen', status:'normal', name:'Introduction to Mass Comm', remarks:'' });
-        addEvent('dmc2s1', 0, { di:2, start:2, end:5, code:'COM2002', type:'L', venue:'E102', lecturer:'Mr. Jason Tan', status:'normal', name:'Journalism', remarks:'' });
-        addEvent('dmc2s1', 0, { di:4, start:4, end:7, code:'COM3003', type:'T', venue:'E103', lecturer:'Ms. Karen Lim', status:'pending', name:'Public Relations', remarks:'' });
-
-        addEvent('dmc2s1', 2, { di:0, start:6, end:9, code:'COM1001', type:'L', venue:'E101', lecturer:'Ms. Elaine Chen', status:'normal', name:'Introduction to Mass Comm', remarks:'' });
-        addEvent('dmc2s1', 2, { di:2, start:2, end:5, code:'COM2002', type:'L', venue:'E102', lecturer:'Mr. Jason Tan', status:'replacement', name:'Journalism', remarks:'28-Aug-2026' });
-        addEvent('dmc2s1', 2, { di:4, start:4, end:7, code:'COM3003', type:'T', venue:'E103', lecturer:'Ms. Karen Lim', status:'pending', name:'Public Relations', remarks:'' });
-
         /* ───── State ───── */
         function currentWeekIndex() {
-            const semesterStart = new Date(2026, 5, 15);
+            const semesterStart = new Date(MockData.semester.startDate);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const idx = Math.floor((today - semesterStart) / 86400000 / 7);
@@ -1197,6 +1068,7 @@
            ════════════════════════════════════════════ */
 
         document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             populateWeeks();
             populateFaculties();
 

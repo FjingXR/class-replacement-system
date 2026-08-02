@@ -22,6 +22,8 @@
 | 2026-07-20 14:45 | HTML (toolbar) + JS | Add week dropdown | Added `filter-select` dropdown dynamically populated via `populateWeekDropdown()` from unique weeks in data |
 | 2026-07-20 15:00 | HTML + JS + CSS | Remove date range filter | Removed From/To date inputs, `matchesDate` logic, date event listeners, `.filter-input`/`.filter-label` CSS |
 | 2026-07-20 15:30 | CSS (`.filter-select`) | Fix weekFilter dark mode | Added `html.dark .filter-select { color-scheme: dark; }` to force native dark dropdown rendering, overriding GTK green tint |
+| 2026-08-02 12:00 | HTML + JS (full page) | Centralised mock data (Task 6) | Removed 14-row inline `conflictedClasses` array; replaced with `MockData.conflictedClasses` reference; standardised `computeWeek()` and `weekRangeLabel()` to use `MockData.semester.startDate`; replaced static semester chip with dynamic `#semesterChip` populated from `MockData.semester.chipText` |
+| 2026-08-02 | `@section('page-scripts')` | Centralised mock data (Task 9) | `conflictedClasses` moved to `mock-data.js` (page-specific, not shared). Week computation standardized to `MockData.semester.startDate`. Semester chip now reads `MockData.semester.chipText` dynamically. |
 
 ### `routes/web.php`
 

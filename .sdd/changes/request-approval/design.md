@@ -730,3 +730,131 @@ CSS: `.row-viewed td:first-child { border-left: 3px solid var(--color-primary); 
 | `public/js/ui-common.js` | **Modify** — append 10 promoted helpers (moved verbatim from my-request-history) |
 | `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php` | **Modify** — delete the 10 page-local helper copies (now resolve from ui-common.js via layout); no other changes |
 | `page-changelogs/request-approval-changelog.md` | **Update/replace** — file already exists (dated 2026-08-01); rewrite to document the page, OOP helper promotion, mock-data.js module, my-request-history refactor, and FR alignment |
+
+## Mobile & Tablet View Design (rule #9 — mandatory)
+
+### Breakpoints
+- **Tablet:** `@media (max-width: 1024px)` — stack summary cards to 2 columns, reduce table density
+- **Mobile:** `@media (max-width: 768px)` — full card layout, stacked elements
+
+### Mobile Layout (≤768px)
+
+**Page header:**
+- Stack title and description vertically
+- Reduce font sizes: `.page-title { font-size: 1.25rem; }`, `.page-desc { font-size: 0.8rem; }`
+
+**Toolbar:**
+- Stack filters vertically (full-width dropdowns/inputs)
+- Search input: full-width
+- Status filter + urgency chips: wrap to new line, full-width
+- Week filter: full-width
+- Reset button: full-width, centered
+
+**Batch action bar (`.batch-bar`):**
+- Full-width, centered text, sticky at top (`.batch-bar { position: sticky; top: 0; z-index: 10; }`)
+
+**Data table → Card layout:**
+- Hide `<table>` on mobile
+- Show `.card-list` container (new element, hidden on desktop)
+- Each request renders as a card:
+  ```html
+  <div class="request-card">
+      <div class="request-card-header">
+          <span class="request-card-id">#12</span>
+          <span class="request-card-status status-pending">Pending</span>
+      </div>
+      <div class="request-card-body">
+          <div class="request-card-row"><span class="request-card-label">Lecturer</span><span class="request-card-value">Kylian Mbappe</span></div>
+          <div class="request-card-row"><span class="request-card-label">Course</span><span class="request-card-value">BMIT2201 — Data Structures</span></div>
+          <div class="request-card-row"><span class="request-card-label">Original</span><span class="request-card-value">Mon, 31 Aug 2026 (Week 1)<br>09:00 AM – 11:00 AM</span></div>
+          <div class="request-card-row"><span class="request-card-label">Replacement</span><span class="request-card-value">Wed, 2 Sep 2026 (Week 1)<br>09:00 AM – 11:00 AM</span></div>
+          <div class="request-card-row"><span class="request-card-label">Urgency</span><span class="request-card-value"><span class="urgency-badge urgency-urgent">Urgent</span></span></div>
+      </div>
+      <div class="request-card-actions">
+          <button class="btn-approve" onclick="approveRequest(12)">Approve</button>
+          <button class="btn-reject" onclick="openRejectModal(12)">Reject</button>
+      </div>
+  </div>
+  ```
+- Card CSS:
+  ```css
+  .card-list { display: none; }
+  .request-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-outline);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 8px;
+  }
+  .request-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-outline);
+  }
+  .request-card-id { font-weight: 600; color: var(--color-on-surface); }
+  .request-card-body { display: flex; flex-direction: column; gap: 6px; }
+  .request-card-row { display: flex; flex-direction: column; font-size: 0.85rem; }
+  .request-card-label { color: var(--color-on-surface-variant); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 2px; }
+  .request-card-value { color: var(--color-on-surface); }
+  .request-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px solid var(--color-outline);
+  }
+  .request-card-actions button { flex: 1; }
+  @media (max-width: 768px) {
+      .grid-scroll { display: none; }
+      .card-list { display: block; }
+      .sort-hint { display: none; }
+      .pagination-bar { flex-direction: column; gap: 8px; }
+  }
+  ```
+
+**Pagination:**
+- Stack vertically (`.pagination-bar { flex-direction: column; align-items: stretch; }`)
+- Full-width info text and controls
+
+**Summary cards (via `@include('partials.ui-summary-bar')`):**
+- Stack to 1 column on mobile (`.summary-bar { grid-template-columns: 1fr; }`)
+
+**Empty state:**
+- Full-width, centered, reduced padding (`.empty-state { padding: 24px 16px; }`)
+
+**Detail modal:**
+- Full-screen on mobile (`.modal { width: 100vw; height: 100vh; border-radius: 0; max-height: none; }`)
+- Stack modal fields vertically with full width
+- Footer buttons: full-width, stacked vertically
+
+**Reject reason modal:**
+- Full-screen on mobile (same as detail modal)
+- Textarea: full-width
+- Buttons: full-width, stacked vertically
+
+**Approve notes modal:**
+- Full-screen on mobile
+- Textarea: full-width
+- Buttons: full-width, stacked vertically
+
+### Tablet Layout (769px–1024px)
+
+**Summary cards:**
+- 2-column grid (`.summary-bar { grid-template-columns: repeat(2, 1fr); }`)
+- 4th card spans full width (`.summary-card:last-child { grid-column: span 2; }`)
+
+**Data table:**
+- Keep table layout but reduce column widths
+- Hide checkbox column on tablet (`.col-checkbox { display: none; }`)
+- Hide urgency column on tablet (`.col-urgency { display: none; }`)
+- Show simplified action buttons (icon-only on tablet)
+
+**Toolbar:**
+- Keep horizontal layout but reduce spacing
+- Wrap filters to 2 rows if needed
+
+### CSS Media Queries Location
+Add all mobile/tablet CSS in `@section('page-styles')` of the Blade template (page-specific, not shared to `theme.css` — the request card layout is unique to this page).

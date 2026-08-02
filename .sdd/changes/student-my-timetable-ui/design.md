@@ -284,7 +284,109 @@ prev/next/select week → currentWeek → rebuild + saveStud​entMyTimetableWee
 | `public/js/mock-data.js` | + `MockData.studentTimetable` (with `activeCohort`, `cancelledFlags`, `notificationCount`); §2.2 holidays comment updated |
 | `page-changelogs/student-my-timetable-ui-changelog.md` | populated during apply |
 
-## 6. Known residuals (post-apply, tracked for later changes)
+## 6. Mobile & Tablet View Design (rule #9 — mandatory)
+
+### 6.1 Breakpoints
+- **Tablet:** `@media (max-width: 1024px)` — stack summary cards to 2 columns, reduce grid padding
+- **Mobile:** `@media (max-width: 768px)` — full card layout, stacked elements
+
+### 6.2 Mobile Layout (≤768px)
+
+**Page header:**
+- Stack title, semester-chip, cohort-chip, and description vertically
+- Reduce font sizes: `.page-title { font-size: 1.25rem; }`, `.page-desc { font-size: 0.8rem; }`
+
+**Semester progress bar:**
+- Full-width, hide `.progress-label` text (show only percentage via `::after` pseudo-element)
+
+**Week picker (`.semester-bar`):**
+- Hide prev/next arrows (`.week-arrow { display: none; }`)
+- Full-width week select dropdown (`.week-select { width: 100%; min-width: 0; }`)
+- Hide Today button (`.today-btn { display: none; }`)
+
+**Week subtitle:**
+- Full-width, centered text, smaller font (`.week-subtitle { font-size: 0.75rem; text-align: center; }`)
+
+**Heatmap bar:**
+- Scrollable horizontally (`.heatmap-bar { overflow-x: auto; flex-wrap: nowrap; }`)
+- Smaller cells (`.heatmap-cell { min-width: 28px; height: 28px; }`)
+
+**Timetable grid → Card layout:**
+- Hide `<table.timetable>` on mobile
+- Show `.card-list` container (new element, hidden on desktop)
+- Each event renders as a card:
+  ```html
+  <div class="event-card">
+      <div class="event-card-header">
+          <span class="event-card-code">BMIT7070</span>
+          <span class="event-card-status status-normal">Normal</span>
+      </div>
+      <div class="event-card-body">
+          <div class="event-card-row"><span class="event-card-label">Day</span><span class="event-card-value">Monday</span></div>
+          <div class="event-card-row"><span class="event-card-label">Time</span><span class="event-card-value">09:00 – 11:00</span></div>
+          <div class="event-card-row"><span class="event-card-label">Venue</span><span class="event-card-value">B104</span></div>
+          <div class="event-card-row"><span class="event-card-label">Lecturer</span><span class="event-card-value">Dr. Ahmad</span></div>
+      </div>
+  </div>
+  ```
+- Card CSS:
+  ```css
+  .card-list { display: none; }
+  .event-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-outline);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 8px;
+  }
+  .event-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+  }
+  .event-card-code { font-weight: 600; color: var(--color-on-surface); }
+  .event-card-body { display: flex; flex-direction: column; gap: 4px; }
+  .event-card-row { display: flex; justify-content: space-between; font-size: 0.85rem; }
+  .event-card-label { color: var(--color-on-surface-variant); }
+  .event-card-value { color: var(--color-on-surface); font-weight: 500; }
+  @media (max-width: 768px) {
+      .grid-scroll { display: none; }
+      .card-list { display: block; }
+  }
+  ```
+
+**Legend bar:**
+- Wrap to 2 rows if needed (`.legend-bar { flex-wrap: wrap; gap: 8px; }`)
+
+**Summary cards (via `@include('partials.ui-summary-bar')`):**
+- Stack to 1 column on mobile (`.summary-bar { grid-template-columns: 1fr; }`)
+
+**Empty state:**
+- Full-width, centered, reduced padding (`.empty-state { padding: 24px 16px; }`)
+
+**Modal:**
+- Full-screen on mobile (`.modal { width: 100vw; height: 100vh; border-radius: 0; max-height: none; }`)
+- Hide `.modal-header` close button (use footer Close only)
+- Stack modal fields vertically with full width
+
+### 6.3 Tablet Layout (769px–1024px)
+
+**Summary cards:**
+- 2-column grid (`.summary-bar { grid-template-columns: repeat(2, 1fr); }`)
+- 5th card spans full width (`.summary-card:last-child { grid-column: span 2; }`)
+
+**Timetable grid:**
+- Keep table layout but reduce cell padding (`.hour-cell { padding: 2px; }`)
+- Smaller font for event blocks (`.ev-code { font-size: 10px; }`, `.ev-time { font-size: 9px; }`)
+
+**Week picker:**
+- Keep arrows + dropdown but reduce dropdown width (`.week-select { min-width: 140px; }`)
+
+### 6.4 CSS Media Queries Location
+Add all mobile/tablet CSS in `@section('page-styles')` of the Blade template (page-specific, not shared to `theme.css` — the timetable card layout is unique to this page).
+
+## 7. Known residuals (post-apply, tracked for later changes)
 - MyT + Cohort inline *event* data (`eventsData` / `facultyData` + `allEvents`) still inline — full migration to `MockData` is a separate change.
 - Cohort inline holiday rule (`d===3&&w===3`) still hardcoded — refactored when Cohort migrates its event data.
 - Cohort `.badge-replacement` gold `#d4a017` — pre-existing rule-#1 violation, deferred.

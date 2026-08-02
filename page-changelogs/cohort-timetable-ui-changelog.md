@@ -98,6 +98,7 @@
 | 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — 5 → 7 courses (+45%) | Added `rsd3g2Base` array: existing 5 courses + BMIT7074 Software Testing (T, Tue 8-11, A106) + BMIT7075 Mobile Application Development (L, Thu 12-15, A106) |
 | 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — weeks 1–3 → weeks 1–14 | Replaced 3 explicit week blocks with a `for` loop generating all 14 dropdown weeks (indexes 0–13 = Week 9…22) → every week now shows 7 events / 14h |
 | 2026-08-01 | `@section('page-scripts')` | RSD3 (S1) G2 — status flags | `rsd3g2Flags` map sets realistic replacement/pending statuses per week (e.g. W1 Capstone+Testing replaced, W2 IT Ethics pending, W4/W9/W13 pending, W3/W7/W11 replacement) — visible on non-holiday days; Thu events on the Week 11 public-holiday render as conflicts by design |
+| 2026-08-02 | `@section('page-scripts')` | Centralised mock data (Task 9) | Migrated facultyData, allEvents, and weekData to `public/js/mock-data.js` — page now reads from `window.MockData.cohortTimetable`. RSD3 G2 reconstructed from shared data via `rsd3g2Base`/`rsd3g2Flags`. Holiday rule now reads `MockData.holidays` instead of hardcoded map. Semester chip text reads `MockData.semester.chipText`. |
 
 ### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php` — selection persists across refresh (localStorage)
 

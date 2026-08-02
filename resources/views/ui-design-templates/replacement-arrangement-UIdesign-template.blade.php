@@ -761,7 +761,7 @@
     </button>
 
     <div class="page-header">
-        <span class="semester-chip">202605 Semester · 15-Jun-2026 ~ 20-Sep-2026</span>
+        <span class="semester-chip" id="semesterChip"></span>
     </div>
 
         <div class="toolbar">
@@ -907,82 +907,8 @@
 @section('page-scripts')
         const MAX_SELECTION = 4;
 
-        const weekData = [
-            {
-                label: 'Week 11',
-                days: [
-                    { abbr: 'Mon', date: '01 Sep 2026' },
-                    { abbr: 'Tue', date: '02 Sep 2026' },
-                    { abbr: 'Wed', date: '03 Sep 2026' },
-                    { abbr: 'Thu', date: '04 Sep 2026', holiday: true },
-                    { abbr: 'Fri', date: '05 Sep 2026' },
-                    { abbr: 'Sat', date: '06 Sep 2026' },
-                    { abbr: 'Sun', date: '07 Sep 2026' },
-                ]
-            },
-            {
-                label: 'Week 10',
-                days: [
-                    { abbr: 'Mon', date: '25 Aug 2026' },
-                    { abbr: 'Tue', date: '26 Aug 2026' },
-                    { abbr: 'Wed', date: '27 Aug 2026' },
-                    { abbr: 'Thu', date: '28 Aug 2026' },
-                    { abbr: 'Fri', date: '29 Aug 2026' },
-                    { abbr: 'Sat', date: '30 Aug 2026' },
-                    { abbr: 'Sun', date: '31 Aug 2026' },
-                ]
-            },
-            {
-                label: 'Week 9',
-                days: [
-                    { abbr: 'Mon', date: '18 Aug 2026' },
-                    { abbr: 'Tue', date: '19 Aug 2026' },
-                    { abbr: 'Wed', date: '20 Aug 2026' },
-                    { abbr: 'Thu', date: '21 Aug 2026' },
-                    { abbr: 'Fri', date: '22 Aug 2026' },
-                    { abbr: 'Sat', date: '23 Aug 2026' },
-                    { abbr: 'Sun', date: '24 Aug 2026' },
-                ]
-            }
-        ];
-
-        const venueSlotData = {
-            'B103': [
-                [0, 4, 0], [0, 5, 0], [0, 6, 0], [0, 7, 0],
-                [1, 0, 0], [1, 1, 0], [1, 2, 0], [1, 3, 0],
-                [1, 8, 0], [1, 9, 0], [1, 10, 0], [1, 11, 0],
-                [2, 12, 1], [2, 13, 1], [2, 14, 1], [2, 15, 1],
-                [4, 14, 4], [4, 15, 4], [4, 16, 4], [4, 17, 4],
-                [4, 18, 4], [4, 19, 4], [4, 20, 4], [4, 21, 4],
-                [5, 4, 3], [5, 5, 3], [5, 6, 3], [5, 7, 3],
-            ],
-            'B104': [
-                [0, 0, 1], [0, 1, 1], [0, 2, 1], [0, 3, 1],
-                [0, 8, 0], [0, 9, 0], [0, 10, 0], [0, 11, 0],
-                [1, 12, 1], [1, 13, 1], [1, 14, 1], [1, 15, 1],
-                [2, 4, 0], [2, 5, 0], [2, 6, 0], [2, 7, 0],
-                [2, 8, 0], [2, 9, 0],
-                [3, 4, 4], [3, 5, 4], [3, 6, 4], [3, 7, 4],
-                [5, 12, 3], [5, 13, 3], [5, 14, 3], [5, 15, 3],
-            ],
-            'B105': [
-                [0, 12, 0], [0, 13, 0], [0, 14, 0], [0, 15, 0],
-                [1, 4, 0], [1, 5, 0], [1, 6, 0], [1, 7, 0],
-                [2, 0, 1], [2, 1, 1], [2, 2, 1], [2, 3, 1],
-                [2, 16, 4], [2, 17, 4], [2, 18, 4], [2, 19, 4],
-                [4, 0, 3], [4, 1, 3], [4, 2, 3], [4, 3, 3],
-            ],
-            'B106': [
-                [0, 16, 1], [0, 17, 1], [0, 18, 1], [0, 19, 1],
-                [1, 0, 1], [1, 1, 1],
-                [1, 16, 0], [1, 17, 0], [1, 18, 0], [1, 19, 0],
-                [2, 8, 0], [2, 9, 0], [2, 10, 0], [2, 11, 0],
-                [3, 0, 4], [3, 1, 4], [3, 2, 4], [3, 3, 4],
-                [3, 12, 4], [3, 13, 4], [3, 14, 4], [3, 15, 4],
-                [5, 8, 3], [5, 9, 3],
-                [2, 0, 0], [2, 1, 0], [2, 2, 0], [2, 3, 0],
-            ],
-        };
+        const weekData = MockData.arrangementWeeks;
+        const venueSlotData = MockData.venueSlots;
 
         let selectedSlotsByVenue = {};
         let currentWeek = 0;
@@ -1401,6 +1327,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             buildTimetable();
         });
 @endsection
