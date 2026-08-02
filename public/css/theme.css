@@ -698,8 +698,11 @@ html.dark .filter-select {
     position: fixed; inset: 0; z-index: 999;
     background: rgba(0,0,0,0.55);
     backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
+    display: none; align-items: center; justify-content: center;
     padding: 20px;
+}
+.modal-overlay.show {
+    display: flex;
 }
 .modal {
     background: var(--color-surface);
@@ -761,7 +764,7 @@ html.dark .filter-select {
 .modal-field:last-child {
     border-bottom: none;
 }
-.modal-field .field-label {
+.field-label, .modal-field-label {
     width: 130px;
     flex-shrink: 0;
     font-size: 12px;
@@ -771,7 +774,7 @@ html.dark .filter-select {
     letter-spacing: 0.3px;
     padding-top: 2px;
 }
-.modal-field .field-value {
+.field-value, .modal-field-value {
     flex: 1;
     font-size: 14px;
     font-weight: 500;

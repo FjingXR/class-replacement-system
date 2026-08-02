@@ -128,33 +128,6 @@
         .selector-dropdown:hover { filter: brightness(1.1); }
         .selector-dropdown option { background: var(--color-surface); color: var(--color-on-surface); }
 
-        .week-arrow {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            border: none;
-            background: transparent;
-            color: var(--color-on-surface-variant);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background 0.15s;
-            flex-shrink: 0;
-        }
-        .week-arrow:hover {
-            background: var(--color-surface-variant);
-        }
-        .week-arrow:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        .week-arrow:disabled:hover {
-            background: transparent;
-        }
-
         .toolbar-center {
             text-align: center;
             flex: 1;
@@ -473,48 +446,6 @@
         }
         .btn-danger:hover {
             filter: brightness(1.1);
-        }
-
-        .modal-overlay {
-            position: fixed; inset: 0; z-index: 999;
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(4px);
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        .modal {
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: 16px;
-            box-shadow: var(--shadow-lg);
-            max-width: 460px; width: 100%;
-            animation: modalIn 0.2s ease;
-        }
-        @keyframes modalIn {
-            from { opacity:0; transform:scale(0.95) translateY(10px); }
-            to { opacity:1; transform:scale(1) translateY(0); }
-        }
-        .modal-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 20px 24px 0;
-        }
-        .modal-title { font-size: 18px; font-weight: 700; color: var(--color-on-surface); }
-        .modal-close {
-            width: 32px; height: 32px; border-radius: 8px; border: none;
-            background: var(--color-surface-variant); color: var(--color-on-surface-variant);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 20px; line-height: 1;
-            transition: background var(--transition);
-        }
-        .modal-close:hover { background: var(--color-outline); }
-        .modal-body {
-            padding: 20px 24px;
-            font-size: 14px; color: var(--color-on-surface);
-            line-height: 1.5;
-        }
-        .modal-footer {
-            display: flex; justify-content: flex-end; gap: 10px;
-            padding: 0 24px 20px;
         }
 
         .legend {
