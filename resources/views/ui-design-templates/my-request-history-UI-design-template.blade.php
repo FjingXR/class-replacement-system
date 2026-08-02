@@ -70,6 +70,65 @@
             color: var(--color-on-surface);
         }
 
+        /* ───── Week Picker (matches replacement-home) ───── */
+        .week-picker {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .week-arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .week-arrow:hover {
+            background: var(--color-surface-variant);
+        }
+        .week-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .week-arrow:disabled:hover {
+            background: transparent;
+        }
+        .week-select {
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 28px 4px 10px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            min-width: 140px;
+        }
+        .week-select option {
+            background: var(--color-surface);
+            color: var(--color-on-surface);
+        }
+        html.dark .week-select {
+            color-scheme: dark;
+        }
+
         /* ───── Column Widths ───── */
         .col-no { width: 50px; }
         .col-requested-at { width: 145px; }
@@ -582,9 +641,11 @@
                     <option value="Cancelled">Cancelled</option>
                     <option value="Completed">Completed</option>
                 </select>
-                <select class="filter-select" id="weekFilter">
-                    <option value="all">All Weeks</option>
-                </select>
+                <div class="week-picker">
+                    <button class="week-arrow" onclick="prevWeekFilter()" aria-label="Previous week">&#8249;</button>
+                    <select class="week-select" id="weekFilter" onchange="weekFilterChanged()"></select>
+                    <button class="week-arrow" onclick="nextWeekFilter()" aria-label="Next week">&#8250;</button>
+                </div>
                 <label class="toggle-wrapper" id="completedToggle">
                     <input type="checkbox" id="hideCompleted" checked>
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -834,7 +895,6 @@
         function saveFilters() {
             var filters = {
                 status: document.getElementById('statusFilter').value,
-                week: document.getElementById('weekFilter').value,
                 search: document.getElementById('searchInput').value,
                 excludeCompleted: document.getElementById('hideCompleted').checked
             };
@@ -847,7 +907,6 @@
             try {
                 var filters = JSON.parse(raw);
                 if (filters.status) document.getElementById('statusFilter').value = filters.status;
-                if (filters.week) document.getElementById('weekFilter').value = filters.week;
                 if (filters.search) document.getElementById('searchInput').value = filters.search;
                 if (typeof filters.excludeCompleted === 'boolean') document.getElementById('hideCompleted').checked = filters.excludeCompleted;
             } catch (e) {}
@@ -1130,9 +1189,13 @@
                 }
             });
             var listHtml = rows.map(function(r) {
-                return '<div style="padding:6px 0;border-bottom:1px solid var(--color-outline);font-size:13px">' +
+                return '<div style="padding:8px 0;border-bottom:1px solid var(--color-outline);font-size:13px;line-height:1.5">' +
+                    '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
                     '<strong>' + r.courseCode + '</strong> — ' + r.courseName +
-                    ' <span class="badge ' + statusClass(r.status) + '" style="font-size:10px;padding:2px 6px">' + r.status + '</span></div>';
+                    ' <span class="badge ' + statusClass(r.status) + '" style="font-size:10px;padding:2px 6px">' + r.status + '</span></div>' +
+                    '<div style="color:var(--color-on-surface-variant);font-size:12px;margin-top:2px">' +
+                    r.classDay + ', ' + formatDate(r.classDate) + ' &middot; ' + r.timeStart + ' – ' + r.timeEnd + ' &middot; ' + r.venue +
+                    '</div></div>';
             }).join('');
             document.getElementById('batchCancelBody').innerHTML =
                 '<p style="font-size:14px;color:var(--color-on-surface);line-height:1.5;margin-bottom:8px">Cancel ' + count + ' selected request(s)? This action cannot be undone.</p>' +
@@ -1281,11 +1344,39 @@
             rows.forEach(function(r) { r.classList.remove('row-focused'); });
         }
 
+        function weekFilterChanged() {
+            pageState.currentPage = 1;
+            saveFilters();
+            renderTable();
+            updateWeekArrowState();
+        }
+
+        function prevWeekFilter() {
+            var sel = document.getElementById('weekFilter');
+            if (sel.selectedIndex > 0) {
+                sel.selectedIndex--;
+                sel.dispatchEvent(new Event('change'));
+            }
+        }
+
+        function nextWeekFilter() {
+            var sel = document.getElementById('weekFilter');
+            if (sel.selectedIndex < sel.options.length - 1) {
+                sel.selectedIndex++;
+                sel.dispatchEvent(new Event('change'));
+            }
+        }
+
+        function updateWeekArrowState() {
+            var sel = document.getElementById('weekFilter');
+            updateWeekArrows(sel.selectedIndex <= 0, sel.selectedIndex >= sel.options.length - 1);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            const weekSel = document.getElementById('weekFilter');
+            var weekSel = document.getElementById('weekFilter');
             weekSel.innerHTML = '<option value="all">All Weeks</option>';
             weekRanges.forEach(function(w) {
-                const opt = document.createElement('option');
+                var opt = document.createElement('option');
                 opt.value = w.value;
                 opt.textContent = w.label;
                 weekSel.appendChild(opt);
@@ -1294,6 +1385,7 @@
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
 
             renderTable();
+            updateWeekArrowState();
 
             document.getElementById('searchInput').addEventListener('input', function() {
                 pageState.currentPage = 1;
@@ -1301,11 +1393,6 @@
                 renderTable();
             });
             document.getElementById('statusFilter').addEventListener('change', function() {
-                pageState.currentPage = 1;
-                saveFilters();
-                renderTable();
-            });
-            document.getElementById('weekFilter').addEventListener('change', function() {
                 pageState.currentPage = 1;
                 saveFilters();
                 renderTable();
@@ -1330,6 +1417,7 @@
                 localStorage.removeItem('mrh-filters');
                 pageState.currentPage = 1;
                 renderTable();
+                updateWeekArrowState();
             });
 
             restoreFilters();

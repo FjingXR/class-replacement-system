@@ -63,6 +63,7 @@
 | 2026-08-02 16:00 | Lines 1309–1317 | Feature | Added deep link support — URL `?id=N` auto-opens modal for that request on page load |
 | 2026-08-02 16:00 | Lines 1175–1205 | Feature | Added `renderCards()` — builds card view from `currentFiltered` data, click/Enter opens modal |
 | 2026-08-02 | `@section('page-scripts')` | Centralised mock data (Task 9) | `mockRequests` array moved to `public/js/mock-data.js` — page now reads from `MockData.requests`. Semester chip now reads `MockData.semester.chipText` dynamically. |
+| 2026-08-02 | Lines 644–648, CSS | Week picker arrows | Replaced plain `<select class="filter-select">` for weekFilter with `<div class="week-picker">` containing prev/next arrow buttons + `week-select` dropdown (matching `replacement-home-ui`). Added CSS: `.week-picker`, `.week-arrow`, `.week-select`. Added JS: `weekFilterChanged()`, `prevWeekFilter()`, `nextWeekFilter()`, `updateWeekArrowState()`. Week filter now resets to "All Weeks" on page refresh (removed from `saveFilters()`/`restoreFilters()`). |
 
 ### `routes/web.php`
 
