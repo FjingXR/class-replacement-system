@@ -51,6 +51,7 @@ window.MockData = {
     holidays: [
         { week: 1, dayIndex: 0, label: 'Public Holiday' }, // Week 1 Monday
         { week: 3, dayIndex: 1, label: 'Public Holiday' }, // Week 3 Tuesday
+        { week: 3, dayIndex: 3, label: 'Public Holiday' }, // Week 3 Thursday
         { week: 5, dayIndex: 2, label: 'Public Holiday' }, // Week 5 Wednesday
         { week: 7, dayIndex: 4, label: 'Public Holiday' }, // Week 7 Friday
     ],
