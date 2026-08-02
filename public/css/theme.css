@@ -1196,7 +1196,7 @@ html.dark .semester-bar select:not(.week-select) {
 
 /* ── Mobile Nav Overrides ── */
 @media (max-width: 768px) {
-    .nav-hamburger { display: flex; }
+    .nav-hamburger { display: flex; position: fixed; right: 12px; top: 12px; z-index: 100; background: var(--color-surface); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
     .nav-items { display: none; }
     .user-info { display: none; }
     .user-panel { display: none; }
