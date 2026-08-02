@@ -288,9 +288,13 @@
         const seedEvents = MockData.myTimetable.eventsByWeek[MockData.myTimetable.seedWeek];
         const weeklyTemplate = seedEvents.filter(e => e.status === 'normal');
         const eventsByWeek = {};
-        const sw = MockData.myTimetable.seedWeek;
         for (let i = 0; i < MockData.semester.weeks; i++) {
-            eventsByWeek[i] = (i === sw) ? seedEvents.slice() : weeklyTemplate.slice();
+            const explicit = MockData.myTimetable.eventsByWeek[i];
+            if (explicit !== undefined) {
+                eventsByWeek[i] = explicit;
+            } else {
+                eventsByWeek[i] = weeklyTemplate.slice();
+            }
         }
         const eventsData = eventsByWeek;
 
