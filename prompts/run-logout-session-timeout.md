@@ -32,6 +32,7 @@ Discuss with me BEFORE you generate the proposal (do not skip):
 1. List the FRs/NFRs that apply:
    - FR 1.1 login (exists — login pages work, route /login/student and /login/staff, Fortify authenticateUsing queries DB). Login is fully wired to database: Student::where('student_id', $loginId) or Lecturer::where('staff_id', $loginId), then Hash::check($password, $user->password).
    - NFR 2.4 session timeout — config/session.php already set to 1 min (look for [SESSION TIMEOUT] comment). .env SESSION_LIFETIME=1. For production: change to 30. Comment already in code for easy finding.
+   - Role-based session lifetime: students are view-only (low risk) → 30-day session for better UX. Staff can approve/reject (higher risk) → 30 min session for security. Implementation: override session lifetime per-role in FortifyServiceProvider or middleware (Fortify `home` is a single value, so session lifetime override may need similar approach).
    - Post-login redirect: role-based — student → /student-my-timetable-ui (page does not exist yet, will be created in a separate SDD; for now, redirect will 404 until that page is built), staff → /my-timetable-ui. Fortify 'home' config is a single value, so the redirect needs to be overridden per-role.
    - Nav bar user profile: show Auth::user() name, role, and student_id/staff_id from related model.
    - [A1] Remember me: "Remember me" checkbox on both login forms. Fortify has built-in `remember` feature — just needs checkbox + `'remember' => $request->boolean('remember')` in auth attempt. Frontend design is TBD — use a simple placeholder checkbox for now.
@@ -74,7 +75,7 @@ Feature to implement
   - NEW: public/js/session-countdown.js — [A3] JS timer that checks session lifetime periodically, shows countdown banner when near expiry, auto-submits logout when timer hits 0.
   - (Optional) C4: NEW public/js/auto-logout.js — JS that tracks mousemove/keydown/click activity. If idle for X min → show warning modal → auto-submit logout at 0. Can be combined with A3 session countdown or kept separate. Only if user wants it.
   - config/fortify.php — change 'home' redirect logic to be role-based: student → /student-my-timetable-ui, staff → /my-timetable-ui. (Note: /student-my-timetable-ui does not exist yet — will 404 until that SDD is applied.)
-  - config/session.php — already set to 1 min (look for [SESSION TIMEOUT] comment). No change needed — already done.
+  - config/session.php — already set to 1 min (look for [SESSION TIMEOUT] comment). This is the DEFAULT. Role-based override will be applied per-role (see "What to add" below).
   - .env — SESSION_LIFETIME=1 already set. No change needed — already done.
 - What already exists (do NOT re-implement):
   - resources/views/partials/ui-nav-bar.blade.php — user panel HTML already exists at lines 29–45 (.user-panel > .user-profile > .user-avatar + .user-info > .user-name + .user-role, and .logout-btn). Data is HARDCODED. Just replace with dynamic data from Auth::user().
@@ -90,6 +91,10 @@ Feature to implement
   - Wire user panel: replace 4 hardcoded values (avatar initials, name, role, logout button) with dynamic data from Auth::user()
   - Add student_id/staff_id display below role in user panel
   - Implement role-based post-login redirect (student → /student-my-timetable-ui, staff → /my-timetable-ui)
+  - Implement role-based session lifetime:
+    - Students (view-only, low risk): 30-day session (43200 min) — better UX, they just view timetables
+    - Staff (can approve/reject, higher risk): 30-min session (or 1 min for testing) — tighter security
+    - Implementation options: (a) override in login controller/session middleware per-role, (b) set session lifetime in LoginController after auth, (c) use a middleware that checks role and adjusts session lifetime. Discuss which is cleanest.
   - [A1] Add "Remember me" checkbox to both login forms + pass 'remember' => true to Fortify auth attempt
   - [A3] Create session countdown Blade partial + JS timer — shows banner when session is near expiry, auto-logouts on timeout
   - [B1] Add active session indicator to nav bar (green dot / "Session active" text)
@@ -108,9 +113,9 @@ What to reuse:
 
 Changelog (generate BEFORE the proposal, keep updating as you build): create `page-changelogs/logout-session-timeout-changelog.md` now (even if only header + empty Files Changed). Follow the exact format of `page-changelogs/my-timetable-changelog.md`: `# Changelog — Logout + Session Timeout + Login Redirect + User Profile` → `## Files Changed` → one `### \`<file path>\`` per changed file → per-file table `| Timestamp | Location | Change | Detail |`. Log every touched file (nav bar, config/fortify.php). Note: config/session.php and .env are already changed (no need to log those). Use server-local ISO-ish timestamps.
 
-Deliverables: .sdd/changes/logout-session-timeout/ (sdd.yaml, proposal.md, design.md, tasks.md — model format on .sdd/changes/), updated resources/views/partials/ui-nav-bar.blade.php (user panel wired + logout form + session indicator), updated resources/views/auth/login-student.blade.php + login-staff.blade.php (remember me checkbox), NEW resources/views/partials/ui-session-countdown.blade.php (placeholder), NEW public/js/session-countdown.js (placeholder), (optional) NEW public/js/auto-logout.js, config/fortify.php change (role-based redirect), page-changelogs/logout-session-timeout-changelog.md (created now, filled as you build). After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: feat:.
+Deliverables: .sdd/changes/logout-session-timeout/ (sdd.yaml, proposal.md, design.md, tasks.md — model format on .sdd/changes/), updated resources/views/partials/ui-nav-bar.blade.php (user panel wired + logout form + session indicator), updated resources/views/auth/login-student.blade.php + login-staff.blade.php (remember me checkbox), NEW resources/views/partials/ui-session-countdown.blade.php (placeholder), NEW public/js/session-countdown.js (placeholder), (optional) NEW public/js/auto-logout.js, config/fortify.php change (role-based redirect), session lifetime override logic (role-based: student 30 days, staff 30 min), page-changelogs/logout-session-timeout-changelog.md (created now, filled as you build). After apply: run composer run lint:check + composer run types:check; confirm no new failures. Commit prefix: feat:.
 
-Constraints: no new migrations (no DB changes), no new models, no new Livewire components, no new composer dependencies, no new frontend UI mock pages. A1/A3/B1/C4 frontend designs are PLACEHOLDER — will be refined in a separate frontend SDD later. /student-my-timetable-ui will 404 until that SDD is applied (acceptable — that page is next in queue).
+Constraints: no new migrations (no DB changes), no new models, no new Livewire components, no new composer dependencies, no new frontend UI mock pages. A1/A3/B1/C4 frontend designs are PLACEHOLDER — will be refined in a separate frontend SDD later. /student-my-timetable-ui will 404 until that SDD is applied (acceptable — that page is next in queue). Session lifetime for students = 30 days (43200 min), staff = 30 min (or 1 min for testing).
 ```
 
 ---
@@ -124,10 +129,11 @@ These files were already modified outside of any SDD — no need to include them
 ## What the agent will need to figure out
 
 1. **Role-based post-login redirect** — Fortify `'home'` is a single string. The agent needs to override it per-role. Best approach: use `Fortify::redirectUsing()` in `FortifyServiceProvider::boot()` to return different URLs based on `Auth::user()->role`.
-2. **User panel wiring** — the `.user-panel` HTML already exists (lines 29–45 of ui-nav-bar.blade.php). It has hardcoded: avatar "KL", name "Kylian Mbappe", role "Lecturer", and a dummy logout button. Replace all 4 with dynamic data from `Auth::user()`. Add student_id/staff_id below role.
-3. **@auth/@guest guards** — check if nav bar already has these; wrap user panel + logout + session indicator accordingly.
-4. **Student vs Lecturer profile fields** — use `@if(auth()->user()->isStudent())` to show `student_id` vs `staff_id`.
-5. **A1 Remember me** — add checkbox to both login forms. Ensure the form POST includes `remember` field. Fortify handles the rest.
-6. **A3 Session countdown** — decide: client-side timer (estimate based on SESSION_LIFETIME) or server-side AJAX endpoint (accurate but more work). For FYP, client-side estimation is fine. Create the Blade partial + JS file.
-7. **B1 Session indicator** — simple: check `auth()->check()` and show a green dot or text. Place near user panel in nav bar.
-8. **C4 Auto-logout (optional)** — if user wants it: track `mousemove`/`keydown`/`click` on `document`, reset idle timer on activity. At X min idle → show warning modal. At 0 → submit logout form. Can share the warning modal with A3 or keep separate. ~3-4 hours effort.
+2. **Role-based session lifetime** — Students: 30 days (43200 min), Staff: 30 min (or 1 min testing). Options: (a) set `config('session.lifetime')` after login based on role, (b) use middleware that adjusts lifetime per-request, (c) store lifetime in a custom column on users table (requires migration — avoid). Discuss with user which approach is cleanest.
+3. **User panel wiring** — the `.user-panel` HTML already exists (lines 29–45 of ui-nav-bar.blade.php). It has hardcoded: avatar "KL", name "Kylian Mbappe", role "Lecturer", and a dummy logout button. Replace all 4 with dynamic data from `Auth::user()`. Add student_id/staff_id below role.
+4. **@auth/@guest guards** — check if nav bar already has these; wrap user panel + logout + session indicator accordingly.
+5. **Student vs Lecturer profile fields** — use `@if(auth()->user()->isStudent())` to show `student_id` vs `staff_id`.
+6. **A1 Remember me** — add checkbox to both login forms. Ensure the form POST includes `remember` field. Fortify handles the rest.
+7. **A3 Session countdown** — decide: client-side timer (estimate based on SESSION_LIFETIME) or server-side AJAX endpoint (accurate but more work). For FYP, client-side estimation is fine. Create the Blade partial + JS file.
+8. **B1 Session indicator** — simple: check `auth()->check()` and show a green dot or text. Place near user panel in nav bar.
+9. **C4 Auto-logout (optional)** — if user wants it: track `mousemove`/`keydown`/`click` on `document`, reset idle timer on activity. At X min idle → show warning modal. At 0 → submit logout form. Can share the warning modal with A3 or keep separate. ~3-4 hours effort.
