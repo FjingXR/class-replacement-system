@@ -776,16 +776,17 @@
                 padding: 2px;
             }
             .cell-time-label {
-                display: block;
                 position: absolute;
-                bottom: 1px;
-                right: 2px;
-                font-size: 7px;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 13px;
                 color: var(--color-on-surface-variant);
-                line-height: 1;
-                opacity: 0.6;
+                line-height: 1.2;
+                opacity: 0.7;
                 pointer-events: none;
-                text-align: right;
+                text-align: center;
                 white-space: pre-line;
             }
         }
