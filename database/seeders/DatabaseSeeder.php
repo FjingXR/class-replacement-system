@@ -19,6 +19,23 @@ class DatabaseSeeder extends Seeder
 
     private const DEFAULT_PASSWORD = 'Tarumt@2026';
 
+    private const STUDENT_COUNTS = [
+        'DFT1(S1)G1' => 30,
+        'DFT2(S1)G1' => 28,
+        'DSF1(S1)G1' => 24,
+        'DSF2(S1)G1' => 22,
+        'RSD1(S1)G1' => 18,
+        'RSD2(S1)G1' => 16,
+        'RSD2(S1)G2' => 16,
+        'RSD2(S1)G3' => 15,
+        'RSD3(S1)G1' => 14,
+        'RSD3(S1)G2' => 14,
+        'RSD3(S1)G3' => 13,
+        'RAF2(S3)G2' => 12,
+        'RAF2(S3)G4' => 10,
+        'RBU1(S1)G1' => 20,
+    ];
+
     public function run(): void
     {
         $this->seedReferenceData();
@@ -122,7 +139,7 @@ class DatabaseSeeder extends Seeder
         $counters = [];
 
         foreach ($cohorts as $cohort) {
-            $studentCount = rand(10, 15);
+            $studentCount = self::STUDENT_COUNTS[$this->cohortCode($cohort)] ?? 10;
             $yy = $this->intakeYearShort($cohort->intake);
             $progCode = $cohort->programme->programme_code;
             $key = $yy . $progCode;
@@ -157,5 +174,16 @@ class DatabaseSeeder extends Seeder
         preg_match('/(\d{4})/', $intake, $matches);
 
         return substr($matches[1], -2);
+    }
+
+    private function cohortCode(Cohort $cohort): string
+    {
+        return sprintf(
+            '%s%d(S%d)G%d',
+            $cohort->programme->programme_code,
+            $cohort->current_year,
+            $cohort->semester,
+            $cohort->tutorial_group
+        );
     }
 }
