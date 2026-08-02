@@ -176,6 +176,7 @@
 
         const weekData = (function() {
             const start = new Date(MockData.semester.startDate);
+            start.setHours(0, 0, 0, 0);
             const arr = [];
             const todayMs = (function() { const t = new Date('2026-09-03'); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             for (let w = 1; w <= 14; w++) {
