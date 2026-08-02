@@ -28,7 +28,7 @@
 
 | # | SDD name | What it does | Depends on | Prompt file |
 |---|----------|-------------|------------|-------------|
-| 1 | `logout-session-timeout` | Logout + session timeout (1 min) + role-based redirect + nav bar user profile + **A1 remember me + A3 session countdown + B1 session indicator** | student-my-timetable-ui (for student redirect target) | `prompts/run-logout-session-timeout.md` |
+| 1 | `logout-session-timeout` | Logout + session timeout (1 min) + role-based redirect + user panel wiring (replace hardcoded data) + **A1 remember me + A3 session countdown + B1 session indicator + (optional) C4 auto-logout** | student-my-timetable-ui (for student redirect target) | `prompts/run-logout-session-timeout.md` |
 
 ## Deferred / Future
 
@@ -46,9 +46,11 @@
 
 | # | Feature | What it does | Frontend status |
 |---|---------|-------------|----------------|
+| — | **User panel wiring** | Replace 4 hardcoded values in .user-panel (avatar "KL", name "Kylian Mbappe", role "Lecturer", dummy logout) with dynamic data from Auth::user(). Add student_id/staff_id. | Existing HTML — just replace data |
 | A1 | **Remember me** | "Remember me" checkbox on login → longer session (e.g. 7 days) vs. default 1 min. Uses Fortify's built-in `remember` feature. | **TBD** — no design yet. SDD will include placeholder/mock UI on login forms. |
 | A3 | **Session expiry countdown** | Banner/modal that appears when session is about to timeout (e.g. "Session expires in 2 min. Still here?"). Auto-logout if no response. | **TBD** — no design yet. SDD will include placeholder/mock UI (likely a Blade partial + JS countdown). |
 | B1 | **Active session indicator** | Nav bar shows green dot or "Session active" text when user is logged in and session is alive. | **TBD** — no design yet. SDD will include placeholder/mock UI in nav bar. |
+| C4 | **Auto-logout on inactivity** *(optional)* | JS tracks mouse/keyboard activity. Idle for X min → warning modal → auto-logout at 0. Complements A3. | **TBD** — no design yet. ~3-4 hours effort. Only if user wants it. |
 
 ### Skipped (will NOT be implemented)
 
@@ -59,4 +61,3 @@
 | C1 | Two-factor auth (2FA) | User decision — too complex for this FYP |
 | C2 | Session management | User decision — too complex for this FYP |
 | C3 | Password strength indicator | User decision — not needed |
-| C4 | Auto-logout on JS inactivity | Explained to user; not explicitly accepted. Can revisit if needed. |
