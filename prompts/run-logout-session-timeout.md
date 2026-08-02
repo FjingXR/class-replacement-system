@@ -62,7 +62,7 @@ Feature to implement
 - FR/NFR refs: NFR 2.4 (session timeout — 1 min for testing, 30 min prod), implicit FR 1.1 (login exists → logout + redirect must work)
 - What changes:
   - resources/views/partials/ui-nav-bar.blade.php — FIVE changes (user panel already exists at lines 29–45 with hardcoded data):
-    (a) Replace hardcoded .user-avatar "KL" with real initials from Auth::user()->name (first letter of first + last name)
+    (a) Replace hardcoded .user-avatar "KL" with dynamic initials from Auth::user()->name (first letter of first name + first letter of last name, e.g. "Kylian Mbappe" → "KM", "Poong Foo Jing" → "PJ"). No PFP column in users table — always use initials.
     (b) Replace hardcoded .user-name "Kylian Mbappe" with Auth::user()->name
     (c) Replace hardcoded .user-role "Lecturer" with Auth::user()->role (and show student_id/staff_id below it)
     (d) Replace hardcoded .logout-btn onclick="alert('Logout')" with real <form method="POST" action="{{ route('logout') }}"> + @csrf + <button type="submit">
@@ -82,7 +82,7 @@ Feature to implement
   - POST /logout route — provided by Fortify (no route changes needed)
   - dashboard.blade.php, sidebar.blade.php, desktop-user-menu.blade.php, verify-email.blade.php — all already have working logout forms (use as reference for nav bar pattern)
   - Login pages and routes — already work (/login/student, /login/staff), fully wired to database via FortifyServiceProvider authenticateUsing
-  - User model — has student()/lecturer() relationships, loginId(), isStudent(), isLecturer() helpers
+  - User model — has student()/lecturer() relationships, loginId(), isStudent(), isLecturer() helpers. No PFP/avatar column in users table — always use dynamic initials from name.
   - config/session.php — SESSION_LIFETIME already set to 1 min (look for [SESSION TIMEOUT] block comment at line ~36)
   - .env — SESSION_LIFETIME=1 already set
   - Fortify — has built-in `remember` feature for A1 (just needs checkbox in login form + `'remember' => true` in auth attempt)
