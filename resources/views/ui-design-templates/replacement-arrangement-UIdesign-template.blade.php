@@ -1640,22 +1640,22 @@
                 case 'ArrowUp':
                     e.preventDefault();
                     if (focusedCell.day === null) focusCell(0, 0);
-                    else if (focusedCell.hour > 0) focusCell(focusedCell.day, focusedCell.hour - 1);
+                    else if (focusedCell.day > 0) focusCell(focusedCell.day - 1, focusedCell.hour);
                     break;
                 case 'ArrowDown':
                     e.preventDefault();
                     if (focusedCell.day === null) focusCell(0, 0);
-                    else if (focusedCell.hour < maxHour) focusCell(focusedCell.day, focusedCell.hour + 1);
+                    else if (focusedCell.day < maxDay) focusCell(focusedCell.day + 1, focusedCell.hour);
                     break;
                 case 'ArrowLeft':
                     e.preventDefault();
                     if (focusedCell.day === null) focusCell(0, 0);
-                    else if (focusedCell.day > 0) focusCell(focusedCell.day - 1, focusedCell.hour);
+                    else if (focusedCell.hour > 0) focusCell(focusedCell.day, focusedCell.hour - 1);
                     break;
                 case 'ArrowRight':
                     e.preventDefault();
                     if (focusedCell.day === null) focusCell(0, 0);
-                    else if (focusedCell.day < maxDay) focusCell(focusedCell.day + 1, focusedCell.hour);
+                    else if (focusedCell.hour < maxHour) focusCell(focusedCell.day, focusedCell.hour + 1);
                     break;
                 case 'Enter':
                 case ' ':
