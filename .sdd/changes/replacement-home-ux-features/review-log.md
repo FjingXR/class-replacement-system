@@ -16,3 +16,31 @@
 
 ### 🔴 Outstanding
 - None
+
+## design.md Round 1 — 2026-08-03 05:55
+
+### 🟢 Pass
+- No blocking issues found
+
+### 🟡 Addressed (for implementation)
+- F5 keyboard navigation edge cases (empty array, page transition clamping) → implementer to handle during build
+- F6 modal content template → implementer to follow existing `.modal-field` pattern
+- F2 loadFilters() must be called after populateWeekDropdown() → noted in data flow
+- F1 "All" option → implementer to use `currentFiltered.length`
+- F6 card view on mobile → implementer to open Quick View Modal instead of navigating directly
+
+### 🔴 Outstanding
+- None
+
+## tasks.md Round 1 — 2026-08-03 06:05
+
+### 🟢 Pass
+- No blocking issues found
+
+### 🟡 Addressed (for implementation)
+- F5 Escape key modal state check → implementer to check `.modal-overlay.show`
+- F1 "All" option → implementer to use `currentFiltered.length`
+- F6 row click vs button click → implementer to add `event.stopPropagation()` on button
+
+### 🔴 Outstanding
+- None
