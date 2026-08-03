@@ -2,44 +2,206 @@
 
 ## Architecture
 
-No new classes, migrations, or components. All changes are in existing files:
-- `app/Providers/FortifyServiceProvider.php` — role-based redirect, session lifetime, staff lockout
-- `resources/views/partials/ui-nav-bar.blade.php` — user panel wiring, logout form, session indicator
-- `resources/views/auth/login-student.blade.php` — remember me checkbox
-- `resources/views/auth/login-staff.blade.php` — remember me checkbox, lockout error display
-- `resources/views/partials/ui-session-countdown.blade.php` — NEW, session countdown banner
-- `public/js/session-countdown.js` — NEW, countdown timer logic
-- `public/js/auto-logout.js` — NEW, staff-only inactivity tracker
-- `config/fortify.php` — no changes (redirectUsing overrides home)
+No new migrations or models. Changes span existing files + 3 new files:
+
+| File | Change type |
+|------|------------|
+| `app/Providers/FortifyServiceProvider.php` | Modify — redirect, session lifetime, lockout |
+| `bootstrap/app.php` | Modify — register new middleware |
+| `app/Http/Middleware/EnsureSessionLifetime.php` | **NEW** — role-based session expiry |
+| `resources/views/partials/ui-nav-bar.blade.php` | Modify — user panel, logout, indicator |
+| `resources/views/auth/login-student.blade.php` | Modify — remember me checkbox |
+| `resources/views/auth/login-staff.blade.php` | Modify — remember me checkbox, lockout error |
+| `resources/views/partials/ui-session-countdown.blade.php` | **NEW** — countdown banner |
+| `public/js/session-countdown.js` | **NEW** — countdown timer |
+| `public/js/auto-logout.js` | **NEW** — staff idle tracker |
+| `config/fortify.php` | No changes (redirectUsing overrides home) |
 
 ## Key decisions
 
-### Role-based post-login redirect
-Use `Fortify::redirectUsing()` in `FortifyServiceProvider::boot()`. This overrides the `config/fortify.php` `home` value per-request. No middleware needed.
+### 1. User panel wiring + logout form
 
-### Role-based session lifetime
-Set `config('session.lifetime')` after successful authentication. In `Fortify::authenticateUsing()`, after returning `$user`, the session lifetime is already set by the time the response is generated. However, `authenticateUsing` returns the user — it doesn't have access to the response. Better approach: use a `Login` event listener or set it in middleware.
+Replace hardcoded values in `ui-nav-bar.blade.php` (desktop lines 37–53, mobile drawer lines 83–99):
 
-**Chosen approach:** Use `Fortify::authenticateUsing()` to return the user, then use an `after` middleware or `Event::listen(LoginSuccessful::class)` to set `config('session.lifetime')` based on role. Alternatively, set it directly in `authenticateUsing` before returning — but `config()` changes at runtime are per-request and don't persist to the session.
+```blade
+@auth
+<div class="user-panel">
+    <div class="user-profile">
+        <div class="user-avatar">{{ Auth::user()->initials() }}</div>
+        <div class="user-info">
+            <span class="user-name">{{ Auth::user()->name }}</span>
+            <span class="user-id">{{ Auth::user()->loginId() }}</span>
+            <span class="user-role">{{ ucfirst(Auth::user()->role) }}</span>
+        </div>
+    </div>
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button class="logout-btn" type="submit" aria-label="Logout">
+            {{-- existing SVG icon --}}
+        </button>
+    </form>
+</div>
+@endauth
 
-**Simplest approach:** In `FortifyServiceProvider::boot()`, listen for the `LoginSuccessful` event and set `config('session.lifetime')` there. Or: override in `authenticateUsing` by setting `Session::put('login_lifetime', ...)` and use middleware to enforce.
+@guest
+<a href="/login/student" class="login-link">Login</a>
+@endguest
+```
 
-**Final chosen approach:** Store the intended lifetime in the session on login (`Session::put('lifetime_minutes', $minutes)`), and use a middleware or `config/session.php` lifetime override. Since `config('session.lifetime')` is read once at session creation, the cleanest way is to set it **before** the session is created — in the login request. Use `Fortify::authenticateUsing()` to set `config(['session.lifetime' => $minutes])` before returning the user. This works because the session hasn't been started yet at that point.
+Same pattern for mobile nav drawer. Uses existing `Auth::user()->initials()` and `Auth::user()->loginId()` model methods — no custom helpers needed.
 
-### Staff login lockout
-In `FortifyServiceProvider::authenticateUsing()`:
-1. If `login_type === 'staff'`, check `Cache::get("login_lockout:{$loginId}")`. If locked, return null with error message.
-2. On failed auth (return null): increment `Cache::get("login_fail:{$loginId}")`. If count >= 3, set `Cache::put("login_lockout:{$loginId}", true, 10 minutes)`.
-3. On successful auth: forget both cache keys.
+### 2. Role-based post-login redirect
 
-### Session countdown
-Client-side estimation: JS reads a `data-lifetime` attribute (set from `config('session.lifetime')` via Blade) and counts down. Shows banner when < 2 min remaining. Auto-submits logout form at 0.
+Use `Fortify::redirectUsing()` in `FortifyServiceProvider::boot()`:
 
-### Auto-logout (staff only)
-JS tracks `mousemove`, `keydown`, `click` on `document`. Resets idle timer on activity. At 5 min idle → show warning modal. At 6 min → auto-submit logout. Only loaded when `auth()->user()->isLecturer()`.
+```php
+Fortify::redirectUsing(function () {
+    $user = Auth::user();
+    if ($user->isStudent()) return '/student-my-timetable-ui';
+    if ($user->isLecturer()) return '/my-timetable-ui';
+    return config('fortify.home'); // fallback for unknown roles
+});
+```
 
-### User panel initials
-Dynamic from `Auth::user()->name`: split by space, take first letter of first + last name. `str_word_count()` + array access. e.g. "Poong Foo Jing" → "PJ", "Kylian Mbappe" → "KM".
+Falls back to `config('fortify.home')` (`/dashboard`) if role is undefined.
+
+### 3. Role-based session lifetime
+
+**Problem:** `config('session.lifetime')` is read by Laravel's session driver for garbage collection. It acts as a hard ceiling — a session cannot outlive it regardless of middleware.
+
+**Solution:** Set `config/session.php` `lifetime` to `43200` (30 days — the maximum role lifetime). This removes the ceiling. Then enforce per-role expiry via middleware.
+
+- `config/session.php`: change `lifetime` from `1` to `43200`. Add comment: `[SESSION LIFETIME] Hard ceiling — 30 days (max role lifetime). Per-role expiry enforced by EnsureSessionLifetime middleware.`
+- On login (inside `authenticateUsing`), store the intended lifetime:
+  ```php
+  $minutes = $user->isStudent() ? 43200 : 30; // 30 days or 30 min (production)
+  // Testing mode: change staff to 1 min. Comment: // Production: 30 | Testing: 1
+  session(['role_lifetime' => $minutes]);
+  ```
+- Create `app/Http/Middleware/EnsureSessionLifetime.php`:
+  - On every request, updates a custom session timestamp: `session(['_auth_last_activity' => now()->timestamp])`
+  - Reads `session('role_lifetime')` (fallback: `config('session.lifetime')`)
+  - Reads `session('_auth_last_activity')` — the timestamp set by this middleware on previous requests (first request after login will be null → use login timestamp)
+  - Compares `now()->timestamp - session('_auth_last_activity')` against `session('role_lifetime') * 60`
+  - If expired: flush session, redirect to `/login` with error "Session expired. Please log in again."
+  - On first request after login (`_auth_last_activity` is null): sets it to `now()->timestamp` (session just started, not expired)
+- Register in `bootstrap/app.php`:
+  ```php
+  ->withMiddleware(function (Middleware $middleware) {
+      $middleware->alias(['role' => CheckRole::class, 'pl' => CheckPl::class]);
+      $middleware->append(EnsureSessionLifetime::class);
+  })
+  ```
+- **NFR 2.4 deviation:** Student 30-day lifetime is a deliberate deviation from NFR 2.4's blanket "30 min". Justification: students are view-only, low risk. Tracked in this design doc under "NFR overrides" section below.
+
+### 4. Staff login lockout
+
+All lockout logic guarded by `if ($loginType === 'staff') { ... }` — no lockout runs for students.
+
+**Error message delivery:** When locked out, throw `Illuminate\Validation\ValidationException` with the custom message. Fortify catches this and displays it in the login form's `$errors` bag (which both login views already render).
+
+```php
+if ($loginType === 'staff') {
+    $lockout = Cache::get("login_lockout:{$loginId}");
+    if ($lockout) {
+        throw ValidationException::withMessages([
+            'login_id' => "Account locked. Try again in {$lockout['minutes']} min. Forgot password? Reset at TARUMT intranet.",
+        ]);
+    }
+}
+```
+
+On failed auth (null return, staff only, staff ID exists in DB):
+```php
+$failKey = "login_fail:{$loginId}";
+$attempts = Cache::get($failKey, 0) + 1;
+Cache::put($failKey, $attempts, 600); // 10 min TTL
+if ($attempts >= 3) {
+    Cache::put("login_lockout:{$loginId}", ['minutes' => 10], 600);
+    Cache::forget($failKey);
+}
+```
+
+On successful auth (staff):
+```php
+Cache::forget("login_fail:{$loginId}");
+Cache::forget("login_lockout:{$loginId}");
+```
+
+**Coexistence with Fortify rate limiter:** The existing `configureRateLimiting()` (5/min per IP+login_id) is KEPT. Cache lockout is per-user-ID, Fortify throttle is per-IP — they layer.
+
+### 5. Session countdown (A3)
+
+**Data contract:** The Blade partial renders a container div with data attributes:
+
+```blade
+<div class="session-countdown"
+     data-lifetime="{{ session('role_lifetime', config('session.lifetime')) }}"
+     data-last-activity="{{ session('_auth_last_activity', now()->timestamp) }}"
+     style="display: none;">
+    <span class="countdown-text">Session expires in <span id="countdown-min">--</span> min</span>
+    <button onclick="extendSession()" class="btn-extend">Still here?</button>
+    <form id="countdown-logout-form" method="POST" action="{{ route('logout') }}" style="display:none;">
+        @csrf
+    </form>
+</div>
+```
+
+**JS (`session-countdown.js`):**
+- Reads `data-lifetime` and `data-last-activity` from container
+- Computes `remaining = (lastActivity + lifetime*60) - Date.now()/1000`
+- When remaining < 120s: show banner, update countdown text every second
+- "Still here?" button: `location.reload()` (refreshes `_auth_last_activity` via EnsureSessionLifetime middleware)
+- When remaining <= 0: auto-submit `#countdown-logout-form`
+
+**Inclusion:** `@include('partials.ui-session-countdown')` in `resources/views/layouts/ui-template.blade.php` (the shared layout), inside `@auth` block, after the nav bar. Ensures it renders for all authenticated users on every page, after session is started.
+
+**No new route needed** — extend is just a page reload. The `/logout` route already exists via Fortify.
+
+### 6. Auto-logout — staff only (C4)
+
+**Idle tracking:** JS tracks `mousemove`, `keydown`, `click` on `document`. Resets a debounce timer on each event.
+
+**Timing:** At 25 min idle → show warning modal ("You've been idle for 25 min. Session expires in 5 min."). At 30 min → auto-submit logout form. Aligned with staff session lifetime.
+
+**Multi-tab coordination:** Use `BroadcastChannel('idle-sync')` to broadcast activity across tabs. Fallback: `localStorage` event (set a key on activity, listen for `storage` event in other tabs). If neither is available, each tab tracks independently.
+
+**Loading:** Only inject `<script src="/js/auto-logout.js">` when `auth()->user()->isLecturer()`. Place the script tag and hidden logout form in `resources/views/partials/ui-nav-bar.blade.php` (included on every page via the layout), after the user panel section.
+
+**Logout form:** Hidden form in the nav bar that JS auto-submits:
+```html
+<form id="auto-logout-form" method="POST" action="{{ route('logout') }}" style="display:none;">
+    @csrf
+</form>
+```
+
+### 7. Remember me (A1)
+
+Add before the submit button in both login forms:
+```html
+<label class="remember-me">
+    <input type="checkbox" name="remember" value="1"> Remember me
+</label>
+```
+
+No PHP changes — Fortify's `AttemptToAuthenticate` checks `$request->boolean('remember')` automatically.
+
+### 8. Session indicator (B1)
+
+`@auth` block in nav bar near user panel:
+```blade
+@auth
+<span class="session-dot" title="Session active"></span>
+@endauth
+```
+
+CSS: `.session-dot { background: var(--color-secondary); border-radius: 50%; width: 8px; height: 8px; display: inline-block; }`
+
+## NFR overrides
+
+| NFR | Override | Justification | Approved by |
+|-----|----------|--------------|-------------|
+| NFR 2.4 (30 min session) | Student sessions: 30 days | Students are view-only, low risk, better UX | User decision 2026-08-03 |
 
 ## Promoted to shared
 
