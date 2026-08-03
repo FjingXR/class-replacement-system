@@ -54,7 +54,13 @@
 - **Change:** Save cells/slots before clear, call `showToast()` with undo callback
 - [x] Complete
 
-## Task 10: Update changelog
-- **File:** `page-changelogs/my-request-history-changelog.md`
-- **Action:** Add toast entries for theme.css, ui-common.js, layouts/ui-template.blade.php, and my-request-history template changes
+## Task 10: Refactor replacement-arrangement goBack
+- **File:** `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+- **Action:** Edit `goBack()` function (line 1398-1408)
+- **Change:** Save cells/slots before clear, call `showToast()` with undo callback, delay navigation 5s via setTimeout (undo clears timer + restores state)
+- [x] Complete
+
+## Task 11: Update changelogs
+- **Files:** `page-changelogs/my-request-history-changelog.md`, `page-changelogs/replacement-arrangement-changelog.md`
+- **Action:** Add toast entries for theme.css, ui-common.js, layouts/ui-template.blade.php, and template changes
 - [x] Complete

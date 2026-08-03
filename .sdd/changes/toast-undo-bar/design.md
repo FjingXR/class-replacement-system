@@ -213,19 +213,13 @@ function closeCancelConfirm(confirmed) {
 function closeCancelConfirm(confirmed) {
     document.getElementById('cancelConfirmOverlay').style.display = 'none';
     if (confirmed) {
-        var ev = window._currentEvent;
         closeModal();
-        if (ev) {
-            showToast('Class cancelled.', function() {
-                // Restore event to timetable (mock — no actual removal in current impl)
-                buildTimetable();
-            });
-        }
+        showToast('Class cancelled.', null);
     }
 }
 ```
 
-Note: MyTimetable's cancelClass() currently only closes the modal without removing the event from the data. The toast is added for UX consistency, but the undo callback is a no-op since no data was actually modified.
+Note: MyTimetable's cancelClass() currently only closes the modal without removing the event from the data. The toast is added for UX consistency, but `null` is passed for undoCallback since no data was actually modified — there is nothing to undo. **Backend phase:** `cancelClass()` will call API to mark class as cancelled; undo callback will call API to restore the class.
 
 #### 4.4 replacement-arrangement: Submit Request (`proceed`)
 
@@ -315,7 +309,65 @@ function() {
 }
 ```
 
-Note: The undo restores state in memory, but the navigation has already occurred. This is a UX consistency pattern — in a real app, the undo would call an API to restore the server-side state.
+Note: The undo restores state in memory, but the navigation has already occurred. **Backend phase:** `navigateTo()` will delay navigation 5s (match `goBack()` pattern); undo callback will call API to restore server-side selections.
+
+#### 4.7 replacement-arrangement: Go Back (`goBack`)
+
+**Before (line 1398-1408):**
+```javascript
+function goBack() {
+    if (selectedCells.length > 0) {
+        showConfirmModal(
+            'Unsaved Changes',
+            'You have selected time slots that will be lost if you leave this page. Are you sure you want to go back?',
+            function() { hideConfirmModal(); window.location.href = '/replacement-home-ui'; }
+        );
+    } else {
+        window.location.href = '/replacement-home-ui';
+    }
+}
+```
+
+**After:**
+```javascript
+function goBack() {
+    if (selectedCells.length > 0) {
+        showConfirmModal(
+            'Unsaved Changes',
+            'You have selected time slots that will be lost if you leave this page. Are you sure you want to go back?',
+            function() {
+                hideConfirmModal();
+                var savedCells = selectedCells.slice();
+                var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
+                Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
+                selectedCells.forEach(c => {
+                    c.el.classList.remove('cell-selected');
+                    c.el.classList.add('cell-available');
+                    c.el.innerHTML = timeLabelHtml(c.hour);
+                });
+                selectedCells = [];
+                updateCounter();
+                var navTimer = setTimeout(function() { window.location.href = '/replacement-home-ui'; }, 5000);
+                showToast('Selections cleared.', function() {
+                    clearTimeout(navTimer);
+                    Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
+                    savedCells.forEach(c => {
+                        c.el.classList.remove('cell-available');
+                        c.el.classList.add('cell-selected');
+                        c.el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(c.hour);
+                    });
+                    selectedCells = savedCells;
+                    updateCounter();
+                });
+            }
+        );
+    } else {
+        window.location.href = '/replacement-home-ui';
+    }
+}
+```
+
+Note: Unlike `navigateTo()`, `goBack()` delays navigation by 5 seconds via `setTimeout`, giving the user time to click Undo. If Undo is clicked, the timer is cleared and selections are restored. If the timer expires, navigation proceeds. This is the correct pattern for undoable navigate-away actions.
 
 ## File Changes
 
@@ -326,5 +378,6 @@ Note: The undo restores state in memory, but the navigation has already occurred
 | `resources/views/layouts/ui-template.blade.php` | +5 lines (toast HTML) |
 | `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php` | Edit 2 cancel handlers to save removed items + call showToast() |
 | `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php` | Edit closeCancelConfirm() to call showToast() |
-| `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php` | Edit 3 action handlers to save state + call showToast() |
+| `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php` | Edit 4 action handlers to save state + call showToast() (proceed, clearAll, navigateTo, goBack) |
 | `page-changelogs/my-request-history-changelog.md` | Add toast entries |
+| `page-changelogs/replacement-arrangement-changelog.md` | Add toast entries |

@@ -18,22 +18,34 @@ This implements **CodingMAIN.md §10.0 rule #10** (toast/undo bar for critical a
 - **JS** in `public/js/ui-common.js`: `showToast(message, undoCallback, duration=5000)` + `dismissToast()` helpers
 - **HTML** in `resources/views/layouts/ui-template.blade.php`: `<div class="toast-bar" id="toastBar">` before `</body>`
 
-**2. Critical actions to add toast/undo (6 actions across 3 pages)**
+**2. Critical actions to add toast/undo (7 actions across 3 pages)**
 
 | # | Page | Action | Toast Message | Undo? |
 |---|------|--------|---------------|-------|
 | 1 | my-request-history | `quickCancel(id)` | "Request #{id} cancelled." | ✅ Re-insert at index |
 | 2 | my-request-history | `batchCancelSelected()` | "{N} requests cancelled." | ✅ Re-insert all |
-| 3 | MyTimetable | `cancelClass()` | "Class cancelled." | ✅ Restore class |
-| 4 | replacement-arrangement | `proceed()` | "Replacement request submitted." | ❌ No undo (final) |
-| 5 | replacement-arrangement | `clearAll()` | "All selections cleared." | ✅ Restore selections |
-| 6 | replacement-arrangement | `navigateTo()` | "Selections cleared." | ✅ Restore selections |
+| 3 | MyTimetable | `cancelClass()` | "Class cancelled." | ❌ `null` — no undo in mock phase; backend will call API to cancel class, undo will call API to restore |
+| 4 | replacement-arrangement | `proceed()` | "Replacement request submitted." | ❌ No undo (final — submission is irreversible) |
+| 5 | replacement-arrangement | `clearAll()` | "All selections cleared." | ✅ Restore selections (client-side mock) |
+| 6 | replacement-arrangement | `navigateTo()` | "Selections cleared." | ✅ Restore in-memory state (immediate nav — will delay when backend wired) |
+| 7 | replacement-arrangement | `goBack()` | "Selections cleared." | ✅ Restore selections + cancel 5s navigation timer |
+
+### Backend Integration Notes (Future Phase)
+
+This SDD is **frontend mock only**. When backend is wired, the following changes apply:
+
+| Action | Mock Phase (current) | Backend Phase (future) |
+|--------|---------------------|----------------------|
+| `cancelClass()` | `showToast('Class cancelled.', null)` — no undo | `showToast('Class cancelled.', () => undoCancelClass(id))` — undo calls API to restore class |
+| `navigateTo()` | Immediate navigation — undo restores in-memory state only | Delay navigation 5s (match `goBack()` pattern) — undo calls API to restore server-side state |
+| `proceed()` | `showToast('...submitted.', null)` — no undo | Same — submission is final |
+| `quickCancel()` / `batchCancelSelected()` | Undo re-inserts into `mockRequests[]` array | Undo calls API to restore cancelled requests |
+| `clearAll()` / `goBack()` | Undo restores in-memory `selectedCells` + `selectedSlotsByVenue` | Undo calls API to restore server-side selections |
 
 ### Out of Scope
 
 - Settings pages (delete user, delete passkey, disable 2FA, regenerate recovery codes)
 - Approval/rejection toast (PL request-approval page — future SDD change)
-- Backend integration (frontend mock phase only)
 - Toast for non-critical actions (navigation, filter changes, etc.)
 
 ## Impact Scope
@@ -45,7 +57,8 @@ This implements **CodingMAIN.md §10.0 rule #10** (toast/undo bar for critical a
 | `resources/views/layouts/ui-template.blade.php` | **Edit** — add toast HTML before `</body>` |
 | `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php` | **Edit** — refactor 2 cancel actions to use `showToast()` |
 | `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php` | **Edit** — refactor cancelClass() to use `showToast()` |
-| `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php` | **Edit** — refactor 3 actions to use `showToast()` |
+| `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php` | **Edit** — refactor 4 actions to use `showToast()` (proceed, clearAll, navigateTo, goBack) |
 | `page-changelogs/my-request-history-changelog.md` | **Edit** — add toast entries |
+| `page-changelogs/replacement-arrangement-changelog.md` | **Edit** — add toast entries |
 
 No new files are created. The toast component is shared via existing files.
