@@ -589,6 +589,34 @@ html.dark .filter-select {
     cursor: not-allowed;
 }
 
+/* ───── Rows Per Page ───── */
+.rpp-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.rpp-wrapper label {
+    font-size: 12px;
+    color: var(--color-on-surface-variant);
+    font-weight: 500;
+    white-space: nowrap;
+}
+.rpp-select {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--color-outline);
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+.rpp-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-container);
+}
+
 /* ───── Empty State ───── */
 .empty-state {
     display: flex;

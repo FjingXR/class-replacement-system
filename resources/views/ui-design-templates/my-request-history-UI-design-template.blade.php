@@ -221,28 +221,6 @@
             background: var(--color-surface-variant);
         }
 
-        /* ───── F1: Rows Per Page Selector ───── */
-        .rows-per-page-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .rows-per-page-wrapper label {
-            font-size: 12px;
-            color: var(--color-on-surface-variant);
-            font-weight: 500;
-        }
-        .rows-per-page-select {
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid var(--color-outline);
-            background: var(--color-surface);
-            color: var(--color-on-surface);
-            font-family: inherit;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
         /* ───── F2: Bulk Selection ───── */
         .bulk-checkbox {
             width: 16px;
@@ -524,15 +502,7 @@
 
         <!-- ─── Pagination ─── -->
         <div class="pagination-bar" id="paginationBar">
-            <div class="rows-per-page-wrapper">
-                <label for="rowsPerPage">Rows:</label>
-                <select class="rows-per-page-select" id="rowsPerPage">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="all">All</option>
-                </select>
-            </div>
+            @include('partials.ui-rpp', ['id' => 'rowsPerPage', 'default' => 10, 'options' => [10, 25, 50, 'all']])
             <span class="pagination-info" id="paginationInfo">Showing 1-10 of 20</span>
             <div class="pagination-controls" id="paginationControls"></div>
         </div>
@@ -1265,13 +1235,6 @@
                 saveFilters();
                 renderTable();
             });
-            document.getElementById('rowsPerPage').addEventListener('change', function() {
-                var val = this.value;
-                rowsPerPage = val === 'all' ? Infinity : parseInt(val);
-                localStorage.setItem('mrh-rows-per-page', rowsPerPage === Infinity ? 'all' : rowsPerPage);
-                pageState.currentPage = 1;
-                renderTable();
-            });
             document.getElementById('clearFilters').addEventListener('click', function() {
                 document.getElementById('searchInput').value = '';
                 document.getElementById('statusFilter').value = 'all';
@@ -1284,11 +1247,17 @@
             });
 
             restoreFilters();
-            var savedRows = localStorage.getItem('mrh-rows-per-page');
-            if (savedRows) {
-                rowsPerPage = savedRows === 'all' ? Infinity : parseInt(savedRows);
-                document.getElementById('rowsPerPage').value = savedRows === 'all' ? 'all' : savedRows;
-            }
+
+            initRpp({
+                selectId: 'rowsPerPage',
+                storageKey: 'rpp-page-size',
+                defaultVal: 10,
+                onChange: function(size) {
+                    rowsPerPage = size;
+                    pageState.currentPage = 1;
+                    renderTable();
+                }
+            });
 
             document.getElementById('modalOverlay').addEventListener('click', function(e) {
                 closeOnOverlayClick(e, closeModal);

@@ -87,36 +87,6 @@
             filter: brightness(1.08);
         }
 
-        /* ───── Rows Per Page ───── */
-        .rows-per-page {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: flex-end;
-            padding: 8px 16px;
-            border-top: 1px solid var(--color-outline-variant);
-            background: var(--color-surface);
-        }
-        .rpp-label {
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-            white-space: nowrap;
-        }
-        .rpp-select {
-            padding: 4px 8px;
-            border: 1px solid var(--color-outline);
-            border-radius: 6px;
-            font-size: 13px;
-            color: var(--color-on-surface);
-            background: var(--color-surface);
-            cursor: pointer;
-        }
-        .rpp-select:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 2px var(--color-primary-container);
-        }
-
         /* ───── Responsive Card View ───── */
         .card-view { display: none; }
         .replacement-card {
@@ -171,7 +141,7 @@
         }
 
         @media (max-width: 768px) {
-            .grid-wrapper, .pagination-bar, .rows-per-page, .sort-hint { display: none !important; }
+            .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
             .card-view { display: block; }
         }
 
@@ -227,19 +197,9 @@
 
         <!-- ─── Pagination ─── -->
         <div class="pagination-bar" id="paginationBar">
+            @include('partials.ui-rpp', ['id' => 'rppSelect', 'default' => 10, 'options' => [10, 25, 50, 'all']])
             <span class="pagination-info" id="paginationInfo">Showing 1-10 of 14</span>
             <div class="pagination-controls" id="paginationControls"></div>
-        </div>
-
-        <!-- ─── Rows Per Page ─── -->
-        <div class="rows-per-page">
-            <span class="rpp-label">Rows Per Page:</span>
-            <select class="rpp-select" id="rppSelect" onchange="setRpp(this.value)">
-                <option value="5" selected>5</option>
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-            </select>
         </div>
 
         <!-- ─── Summary Dashboard ─── -->
@@ -365,7 +325,7 @@
             return 'Week ' + weekNum + ' \u00B7 ' + fmtFull(start) + ' ~ ' + fmtFull(end);
         }
 
-        var state = { rpp: 5 };
+        var state = { rpp: 10 };
         const pageState = { currentPage: 1 };
         let sortState = { field: 'date', dir: 'asc' };
         let currentFiltered = [];
@@ -554,12 +514,6 @@
             }
         }
 
-        function setRpp(n) {
-            state.rpp = parseInt(n) || 5;
-            pageState.currentPage = 1;
-            buildTable();
-        }
-
         function updateWeekArrowState() {
             const sel = document.getElementById('weekFilter');
             updateWeekArrows(sel.selectedIndex <= 0, sel.selectedIndex >= sel.options.length - 1);
@@ -686,6 +640,16 @@
             buildTable();
             updateWeekArrowState();
             initWeekKeyboardShortcuts();
+            initRpp({
+                selectId: 'rppSelect',
+                storageKey: 'rpp-page-size',
+                defaultVal: 10,
+                onChange: function(size) {
+                    state.rpp = size;
+                    pageState.currentPage = 1;
+                    buildTable();
+                }
+            });
             document.getElementById('searchInput').addEventListener('input', function() {
                 pageState.currentPage = 1;
                 buildTable();

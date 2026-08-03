@@ -1,5 +1,12 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-03] Refactor: Rows Per Page promoted to shared OOP component
+
+### Changed
+- **Rows Per Page (RPP)**: Removed local CSS/HTML/JS; now uses shared `partials.ui-rpp` Blade partial + `initRpp()` from `ui-common.js` + `.rpp-wrapper`/`.rpp-select` from `theme.css`
+- RPP moved from standalone div below pagination-bar to **inside** `.pagination-bar` (consistent with my-request-history)
+- Default changed from 5 to 10; options now `[10, 25, 50, 'all']`; localStorage key `'rpp-page-size'`
+
 ## [2026-08-03] UX Refinement: Remove Filter Presets, Standardise Modals
 
 ### Removed

@@ -136,6 +136,39 @@ function makeSortableHeader(col, sortState, render) {
 
 // ───── Pagination ─────
 
+/**
+ * Initialize a Rows Per Page selector.
+ * @param {object} cfg
+ * @param {string} cfg.selectId - ID of the <select> element
+ * @param {string} cfg.storageKey - localStorage key (null = no persistence)
+ * @param {number|string} cfg.defaultVal - Default page size ('all' for Infinity)
+ * @param {function} cfg.onChange - Callback receiving the new page size (number or Infinity)
+ */
+function initRpp(cfg) {
+    var sel = document.getElementById(cfg.selectId);
+    if (!sel) return;
+
+    if (cfg.storageKey) {
+        var saved = localStorage.getItem(cfg.storageKey);
+        if (saved !== null) {
+            sel.value = saved;
+        }
+    }
+
+    var initial = sel.value;
+    var parsed = initial === 'all' ? Infinity : parseInt(initial) || cfg.defaultVal;
+    cfg.onChange(parsed);
+
+    sel.addEventListener('change', function () {
+        var val = this.value;
+        var pageSize = val === 'all' ? Infinity : parseInt(val) || cfg.defaultVal;
+        if (cfg.storageKey) {
+            localStorage.setItem(cfg.storageKey, val);
+        }
+        cfg.onChange(pageSize);
+    });
+}
+
 function paginate(cfg) {
     const totalPages = Math.ceil(cfg.data.length / cfg.pageSize);
     const info = document.getElementById(cfg.infoId);

@@ -1,5 +1,11 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-03] Refactor: Rows Per Page promoted to shared OOP component
+
+### Changed
+- **Rows Per Page (RPP)**: Removed local CSS/HTML/JS; now uses shared `partials.ui-rpp` Blade partial + `initRpp()` from `ui-common.js` + `.rpp-wrapper`/`.rpp-select` from `theme.css`
+- localStorage key changed from `'mrh-rows-per-page'` to `'rpp-page-size'` (shared across pages)
+
 ## Files Changed
 
 ### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
