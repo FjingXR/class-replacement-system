@@ -1376,7 +1376,10 @@
                     }
                 }
             }
-            return '\u2713 Submitted \u2014 Pending Approval \u00B7 ' + slots.join(' | ');
+            return {
+                message: '\u2713 Submitted \u2014 Pending Approval',
+                details: slots.join('  |  ')
+            };
         }
 
         function proceed() {
@@ -1398,7 +1401,8 @@
                  <div style="border:1px solid var(--color-outline);border-radius:8px;padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
                 function() {
                     hideConfirmModal();
-                    showToast(buildSubmissionToastMessage(), null, 5000, 'View \u2192', '/my-request-history-ui');
+                    const toast = buildSubmissionToastMessage();
+                    showToast(toast.message, null, 5000, 'View \u2192', '/my-request-history-ui', toast.details);
                 }
             );
         }

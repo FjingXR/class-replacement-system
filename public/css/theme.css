@@ -1688,17 +1688,43 @@ body {
     border: 1px solid var(--color-outline);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
-    padding: 10px 16px;
+    padding: 12px 16px;
     align-items: center;
     gap: 12px;
+    max-width: 480px;
     animation: toastSlideUp 0.3s ease;
 }
 .toast-bar.visible { display: flex; }
 
+.toast-bar .toast-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
 .toast-bar .toast-message {
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--color-on-surface);
+    white-space: nowrap;
+}
+
+.toast-bar .toast-details {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-on-surface-variant);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toast-bar .toast-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .toast-bar .toast-undo {

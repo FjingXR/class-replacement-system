@@ -418,16 +418,25 @@ let _toastTimer = null;
  * @param {number} duration - Auto-dismiss time in ms (default 5000)
  * @param {string} [linkText] - Optional text for a clickable link in the toast
  * @param {string} [linkUrl] - Optional URL for the clickable link
+ * @param {string} [details] - Optional secondary detail text (shown below message)
  */
-function showToast(message, undoCallback, duration = 5000, linkText = '', linkUrl = '') {
+function showToast(message, undoCallback, duration = 5000, linkText = '', linkUrl = '', details = '') {
     const bar = document.getElementById('toastBar');
     if (!bar) return;
 
     const msgEl = bar.querySelector('.toast-message');
+    const detailsEl = bar.querySelector('.toast-details');
     const undoBtn = bar.querySelector('.toast-undo');
     const linkEl = bar.querySelector('.toast-link');
 
     msgEl.textContent = message;
+
+    if (details && detailsEl) {
+        detailsEl.textContent = details;
+        detailsEl.style.display = 'block';
+    } else if (detailsEl) {
+        detailsEl.style.display = 'none';
+    }
 
     if (undoCallback) {
         undoBtn.style.display = 'inline-block';
