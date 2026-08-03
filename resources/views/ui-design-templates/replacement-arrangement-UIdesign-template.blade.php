@@ -1402,6 +1402,14 @@
                 function() {
                     hideConfirmModal();
                     const toast = buildSubmissionToastMessage();
+                    selectedCells.forEach(c => {
+                        c.el.classList.remove('cell-selected');
+                        c.el.classList.add('cell-available');
+                        c.el.innerHTML = timeLabelHtml(c.hour);
+                    });
+                    selectedCells = [];
+                    Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
+                    updateCounter();
                     showToast(toast.message, null, 5000, 'View \u2192', '/my-request-history-ui', toast.details);
                 }
             );
