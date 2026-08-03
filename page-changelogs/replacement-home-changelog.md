@@ -1,5 +1,16 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-03] UX Refinement: Remove Filter Presets, Standardise Modals
+
+### Removed
+- **F2 – Filter Presets (localStorage)**: Removed My Filters panel (Save/Apply/Delete buttons), associated CSS, and JS functions (`saveFilter`, `applyFilter`, `deleteFilter`, `loadFilterPrefs`)
+
+### Changed
+- **Keyboard Shortcuts Modal**: Replaced custom inline-styled modal (`.modal-box`, `z-index:3000`) with standard `.modal-overlay` + `.modal` pattern from `theme.css` (consistent with my-request-history, replacement-arrangement)
+- **Quick View Modal**: Replaced custom inline-styled modal with standard `.modal-overlay` + `.modal` pattern; fields now use `.modal-field` / `.modal-field-label` / `.modal-field-value` classes
+- Both modals now toggle via `.show` class instead of `style.display`, and use `.modal-close` (✕) button + `.btn-close-modal` footer button
+- Removed unused custom CSS: `.my-filters-panel`, `.btn-outline`, `.quick-view-*`, `.table-body tr` cursor/hover
+
 ## [2026-08-03] UX Enhancement: Rows Per Page, Filter Presets, Keyboard Shortcuts, Quick View Modal, Column Consolidation
 
 ### Added

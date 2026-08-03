@@ -170,79 +170,6 @@
             padding: 3px 8px;
         }
 
-        /* ───── My Filters Panel ───── */
-        .my-filters-panel {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 16px;
-            background: var(--color-surface);
-            border-bottom: 1px solid var(--color-outline-variant);
-        }
-        .my-filters-title {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--color-on-surface-variant);
-        }
-        .my-filters-actions {
-            display: flex;
-            gap: 6px;
-        }
-        .btn-outline {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
-            border: 1px solid var(--color-outline);
-            border-radius: 6px;
-            font-size: 12px;
-            color: var(--color-on-surface);
-            background: transparent;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .btn-outline:hover {
-            background: var(--color-surface-hover);
-        }
-
-        /* ───── Quick View Modal ───── */
-        .quick-view-field {
-            display: flex;
-            justify-content: space-between;
-            padding: 7px 0;
-            border-bottom: 1px solid var(--color-outline-variant);
-        }
-        .quick-view-field:last-child { border-bottom: none; }
-        .quick-view-label {
-            font-size: 12px;
-            color: var(--color-on-surface-variant);
-            font-weight: 600;
-        }
-        .quick-view-value {
-            font-size: 13px;
-            color: var(--color-on-surface);
-            text-align: right;
-        }
-        .quick-view-empty {
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-            font-style: italic;
-        }
-        .quick-view-header {
-            text-align: center;
-        }
-
-        /* ───── Table Row Hover ───── */
-        .table-body tr {
-            cursor: pointer;
-        }
-        .table-body tr:hover {
-            background: var(--color-surface-hover);
-        }
-
         @media (max-width: 768px) {
             .grid-wrapper, .pagination-bar, .rows-per-page, .sort-hint { display: none !important; }
             .card-view { display: block; }
@@ -279,28 +206,6 @@
                 <span class="result-count" id="resultCount">Showing 14 of 14 classes</span>
                 <button class="btn-icon" onclick="showKeyboardShortcuts()" title="Keyboard Shortcuts" style="margin-left:auto; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid var(--color-outline); border-radius:8px; color:var(--color-on-surface-variant); background:var(--color-surface); cursor:pointer;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><path d="M6 8h.001"/><path d="M10 8h.001"/><path d="M14 8h.001"/><path d="M18 8h.001"/><path d="M8 12h.001"/><path d="M12 12h.001"/><path d="M16 12h.001"/><path d="M7 16h10"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- My Saved Filters -->
-        <div class="my-filters-panel">
-            <div class="my-filters-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                My Filters
-            </div>
-            <div class="my-filters-actions">
-                <button class="btn-outline" onclick="saveFilter()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    Save
-                </button>
-                <button class="btn-outline" onclick="applyFilter()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                    Apply
-                </button>
-                <button class="btn-outline" onclick="deleteFilter()" style="color:var(--color-error)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    Delete
                 </button>
             </div>
         </div>
@@ -361,60 +266,37 @@
         </div>
 
         <!-- Keyboard Shortcuts Modal -->
-        <div id="keyboardModal" style="display:none; position:fixed; inset:0; z-index:3000; background:rgba(0,0,0,0.45); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
-            <div class="modal-box" style="width:420px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+        <div class="modal-overlay" id="keyboardModal">
+            <div class="modal" style="max-width:420px">
                 <div class="modal-header">
-                    <div class="modal-title">Keyboard Shortcuts</div>
-                    <button class="modal-close-btn" onclick="hideKeyboardShortcuts()" aria-label="Close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
+                    <h3 class="modal-title">Keyboard Shortcuts</h3>
+                    <button class="modal-close" onclick="hideKeyboardShortcuts()">✕</button>
                 </div>
                 <div class="modal-body">
-                    <div style="border:1px solid var(--color-outline-variant); border-radius:8px; overflow:hidden; font-size:13px;">
-                        <div style="display:grid; grid-template-columns:1fr 1fr; background:var(--color-surface-variant); font-weight:600; color:var(--color-on-surface); padding:8px 14px; border-bottom:1px solid var(--color-outline-variant);">
-                            <span>Action</span><span style="text-align:right">Shortcut</span>
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
-                            <span>Focus search bar</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">/</code></span>
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
-                            <span>Clear all filters</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">Esc</code></span>
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
-                            <span>Next page</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">→</code></span>
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
-                            <span>Previous page</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">←</code></span>
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
-                            <span>Open quick view</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">Enter</code></span>
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
-                            <span>Show keyboard shortcuts</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">?</code></span>
-                        </div>
-                    </div>
-                    <div style="margin-top:10px; font-size:11px; color:var(--color-on-surface-variant); text-align:center;">
-                        Keyboard shortcuts only work when no input field is focused.
-                    </div>
+                    <div class="modal-field"><span class="modal-field-label">Focus search</span><span class="modal-field-value"><code style="padding:2px 6px;border:1px solid var(--color-outline);border-radius:4px;font-size:12px;background:var(--color-surface-variant)">/</code></span></div>
+                    <div class="modal-field"><span class="modal-field-label">Clear filters</span><span class="modal-field-value"><code style="padding:2px 6px;border:1px solid var(--color-outline);border-radius:4px;font-size:12px;background:var(--color-surface-variant)">Esc</code></span></div>
+                    <div class="modal-field"><span class="modal-field-label">Next page</span><span class="modal-field-value"><code style="padding:2px 6px;border:1px solid var(--color-outline);border-radius:4px;font-size:12px;background:var(--color-surface-variant)">→</code></span></div>
+                    <div class="modal-field"><span class="modal-field-label">Previous page</span><span class="modal-field-value"><code style="padding:2px 6px;border:1px solid var(--color-outline);border-radius:4px;font-size:12px;background:var(--color-surface-variant)">←</code></span></div>
+                    <div class="modal-field"><span class="modal-field-label">Open quick view</span><span class="modal-field-value"><code style="padding:2px 6px;border:1px solid var(--color-outline);border-radius:4px;font-size:12px;background:var(--color-surface-variant)">Enter</code></span></div>
+                    <div class="modal-field"><span class="modal-field-label">Show shortcuts</span><span class="modal-field-value"><code style="padding:2px 6px;border:1px solid var(--color-outline);border-radius:4px;font-size:12px;background:var(--color-surface-variant)">?</code></span></div>
+                    <p style="margin-top:12px;font-size:11px;color:var(--color-on-surface-variant);text-align:center">Shortcuts only work when no input field is focused.</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-primary" onclick="hideKeyboardShortcuts()" style="padding:6px 16px;">OK</button>
+                    <button class="btn-close-modal" onclick="hideKeyboardShortcuts()">Close</button>
                 </div>
             </div>
         </div>
 
         <!-- Quick View Modal -->
-        <div id="quickViewModal" style="display:none; position:fixed; inset:0; z-index:3000; background:rgba(0,0,0,0.45); backdrop-filter:blur(4px); align-items:center; justify-content:center;" onclick="if(event.target===this)hideQuickView()">
-            <div class="modal-box" style="width:500px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+        <div class="modal-overlay" id="quickViewModal">
+            <div class="modal" style="max-width:500px">
                 <div class="modal-header">
-                    <div class="modal-title" id="qvTitle">Replacement Details</div>
-                    <button class="modal-close-btn" onclick="hideQuickView()" aria-label="Close">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
+                    <h3 class="modal-title" id="qvTitle">Replacement Details</h3>
+                    <button class="modal-close" onclick="hideQuickView()">✕</button>
                 </div>
-                <div class="modal-body" id="qvBody" style="font-size:13px; color:var(--color-on-surface);"></div>
-                <div class="modal-footer" style="display:flex; justify-content:flex-end;">
-                    <button class="btn-primary" onclick="hideQuickView()" style="padding:6px 16px;">OK</button>
+                <div class="modal-body" id="qvBody"></div>
+                <div class="modal-footer">
+                    <button class="btn-close-modal" onclick="hideQuickView()">Close</button>
                 </div>
             </div>
         </div>
@@ -683,53 +565,14 @@
             updateWeekArrows(sel.selectedIndex <= 0, sel.selectedIndex >= sel.options.length - 1);
         }
 
-        function saveFilter() {
-            var prefs = {
-                search: document.getElementById('searchInput').value,
-                weekFilter: document.getElementById('weekFilter').value,
-                sortBy: sortState.field,
-                sortAsc: sortState.dir === 'asc',
-            };
-            localStorage.setItem('replacementHomeFilterPrefs', JSON.stringify(prefs));
-            showToast('Filters saved', 'success');
-        }
-
-        function applyFilter() {
-            var raw = localStorage.getItem('replacementHomeFilterPrefs');
-            if (!raw) { showToast('No saved filter found', 'warning'); return; }
-            var prefs = JSON.parse(raw);
-            document.getElementById('searchInput').value = prefs.search || '';
-            document.getElementById('weekFilter').value = prefs.weekFilter || 'all';
-            sortState.field = prefs.sortBy || 'date';
-            sortState.dir = prefs.sortAsc !== undefined ? (prefs.sortAsc ? 'asc' : 'desc') : 'asc';
-            pageState.currentPage = 1;
-            buildTable();
-            showToast('Filters applied', 'success');
-        }
-
-        function deleteFilter() {
-            localStorage.removeItem('replacementHomeFilterPrefs');
-            showToast('Saved filter deleted', 'info');
-        }
-
-        function loadFilterPrefs() {
-            var raw = localStorage.getItem('replacementHomeFilterPrefs');
-            if (!raw) return;
-            var prefs = JSON.parse(raw);
-            if (prefs.search) document.getElementById('searchInput').value = prefs.search;
-            if (prefs.weekFilter) document.getElementById('weekFilter').value = prefs.weekFilter;
-            if (prefs.sortBy) sortState.field = prefs.sortBy;
-            if (prefs.sortAsc !== undefined) sortState.dir = prefs.sortAsc ? 'asc' : 'desc';
-        }
-
         function showKeyboardShortcuts() {
             var el = document.getElementById('keyboardModal');
-            if (el) { el.style.display = 'flex'; }
+            if (el) { el.classList.add('show'); }
         }
 
         function hideKeyboardShortcuts() {
             var el = document.getElementById('keyboardModal');
-            if (el) { el.style.display = 'none'; }
+            if (el) { el.classList.remove('show'); }
         }
 
         function quickView(idx) {
@@ -759,15 +602,15 @@
             ];
 
             var html = fields.map(function(f) {
-                return '<div class="quick-view-field"><span class="quick-view-label">' + f.label + '</span><span class="quick-view-value">' + (f.value || '<span class="quick-view-empty">—</span>') + '</span></div>';
+                return '<div class="modal-field"><span class="modal-field-label">' + f.label + '</span><span class="modal-field-value">' + (f.value || '<span style="color:var(--color-on-surface-variant);font-style:italic">—</span>') + '</span></div>';
             }).join('');
 
             document.getElementById('qvBody').innerHTML = html;
-            document.getElementById('quickViewModal').style.display = 'flex';
+            document.getElementById('quickViewModal').classList.add('show');
         }
 
         function hideQuickView() {
-            document.getElementById('quickViewModal').style.display = 'none';
+            document.getElementById('quickViewModal').classList.remove('show');
         }
 
         function clearAll() {
@@ -807,12 +650,12 @@
             }
             if (e.key === 'Escape') {
                 var qvEl = document.getElementById('quickViewModal');
-                if (qvEl && qvEl.style.display === 'flex') {
+                if (qvEl && qvEl.classList.contains('show')) {
                     hideQuickView();
                     return;
                 }
                 var el = document.getElementById('keyboardModal');
-                if (el && el.style.display === 'flex') {
+                if (el && el.classList.contains('show')) {
                     hideKeyboardShortcuts();
                     return;
                 }
@@ -840,7 +683,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             populateWeekDropdown();
-            loadFilterPrefs();
             buildTable();
             updateWeekArrowState();
             initWeekKeyboardShortcuts();
