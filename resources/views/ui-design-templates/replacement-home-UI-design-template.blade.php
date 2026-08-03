@@ -248,6 +248,12 @@
         </div>
 
         <!-- Quick View Modal -->
+        <style>
+            #quickViewModal .modal-footer {
+                justify-content: space-between !important;
+                width: 100% !important;
+            }
+        </style>
         <div class="modal-overlay" id="quickViewModal">
             <div class="modal" style="max-width:500px">
                 <div class="modal-header">
@@ -256,6 +262,10 @@
                 </div>
                 <div class="modal-body" id="qvBody"></div>
                 <div class="modal-footer">
+                    <button class="btn-action" id="qvArrangeBtn" onclick="qvArrange()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        Arrange Replacement
+                    </button>
                     <button class="btn-close-modal" onclick="hideQuickView()">Close</button>
                 </div>
             </div>
@@ -529,10 +539,13 @@
             if (el) { el.classList.remove('show'); }
         }
 
+        var qvCurrent = null;
+
         function quickView(idx) {
             var c = currentFiltered[idx];
             if (!c) return;
 
+            qvCurrent = c;
             document.getElementById('qvTitle').textContent = c.name + ' (' + c.type + ')';
 
             var daysLeftVal = daysLeft(c.date);
@@ -563,7 +576,15 @@
             document.getElementById('quickViewModal').classList.add('show');
         }
 
+        function qvArrange() {
+            if (qvCurrent) {
+                hideQuickView();
+                goToReplacementWith(qvCurrent.code, qvCurrent.date);
+            }
+        }
+
         function hideQuickView() {
+            qvCurrent = null;
             document.getElementById('quickViewModal').classList.remove('show');
         }
 
