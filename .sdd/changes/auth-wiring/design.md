@@ -1,4 +1,4 @@
-# Design: Logout + Session Timeout + Login Redirect + User Panel
+# Design: Auth Wiring
 
 ## Architecture
 

@@ -29,7 +29,7 @@
 
 | # | SDD name | What it does | Depends on | Prompt file |
 |---|----------|-------------|------------|-------------|
-| 1 | `logout-session-timeout` | Logout + **role-based session lifetime (student 30 days, staff 30 min)** + role-based redirect + user panel wiring + **A1 remember me + A3 session countdown + B1 session indicator + staff login lockout (3 fails → 10 min lock) + (optional) C4 auto-logout** | student-my-timetable-ui (for student redirect target) | `prompts/run-logout-session-timeout.md` |
+| 1 | `auth-wiring` | Logout + **role-based session lifetime (student 30 days, staff 30 min)** + role-based redirect + user panel wiring + **A1 remember me + A3 session countdown + B1 session indicator + staff login lockout (3 fails → 10 min lock) + C4 auto-logout (staff only)** | student-my-timetable-ui (for student redirect target) | `prompts/run-auth-wiring.md` |
 
 ## Deferred / Future
 

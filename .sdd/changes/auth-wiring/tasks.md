@@ -1,4 +1,4 @@
-# Tasks: Logout + Session Timeout + Login Redirect + User Panel
+# Tasks: Auth Wiring
 
 ## Task 1: User panel wiring + logout form
 - [ ] 1.1 Read `ui-nav-bar.blade.php` lines 37–53 (desktop) and 83–99 (mobile drawer)

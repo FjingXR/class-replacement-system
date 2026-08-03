@@ -1,4 +1,4 @@
-# Proposal: Logout + Session Timeout + Login Redirect + User Panel
+# Proposal: Auth Wiring
 
 ## Why
 
