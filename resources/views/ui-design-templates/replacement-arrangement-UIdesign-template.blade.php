@@ -1398,7 +1398,6 @@
                  <div style="border:1px solid var(--color-outline);border-radius:8px;padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
                 function() {
                     hideConfirmModal();
-                    showConfirmModal('Submitted', 'Your replacement request has been submitted for approval.', null);
                     showToast(buildSubmissionToastMessage(), null, 5000, 'View \u2192', '/my-request-history-ui');
                 }
             );
