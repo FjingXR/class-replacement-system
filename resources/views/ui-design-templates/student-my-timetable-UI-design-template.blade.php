@@ -518,6 +518,7 @@ updateWeekSubtitle();
 
             buildWeekOptions();
             buildTimetable();
+            initWeekKeyboardShortcuts();
 
 updateWeekSubtitle();
             updateProgress();

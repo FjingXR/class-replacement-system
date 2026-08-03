@@ -646,6 +646,7 @@
         });
 
         initTodayBtn();
+        initWeekKeyboardShortcuts();
 
         // Mobile swipe gestures for week navigation
         if (window.innerWidth <= 768) {

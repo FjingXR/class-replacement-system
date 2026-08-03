@@ -1248,6 +1248,7 @@
 
             renderTable();
             updateWeekArrowState();
+            initWeekKeyboardShortcuts();
 
             document.getElementById('searchInput').addEventListener('input', function() {
                 pageState.currentPage = 1;

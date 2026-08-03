@@ -234,6 +234,25 @@ function ripple(e, btn) {
 
 // ───── Mobile Navigation ─────
 
+/**
+ * Initialize keyboard shortcuts for week navigation ([ and ]).
+ * Each page must define either prevWeek()/nextWeek() or prevWeekFilter()/nextWeekFilter().
+ */
+function initWeekKeyboardShortcuts() {
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (e.key === '[') {
+            e.preventDefault();
+            if (typeof prevWeek === 'function') prevWeek();
+            else if (typeof prevWeekFilter === 'function') prevWeekFilter();
+        } else if (e.key === ']') {
+            e.preventDefault();
+            if (typeof nextWeek === 'function') nextWeek();
+            else if (typeof nextWeekFilter === 'function') nextWeekFilter();
+        }
+    });
+}
+
 function initMobileNav() {
     const hamburger = document.getElementById('navHamburger');
     const drawer = document.getElementById('navDrawer');

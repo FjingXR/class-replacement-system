@@ -1685,14 +1685,6 @@
                         undoSelection();
                     }
                     break;
-                case '[':
-                    e.preventDefault();
-                    prevWeek();
-                    break;
-                case ']':
-                    e.preventDefault();
-                    nextWeek();
-                    break;
                 case '1':
                 case '2':
                 case '3':
@@ -1728,5 +1720,6 @@
             buildTimetable();
 
             document.addEventListener('keydown', handleKeyDown);
+            initWeekKeyboardShortcuts();
         });
 @endsection

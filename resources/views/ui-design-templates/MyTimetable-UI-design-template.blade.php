@@ -620,6 +620,7 @@
         });
 
         initTodayBtn();
+        initWeekKeyboardShortcuts();
 
         document.addEventListener('keydown', function(e) {
             if (e.target.tagName === 'SELECT' || document.getElementById('classModal').style.display === 'flex') return;
