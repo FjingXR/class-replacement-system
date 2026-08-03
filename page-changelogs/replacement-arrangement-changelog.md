@@ -67,3 +67,30 @@
 | 2026-08-02 | `updateCounter()` | F3: Progress update | Added `updateProgress()` call inside existing function. |
 | 2026-08-02 | `DOMContentLoaded` | F4: Venue init | Added `buildVenueDropdown()` call to replace hardcoded options. |
 | 2026-08-02 | `DOMContentLoaded` | F1: Keyboard listener | Added `document.addEventListener('keydown', handleKeyDown)`. |
+
+### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php` — Approval Status Toast (DRY Cleanup)
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-03 | `@section('page-styles')` | Remove page-local `.toast` CSS | Removed lines 758-772 (duplicate toast styling); now handled by shared `ui-common.js` toast bar. |
+| 2026-08-03 | `@section('page-scripts')` | Remove page-local `showToast()` | Removed duplicate function at line 1528; all call sites now use shared `showToast()` from `ui-common.js`. |
+| 2026-08-03 | `@section('page-scripts')` | Add `buildSubmissionToastMessage()` | New helper function builds slot details string from `selectedSlotsByVenue` for enhanced submission toast. |
+| 2026-08-03 | `proceed()` confirm callback | Enhanced submission toast | Replaced `showToast('Replacement request submitted.', null)` with `showToast(buildSubmissionToastMessage(), null, 5000, 'View →', '/my-request-history-ui')`. Shows venue, day, date, time range + "View →" link. |
+
+### `public/js/ui-common.js` — Toast Link Extension
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-03 | `showToast()` | Add link parameters | Extended signature with optional `linkText` and `linkUrl` params; shows `.toast-link` element when both provided. |
+
+### `resources/views/layouts/ui-template.blade.php` — Toast Link Element
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-03 | `#toastBar` | Add toast-link element | Added `<a class="toast-link" href="#" style="display:none"></a>` between `.toast-message` and `.toast-undo`. |
+
+### `public/css/theme.css` — Toast Link Styles
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-03 | Toast styles section | Add `.toast-link` CSS | Added link styling (color, underline, hover state) for toast link button. |

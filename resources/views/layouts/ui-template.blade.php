@@ -43,6 +43,7 @@
     <!-- Toast/Undo Bar (shared) -->
     <div class="toast-bar" id="toastBar">
         <span class="toast-message"></span>
+        <a class="toast-link" href="#" style="display:none"></a>
         <button class="toast-undo" style="display:none">Undo</button>
         <button class="toast-close" onclick="dismissToast()">✕</button>
     </div>

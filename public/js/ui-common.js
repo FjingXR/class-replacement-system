@@ -416,13 +416,16 @@ let _toastTimer = null;
  * @param {string} message - Success message to display
  * @param {function|null} undoCallback - Function to call when Undo is clicked (null = no Undo button)
  * @param {number} duration - Auto-dismiss time in ms (default 5000)
+ * @param {string} [linkText] - Optional text for a clickable link in the toast
+ * @param {string} [linkUrl] - Optional URL for the clickable link
  */
-function showToast(message, undoCallback, duration = 5000) {
+function showToast(message, undoCallback, duration = 5000, linkText = '', linkUrl = '') {
     const bar = document.getElementById('toastBar');
     if (!bar) return;
 
     const msgEl = bar.querySelector('.toast-message');
     const undoBtn = bar.querySelector('.toast-undo');
+    const linkEl = bar.querySelector('.toast-link');
 
     msgEl.textContent = message;
 
@@ -434,6 +437,14 @@ function showToast(message, undoCallback, duration = 5000) {
         };
     } else {
         undoBtn.style.display = 'none';
+    }
+
+    if (linkText && linkUrl && linkEl) {
+        linkEl.textContent = linkText;
+        linkEl.href = linkUrl;
+        linkEl.style.display = 'inline-block';
+    } else if (linkEl) {
+        linkEl.style.display = 'none';
     }
 
     bar.classList.add('visible');

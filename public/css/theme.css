@@ -1730,6 +1730,19 @@ body {
     color: var(--color-on-surface);
 }
 
+.toast-link {
+    color: var(--color-primary);
+    text-decoration: underline;
+    font-weight: 600;
+    margin-left: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.toast-link:hover {
+    color: var(--color-primary-dark);
+}
+
 @keyframes toastSlideUp {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }

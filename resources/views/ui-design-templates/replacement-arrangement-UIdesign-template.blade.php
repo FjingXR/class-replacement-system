@@ -754,22 +754,7 @@
             margin-left: 4px;
         }
 
-        /* ───── F7: Toast Notification ───── */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            padding: 8px 16px;
-            border-radius: 8px;
-            z-index: 200;
-            box-shadow: var(--shadow-md);
-            font-size: 13px;
-            color: var(--color-on-surface);
-            transition: opacity 0.3s;
-        }
+        /* ───── F7: Toast Notification — handled by shared ui-common.js ───── */
 
         /* ───── F1: Keyboard Shortcuts ───── */
         .cell-focused {
@@ -1375,6 +1360,25 @@
             confirmCallback = null;
         }
 
+        function buildSubmissionToastMessage() {
+            const slots = [];
+            for (const venue in selectedSlotsByVenue) {
+                for (const week in selectedSlotsByVenue[venue]) {
+                    for (const slot of selectedSlotsByVenue[venue][week]) {
+                        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                        const dayData = weekData[week].days[slot.day];
+                        const dayName = dayNames[slot.day];
+                        const dateStr = dayData.date.replace(/ \d{4}$/, '');
+                        const startStr = hours[slot.hour];
+                        const endStr = add30min(startStr);
+                        const timeRange = to12h(startStr) + '–' + to12h(endStr);
+                        slots.push(venue + ' · ' + dayName + ', ' + dateStr + ' · ' + timeRange);
+                    }
+                }
+            }
+            return '\u2713 Submitted \u2014 Pending Approval \u00B7 ' + slots.join(' | ');
+        }
+
         function proceed() {
             if (selectedCells.length === 0) {
                 showConfirmModal('No Selection', 'Please select at least one timeslot before proceeding.', null);
@@ -1395,7 +1399,7 @@
                 function() {
                     hideConfirmModal();
                     showConfirmModal('Submitted', 'Your replacement request has been submitted for approval.', null);
-                    showToast('Replacement request submitted.', null);
+                    showToast(buildSubmissionToastMessage(), null, 5000, 'View \u2192', '/my-request-history-ui');
                 }
             );
         }
@@ -1523,22 +1527,6 @@
                 }
                 sel.appendChild(opt);
             });
-        }
-
-        function showToast(message, callback) {
-            let existing = document.querySelector('.toast');
-            if (existing) existing.remove();
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => {
-                    toast.remove();
-                    if (callback) callback();
-                }, 300);
-            }, 2000);
         }
 
         function checkConflict(dayIndex, hourIndex) {
