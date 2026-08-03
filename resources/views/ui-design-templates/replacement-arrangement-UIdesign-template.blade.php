@@ -722,6 +722,104 @@
             }
         }
 
+        /* ───── F3: Progress Indicator ───── */
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--color-outline);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s, background 0.3s;
+            background: var(--color-outline);
+        }
+        .progress-text {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            white-space: nowrap;
+        }
+
+        /* ───── F4: Venue Capacity Badge ───── */
+        .venue-warning {
+            color: var(--color-error);
+            margin-left: 4px;
+        }
+
+        /* ───── F7: Toast Notification ───── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            padding: 8px 16px;
+            border-radius: 8px;
+            z-index: 200;
+            box-shadow: var(--shadow-md);
+            font-size: 13px;
+            color: var(--color-on-surface);
+            transition: opacity 0.3s;
+        }
+
+        /* ───── F1: Keyboard Shortcuts ───── */
+        .cell-focused {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -2px;
+        }
+        .help-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .help-overlay.active {
+            display: flex;
+        }
+        .help-card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: var(--shadow-lg);
+        }
+        .help-card h3 {
+            margin: 0 0 16px 0;
+            font-size: 16px;
+            color: var(--color-on-surface);
+        }
+        .help-card .shortcut-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+        }
+        .help-card .shortcut-key {
+            font-family: monospace;
+            background: var(--color-surface-variant);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .help-card .help-close {
+            margin-top: 16px;
+            text-align: right;
+        }
+
 @endsection
 
 @section('content')
@@ -762,15 +860,18 @@
             </div>
             <div class="toolbar-right">
                 <select class="selector-dropdown" id="buildingSelector" onchange="onVenueChange()">
-                    <option>B103</option>
-                    <option>B104</option>
-                    <option>B105</option>
-                    <option>B106</option>
                 </select>
             </div>
         </div>
 
         <div class="hint-text">Select an available (green) time slot</div>
+
+        <div class="progress-wrapper" id="progressWrapper">
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">Selected 0 of 4 slots</span>
+        </div>
 
         <div class="grid-wrapper">
             <div class="grid-scroll" id="gridScroll">
@@ -870,7 +971,7 @@
             </div>
         </div>
 
-    <div class="modal-overlay" id="confirmModal" style="display:none">
+        <div class="modal-overlay" id="confirmModal" style="display:none">
         <div class="modal">
             <div class="modal-header">
                 <span class="modal-title" id="modalTitle">Confirm</span>
@@ -884,6 +985,20 @@
         </div>
     </div>
 
+<div class="help-overlay" id="helpOverlay">
+    <div class="help-card">
+        <h3>Keyboard Shortcuts</h3>
+        <div class="shortcut-row"><span>Navigate grid</span><span class="shortcut-key">↑ ↓ ← →</span></div>
+        <div class="shortcut-row"><span>Select / deselect slot</span><span class="shortcut-key">Enter / Space</span></div>
+        <div class="shortcut-row"><span>Undo last selection</span><span class="shortcut-key">Ctrl+Z</span></div>
+        <div class="shortcut-row"><span>Close modal / clear focus</span><span class="shortcut-key">Escape</span></div>
+        <div class="shortcut-row"><span>Show this help</span><span class="shortcut-key">?</span></div>
+        <div class="help-close">
+            <button class="btn btn-outline" onclick="hideHelp()">Close</button>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('page-scripts')
@@ -896,6 +1011,8 @@
         let currentWeek = 0;
         let currentVenue = 'B103';
         let selectedCells = [];
+        let selectionHistory = [];
+        let focusedCell = { day: null, hour: null };
 
         function saveCurrentWeek() {
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
@@ -941,6 +1058,7 @@
             const btn = document.querySelector('.btn-primary');
             if (btn) btn.disabled = selectedCells.length === 0;
             updateSelectionSummary();
+            updateProgress();
         }
 
         function updateSelectionSummary() {
@@ -1143,6 +1261,7 @@
 
         function toggleCell(di, hi, el) {
             if (el.classList.contains('cell-selected')) {
+                pushHistory({ action: 'deselect', day: di, hour: hi, venue: currentVenue, week: currentWeek });
                 el.classList.remove('cell-selected');
                 el.classList.add('cell-available');
                 el.innerHTML = timeLabelHtml(hi);
@@ -1164,6 +1283,11 @@
                 el.classList.add('cell-selected');
                 el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(hi);
                 selectedCells.push({ day: di, hour: hi, el });
+                pushHistory({ action: 'select', day: di, hour: hi, venue: currentVenue, week: currentWeek });
+                const conflict = checkConflict(di, hi);
+                if (conflict) {
+                    showToast('This slot overlaps with your ' + conflict + ' class');
+                }
                 saveCurrentWeek();
                 updateCounter();
             }
@@ -1366,7 +1490,201 @@
             navigateTo('/');
         }
 
+        function updateProgress() {
+            const count = selectedCells.length;
+            const max = MAX_SELECTION;
+            const pct = max > 0 ? (count / max) * 100 : 0;
+            const fill = document.getElementById('progressFill');
+            const text = document.getElementById('progressText');
+            if (fill) {
+                fill.style.width = pct + '%';
+                if (count === 0) fill.style.background = 'var(--color-outline)';
+                else if (count < max) fill.style.background = 'var(--color-tertiary)';
+                else fill.style.background = 'var(--color-secondary)';
+            }
+            if (text) text.textContent = 'Selected ' + count + ' of ' + max + ' slots';
+        }
+
+        function buildVenueDropdown() {
+            const sel = document.getElementById('buildingSelector');
+            const venues = MockData.venues || [];
+            const cohortStudents = 35; // DFT2(S1) + DSF2(S1) combined
+            sel.innerHTML = '';
+            venues.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.code;
+                const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
+                opt.textContent = v.code + ' — ' + typeLabel + ' (' + v.capacity + ' seats)';
+                if (v.capacity < cohortStudents) {
+                    opt.textContent += ' ⚠';
+                }
+                sel.appendChild(opt);
+            });
+        }
+
+        function showToast(message, callback) {
+            let existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.remove();
+                    if (callback) callback();
+                }, 300);
+            }, 2000);
+        }
+
+        function checkConflict(dayIndex, hourIndex) {
+            const events = MockData.myTimetable.eventsByWeek[currentWeek] || [];
+            for (let i = 0; i < events.length; i++) {
+                const e = events[i];
+                if (e.di === dayIndex && hourIndex >= e.start && hourIndex < e.end) {
+                    return e.code;
+                }
+            }
+            return null;
+        }
+
+        function pushHistory(entry) {
+            selectionHistory.push(entry);
+        }
+
+        function undoSelection() {
+            if (selectionHistory.length === 0) return;
+            const last = selectionHistory.pop();
+            const body = document.getElementById('tableBody');
+            const cellDiv = body.querySelector(
+                'td[data-day="' + last.day + '"][data-hour="' + last.hour + '"] .cell-content'
+            );
+            if (!cellDiv) return;
+
+            if (last.action === 'select') {
+                cellDiv.classList.remove('cell-selected');
+                cellDiv.classList.add('cell-available');
+                cellDiv.innerHTML = timeLabelHtml(last.hour);
+                selectedCells = selectedCells.filter(c => !(c.day === last.day && c.hour === last.hour));
+                if (selectedSlotsByVenue[last.venue] && selectedSlotsByVenue[last.venue][last.week]) {
+                    const slots = selectedSlotsByVenue[last.venue][last.week];
+                    const idx = slots.findIndex(s => s.day === last.day && s.hour === last.hour);
+                    if (idx !== -1) slots.splice(idx, 1);
+                }
+            } else if (last.action === 'deselect') {
+                if (cellDiv.classList.contains('cell-available')) {
+                    cellDiv.classList.remove('cell-available');
+                    cellDiv.classList.add('cell-selected');
+                    cellDiv.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(last.hour);
+                    selectedCells.push({ day: last.day, hour: last.hour, el: cellDiv });
+                    if (!selectedSlotsByVenue[last.venue]) selectedSlotsByVenue[last.venue] = {};
+                    if (!selectedSlotsByVenue[last.venue][last.week]) selectedSlotsByVenue[last.venue][last.week] = [];
+                    selectedSlotsByVenue[last.venue][last.week].push({ day: last.day, hour: last.hour });
+                }
+            }
+            updateCounter();
+            showToast('Selection undone');
+        }
+
+        function focusCell(day, hour) {
+            unfocusCell();
+            const body = document.getElementById('tableBody');
+            const td = body.querySelector('td[data-day="' + day + '"][data-hour="' + hour + '"]');
+            if (td) {
+                const cellDiv = td.querySelector('.cell-content');
+                if (cellDiv) cellDiv.classList.add('cell-focused');
+            }
+            focusedCell = { day: day, hour: hour };
+        }
+
+        function unfocusCell() {
+            if (focusedCell.day !== null && focusedCell.hour !== null) {
+                const body = document.getElementById('tableBody');
+                const td = body.querySelector('td[data-day="' + focusedCell.day + '"][data-hour="' + focusedCell.hour + '"]');
+                if (td) {
+                    const cellDiv = td.querySelector('.cell-content');
+                    if (cellDiv) cellDiv.classList.remove('cell-focused');
+                }
+            }
+            focusedCell = { day: null, hour: null };
+        }
+
+        function showHelp() {
+            document.getElementById('helpOverlay').classList.add('active');
+        }
+
+        function hideHelp() {
+            document.getElementById('helpOverlay').classList.remove('active');
+        }
+
+        function handleKeyDown(e) {
+            const modal = document.getElementById('confirmModal');
+            if (modal && modal.style.display === 'flex') {
+                if (e.key === 'Escape') hideConfirmModal(e);
+                return;
+            }
+            const help = document.getElementById('helpOverlay');
+            if (help && help.classList.contains('active')) {
+                if (e.key === 'Escape') hideHelp();
+                return;
+            }
+
+            const days = getDays();
+            const maxDay = days.length - 1;
+            const maxHour = hours.length - 1;
+
+            switch (e.key) {
+                case 'ArrowUp':
+                    e.preventDefault();
+                    if (focusedCell.day === null) focusCell(0, 0);
+                    else if (focusedCell.hour > 0) focusCell(focusedCell.day, focusedCell.hour - 1);
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    if (focusedCell.day === null) focusCell(0, 0);
+                    else if (focusedCell.hour < maxHour) focusCell(focusedCell.day, focusedCell.hour + 1);
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    if (focusedCell.day === null) focusCell(0, 0);
+                    else if (focusedCell.day > 0) focusCell(focusedCell.day - 1, focusedCell.hour);
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    if (focusedCell.day === null) focusCell(0, 0);
+                    else if (focusedCell.day < maxDay) focusCell(focusedCell.day + 1, focusedCell.hour);
+                    break;
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    if (focusedCell.day !== null) {
+                        const body = document.getElementById('tableBody');
+                        const td = body.querySelector('td[data-day="' + focusedCell.day + '"][data-hour="' + focusedCell.hour + '"]');
+                        if (td) {
+                            const cellDiv = td.querySelector('.cell-content');
+                            if (cellDiv) toggleCell(focusedCell.day, focusedCell.hour, cellDiv);
+                        }
+                    }
+                    break;
+                case 'Escape':
+                    unfocusCell();
+                    break;
+                case '?':
+                    showHelp();
+                    break;
+                case 'z':
+                case 'Z':
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        undoSelection();
+                    }
+                    break;
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            buildVenueDropdown();
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             const sel = document.getElementById('weekSelector');
             const isMobile = window.innerWidth <= 768;
@@ -1382,5 +1700,7 @@
             }).join('');
             sel.value = currentWeek;
             buildTimetable();
+
+            document.addEventListener('keydown', handleKeyDown);
         });
 @endsection
