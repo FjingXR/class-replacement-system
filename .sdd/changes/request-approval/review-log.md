@@ -334,3 +334,33 @@ Chain remains FROZEN. `/sdd-apply` implementer should action Gap A (strip `.togg
  - design.md §18 lacked DOM stacking note — proposal §7c and Task 10 already cover it; self-containedness improved by the §12 Escape fix (which references approveNotesModal)
 
 ### ✅ PASS — all artifacts re-frozen (proposal.md, design.md, tasks.md).
+
+## CHAIN UNFROZEN — 3 keyboard/UX features — 2026-08-01
+
+### 🔴 Fixed
+ - (none — decision-level unfreeze to add new features)
+
+### 🟡 Addressed
+ - User requested 3 additional UX features:
+   1. Keyboard shortcuts — Arrow keys navigate rows, Enter opens modal, A approves, R rejects (Small)
+   2. Review next auto-advance — after approve/reject/close, auto-open next Pending request (Small)
+   3. Slot validity preview icon — tiny ✓/⚠ in Proposed Replacement column (Tiny)
+ - Chain unfrozen to add these to proposal.md (§7i-§7k), design.md (§21-§23), tasks.md (Task 12 update, Task 8 update)
+ - Total task count remains 12; effort delta: ~45 min added to Task 12
+
+
+## CHAIN RE-FROZEN — 3 keyboard/UX features — 2026-08-01
+
+### 🔴 Fixed
+ - **Critical:** `rejectRequest()` in design.md §7 — was single-item only, showed "#null" for bulk; now uses conditional label (`selectedIds.size + ' request(s)'` for bulk, `'Request #' + currentRejectId` for single), clears `selectedIds`, re-renders, and calls `reviewNextAfterAction()`
+ - **Critical:** `rejectRequest()` in tasks.md Task 8 and Task 12 — updated to describe bulk-mode label branching, `selectedIds.clear()`, `renderTable()`, `reviewNextAfterAction()` call
+ - **Minor:** proposal.md §7k tooltip for "Valid" was "Slot available"; updated design.md §23 to match proposal: "Slot available — no conflict"
+
+### 🟡 Addressed
+ - Expanded Task 8 smoke test: split "review next auto-advance" into two items — one for approve path, one for reject path
+ - Proposal §7k, design.md §21-§23, tasks.md Task 11/12: all consistent across artifacts
+
+### ✅ PASS
+ - All 3 features (keyboard shortcuts §7i/§21, review next §7j/§22, slot validity icons §7k/§23) are now fully specified, cross-artifact consistent, and ready for `/sdd-apply`
+ - Chain is re-frozen
+

@@ -2,7 +2,7 @@
 
 ## Why This Change Is Needed
 
-The current system allows lecturers to submit and track replacement requests via the "My Request History" page, but Program Leaders (PL) have no dedicated interface to review, approve, or reject them. The PL must currently rely on ad-hoc communication (email, WhatsApp) to handle approval workflows, leading to delays, lost requests, and no audit trail. This change adds a Request Approval page that displays all replacement requests with a default "Pending" status filter, urgency indicators (requests within 3 days of the class date flagged as "Urgent"), quick Approve/Reject action buttons inline in the table, and a full detail modal with remarks support. Beyond the core review workflow, the page includes 8 PL-efficiency features: bulk approve/reject with per-row checkboxes and a batch action bar, enhanced approve/reject confirm dialogs with request summaries, reject reason presets (clickable chips), an urgency filter, request age indicators ("X days ago"), approval notes, a pending count badge on the nav bar, and a "viewed" indicator for rows already opened in the modal. The page is built on the codebase's OOP architecture — **inheritance** (Blade layout via `@extends`), **composition** (Blade partials via `@include`), and **shared modules** (`theme.css`, `ui-common.js`) — and promotes duplicated helpers into the shared JS module so the codebase has a single source of truth instead of copy-pasted page-local copies.
+The current system allows lecturers to submit and track replacement requests via the "My Request History" page, but Program Leaders (PL) have no dedicated interface to review, approve, or reject them. The PL must currently rely on ad-hoc communication (email, WhatsApp) to handle approval workflows, leading to delays, lost requests, and no audit trail. This change adds a Request Approval page that displays all replacement requests with a default "Pending" status filter, urgency indicators (requests within 3 days of the class date flagged as "Urgent"), quick Approve/Reject action buttons inline in the table, and a full detail modal with remarks support. Beyond the core review workflow, the page includes 11 PL-efficiency features: bulk approve/reject with per-row checkboxes and a batch action bar, enhanced approve/reject confirm dialogs with request summaries, reject reason presets (clickable chips), an urgency filter, request age indicators ("X days ago"), approval notes, a pending count badge on the nav bar, a "viewed" indicator for rows already opened in the modal, keyboard shortcuts for rapid navigation (Arrow/Enter/A/R/Escape), review-next auto-advance after approve/reject, and slot validity preview icons (✓/⚠/?) in the Proposed Replacement column. The page is built on the codebase's OOP architecture — **inheritance** (Blade layout via `@extends`), **composition** (Blade partials via `@include`), and **shared modules** (`theme.css`, `ui-common.js`) — and promotes duplicated helpers into the shared JS module so the codebase has a single source of truth instead of copy-pasted page-local copies.
 
 ## FR Traceability
 
@@ -291,6 +291,60 @@ Placed in `.toolbar-left` after the status `<select>` and before the week `<sele
 .urgency-filter-chip.active { background: var(--color-primary); color: var(--color-on-primary); border-color: var(--color-primary); }
 .urgency-filter-chip:hover:not(.active) { background: var(--color-surface-variant); }
 ```
+
+**i. Keyboard Shortcuts** (effort: Small)
+
+Keyboard navigation for power reviewers. Active when the table is visible (not when a modal is open):
+
+| Key | Action |
+|-----|--------|
+| `↑` / `↓` | Move highlight between visible rows |
+| `Enter` | Open detail modal for highlighted row |
+| `A` | Approve highlighted row (if Pending) — opens approval notes modal |
+| `R` | Reject highlighted row (if Pending) — opens rejection reason modal |
+| `Escape` | Move highlight off all rows (deselect) |
+
+**Visual:** Highlighted row gets `.row-active` class — `background: var(--color-primary-container)` + left accent border, distinct from `.row-viewed`.
+
+**State:** `activeRowIndex = -1` — index into `currentFiltered`. When a modal opens, keyboard nav pauses (all shortcuts ignored while any `.modal.show` is visible).
+
+**Scope:** Only navigates rows visible on the current page (within the current pagination page). Does not auto-advance pages.
+
+```css
+.row-active { background: var(--color-primary-container) !important; border-left: 3px solid var(--color-primary); }
+```
+
+**j. Review Next Auto-Advance** (effort: Small)
+
+After completing any approve/reject action (including from the approval notes modal or rejection reason modal), automatically open the next Pending request in the current filtered list:
+
+1. Find next Pending request after the just-acted-on request's index in `currentFiltered`
+2. If found → open its detail modal (or approval notes modal for approve, rejection reason modal for reject)
+3. If no more Pending → close modal, clear `activeRowIndex`
+4. Update `activeRowIndex` to match the auto-advanced row
+
+This pairs with keyboard shortcuts: a PL can press `A` → confirm approve → next Pending opens → `A` again → rapid sequential review.
+
+**Scope:** Only auto-advances when the user explicitly approves/rejects (not when they close the modal with Escape or overlay click). Does not auto-advance pages (if the last Pending on the current page is acted on, modal closes).
+
+**k. Slot Validity Preview Icon** (effort: Tiny)
+
+Show a tiny validity indicator in the **Proposed Replacement** column so the PL can spot conflicts at a glance without opening the modal:
+
+| `slotValidity` value | Icon | CSS class | Tooltip |
+|----------------------|------|-----------|---------|
+| `"Valid"` | `✓` | `.slot-valid` | "Slot available — no conflict" |
+| `"Conflict"` | `⚠` | `.slot-conflict` | "Conflict — another class scheduled" |
+| `"Tentative"` | `?` | `.slot-tentative` | "Tentative — pending venue confirmation" |
+
+```css
+.slot-icon { font-size: 11px; margin-left: 4px; font-weight: 600; }
+.slot-valid { color: var(--color-approved, #2e7d32); }
+.slot-conflict { color: var(--color-rejected, #c62828); }
+.slot-tentative { color: var(--color-amber, #f59e0b); }
+```
+
+Placed inside the Proposed Replacement cell, after the time line: `3:00 PM – 5:00 PM · <span class="slot-icon slot-valid">✓</span>`.
 
 **8. Nav Bar Update**
 

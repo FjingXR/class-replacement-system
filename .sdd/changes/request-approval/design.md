@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Create a new Blade template extending `layouts/ui-template`. The page mirrors the my-request-history page structure (page header → toolbar → table → pagination → summary cards → empty state → modal) but adds PL-specific features: Lecturer column, Urgency column, in-table Approve/Reject actions, and a default "Pending" status filter. All shared CSS comes from `theme.css`; page-specific CSS (modal, badges, buttons, cell-class-block, column widths) is copied from my-request-history's `@section('page-styles')` and adapted. All table rendering, filtering, sorting, and pagination logic follows the my-request-history JS pattern, reusing the shared helpers in `ui-common.js`. The 10 generic helpers currently page-local in my-request-history (`weekRanges`, `formatDateTime`, `statusClass`, `dayAbbr`, `isoDayName`, `formatClassBlock`, `formatReplacementBlock`, `getWeekRange`, `isInWeek`, `getWeekNumber`) are **promoted into `ui-common.js`** as the single source of truth — the new page consumes them from there, and my-request-history is refactored to do the same (its local copies are removed). The mock data (`approvalRequests`, `URGENCY_REFERENCE_DATE`) lives in a **new shared data module `public/js/mock-data.js`** loaded by the layout, separating data from logic. This follows the OOP encapsulation principle: shared logic lives in shared modules, not duplicated per-page. Beyond the core review workflow, 8 PL-efficiency features are added: bulk approve/reject (checkbox column + batch action bar), enhanced approve/reject confirm summaries, reject reason preset chips, urgency filter chips, request age sub-labels, approval notes modal, pending count badge on nav bar, and viewed-row indicator.
+Create a new Blade template extending `layouts/ui-template`. The page mirrors the my-request-history page structure (page header → toolbar → table → pagination → summary cards → empty state → modal) but adds PL-specific features: Lecturer column, Urgency column, in-table Approve/Reject actions, and a default "Pending" status filter. All shared CSS comes from `theme.css`; page-specific CSS (modal, badges, buttons, cell-class-block, column widths) is copied from my-request-history's `@section('page-styles')` and adapted. All table rendering, filtering, sorting, and pagination logic follows the my-request-history JS pattern, reusing the shared helpers in `ui-common.js`. The 10 generic helpers currently page-local in my-request-history (`weekRanges`, `formatDateTime`, `statusClass`, `dayAbbr`, `isoDayName`, `formatClassBlock`, `formatReplacementBlock`, `getWeekRange`, `isInWeek`, `getWeekNumber`) are **promoted into `ui-common.js`** as the single source of truth — the new page consumes them from there, and my-request-history is refactored to do the same (its local copies are removed). The mock data (`approvalRequests`, `URGENCY_REFERENCE_DATE`) lives in a **new shared data module `public/js/mock-data.js`** loaded by the layout, separating data from logic. This follows the OOP encapsulation principle: shared logic lives in shared modules, not duplicated per-page. Beyond the core review workflow, 11 PL-efficiency features are added: bulk approve/reject (checkbox column + batch action bar), enhanced approve/reject confirm summaries, reject reason preset chips, urgency filter chips, request age sub-labels, approval notes modal, pending count badge on nav bar, viewed-row indicator, keyboard shortcuts (Arrow/Enter/A/R/Escape), review-next auto-advance after approve/reject, and slot validity preview icons (✓/⚠/?) in the Proposed Replacement column.
 
 ## Architecture Decisions
 
@@ -401,10 +401,15 @@ function rejectRequest() {
         alert('Please provide a rejection reason.');
         return;
     }
-    if (confirm('Reject replacement request #' + currentRejectId + '?\n\nReason: ' + reason + '\n\nThis will notify the lecturer that the request was declined.')) {
-        alert('Request #' + currentRejectId + ' has been rejected.\n\n(Frontend design phase — no backend state update.)');
+    const isBulk = currentRejectId === null;
+    const label = isBulk ? selectedIds.size + ' request(s)' : 'Request #' + currentRejectId;
+    if (confirm('Reject ' + label + '?\n\nReason: ' + reason + '\n\nThis will notify the lecturer(s) that the request was declined.')) {
+        alert(label + ' rejected.\n\n(Frontend design phase — no backend state update.)');
+        reviewNextAfterAction(isBulk ? null : currentRejectId);
     }
     closeRejectModal();
+    selectedIds.clear();
+    renderTable();
 }
 
 function closeRejectModal() {
@@ -705,6 +710,102 @@ viewedIds.add(currentFiltered[index].id);
 In `renderTable()`, after building each row:
 ```javascript
 if (viewedIds.has(r.id)) rowClass += ' row-viewed';
+```
+
+### 21. Keyboard Shortcuts (§7i)
+
+**State:** `activeRowIndex = -1` — index into `currentFiltered`, -1 = none selected.
+
+**Active scope:** Only when no `.modal.show` elements exist (all modals closed). When any modal is open, keyboard shortcuts are paused — keydown listener checks `document.querySelector('.modal.show')` and returns early if truthy.
+
+```javascript
+document.addEventListener('keydown', function(e) {
+    if (document.querySelector('.modal.show')) return; // modal open — pause nav
+    if (!currentFiltered.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeRowIndex = Math.min(activeRowIndex + 1, currentFiltered.length - 1); highlightRow(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); activeRowIndex = Math.max(activeRowIndex - 1, 0); highlightRow(); }
+    else if (e.key === 'Enter' && activeRowIndex >= 0) { openModal(activeRowIndex); }
+    else if ((e.key === 'a' || e.key === 'A') && activeRowIndex >= 0) {
+        const r = currentFiltered[activeRowIndex];
+        if (r.status === 'Pending') approveRequest(r.id);
+    }
+    else if ((e.key === 'r' || e.key === 'R') && activeRowIndex >= 0) {
+        const r = currentFiltered[activeRowIndex];
+        if (r.status === 'Pending') openRejectModal(r.id);
+    }
+    else if (e.key === 'Escape') { activeRowIndex = -1; highlightRow(); }
+});
+
+function highlightRow() {
+    document.querySelectorAll('#dataTable tbody tr').forEach((tr, i) => {
+        tr.classList.toggle('row-active', i === activeRowIndex);
+    });
+}
+```
+
+In `renderTable()`, after building rows, re-apply highlight:
+```javascript
+highlightRow(); // re-apply .row-active after re-render
+```
+
+**CSS:**
+```css
+.row-active { background: var(--color-primary-container) !important; border-left: 3px solid var(--color-primary); }
+```
+
+### 22. Review Next Auto-Advance (§7j)
+
+After any approve/reject action completes (approve notes confirmed, reject reason confirmed), auto-advance to the next Pending request:
+
+```javascript
+function reviewNextAfterAction(actedOnId) {
+    const actedIndex = currentFiltered.findIndex(r => r.id === actedOnId);
+    // Find next Pending after the acted-on request
+    let nextIndex = -1;
+    for (let i = actedIndex + 1; i < currentFiltered.length; i++) {
+        if (currentFiltered[i].status === 'Pending') { nextIndex = i; break; }
+    }
+    if (nextIndex >= 0) {
+        activeRowIndex = nextIndex;
+        openModal(nextIndex); // opens detail modal; PL can then A/R from there
+    } else {
+        // No more Pending — close modal, clear highlight
+        activeRowIndex = -1;
+        closeModal();
+    }
+    renderTable(); // update counts/badges after status change
+}
+```
+
+Called at the end of:
+- `confirmApproveWithNotes()` → after `alert()` success → `reviewNextAfterAction(ids[0])`
+- `rejectRequest()` → after `alert()` success → `reviewNextAfterAction(rejectingId)`
+
+**Scope:** Only auto-advances when user explicitly approves/rejects. Does NOT auto-advance on modal close (Escape / overlay click). Does NOT auto-advance pages — if last Pending on current page is acted on, modal closes.
+
+### 23. Slot Validity Preview Icon (§7k)
+
+Show `slotValidity` value as a tiny icon in the Proposed Replacement cell during `renderTable()`:
+
+```javascript
+// Inside renderTable(), in the Proposed Replacement column cell:
+const validityMap = { Valid: '✓', Conflict: '⚠', Tentative: '?' };
+const validityClass = { Valid: 'slot-valid', Conflict: 'slot-conflict', Tentative: 'slot-tentative' };
+const validityTip = { Valid: 'Slot available — no conflict', Conflict: 'Conflict — another class scheduled', Tentative: 'Pending venue confirmation' };
+const slotIcon = validityMap[r.slotValidity] || '';
+const slotClass = validityClass[r.slotValidity] || '';
+const slotTitle = validityTip[r.slotValidity] || '';
+
+// Append to Proposed Replacement cell HTML:
+// <span class="slot-icon ${slotClass}" title="${slotTitle}">${slotIcon}</span>
+```
+
+**CSS (in page-styles `@section`):**
+```css
+.slot-icon { font-size: 11px; margin-left: 4px; font-weight: 600; }
+.slot-valid { color: var(--color-approved, #2e7d32); }
+.slot-conflict { color: var(--color-rejected, #c62828); }
+.slot-tentative { color: var(--color-amber, #f59e0b); }
 ```
 
 CSS: `.row-viewed td:first-child { border-left: 3px solid var(--color-primary); }` — subtle left-border accent.

@@ -47,9 +47,9 @@
 
 ## Task 6: Changelog + Final Testing
 
-- [ ] Update `page-changelogs/replacement-arrangement-changelog.md` with all changes
-- [ ] Run `composer run lint:check` — confirm no new failures
-- [ ] Run `composer run types:check` — confirm no new failures
-- [ ] Test all 5 features together on desktop
-- [ ] Test mobile layout (≤768px) — progress bar, venue dropdown, toast work
-- [ ] Commit with prefix: `ui:`
+- [x] Update `page-changelogs/replacement-arrangement-changelog.md` with all changes
+- [x] Run `composer run lint:check` — confirm no new failures
+- [x] Run `composer run types:check` — confirm no new failures
+- [x] Test all 5 features together on desktop
+- [x] Test mobile layout (≤768px) — progress bar, venue dropdown, toast work
+- [x] Commit with prefix: `ui:`

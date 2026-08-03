@@ -89,7 +89,7 @@
 - [ ] Write `closeModal()` function (same as my-request-history) — can use shared `closeOnOverlayClick(e, closeFn)` from ui-common.js; do NOT use `closeOnEsc` for closeModal — Escape is handled by the ONE keydown handler in the DOMContentLoaded line below (wiring closeOnEsc(closeModal) here AND the custom handler would make Escape close BOTH modals at once when the reject modal is open)
 - [ ] Place `#rejectReasonModal` AFTER `#modalOverlay` in the DOM (both use `.modal-overlay` z-index 100 → DOM order decides which is on top)
 - [ ] Write `approveRequest(id)` function: `confirm()` → `alert()` — does NOT modify approvalRequests or re-render
-- [ ] Write Rejection Reason modal (FR 3.6): HTML overlay `#rejectReasonModal` with textarea `#rejectReasonInput`, Cancel (`#cancelRejectBtn`) + Confirm Reject (`#confirmRejectBtn`, disabled initially); functions `openRejectModal(id)` (clears input, shows modal, focuses textarea), `updateRejectConfirmState()` (enables Confirm only when input has non-whitespace), `rejectRequest()` (re-validates, `confirm()` including reason → `alert()`, then close), `closeRejectModal()` — does NOT modify approvalRequests or re-render
+- [ ] Write Rejection Reason modal (FR 3.6): HTML overlay `#rejectReasonModal` with textarea `#rejectReasonInput`, Cancel (`#cancelRejectBtn`) + Confirm Reject (`#confirmRejectBtn`, disabled initially); functions `openRejectModal(id)` (clears input, shows modal, focuses textarea), `updateRejectConfirmState()` (enables Confirm only when input has non-whitespace), `rejectRequest()` (re-validates, `confirm()` including reason — label is `selectedIds.size + ' request(s)'` for bulk or `'Request #' + currentRejectId` for single → `alert()`, then `closeRejectModal()`, `selectedIds.clear()`, `renderTable()`, `reviewNextAfterAction(currentRejectId)`), `closeRejectModal()` — does NOT modify approvalRequests
 - [ ] Write `DOMContentLoaded` handler: populate week filter dropdown, set status filter to 'Pending', call `renderTable()`, attach event listeners (search input, status filter, week filter, clear filters, modal overlay click, Escape key — use ONE Escape keydown handler that closes the topmost modal: `if (rejectReasonModal.classList.contains('show')) closeRejectModal(); else closeModal();`. Do NOT call `closeOnEsc` twice — it attaches an unconditional listener per call and would close both modals at once)
 - [ ] "Reset Filters" button: resets search to '', status to 'Pending', week to 'all' (NOT 'all' for status — resets to 'Pending'), page to 1, sort to `requestedAt` asc
 - [ ] Verify modal opens on badge click and View button click
@@ -135,6 +135,11 @@
 - [ ] Verify mock-data.js loads: Network tab shows `/js/mock-data.js` loaded with 200; no "Identifier already declared" console errors
 - [ ] Verify other pages unaffected: `http://localhost:8000/replacement-home-ui` and `http://localhost:8000/my-timetable-ui` still load with no console errors
 - [ ] Regression: `http://localhost:8000/my-request-history-ui` still works after helper promotion (sorting, week filter, pagination, modal, Cancel button)
+- [ ] Test keyboard shortcuts: ArrowDown/ArrowUp moves row highlight; Enter opens modal for highlighted row; Escape clears highlight; A on Pending opens approval notes modal; R on Pending opens rejection reason modal
+- [ ] Test keyboard shortcuts paused in modal: open any modal, press ArrowDown — no row highlight change; close modal, verify shortcuts resume
+- [ ] Test review next auto-approve: approve a Pending row — next Pending row's modal opens automatically; approve the last Pending — modal closes, no more Pending highlighted
+- [ ] Test review next auto-reject: reject a Pending row — next Pending row's modal opens automatically; reject the last Pending — modal closes
+- [ ] Test slot validity icon: Proposed Replacement column shows ✓ (green) for valid, ⚠ (red) for conflict, ? (amber) for tentative entries
 
 **Effort:** 30 minutes
 
@@ -142,7 +147,7 @@
 
 - [ ] Update/replace `page-changelogs/request-approval-changelog.md` (file already exists, dated 2026-08-01) — follow the existing changelog format (see `page-changelogs/my-request-history-changelog.md` for reference); reconcile pre-existing entries with the actual implemented state (entries claiming the page/route/nav are done are incorrect until implementation completes)
 - [ ] Document all files changed: new template, mock-data.js creation, layout script tag, route addition, nav bar modification, ui-common.js helper promotion, my-request-history refactor
-- [ ] Document key design decisions: 10-column table + checkbox column, urgency system with fixed reference date, in-table approve/reject (no state update), default Pending filter, modal footer button toggling, 8 PL-efficiency features
+- [ ] Document key design decisions: 11-column table + checkbox column, urgency system with fixed reference date, in-table approve/reject (no state update), default Pending filter, modal footer button toggling, 11 PL-efficiency features (8 original + 3 keyboard/UX: keyboard shortcuts, review-next auto-advance, slot validity preview icons)
 - [ ] Document OOP decisions: 10 shared helpers promoted to ui-common.js (single source of truth), mock-data.js shared data module (data separated from logic), my-request-history refactored to consume shared versions
 
 **Effort:** 15 minutes
@@ -159,7 +164,7 @@
 
 **Effort:** 1.5 hours
 
-## Task 11 — Write CSS for 8 PL-efficiency features
+## Task 11 — Write CSS for 8 PL-efficiency features + 3 keyboard/UX features
 
 - [ ] Add `.col-checkbox` width (35px) + checkbox styling (`accent-color: var(--color-primary)`)
 - [ ] Add `.batch-bar` (flex, gap, padding, background, border, border-radius, margin-bottom) + `.batch-count` (font-size, font-weight)
@@ -168,15 +173,17 @@
 - [ ] Add `.reject-presets` (flex, wrap, gap, margin-bottom) + `.reject-preset-chip` (padding, border-radius, border, background, color, font-size, cursor, transition) + hover
 - [ ] Add `.nav-badge` (inline-block, min-width, height, line-height, border-radius, background error, color on-error, font-size, font-weight, text-align, margin-left, padding)
 - [ ] Add `.row-viewed td:first-child` (left-border 3px solid primary)
+- [ ] Add `.row-active` (background primary-container !important, border-left 3px solid primary) — keyboard highlight (§7i)
+- [ ] Add `.slot-icon` (font-size 11px, margin-left 4px, font-weight 600) + `.slot-valid` (green), `.slot-conflict` (red), `.slot-tentative` (amber) — slot validity preview (§7k)
 - [ ] Verify no CSS syntax errors
 
 **Effort:** 1 hour
 
-## Task 12 — Write JS for 8 PL-efficiency features
+## Task 12 — Write JS for 8 PL-efficiency features + 3 keyboard/UX features
 
 - [ ] Add `selectedIds = new Set()` state variable + `toggleSelectAll()`, `toggleRowSelect(id)`, `updateBatchBar()` functions (§7.1 bulk)
 - [ ] Add `bulkApprove()` function: builds summary from `selectedIds`, `confirm()` with multi-line summary (§7.2), `alert()`, clears `selectedIds`, calls `renderTable()`
-- [ ] Add `bulkReject()` function: calls `openRejectModal(null)` — `rejectRequest()` checks if `currentRejectId === null` and applies reason to all `selectedIds` entries
+- [ ] Add `bulkReject()` function: calls `openRejectModal(null)` — `rejectRequest()` checks if `currentRejectId === null` and applies reason to all `selectedIds` entries; after confirm: `selectedIds.clear()`, `renderTable()`, `reviewNextAfterAction(null)`
 - [ ] Add `approveSummary(r)` helper: builds multi-line string from request object (§7.2 confirm summary)
 - [ ] Add `formatShortDate(iso)` helper: returns "31 Aug 2026" from "2026-08-31"
 - [ ] Add `applyRejectPreset(text)` function: sets `#rejectReasonInput` value, calls `updateRejectConfirmState()` (§7.3 presets)
@@ -187,9 +194,13 @@
 - [ ] Add `closeApproveNotesModal()` function
 - [ ] Add `viewedIds = new Set()` state + mark viewed in `openModal()` (§7.8 viewed indicator)
 - [ ] Add `updateNavBadge()` function: counts Pending, sets `#navPendingBadge` text + visibility (§7.7 nav badge)
-- [ ] Update `renderTable()`: add checkbox column (col 0), add request age sub-label in col 2, add urgency filter after status+week+search filtering, add `.row-viewed` class to `<tr>` if viewed, call `updateBatchBar()` at end
-- [ ] Update `DOMContentLoaded`: init urgency filter chip listeners, call `updateNavBadge()`, wire `#approveNotesModal` overlay click, extend Escape handler to 3-layer: approveNotes → rejectReason → detail modal
+- [ ] Add `activeRowIndex = -1` state + keyboard `keydown` listener (§7i): ArrowUp/ArrowDown navigate, Enter opens modal, A/R approve/reject, Escape clears highlight; pause when any `.modal.show` is open
+- [ ] Add `highlightRow()` function: toggles `.row-active` on `<tr>` elements by index
+- [ ] Add `reviewNextAfterAction(actedOnId)` function (§7j): finds next Pending after acted-on index, opens modal or closes if none left; called from `confirmApproveWithNotes()` and `rejectRequest()`
+- [ ] Add slot validity icon rendering in `renderTable()` (§7k): map `slotValidity` → ✓/⚠/? with `.slot-valid`/`.slot-conflict`/`.slot-tentative` classes
+- [ ] Update `renderTable()`: add checkbox column (col 0), add request age sub-label in col 2, add urgency filter after status+week+search filtering, add `.row-viewed` class to `<tr>` if viewed, call `updateBatchBar()` at end, call `highlightRow()` at end
+- [ ] Update `DOMContentLoaded`: init urgency filter chip listeners, call `updateNavBadge()`, wire `#approveNotesModal` overlay click, extend Escape handler to 3-layer: approveNotes → rejectReason → detail modal, add keyboard `keydown` listener
 - [ ] Update `approveRequest(id)`: call `openApproveNotesModal([id])` instead of bare `confirm()` (§7.6 approval notes flow)
 - [ ] Verify no console errors on all interactions
 
-**Effort:** 2 hours
+**Effort:** 2.5 hours
