@@ -203,6 +203,16 @@ CSS: `.session-dot { background: var(--color-secondary); border-radius: 50%; wid
 |-----|----------|--------------|-------------|
 | NFR 2.4 (30 min session) | Student sessions: 30 days | Students are view-only, low risk, better UX | User decision 2026-08-03 |
 
+## Frontend approach
+
+All placeholder UI must reuse existing frontend patterns from the codebase:
+- **CSS tokens** from `public/css/theme.css` — use `var(--color-*)` tokens, never hardcode hex
+- **JS helpers** from `public/js/ui-common.js` — reuse existing functions where applicable
+- **Blade patterns** from existing partials — follow the `@extends`/`@include` OOP structure
+- **Component style** — match the look of existing UI elements (buttons, badges, modals) for consistency
+
+The frontend SDD later will polish these placeholders (responsive, animation, accessibility). For now, make them **functional and visually consistent** with the existing design system.
+
 ## Promoted to shared
 
 None — all changes are in existing files or new standalone files.

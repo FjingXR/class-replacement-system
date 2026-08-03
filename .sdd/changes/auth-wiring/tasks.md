@@ -1,5 +1,7 @@
 # Tasks: Auth Wiring
 
+> **Frontend note:** All placeholder UI must reuse existing patterns — CSS tokens from `theme.css`, JS helpers from `ui-common.js`, Blade patterns from existing partials. Match the look of existing UI elements. The frontend SDD later will polish further (responsive, animation, accessibility).
+
 ## Task 1: User panel wiring + logout form
 - [ ] 1.1 Read `ui-nav-bar.blade.php` — desktop user panel (lines 37–53) and mobile nav drawer (lines 83–99)
 - [ ] 1.2 Desktop: Replace hardcoded `.user-avatar` "KL" with `{{ Auth::user()->initials() }}`
