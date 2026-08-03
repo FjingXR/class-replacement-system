@@ -991,6 +991,9 @@
         <div class="shortcut-row"><span>Navigate grid</span><span class="shortcut-key">↑ ↓ ← →</span></div>
         <div class="shortcut-row"><span>Select / deselect slot</span><span class="shortcut-key">Enter / Space</span></div>
         <div class="shortcut-row"><span>Undo last selection</span><span class="shortcut-key">Ctrl+Z</span></div>
+        <div class="shortcut-row"><span>Previous week</span><span class="shortcut-key">[</span></div>
+        <div class="shortcut-row"><span>Next week</span><span class="shortcut-key">]</span></div>
+        <div class="shortcut-row"><span>Switch venue (1-3)</span><span class="shortcut-key">Ctrl+1/2/3</span></div>
         <div class="shortcut-row"><span>Close modal / clear focus</span><span class="shortcut-key">Escape</span></div>
         <div class="shortcut-row"><span>Show this help</span><span class="shortcut-key">?</span></div>
         <div class="help-close">
@@ -1680,6 +1683,27 @@
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
                         undoSelection();
+                    }
+                    break;
+                case '[':
+                    e.preventDefault();
+                    prevWeek();
+                    break;
+                case ']':
+                    e.preventDefault();
+                    nextWeek();
+                    break;
+                case '1':
+                case '2':
+                case '3':
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        const venueIdx = parseInt(e.key) - 1;
+                        const venueSel = document.getElementById('buildingSelector');
+                        if (venueIdx < venueSel.options.length) {
+                            venueSel.selectedIndex = venueIdx;
+                            onVenueChange();
+                        }
                     }
                     break;
             }
