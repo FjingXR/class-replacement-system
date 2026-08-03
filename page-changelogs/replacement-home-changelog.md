@@ -1,5 +1,19 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-03] UX Enhancement: Rows Per Page, Filter Presets, Keyboard Shortcuts, Quick View Modal, Column Consolidation
+
+### Added
+- **F1 – Rows Per Page Selector**: Dropdown below pagination with options [5, 10, 25, 50]; default 5 rows per page; resets to page 1 on change
+- **F2 – Filter Presets (localStorage)**: My Filters panel with Save/Apply/Delete buttons; persists search, filter, and sort state to localStorage (`replacementHomeFilterPrefs`); restores on page load
+- **F5 – Keyboard Shortcuts**: Help icon button in toolbar; `?` global keydown opens modal; shortcuts: `/` focus search, `Esc` clear filters, `←`/`→` page nav, `Enter` quick view
+- **F6 – Quick View Modal**: Click any table row to open modal showing full class details (12 fields); closes on OK, X, backdrop click, or `Esc`
+- **F7 – Column Consolidation**: Merged 14 columns → 9 columns; date/time/week merged into "Original Class" column using `formatClassBlock()`; Type merged as `(L)`/`(T)` suffix in Course Code column
+
+### Changed
+- Table now displays 9 columns (was 14): #, Course Code & Name, Original Class, Days Left, Venue, Students, Affected Cohorts, Conflict Reason, Action
+- Sort by "Original Class" sorts by underlying date value
+- Keyboard shortcuts don't trigger when input/textarea/select is focused
+
 ## Files Changed
 
 ### `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php`
@@ -25,6 +39,9 @@
 | 2026-08-02 12:00 | HTML + JS (full page) | Centralised mock data (Task 6) | Removed 14-row inline `conflictedClasses` array; replaced with `MockData.conflictedClasses` reference; standardised `computeWeek()` and `weekRangeLabel()` to use `MockData.semester.startDate`; replaced static semester chip with dynamic `#semesterChip` populated from `MockData.semester.chipText` |
 | 2026-08-02 | `@section('page-scripts')` | Centralised mock data (Task 9) | `conflictedClasses` moved to `mock-data.js` (page-specific, not shared). Week computation standardized to `MockData.semester.startDate`. Semester chip now reads `MockData.semester.chipText` dynamically. |
 | 2026-08-02 | CSS + HTML + JS | Mobile card view | Added `.replacement-card` / `.rc-header` / `.rc-body` / `.rc-footer` card styles; added `#cardView` container; added `renderCards()` JS function; on mobile (≤768px) grid/pagination/sort-hint hidden, card-view shown; cards show course code, conflict reason badge, name, date/time/venue, days left, cohorts |
+| 2026-08-03 | CSS + JS columns + cells | F7: Column consolidation (14 → 9) | Merged Week/Date/Day/Time/Duration into single "Original Class" column using `formatClassBlock(c)` + `dayAbbr()` helpers; merged Type into Course Code as `(L)`/`(T)` suffix; added `.cell-class-block` / `.class-day-date` / `.class-time` / `.class-duration` CSS; removed `.col-type`/`.col-week`/`.col-date`/`.col-day`/`.col-time`/`.col-duration`; added `event.stopPropagation()` on action button; sort hint updated |
+| 2026-08-03 | CSS + HTML + JS | F1: Rows Per Page selector | Added `state.rpp` (default 5), `setRpp(n)` function, `rppSelect` dropdown (5/10/25/50), CSS for `.rows-per-page`/`.rpp-label`/`.rpp-select`; replaced `pageSize` with `state.rpp` in offset/slice/paginate; resets to page 1 on change; hidden on mobile |
+| 2026-08-03 | HTML + JS | F5: Keyboard Shortcuts modal | Added help icon button in toolbar; added `#keyboardModal` overlay with 7-row shortcuts table (/, Esc, →, ←, Enter, ?); added `showKeyboardShortcuts()`/`hideKeyboardShortcuts()` functions; added global `keydown` listener for `/` (focus search), `Esc` (close modal or clear filters), `?` (open modal), `ArrowRight`/`ArrowLeft` (page navigation); added `clearAll()`/`goNextPage()`/`goPrevPage()` helper functions |
 
 ### `routes/web.php`
 

@@ -44,3 +44,19 @@
 
 ### 🔴 Outstanding
 - None
+
+## proposal.md Round 2 — 2026-08-03 06:15
+
+### 🔴 Fixed
+- Added F7: Column Consolidation (14 → 9 columns) feature
+- Merged 6 date/time columns into "Original Class" column
+- Merged Type into "Course Code & Name" as (L)/(T) suffix
+- Updated feature count from 4 to 5
+- Updated impact scope and line estimates
+
+### 🟡 Addressed
+- Days Left kept separate for quick scanning (user decision)
+- Type merged as suffix (user decision)
+
+### 🔴 Outstanding
+- None

@@ -7,18 +7,32 @@
         /* ───── Column Widths ───── */
         .col-no { width: 50px; }
         .col-code { width: 200px; }
-        .col-type { width: 90px; }
-        .col-week { width: 80px; }
-        .col-date { width: 110px; }
-        .col-day { width: 80px; }
+        .col-original { width: 200px; }
+        .col-original { white-space: normal; }
         .col-urgency { width: 100px; }
-        .col-time { width: 130px; }
-        .col-duration { width: 70px; }
         .col-venue { width: 70px; }
         .col-students { width: 80px; }
         .col-cohort { width: 130px; }
         .col-reason { width: 140px; vertical-align: middle; }
         .col-action { width: 150px; }
+
+        /* ───── Multi-line Cell ───── */
+        .cell-class-block {
+            line-height: 1.55;
+            white-space: pre-line;
+        }
+        .cell-class-block .class-day-date {
+            font-weight: 600;
+            color: var(--color-on-surface);
+        }
+        .cell-class-block .class-time {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+        }
+        .cell-class-block .class-duration {
+            color: var(--color-on-surface);
+            font-weight: 500;
+        }
 
         /* ───── Urgency ───── */
         .urgency-high { color: var(--color-error); font-weight: 700; }
@@ -71,6 +85,36 @@
         }
         .btn-replace-now:hover {
             filter: brightness(1.08);
+        }
+
+        /* ───── Rows Per Page ───── */
+        .rows-per-page {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+            padding: 8px 16px;
+            border-top: 1px solid var(--color-outline-variant);
+            background: var(--color-surface);
+        }
+        .rpp-label {
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+            white-space: nowrap;
+        }
+        .rpp-select {
+            padding: 4px 8px;
+            border: 1px solid var(--color-outline);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--color-on-surface);
+            background: var(--color-surface);
+            cursor: pointer;
+        }
+        .rpp-select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px var(--color-primary-container);
         }
 
         /* ───── Responsive Card View ───── */
@@ -126,8 +170,81 @@
             padding: 3px 8px;
         }
 
+        /* ───── My Filters Panel ───── */
+        .my-filters-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-outline-variant);
+        }
+        .my-filters-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-on-surface-variant);
+        }
+        .my-filters-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border: 1px solid var(--color-outline);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--color-on-surface);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-outline:hover {
+            background: var(--color-surface-hover);
+        }
+
+        /* ───── Quick View Modal ───── */
+        .quick-view-field {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--color-outline-variant);
+        }
+        .quick-view-field:last-child { border-bottom: none; }
+        .quick-view-label {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            font-weight: 600;
+        }
+        .quick-view-value {
+            font-size: 13px;
+            color: var(--color-on-surface);
+            text-align: right;
+        }
+        .quick-view-empty {
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+            font-style: italic;
+        }
+        .quick-view-header {
+            text-align: center;
+        }
+
+        /* ───── Table Row Hover ───── */
+        .table-body tr {
+            cursor: pointer;
+        }
+        .table-body tr:hover {
+            background: var(--color-surface-hover);
+        }
+
         @media (max-width: 768px) {
-            .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
+            .grid-wrapper, .pagination-bar, .rows-per-page, .sort-hint { display: none !important; }
             .card-view { display: block; }
         }
 
@@ -160,10 +277,35 @@
             </div>
             <div class="toolbar-right">
                 <span class="result-count" id="resultCount">Showing 14 of 14 classes</span>
+                <button class="btn-icon" onclick="showKeyboardShortcuts()" title="Keyboard Shortcuts" style="margin-left:auto; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid var(--color-outline); border-radius:8px; color:var(--color-on-surface-variant); background:var(--color-surface); cursor:pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><path d="M6 8h.001"/><path d="M10 8h.001"/><path d="M14 8h.001"/><path d="M18 8h.001"/><path d="M8 12h.001"/><path d="M12 12h.001"/><path d="M16 12h.001"/><path d="M7 16h10"/></svg>
+                </button>
             </div>
         </div>
 
-        <div class="sort-hint">Click <strong>Date</strong> or <strong>Course Code &amp; Name</strong> to sort</div>
+        <!-- My Saved Filters -->
+        <div class="my-filters-panel">
+            <div class="my-filters-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                My Filters
+            </div>
+            <div class="my-filters-actions">
+                <button class="btn-outline" onclick="saveFilter()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save
+                </button>
+                <button class="btn-outline" onclick="applyFilter()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    Apply
+                </button>
+                <button class="btn-outline" onclick="deleteFilter()" style="color:var(--color-error)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Delete
+                </button>
+            </div>
+        </div>
+
+        <div class="sort-hint">Click <strong>Course Code &amp; Name</strong> or <strong>Original Class</strong> to sort</div>
 
         <!-- ─── Grid Wrapper ─── -->
         <div class="grid-wrapper">
@@ -182,6 +324,17 @@
         <div class="pagination-bar" id="paginationBar">
             <span class="pagination-info" id="paginationInfo">Showing 1-10 of 14</span>
             <div class="pagination-controls" id="paginationControls"></div>
+        </div>
+
+        <!-- ─── Rows Per Page ─── -->
+        <div class="rows-per-page">
+            <span class="rpp-label">Rows Per Page:</span>
+            <select class="rpp-select" id="rppSelect" onchange="setRpp(this.value)">
+                <option value="5" selected>5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
         </div>
 
         <!-- ─── Summary Dashboard ─── -->
@@ -207,6 +360,65 @@
             <p class="empty-text">Try adjusting your search or filter criteria.</p>
         </div>
 
+        <!-- Keyboard Shortcuts Modal -->
+        <div id="keyboardModal" style="display:none; position:fixed; inset:0; z-index:3000; background:rgba(0,0,0,0.45); backdrop-filter:blur(4px); align-items:center; justify-content:center;">
+            <div class="modal-box" style="width:420px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+                <div class="modal-header">
+                    <div class="modal-title">Keyboard Shortcuts</div>
+                    <button class="modal-close-btn" onclick="hideKeyboardShortcuts()" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="border:1px solid var(--color-outline-variant); border-radius:8px; overflow:hidden; font-size:13px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; background:var(--color-surface-variant); font-weight:600; color:var(--color-on-surface); padding:8px 14px; border-bottom:1px solid var(--color-outline-variant);">
+                            <span>Action</span><span style="text-align:right">Shortcut</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
+                            <span>Focus search bar</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">/</code></span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
+                            <span>Clear all filters</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">Esc</code></span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
+                            <span>Next page</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">→</code></span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
+                            <span>Previous page</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">←</code></span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
+                            <span>Open quick view</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">Enter</code></span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; padding:7px 14px; border-bottom:1px solid var(--color-outline-variant); color:var(--color-on-surface);">
+                            <span>Show keyboard shortcuts</span><span style="text-align:right"><code style="padding:2px 6px; border:1px solid var(--color-outline); border-radius:4px; font-size:11px; background:var(--color-surface);">?</code></span>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px; font-size:11px; color:var(--color-on-surface-variant); text-align:center;">
+                        Keyboard shortcuts only work when no input field is focused.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary" onclick="hideKeyboardShortcuts()" style="padding:6px 16px;">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick View Modal -->
+        <div id="quickViewModal" style="display:none; position:fixed; inset:0; z-index:3000; background:rgba(0,0,0,0.45); backdrop-filter:blur(4px); align-items:center; justify-content:center;" onclick="if(event.target===this)hideQuickView()">
+            <div class="modal-box" style="width:500px; max-width:90vw; max-height:80vh; overflow-y:auto;">
+                <div class="modal-header">
+                    <div class="modal-title" id="qvTitle">Replacement Details</div>
+                    <button class="modal-close-btn" onclick="hideQuickView()" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body" id="qvBody" style="font-size:13px; color:var(--color-on-surface);"></div>
+                <div class="modal-footer" style="display:flex; justify-content:flex-end;">
+                    <button class="btn-primary" onclick="hideQuickView()" style="padding:6px 16px;">OK</button>
+                </div>
+            </div>
+        </div>
+
 @endsection
 
 @section('page-scripts')
@@ -221,6 +433,20 @@
                 'Emergency Leave': 'badge-emergency-leave'
             };
             return map[reason] || '';
+        }
+
+        function dayAbbr(day) {
+            return day.substring(0, 3);
+        }
+
+        function formatClassBlock(c) {
+            var d = dayAbbr(c.day);
+            var dateStr = formatDate(c.date);
+            var wn = computeWeek(c.date);
+            var weekTag = wn ? ' (Week ' + wn + ')' : '';
+            var timeStr = to12h(c.timeStart) + ' to ' + to12h(c.timeEnd);
+            var hrs = c.duration + ' hr' + (c.duration > 1 ? 's' : '');
+            return '<div class="cell-class-block"><span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br><span class="class-time">' + timeStr + '</span> <span class="class-duration">(' + hrs + ')</span></div>';
         }
 
         function daysLeft(iso) {
@@ -257,8 +483,8 @@
             return 'Week ' + weekNum + ' \u00B7 ' + fmtFull(start) + ' ~ ' + fmtFull(end);
         }
 
+        var state = { rpp: 5 };
         const pageState = { currentPage: 1 };
-        const pageSize = 10;
         let sortState = { field: 'date', dir: 'asc' };
         let currentFiltered = [];
 
@@ -292,8 +518,8 @@
 
             currentFiltered = filtered;
 
-            const offset = (pageState.currentPage - 1) * pageSize;
-            const pageData = filtered.slice(offset, offset + pageSize);
+            const offset = (pageState.currentPage - 1) * state.rpp;
+            const pageData = filtered.slice(offset, offset + state.rpp);
 
             const head = document.getElementById('tableHead');
             const body = document.getElementById('tableBody');
@@ -304,13 +530,8 @@
             const columns = [
                 { label: '#', cls: 'col-no', sortable: false },
                 { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'code' },
-                { label: 'Type', cls: 'col-type', sortable: false },
-                { label: 'Week', cls: 'col-week', sortable: false },
-                { label: 'Date', cls: 'col-date', sortable: true, field: 'date' },
-                { label: 'Day', cls: 'col-day', sortable: false },
+                { label: 'Original Class', cls: 'col-original', sortable: true, field: 'date' },
                 { label: 'Days Left', cls: 'col-urgency', sortable: false },
-                { label: 'Time', cls: 'col-time', sortable: false },
-                { label: 'Hrs', cls: 'col-duration', sortable: false },
                 { label: 'Venue', cls: 'col-venue', sortable: false },
                 { label: 'Students', cls: 'col-students', sortable: false },
                 { label: 'Affected Cohort(s)', cls: 'col-cohort', sortable: false },
@@ -333,19 +554,14 @@
                     const row = document.createElement('tr');
                     var cells = [
                         { html: String(offset + i + 1), cls: 'col-no' },
-                        { html: '<span class="cell-code">' + c.code + '</span><span class="cell-name">' + c.name + '</span>', cls: 'col-code' },
-                        { html: c.type === 'L' ? 'Lecture' : 'Tutorial', cls: 'col-type' },
-                        { html: 'Week ' + computeWeek(c.date), cls: 'col-week' },
-                        { html: formatDate(c.date), cls: 'col-date' },
-                        { html: c.day, cls: 'col-day' },
+                        { html: '<span class="cell-code">' + c.code + '</span><span class="cell-name">' + c.name + ' <span style="font-weight:400;font-size:12px;color:var(--color-on-surface-variant)">(' + (c.type === 'L' ? 'L' : 'T') + ')</span></span>', cls: 'col-code' },
+                        { html: formatClassBlock(c), cls: 'col-original' },
                         { html: '<span class="' + urgencyClass(daysLeft(c.date)) + '">' + daysLeft(c.date) + ' days</span>', cls: 'col-urgency' },
-                        { html: to12h(c.timeStart) + ' - ' + to12h(c.timeEnd), cls: 'col-time' },
-                        { html: String(c.duration) + 'h', cls: 'col-duration' },
                         { html: c.venue, cls: 'col-venue' },
                         { html: String(c.totalStudents), cls: 'col-students' },
                         { html: c.cohorts.join('<br>'), cls: 'col-cohort' },
                         { html: '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>', cls: 'col-reason' },
-                        { html: '<button class="btn-action" onclick="goToReplacementWith(\'' + c.code + '\',\'' + c.date + '\')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Arrange Replacement</button>', cls: 'col-action' },
+                        { html: '<button class="btn-action" onclick="event.stopPropagation(); goToReplacementWith(\'' + c.code + '\',\'' + c.date + '\')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Arrange Replacement</button>', cls: 'col-action' },
                     ];
                     cells.forEach(function(cell) {
                         const td = document.createElement('td');
@@ -353,11 +569,15 @@
                         td.innerHTML = cell.html;
                         row.appendChild(td);
                     });
+                    (function(row, idx) {
+                        row.onclick = function() { quickView(idx); };
+                        row.style.cursor = 'pointer';
+                    })(row, i);
                     body.appendChild(row);
                 });
             }
 
-            paginate({ data: currentFiltered, pageSize: pageSize, state: pageState, infoId: 'paginationInfo', controlsId: 'paginationControls', render: buildTable });
+            paginate({ data: currentFiltered, pageSize: state.rpp, state: pageState, infoId: 'paginationInfo', controlsId: 'paginationControls', render: buildTable });
             updateResultCount({ elId: 'resultCount', data: currentFiltered, total: conflictedClasses.length, label: 'classes' });
             updateSummary();
             renderCards();
@@ -452,14 +672,175 @@
             }
         }
 
+        function setRpp(n) {
+            state.rpp = parseInt(n) || 5;
+            pageState.currentPage = 1;
+            buildTable();
+        }
+
         function updateWeekArrowState() {
             const sel = document.getElementById('weekFilter');
             updateWeekArrows(sel.selectedIndex <= 0, sel.selectedIndex >= sel.options.length - 1);
         }
 
+        function saveFilter() {
+            var prefs = {
+                search: document.getElementById('searchInput').value,
+                weekFilter: document.getElementById('weekFilter').value,
+                sortBy: sortState.field,
+                sortAsc: sortState.dir === 'asc',
+            };
+            localStorage.setItem('replacementHomeFilterPrefs', JSON.stringify(prefs));
+            showToast('Filters saved', 'success');
+        }
+
+        function applyFilter() {
+            var raw = localStorage.getItem('replacementHomeFilterPrefs');
+            if (!raw) { showToast('No saved filter found', 'warning'); return; }
+            var prefs = JSON.parse(raw);
+            document.getElementById('searchInput').value = prefs.search || '';
+            document.getElementById('weekFilter').value = prefs.weekFilter || 'all';
+            sortState.field = prefs.sortBy || 'date';
+            sortState.dir = prefs.sortAsc !== undefined ? (prefs.sortAsc ? 'asc' : 'desc') : 'asc';
+            pageState.currentPage = 1;
+            buildTable();
+            showToast('Filters applied', 'success');
+        }
+
+        function deleteFilter() {
+            localStorage.removeItem('replacementHomeFilterPrefs');
+            showToast('Saved filter deleted', 'info');
+        }
+
+        function loadFilterPrefs() {
+            var raw = localStorage.getItem('replacementHomeFilterPrefs');
+            if (!raw) return;
+            var prefs = JSON.parse(raw);
+            if (prefs.search) document.getElementById('searchInput').value = prefs.search;
+            if (prefs.weekFilter) document.getElementById('weekFilter').value = prefs.weekFilter;
+            if (prefs.sortBy) sortState.field = prefs.sortBy;
+            if (prefs.sortAsc !== undefined) sortState.dir = prefs.sortAsc ? 'asc' : 'desc';
+        }
+
+        function showKeyboardShortcuts() {
+            var el = document.getElementById('keyboardModal');
+            if (el) { el.style.display = 'flex'; }
+        }
+
+        function hideKeyboardShortcuts() {
+            var el = document.getElementById('keyboardModal');
+            if (el) { el.style.display = 'none'; }
+        }
+
+        function quickView(idx) {
+            var c = currentFiltered[idx];
+            if (!c) return;
+
+            document.getElementById('qvTitle').textContent = c.name + ' (' + c.type + ')';
+
+            var daysLeftVal = daysLeft(c.date);
+            var urgencyCls = daysLeftVal <= 3 ? 'urgent' : daysLeftVal <= 7 ? 'warning' : 'safe';
+            var wn = computeWeek(c.date);
+            var weekTag = wn ? ' (Week ' + wn + ')' : '';
+
+            var fields = [
+                { label: 'Course Code', value: c.code },
+                { label: 'Course Name', value: c.name },
+                { label: 'Type', value: c.type === 'L' ? 'Lecture' : 'Tutorial' },
+                { label: 'Week', value: 'Week ' + (wn || '-') },
+                { label: 'Day', value: c.day },
+                { label: 'Date', value: formatDate(c.date) + weekTag },
+                { label: 'Time', value: to12h(c.timeStart) + ' to ' + to12h(c.timeEnd) + ' (' + c.duration + ' hr' + (c.duration > 1 ? 's' : '') + ')' },
+                { label: 'Venue', value: c.venue },
+                { label: 'Students', value: String(c.totalStudents) },
+                { label: 'Affected Cohort(s)', value: c.cohorts.join(', ') },
+                { label: 'Days Left', value: daysLeftVal + ' days' },
+                { label: 'Conflict Reason', value: c.conflictReason },
+            ];
+
+            var html = fields.map(function(f) {
+                return '<div class="quick-view-field"><span class="quick-view-label">' + f.label + '</span><span class="quick-view-value">' + (f.value || '<span class="quick-view-empty">—</span>') + '</span></div>';
+            }).join('');
+
+            document.getElementById('qvBody').innerHTML = html;
+            document.getElementById('quickViewModal').style.display = 'flex';
+        }
+
+        function hideQuickView() {
+            document.getElementById('quickViewModal').style.display = 'none';
+        }
+
+        function clearAll() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('weekFilter').value = 'all';
+            sortState.field = 'date';
+            sortState.dir = 'asc';
+            pageState.currentPage = 1;
+            buildTable();
+            updateWeekArrowState();
+        }
+
+        function goNextPage() {
+            var totalPages = Math.ceil(currentFiltered.length / state.rpp);
+            if (pageState.currentPage < totalPages) {
+                pageState.currentPage++;
+                buildTable();
+            }
+        }
+
+        function goPrevPage() {
+            if (pageState.currentPage > 1) {
+                pageState.currentPage--;
+                buildTable();
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            var tag = (e.target || {}).tagName || '';
+            var isInput = (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
+
+            if (e.key === '/' && !isInput) {
+                e.preventDefault();
+                var s = document.getElementById('searchInput');
+                if (s) s.focus();
+                return;
+            }
+            if (e.key === 'Escape') {
+                var qvEl = document.getElementById('quickViewModal');
+                if (qvEl && qvEl.style.display === 'flex') {
+                    hideQuickView();
+                    return;
+                }
+                var el = document.getElementById('keyboardModal');
+                if (el && el.style.display === 'flex') {
+                    hideKeyboardShortcuts();
+                    return;
+                }
+                clearAll();
+                return;
+            }
+            if (e.key === '?' && !isInput) {
+                e.preventDefault();
+                showKeyboardShortcuts();
+                return;
+            }
+            if (isInput) return;
+            if (e.key === 'ArrowRight') { goNextPage(); }
+            if (e.key === 'ArrowLeft') { goPrevPage(); }
+            if (e.key === 'Enter') {
+                var focused = document.querySelector('.table-body tr:focus, .table-body tr:focus-within');
+                if (focused) {
+                    var rows = Array.from(document.querySelectorAll('.table-body tr'));
+                    var idx = rows.indexOf(focused);
+                    if (idx >= 0) { quickView(idx); }
+                }
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             populateWeekDropdown();
+            loadFilterPrefs();
             buildTable();
             updateWeekArrowState();
             initWeekKeyboardShortcuts();

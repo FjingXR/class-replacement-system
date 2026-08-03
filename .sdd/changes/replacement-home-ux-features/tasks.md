@@ -1,6 +1,20 @@
 # Tasks: Replacement Home — UX Enhancement Features
 
-## Task 1: F1 — Rows Per Page Selector
+## Task 1: F7 — Column Consolidation (14 → 9 columns)
+**Estimate**: 45 min
+
+- [ ] Add `dayAbbr(day)` helper function: returns first 3 characters of day name
+- [ ] Add `formatClassBlock(c)` function (same pattern as my-request-history):
+  - Line 1: Day, Date (Week N)
+  - Line 2: Time (Duration)
+- [ ] Add CSS classes: `.cell-class-block`, `.class-day-date`, `.class-time`, `.class-duration` (reuse from my-request-history)
+- [ ] Update `columns` array: remove Week, Date, Day, Time, Hrs columns; add Original Class column
+- [ ] Update `cells` array in row rendering: merge Type into Course Code as `(L)` or `(T)` suffix; use `formatClassBlock(c)` for Original Class
+- [ ] Remove old column-specific code (Week, Date, Day, Time, Hrs rendering)
+- [ ] Update table min-width from 1350px to ~1000px
+- [ ] Test: table displays correctly with 9 columns; merged cell shows correct format
+
+## Task 2: F1 — Rows Per Page Selector
 **Estimate**: 30 min
 
 - [ ] Refactor `pageState` to include `pageSize`: `pageState = { currentPage: 1, pageSize: 10 }`
@@ -11,7 +25,7 @@
 - [ ] Add `change` event listener: update `pageState.pageSize`, reset `pageState.currentPage = 1`, call `buildTable()`
 - [ ] Test: changing rows per page re-renders table correctly
 
-## Task 2: F2 — Filter Presets (localStorage)
+## Task 3: F2 — Filter Presets (localStorage)
 **Estimate**: 30 min
 
 - [ ] Add `saveFilters()` function: saves `{ search, week }` to localStorage `'rh-filters'`
@@ -23,7 +37,7 @@
 - [ ] Add `click` listener on reset button: clear localStorage, reset filters, call `buildTable()`
 - [ ] Test: filters persist across page reload; reset clears everything
 
-## Task 3: F5 — Keyboard Shortcuts
+## Task 4: F5 — Keyboard Shortcuts
 **Estimate**: 45 min
 
 - [ ] Add `focusedRowIndex = -1` state variable
@@ -37,7 +51,7 @@
 - [ ] Hide hint on mobile (≤768px): `.keyboard-hint { display: none; }` in media query
 - [ ] Test: keyboard navigation works correctly; modal + keyboard interaction doesn't conflict
 
-## Task 4: F6 — Quick View Modal
+## Task 5: F6 — Quick View Modal
 **Estimate**: 45 min
 
 - [ ] Add modal overlay HTML structure (reuse `.modal-overlay`, `.modal`, `.modal-header`, `.modal-body`, `.modal-footer`)
@@ -51,20 +65,20 @@
 - [ ] Update mobile card tap: open Quick View Modal instead of navigating directly
 - [ ] Test: modal opens on row click; arrangement button works; mobile bottom-sheet displays correctly
 
-## Task 5: Changelog Update
+## Task 6: Changelog Update
 **Estimate**: 10 min
 
-- [ ] Add entries to `page-changelogs/replacement-home-changelog.md` for each feature (F1, F2, F5, F6)
+- [ ] Add entries to `page-changelogs/replacement-home-changelog.md` for each feature (F7, F1, F2, F5, F6)
 - [ ] Follow existing format: `| Timestamp | Location | Change | Detail |`
 
-## Task 6: Final Verification
+## Task 7: Final Verification
 **Estimate**: 10 min
 
 - [ ] Run `composer run lint:check` — confirm no new failures
 - [ ] Run `composer run types:check` — confirm no new failures
 - [ ] Verify total line count < 1500
-- [ ] Test all 4 features together (no conflicts)
+- [ ] Test all 5 features together (no conflicts)
 
 ---
 
-**Total estimated time**: ~2.5 hours
+**Total estimated time**: ~3 hours
