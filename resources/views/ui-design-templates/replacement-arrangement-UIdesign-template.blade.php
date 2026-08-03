@@ -1539,7 +1539,9 @@
         }
 
         function checkConflict(dayIndex, hourIndex) {
-            const events = MockData.myTimetable.eventsByWeek[currentWeek] || [];
+            const weekLabel = weekData[currentWeek].label;
+            const semesterWeek = parseInt(weekLabel.replace('Week ', ''));
+            const events = MockData.myTimetable.eventsByWeek[semesterWeek] || [];
             for (let i = 0; i < events.length; i++) {
                 const e = events[i];
                 if (e.di === dayIndex && hourIndex >= e.start && hourIndex < e.end) {
