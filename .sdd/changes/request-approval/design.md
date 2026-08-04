@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Create a new Blade template extending `layouts/ui-template`. The page mirrors the my-request-history page structure (page header → toolbar → table → pagination → summary cards → empty state → modal) but adds PL-specific features: Lecturer column, Urgency column, in-table Approve/Reject actions, and a default "Pending" status filter. All shared CSS comes from `theme.css`; page-specific CSS (modal, badges, buttons, cell-class-block, column widths) is copied from my-request-history's `@section('page-styles')` and adapted. All table rendering, filtering, sorting, and pagination logic follows the my-request-history JS pattern, reusing the shared helpers in `ui-common.js`. The 10 generic helpers currently page-local in my-request-history (`weekRanges`, `formatDateTime`, `statusClass`, `dayAbbr`, `isoDayName`, `formatClassBlock`, `formatReplacementBlock`, `getWeekRange`, `isInWeek`, `getWeekNumber`) are **promoted into `ui-common.js`** as the single source of truth — the new page consumes them from there, and my-request-history is refactored to do the same (its local copies are removed). The mock data (`approvalRequests`, `URGENCY_REFERENCE_DATE`) lives in a **new shared data module `public/js/mock-data.js`** loaded by the layout, separating data from logic. This follows the OOP encapsulation principle: shared logic lives in shared modules, not duplicated per-page. Beyond the core review workflow, 11 PL-efficiency features are added: bulk approve/reject (checkbox column + batch action bar), enhanced approve/reject confirm summaries, reject reason preset chips, urgency filter chips, request age sub-labels, approval notes modal, pending count badge on nav bar, viewed-row indicator, keyboard shortcuts (Arrow/Enter/A/R/Escape), review-next auto-advance after approve/reject, and slot validity preview icons (✓/⚠/?) in the Proposed Replacement column.
+Create a new Blade template extending `layouts/ui-template`. The page mirrors the my-request-history page structure (page header → toolbar → table → pagination → summary cards → empty state → modal) but adds PL-specific features: Lecturer column, Urgency column, in-table Approve/Reject actions, and a default "Pending" status filter. All shared CSS comes from `theme.css`; page-specific CSS (modal, badges, buttons, cell-class-block, column widths) is copied from my-request-history's `@section('page-styles')` and adapted. All table rendering, filtering, sorting, and pagination logic follows the my-request-history JS pattern, reusing the shared helpers in `ui-common.js`. The 10 generic helpers currently page-local in my-request-history (`weekRanges`, `formatDateTime`, `statusClass`, `dayAbbr`, `isoDayName`, `formatClassBlock`, `formatReplacementBlock`, `getWeekRange`, `isInWeek`, `getWeekNumber`) are **promoted into `ui-common.js`** as the single source of truth — the new page consumes them from there, and my-request-history is refactored to do the same (its local copies are removed). The mock data (`approvalRequests`, `URGENCY_REFERENCE_DATE`) lives in a **new shared data module `public/js/mock-data.js`** loaded by the layout, separating data from logic. This follows the OOP encapsulation principle: shared logic lives in shared modules, not duplicated per-page. Beyond the core review workflow, 17 PL-efficiency features are added: bulk approve/reject (checkbox column + batch action bar), enhanced approve/reject confirm summaries, reject reason preset chips, urgency filter chips, request age sub-labels, approval notes modal, pending count badge on nav bar, viewed-row indicator, keyboard shortcuts (Arrow/Enter/A/R/Escape), review-next auto-advance after approve/reject, slot validity preview icons (✓/⚠/?) in the Proposed Replacement column, toast notifications (replacing browser alerts), undo stack (3-5 sec toast with Undo button), animated transitions (row status flash, filter fade, group expand/collapse), smart grouping (Group by dropdown: None/Course/Lecturer), mini request lifecycle timeline in detail modal, and skeleton loading placeholders.
 
 ## Architecture Decisions
 
@@ -32,7 +32,7 @@ Create a new Blade template extending `layouts/ui-template`. The page mirrors th
 
 @section('page-scripts')
     // Page-local logic only — NO mock data here.
-    // approvalRequests + URGENCY_REFERENCE_DATE come from mock-data.js (loaded by layout)
+    // MockData.approvalRequests + MockData.urgencyReferenceDate come from mock-data.js (loaded by layout)
     // weekRanges + shared helpers come from ui-common.js (loaded by layout)
     // urgencyLevel(), urgencyClass(), urgencyLabel(), urgencyDays()
     // approveRequest(), openRejectModal(), closeRejectModal(), updateRejectConfirmState(), rejectRequest()
@@ -326,7 +326,7 @@ const URGENCY_REFERENCE_DATE = new Date('2026-08-29T00:00:00');
 - Different venues (6+, e.g. C201, C202, D103, D104, E201, E202)
 - Class dates spanning Aug 31 – Sep 27 (Weeks 1-4)
 
-The page's `@section('page-scripts')` must NOT redeclare `approvalRequests` or `URGENCY_REFERENCE_DATE` — both are provided by `mock-data.js` (loaded by the layout before the page inline script).
+The page's `@section('page-scripts')` must NOT redeclare `MockData.approvalRequests` or `MockData.urgencyReferenceDate` — both are provided by `mock-data.js` (loaded by the layout before the page inline script). The page reads them via `MockData.*`.
 
 ### 5. Urgency System
 
@@ -418,7 +418,7 @@ function closeRejectModal() {
 }
 ```
 
-These functions do NOT modify `approvalRequests`, do NOT re-render the table, and do NOT update summary cards. The confirm + alert simulates the action without changing state.
+These functions do NOT modify `MockData.approvalRequests`, do NOT re-render the table, and do NOT update summary cards. The confirm + alert simulates the action without changing state.
 
 ### 8. Table Rendering Logic
 
@@ -737,7 +737,9 @@ document.addEventListener('keydown', function(e) {
 });
 
 function highlightRow() {
-    document.querySelectorAll('#dataTable tbody tr').forEach((tr, i) => {
+    // Skip .group-header rows — only navigate data rows
+    const dataRows = document.querySelectorAll('#dataTable tbody tr:not(.group-header)');
+    dataRows.forEach((tr, i) => {
         tr.classList.toggle('row-active', i === activeRowIndex);
     });
 }
@@ -809,6 +811,220 @@ const slotTitle = validityTip[r.slotValidity] || '';
 ```
 
 CSS: `.row-viewed td:first-child { border-left: 3px solid var(--color-primary); }` — subtle left-border accent.
+
+### 24. Toast Notifications (§7l)
+
+Replace all `alert()` calls with `showToast(message, undoCallback, duration)` from `ui-common.js:387`. The toast bar HTML exists in `ui-template.blade.php:44`; CSS in `theme.css:1653`.
+
+**Refactor mapping:**
+
+| Current code | Replacement |
+|-------------|-------------|
+| `alert('Request #' + id + ' approved...')` in `approveRequest()` | `showToast('Request #' + id + ' approved.', undoFn, 5000)` |
+| `alert(label + ' rejected...')` in `rejectRequest()` | `showToast(label + ' rejected.', undoFn, 5000)` |
+| `alert(ids.length + ' request(s) approved...')` in `bulkApprove()` | `showToast(ids.length + ' request(s) approved.', undoFn, 5000)` |
+| `alert(label + ' approved...')` in `confirmApproveWithNotes()` | `showToast(label + ' approved.', undoFn, 5000)` |
+| `alert('Please provide a rejection reason.')` in `rejectRequest()` | `showToast('Please provide a rejection reason.', null, 3000)` |
+
+**Flow change:** After `showToast()`, `reviewNextAfterAction()` is called immediately (not after a blocking alert). The toast is non-blocking — the PL can continue interacting while it's visible.
+
+### 25. Undo Stack (§7m)
+
+After approve/reject, store the previous status and provide an undo callback:
+
+```javascript
+// In approveRequest(id):
+    const r = MockData.approvalRequests.find(x => x.id === id);
+    const prevStatus = r.status;
+    r.status = 'Approved';
+    renderTable();
+    updateNavBadge();
+    showToast('Request #' + id + ' approved.', function() {
+        r.status = prevStatus;
+        renderTable();
+        updateNavBadge();
+    });
+```
+
+**State:** No dedicated state variable — the undo callback captures `prevStatus` in a closure. Only the **last action** is undoable. When the toast auto-dismisses (5s) or is manually closed, the undo callback is cleared (no reference held).
+
+**Known UX quirk (design-phase):** When review-next auto-advance fires (§22), the modal shows the *next* request while the toast shows undo for the *previous* request. The user sees request B's modal but the toast says "Request #A approved — Undo." This is accepted as a design-phase simulation quirk. In the backend phase, the toast message will include the request ID prominently, and the modal will update to show the reverted request on undo.
+
+**Scope:** Undo restores in-memory status only (design phase simulation). In the backend phase, undo would call a revert API endpoint.
+
+### 26. Animated Transitions (§7n)
+
+**Row flash on status change:**
+
+```javascript
+// After renderTable() following approve/reject:
+const row = document.querySelector('tr[data-id="' + id + '"]');
+if (row) {
+    row.classList.add(status === 'Approved' ? 'row-flash-approved' : 'row-flash-rejected');
+    setTimeout(() => row.classList.remove('row-flash-approved', 'row-flash-rejected'), 600);
+}
+```
+
+**CSS:**
+```css
+.row-flash-approved { animation: flashGreen 0.6s ease; }
+.row-flash-rejected { animation: flashRed 0.6s ease; }
+@keyframes flashGreen { 0% { background: var(--color-secondary-container); } 100% { background: transparent; } }
+@keyframes flashRed { 0% { background: var(--color-error-container); } 100% { background: transparent; } }
+```
+
+**Filter fade:** `.grid-scroll` already has `transition: opacity 0.1s` in `theme.css:1130`. Add class toggle:
+```javascript
+// In renderTable() and setGroupFilter():
+gridScroll.classList.add('grid-transitioning');
+requestAnimationFrame(() => { gridScroll.classList.remove('grid-transitioning'); });
+```
+
+**Group expand/collapse:**
+```css
+.group-body { transition: max-height 0.3s ease, opacity 0.2s; overflow: hidden; }
+.group-body.collapsed { max-height: 0; opacity: 0; }
+```
+
+### 27. Smart Grouping (§7o)
+
+**State:** `groupField = 'none'` — toggled by `setGroupFilter(value)`.
+
+**Toolbar HTML:** Add after urgency filter chips, before week filter:
+```html
+<select id="groupFilter" onchange="setGroupFilter(this.value)">
+    <option value="none">No grouping</option>
+    <option value="course">Group by Course</option>
+    <option value="lecturer">Group by Lecturer</option>
+</select>
+```
+
+**Algorithm in renderTable():**
+```javascript
+function renderTable() {
+    // ... existing filter/sort logic produces currentFiltered ...
+    
+    let html = '';
+    if (groupField !== 'none') {
+        const groups = {};
+        currentFiltered.forEach(r => {
+            const key = groupField === 'course' ? r.courseCode : r.lecturer;
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(r);
+        });
+        const sortedKeys = Object.keys(groups).sort();
+        sortedKeys.forEach(key => {
+            const rows = groups[key];
+            const isCollapsed = collapsedGroups.has(key);
+            html += '<tr class="group-header" onclick="toggleGroup(\'' + key.replace(/'/g, "\\'") + '\')">';
+            html += '<td colspan="11"><span class="group-arrow">' + (isCollapsed ? '▶' : '▼') + '</span> ';
+            html += '<strong>' + key + '</strong> <span class="group-count">' + rows.length + '</span></td></tr>';
+            html += '<tbody class="group-body' + (isCollapsed ? ' collapsed' : '') + '">';
+            rows.forEach(r => { html += renderRow(r); }); // existing per-row render
+            html += '</tbody>';
+        });
+    } else {
+        currentFiltered.forEach(r => { html += renderRow(r); });
+    }
+    // ... pagination, summary updates ...
+}
+```
+
+**State:** `collapsedGroups = new Set()` — stores collapsed group keys. `toggleGroup(key)` adds/removes from set, re-renders.
+
+**Interaction with pagination:** Group headers count as 1 row for pagination. If a group spans pages, it is split at the page boundary (group header repeated on next page if needed).
+
+**Interaction with keyboard nav:** Arrow keys skip `.group-header` rows — only navigate data rows.
+
+### 28. Mini Timeline (§7p)
+
+Add a visual lifecycle timeline at the top of the detail modal (`.modal-body`), before Section 1.
+
+**Mock data addition:** Add `viewedAt` (ISO string or null) and `reviewedAt` (ISO string or null) to each `approvalRequests` entry. For Pending items, `reviewedAt` is null. For all items, `viewedAt` is set to a time after `requestedAt`.
+
+**HTML (generated in `openModal()`):**
+```javascript
+function buildTimeline(r) {
+    const steps = [
+        { label: 'Submitted', time: r.requestedAt, done: true },
+        { label: 'Viewed', time: r.viewedAt, done: !!r.viewedAt },
+        { label: 'Reviewed', time: r.reviewedAt, done: !!r.reviewedAt }
+    ];
+    let html = '<div class="request-timeline">';
+    steps.forEach((s, i) => {
+        const cls = s.done ? 'completed' : (i === steps.filter(x => !x.done).length - 1 ? 'active' : 'pending');
+        html += '<div class="timeline-step ' + cls + '">';
+        html += '<div class="timeline-dot"></div>';
+        html += '<div class="timeline-label">' + s.label + '</div>';
+        html += '<div class="timeline-time">' + (s.time ? formatDateTime(s.time) : '—') + '</div>';
+        html += '</div>';
+        if (i < steps.length - 1) html += '<div class="timeline-connector ' + (s.done ? 'completed' : '') + '"></div>';
+    });
+    html += '</div>';
+    return html;
+}
+```
+
+**CSS (in page-styles `@section`):**
+```css
+.request-timeline { display: flex; align-items: center; gap: 0; padding: 12px 0 16px; border-bottom: 1px solid var(--color-outline-variant); margin-bottom: 16px; }
+.timeline-step { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; }
+.timeline-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--color-outline); background: var(--color-surface); transition: all 0.3s; }
+.timeline-step.completed .timeline-dot { background: var(--color-secondary); border-color: var(--color-secondary); }
+.timeline-step.active .timeline-dot { background: var(--color-tertiary); border-color: var(--color-tertiary); animation: pulse 1.5s infinite; }
+.timeline-label { font-size: 11px; font-weight: 500; color: var(--color-on-surface-variant); }
+.timeline-time { font-size: 10px; color: var(--color-on-surface-variant); opacity: 0.7; }
+.timeline-connector { flex: 1; height: 2px; background: var(--color-outline-variant); min-width: 40px; }
+.timeline-connector.completed { background: var(--color-secondary); }
+.timeline-connector.active { background: linear-gradient(90deg, var(--color-secondary), var(--color-tertiary)); }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4); } 50% { box-shadow: 0 0 0 6px rgba(156, 39, 176, 0); } }
+```
+
+### 29. Skeleton Loading (§7q)
+
+Show skeleton placeholder rows on initial load and filter changes.
+
+**Existing CSS:** `.skeleton`, `.skeleton-row` (60px), `.skeleton-card` (80px), `.skeleton-text` (14px, 80% width) with `skeleton-shimmer` animation in `theme.css:1570`.
+
+**Implementation:**
+```javascript
+function showSkeleton() {
+    const tbody = document.querySelector('#dataTable tbody');
+    tbody.innerHTML = '';
+    for (let i = 0; i < 10; i++) {
+        const tr = document.createElement('tr');
+        for (let j = 0; j < 11; j++) {
+            const td = document.createElement('td');
+            td.innerHTML = '<div class="skeleton" style="height:16px;width:' + (60 + Math.random() * 40) + '%"></div>';
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    }
+    document.querySelectorAll('.summary-card .summary-value').forEach(el => {
+        el.innerHTML = '<div class="skeleton" style="height:24px;width:40px;display:inline-block"></div>';
+    });
+}
+```
+
+**Trigger points:**
+1. `DOMContentLoaded` → `showSkeleton()` → 300ms delay → `renderTable()`
+2. `renderTable()` called from filter/sort change → brief skeleton (150ms) → real render
+
+```javascript
+let isInitialLoad = true;
+
+// In DOMContentLoaded:
+showSkeleton();
+setTimeout(() => { isInitialLoad = false; renderTable(); updateNavBadge(); }, 300);
+
+// In renderTable() — brief skeleton flash for filter/sort changes only:
+if (!isInitialLoad) {
+    showSkeleton();
+    setTimeout(() => { renderTableBody(); }, 150);
+    return; // renderTableBody() does the actual render
+}
+// ... full render on initial load
+```
 
 ## Dependencies
 

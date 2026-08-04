@@ -2,7 +2,7 @@
 
 ## Why This Change Is Needed
 
-The current system allows lecturers to submit and track replacement requests via the "My Request History" page, but Program Leaders (PL) have no dedicated interface to review, approve, or reject them. The PL must currently rely on ad-hoc communication (email, WhatsApp) to handle approval workflows, leading to delays, lost requests, and no audit trail. This change adds a Request Approval page that displays all replacement requests with a default "Pending" status filter, urgency indicators (requests within 3 days of the class date flagged as "Urgent"), quick Approve/Reject action buttons inline in the table, and a full detail modal with remarks support. Beyond the core review workflow, the page includes 11 PL-efficiency features: bulk approve/reject with per-row checkboxes and a batch action bar, enhanced approve/reject confirm dialogs with request summaries, reject reason presets (clickable chips), an urgency filter, request age indicators ("X days ago"), approval notes, a pending count badge on the nav bar, a "viewed" indicator for rows already opened in the modal, keyboard shortcuts for rapid navigation (Arrow/Enter/A/R/Escape), review-next auto-advance after approve/reject, and slot validity preview icons (✓/⚠/?) in the Proposed Replacement column. The page is built on the codebase's OOP architecture — **inheritance** (Blade layout via `@extends`), **composition** (Blade partials via `@include`), and **shared modules** (`theme.css`, `ui-common.js`) — and promotes duplicated helpers into the shared JS module so the codebase has a single source of truth instead of copy-pasted page-local copies.
+The current system allows lecturers to submit and track replacement requests via the "My Request History" page, but Program Leaders (PL) have no dedicated interface to review, approve, or reject them. The PL must currently rely on ad-hoc communication (email, WhatsApp) to handle approval workflows, leading to delays, lost requests, and no audit trail. This change adds a Request Approval page that displays all replacement requests with a default "Pending" status filter, urgency indicators (requests within 3 days of the class date flagged as "Urgent"), quick Approve/Reject action buttons inline in the table, and a full detail modal with remarks support. Beyond the core review workflow, the page includes 17 PL-efficiency features: bulk approve/reject with per-row checkboxes and a batch action bar, enhanced approve/reject confirm dialogs with request summaries, reject reason presets (clickable chips), an urgency filter, request age indicators ("X days ago"), approval notes, a pending count badge on the nav bar, a "viewed" indicator for rows already opened in the modal, keyboard shortcuts for rapid navigation (Arrow/Enter/A/R/Escape), review-next auto-advance after approve/reject, slot validity preview icons (✓/⚠/?) in the Proposed Replacement column, toast notifications replacing browser alerts, undo stack (3-5 sec toast with Undo button), animated transitions for state changes, smart grouping by course or lecturer, mini request lifecycle timeline in the detail modal, and skeleton loading placeholders. The page is built on the codebase's OOP architecture — **inheritance** (Blade layout via `@extends`), **composition** (Blade partials via `@include`), and **shared modules** (`theme.css`, `ui-common.js`) — and promotes duplicated helpers into the shared JS module so the codebase has a single source of truth instead of copy-pasted page-local copies.
 
 ## FR Traceability
 
@@ -173,7 +173,7 @@ A small modal `#approveNotesModal` with an optional "Notes" textarea and an Appr
 
 **7.7 Pending Count Badge on Nav Bar (Small effort)**
 
-The "Request Approval" nav link in `ui-nav-bar.blade.php` shows a small red badge with the pending count (e.g. `8`). In the mock phase, the badge is rendered by the page script after counting `approvalRequests.filter(r => r.status === 'Pending').length`. Backend phase: dynamic from `PendingRequest::count()`. Styled as `.nav-badge` — small red circle with white text, positioned after the nav link text.
+The "Request Approval" nav link in `ui-nav-bar.blade.php` shows a small red badge with the pending count (e.g. `8`). In the mock phase, the badge is rendered by the page script after counting `MockData.approvalRequests.filter(r => r.status === 'Pending').length`. Backend phase: dynamic from `PendingRequest::count()`. Styled as `.nav-badge` — small red circle with white text, positioned after the nav link text.
 
 **7.8 Viewed Indicator (Small effort)**
 
@@ -346,6 +346,155 @@ Show a tiny validity indicator in the **Proposed Replacement** column so the PL 
 
 Placed inside the Proposed Replacement cell, after the time line: `3:00 PM – 5:00 PM · <span class="slot-icon slot-valid">✓</span>`.
 
+**l. Toast Notifications** (effort: Small)
+
+Replace all browser `alert()` calls with the existing `showToast(message, undoCallback, duration)` function from `ui-common.js` (line 387). The toast bar HTML already exists in `ui-template.blade.php` (line 44) with CSS in `theme.css` (line 1653).
+
+| Action | Toast message | Undo? | Duration |
+|--------|--------------|-------|----------|
+| Single approve | "Request #X approved." | Yes (§7m) | 5000ms |
+| Single reject | "Request #X rejected." | Yes (§7m) | 5000ms |
+| Bulk approve | "N request(s) approved." | Yes (§7m) | 5000ms |
+| Bulk reject | "N request(s) rejected." | Yes (§7m) | 5000ms |
+| Validation error | "Please provide a rejection reason." | No | 3000ms |
+
+No new HTML or CSS needed — reuses the existing shared toast bar.
+
+**m. Undo Stack** (effort: Small)
+
+When a toast with Undo is shown, the undo callback reverts the action by restoring the previous status in the `MockData.approvalRequests` array and re-rendering.
+
+```javascript
+// Example undo flow for single approve:
+function approveRequest(id) {
+    const r = MockData.approvalRequests.find(x => x.id === id);
+    const prevStatus = r.status; // 'Pending'
+    if (confirm('Approve Request #' + id + '?')) {
+        r.status = 'Approved'; // design-phase simulation
+        renderTable();
+        updateNavBadge();
+        showToast('Request #' + id + ' approved.', function() {
+            r.status = prevStatus; // undo: restore Pending
+            renderTable();
+            updateNavBadge();
+        });
+    }
+}
+```
+
+**Scope:** Undo restores the in-memory status only (design phase). The undo callback is cleared when the toast auto-dismisses or is manually closed. Only the **last action** is undoable (no multi-level undo stack).
+
+**n. Animated Transitions** (effort: Small)
+
+Add subtle CSS transitions to make state changes feel smooth:
+
+| Element | Animation | CSS |
+|---------|-----------|-----|
+| Row status change | Flash green/red background on approve/reject | `.row-flash-approved` / `.row-flash-rejected` — 0.6s fade-out |
+| Filter change | Fade table content opacity 0→1 | `.grid-scroll` already has `transition: opacity 0.1s` — add class toggle |
+| Group expand/collapse | `max-height` transition on group body | `.group-body { transition: max-height 0.3s ease, opacity 0.2s; overflow: hidden; }` |
+| Summary card count | Number count-up on filter change | Optional — CSS `counter()` or JS `requestAnimationFrame` |
+
+```css
+.row-flash-approved { animation: flashGreen 0.6s ease; }
+.row-flash-rejected { animation: flashRed 0.6s ease; }
+@keyframes flashGreen { 0% { background: var(--color-secondary-container); } 100% { background: transparent; } }
+@keyframes flashRed { 0% { background: var(--color-error-container); } 100% { background: transparent; } }
+```
+
+**o. Smart Grouping** (effort: Medium)
+
+Add a "Group by" dropdown in `.toolbar-left` (after the urgency filter chips, before the week filter):
+
+```html
+<select id="groupFilter" onchange="setGroupFilter(this.value)">
+    <option value="none">No grouping</option>
+    <option value="course">Group by Course</option>
+    <option value="lecturer">Group by Lecturer</option>
+</select>
+```
+
+When a group is selected:
+1. After filtering/sorting, group `currentFiltered` by the selected field
+2. Insert `<tr class="group-header">` rows before each group — clickable to collapse/expand
+3. Group header shows: expand/collapse arrow + group name + count badge (e.g. "BCS1234 — Object-Oriented Programming (3)")
+4. Collapsed groups hide their body rows via `max-height: 0; opacity: 0`
+
+**State:** `groupField = 'none'` — toggled by `setGroupFilter(value)`, resets page to 1, calls `renderTable()`.
+
+**Interaction with other features:**
+- Sorting applies **within** each group (groups maintain their order: alphabetical by group key)
+- Pagination applies **after** grouping (group headers count as rows for pagination)
+- Keyboard navigation skips group headers (only navigates data rows)
+- Select All only selects data rows within the current page (not across groups)
+
+**p. Mini Timeline** (effort: Small)
+
+Add a request lifecycle timeline at the top of the detail modal (`.modal-body`), before Section 1:
+
+```html
+<div class="request-timeline">
+    <div class="timeline-step completed">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Submitted</div>
+        <div class="timeline-time">30 Aug, 10:30 AM</div>
+    </div>
+    <div class="timeline-connector completed"></div>
+    <div class="timeline-step completed">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Viewed</div>
+        <div class="timeline-time">30 Aug, 2:15 PM</div>
+    </div>
+    <div class="timeline-connector active"></div>
+    <div class="timeline-step active">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Reviewed</div>
+        <div class="timeline-time">—</div>
+    </div>
+</div>
+```
+
+**States:** `.timeline-step.completed` (green dot + filled), `.timeline-step.active` (amber dot + pulsing), `.timeline-step.pending` (grey dot + outline).
+
+**Data:** Uses existing mock fields: `requestedAt` (Submitted), `viewedAt` (Viewed — new mock field, nullable), `reviewedAt` (Reviewed — new mock field, nullable). The timeline is purely visual — it reads from the request object and does not track real view events.
+
+```css
+.request-timeline { display: flex; align-items: center; gap: 0; padding: 12px 0 16px; border-bottom: 1px solid var(--color-outline-variant); margin-bottom: 16px; }
+.timeline-step { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; }
+.timeline-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--color-outline); background: var(--color-surface); transition: all 0.3s; }
+.timeline-step.completed .timeline-dot { background: var(--color-secondary); border-color: var(--color-secondary); }
+.timeline-step.active .timeline-dot { background: var(--color-tertiary); border-color: var(--color-tertiary); animation: pulse 1.5s infinite; }
+.timeline-label { font-size: 11px; font-weight: 500; color: var(--color-on-surface-variant); }
+.timeline-time { font-size: 10px; color: var(--color-on-surface-variant); opacity: 0.7; }
+.timeline-connector { flex: 1; height: 2px; background: var(--color-outline-variant); min-width: 40px; }
+.timeline-connector.completed { background: var(--color-secondary); }
+.timeline-connector.active { background: linear-gradient(90deg, var(--color-secondary), var(--color-tertiary)); }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-tertiary-rgb, 156, 39, 176), 0.4); } 50% { box-shadow: 0 0 0 6px rgba(var(--color-tertiary-rgb, 156, 39, 176), 0); } }
+```
+
+**q. Skeleton Loading** (effort: Small)
+
+Show skeleton placeholder rows when the page first loads or when filters change, then fade in the real content after a simulated delay.
+
+**Existing CSS:** `.skeleton`, `.skeleton-row` (60px height), `.skeleton-card`, `.skeleton-text` with `skeleton-shimmer` animation in `theme.css:1570`.
+
+**Behavior:**
+1. On `DOMContentLoaded`: show 10 skeleton rows + 4 skeleton cards for 300ms, then render real content
+2. On filter/sort change: briefly show skeleton rows (150ms) then re-render — gives a "loading" feel
+3. Skeleton rows match the table column layout (11 columns)
+
+```javascript
+function showSkeleton() {
+    const tbody = document.querySelector('#dataTable tbody');
+    tbody.innerHTML = Array(10).fill('').map(() =>
+        '<tr>' + Array(11).fill('<td><div class="skeleton" style="height:16px"></div></td>').join('') + '</tr>'
+    ).join('');
+    document.querySelectorAll('.summary-card .summary-value').forEach(el => {
+        el.innerHTML = '<div class="skeleton" style="height:24px;width:40px"></div>';
+    });
+}
+```
+
 **8. Nav Bar Update**
 
 Add a "Request Approval" nav link to `partials/ui-nav-bar.blade.php`, positioned after "Replacement Arrangement" and before "Replacement History":
@@ -411,13 +560,11 @@ These helpers are generic (they depend only on `weekRanges`, `to12h`, `formatDat
 
 **10.6 NEW — shared data module (`mock-data.js`)**
 
-The page's mock data is **not** embedded in the page script. A new shared module `public/js/mock-data.js` defines two globals:
-- `approvalRequests` — 20 request entries (see §6)
-- `URGENCY_REFERENCE_DATE` — fixed demo reference date `new Date('2026-08-29T00:00:00')`
+The page's mock data is **not** embedded in the page script. The shared module `public/js/mock-data.js` defines `window.MockData.approvalRequests` (20 request entries, see §6) and `MockData.urgencyReferenceDate` (fixed demo reference date `new Date('2026-08-29T00:00:00')`).
 
-The layout loads it via `<script src="/js/mock-data.js"></script>` immediately after `ui-common.js` (both before the page's inline script). The page's `@section('page-scripts')` references these globals directly and does NOT redeclare them (redeclaring `const approvalRequests` / `const URGENCY_REFERENCE_DATE` would throw "Identifier already declared" and kill the page script). Data is separated from logic (encapsulation): `mock-data.js` holds only data, `ui-common.js` holds only generic functions, the page holds page-specific logic. Other pages keep their own inline datasets for now — migrating them into `mock-data.js` is future work.
+The layout loads it via `<script src="/js/mock-data.js"></script>` immediately after `ui-common.js` (both before the page's inline script). The page's `@section('page-scripts')` reads from `MockData.*` and does NOT redeclare them (redeclaring `const approvalRequests` / `const URGENCY_REFERENCE_DATE` would throw "Identifier already declared" and kill the page script). Data is separated from logic (encapsulation): `mock-data.js` holds only data, `ui-common.js` holds only generic functions, the page holds page-specific logic. Other pages keep their own inline datasets for now — migrating them into `mock-data.js` is future work.
 
-**Page-local (NOT shared — page-specific):** urgency helpers (`urgencyLevel`, `urgencyClass`, `urgencyLabel`, `urgencyDays` — the functions; the `URGENCY_REFERENCE_DATE` constant lives in `mock-data.js`), `approveRequest`, `rejectRequest`, `slotValidityHtml`, render/filter/sort glue, modal open/close, event listeners. Page-specific CSS (urgency badges, action buttons, column widths, modal styles) stays in the page's `@section('page-styles')` — copied from my-request-history per the existing per-page duplication convention for page-specific CSS.
+**Page-local (NOT shared — page-specific):** urgency helpers (`urgencyLevel`, `urgencyClass`, `urgencyLabel`, `urgencyDays` — the functions; the `MockData.urgencyReferenceDate` value lives in `mock-data.js`), `approveRequest`, `rejectRequest`, `slotValidityHtml`, render/filter/sort glue, modal open/close, event listeners. Page-specific CSS (urgency badges, action buttons, column widths, modal styles) stays in the page's `@section('page-styles')` — copied from my-request-history per the existing per-page duplication convention for page-specific CSS.
 
 ### Out of Scope
 
@@ -431,8 +578,8 @@ The layout loads it via `<script src="/js/mock-data.js"></script>` immediately a
 
 | File | Change |
 |------|--------|
-| `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php` | **Create** — full page with CSS, HTML, JS (references `approvalRequests` + `URGENCY_REFERENCE_DATE` from mock-data.js, does not embed them) |
-| `public/js/mock-data.js` | **Create** — shared data module: `approvalRequests` (20 entries) + `URGENCY_REFERENCE_DATE` |
+| `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php` | **Create** — full page with CSS, HTML, JS (reads `MockData.approvalRequests` + `MockData.urgencyReferenceDate` from mock-data.js, does not embed them) |
+| `public/js/mock-data.js` | **Create** — shared data module: `MockData.approvalRequests` (20 entries) + `MockData.urgencyReferenceDate` |
 | `resources/views/layouts/ui-template.blade.php` | **Modify** — add `<script src="/js/mock-data.js"></script>` after ui-common.js |
 | `resources/views/partials/ui-nav-bar.blade.php` | **Modify** — add "Request Approval" nav link |
 | `routes/web.php` | **Modify** — add `/request-approval-ui` route |

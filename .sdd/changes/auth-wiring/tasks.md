@@ -24,16 +24,25 @@
 ## Task 4: A1 Remember me
 - [ ] 4.1 Add `<label class="remember-me"><input type="checkbox" name="remember" value="1"> Remember me</label>` to `login-student.blade.php` (between password field and login button)
 - [ ] 4.2 Add same checkbox to `login-staff.blade.php`
+- [ ] 4.3 Add remember me help text: student form → `<p class="remember-hint">Keep me logged in for 30 days</p>`, staff form → `<p class="remember-hint">Keep me logged in for 30 minutes</p>`
+- [ ] 4.4 Add `.remember-hint` CSS in `theme.css` (0.75rem, muted color)
 
 ## Task 5: Staff login lockout
 - [ ] 5.1 In `authenticateUsing()`, before DB query, guarded by `if ($loginType === 'staff')`: check `Cache::get("login_lockout:{$loginId}")` — if locked, throw `ValidationException::withMessages(['login_id' => "Account locked. Try again in 10 min. Forgot password? Reset at TARUMT intranet."])`
 - [ ] 5.2 On failed auth (null return, staff only, lecturer exists in DB): increment `Cache::get("login_fail:{$loginId}")`, if >= 3 → set `Cache::put("login_lockout:{$loginId}", ['minutes' => 10], 600)` and forget fail key
 - [ ] 5.3 On successful auth (staff): `Cache::forget("login_fail:{$loginId}")` + `Cache::forget("login_lockout:{$loginId}")`
+- [ ] 5.4 Flash lockout expiry timestamp to session: `session(['lockout_expires' => now()->addMinutes(10)->timestamp])` when throwing lockout ValidationException
+- [ ] 5.5 Create `resources/views/partials/ui-lockout-countdown.blade.php` — red banner with live countdown timer, warning icon, lockout hint with intranet link
+- [ ] 5.6 Create `public/js/lockout-countdown.js` — read `data-expires`, compute remaining, update timer every second, hide when expired, re-enable login button
+- [ ] 5.7 Include partial in `login-staff.blade.php` guarded by `@if(session('lockout_expires'))`
 
 ## Task 6: A3 Session countdown
 - [ ] 6.1 Create `resources/views/partials/ui-session-countdown.blade.php` — container div with `data-lifetime` and `data-last-activity` attributes, countdown text, "Still here?" button, hidden logout form
 - [ ] 6.2 Create `public/js/session-countdown.js` — read data attributes, compute remaining time, show banner at < 120s, countdown text update, "Still here?" → `location.reload()`, at 0 → auto-submit logout form
-- [ ] 6.3 Include partial in `resources/views/layouts/ui-template.blade.php` inside `@auth` block, after the nav bar include, before `@yield('content')`
+- [ ] 6.3 Add modal markup to `ui-session-countdown.blade.php` — overlay div with "Session Expiring Soon" heading, countdown text, "Stay logged in" button (reload), "Logout" button (form submit)
+- [ ] 6.4 Extend `session-countdown.js` — at 60s remaining, show modal overlay; at 0s, auto-submit logout; "Stay logged in" → `location.reload()`
+- [ ] 6.5 Add modal CSS to `theme.css` — `.session-modal-overlay` (fixed, inset 0, semi-transparent bg, z-index 9999, flex center), `.session-modal` (white card, padding, rounded)
+- [ ] 6.6 Include partial in `resources/views/layouts/ui-template.blade.php` inside `@auth` block, after the nav bar include, before `@yield('content')`
 
 ## Task 7: B1 Session indicator
 - [ ] 7.1 Add `<span class="session-dot" title="Session active"></span>` in `ui-nav-bar.blade.php` near user panel, inside `@auth` block

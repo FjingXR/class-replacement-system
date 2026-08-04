@@ -15,6 +15,8 @@ No new migrations or models. Changes span existing files + 3 new files:
 | `resources/views/partials/ui-session-countdown.blade.php` | **NEW** — countdown banner |
 | `public/js/session-countdown.js` | **NEW** — countdown timer |
 | `public/js/auto-logout.js` | **NEW** — staff idle tracker |
+| `resources/views/partials/ui-lockout-countdown.blade.php` | **NEW** — lockout countdown banner |
+| `public/js/lockout-countdown.js` | **NEW** — lockout countdown timer |
 | `config/fortify.php` | No changes (redirectUsing overrides home) |
 
 ## Key decisions
@@ -186,7 +188,103 @@ Add before the submit button in both login forms:
 
 No PHP changes — Fortify's `AttemptToAuthenticate` checks `$request->boolean('remember')` automatically.
 
-### 8. Session indicator (B1)
+### 8. Remember me help text
+
+Below the remember me checkbox in each login form, add context-aware help text:
+
+**Student login (`login-student.blade.php`):**
+```html
+<p class="remember-hint">Keep me logged in for 30 days</p>
+```
+
+**Staff login (`login-staff.blade.php`):**
+```html
+<p class="remember-hint">Keep me logged in for 30 minutes</p>
+```
+
+CSS in `theme.css`:
+```css
+.remember-hint {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    margin-top: 0.25rem;
+}
+```
+
+### 9. Lockout error with countdown (Feature 11)
+
+**Blade partial (`ui-lockout-countdown.blade.php`):**
+```blade
+@props(['expiresAt'])
+<div class="lockout-countdown" data-expires="{{ $expiresAt }}" style="display: none;">
+    <div class="lockout-banner">
+        <svg class="icon-warning"><!-- warning icon --></svg>
+        <span class="lockout-text">Account locked. Try again in <span class="lockout-timer">--:--</span>.</span>
+    </div>
+    <p class="lockout-hint">Forgot password? Reset at <a href="https://intranet.tarumt.edu.my" target="_blank">TARUMT intranet</a>.</p>
+</div>
+```
+
+**JS (`lockout-countdown.js`):**
+- Reads `data-expires` (Unix timestamp)
+- Computes remaining = `expires - Date.now()/1000`
+- Updates `.lockout-timer` every second: `{min} min {sec} sec`
+- When remaining <= 0: hide `.lockout-countdown`, re-enable login button
+
+**Backend:** In `FortifyServiceProvider`, when throwing `ValidationException` for lockout, also flash the lockout expiry:
+```php
+session(['lockout_expires' => now()->addMinutes(10)->timestamp]);
+throw ValidationException::withMessages([...]);
+```
+
+**In `login-staff.blade.php`:**
+```blade
+@if(session('lockout_expires'))
+    @include('partials.ui-lockout-countdown', ['expiresAt' => session('lockout_expires')])
+@endif
+```
+
+### 10. Session expiry modal at 60s (Feature 12)
+
+Extends `session-countdown.js`. At 60s remaining, show a blocking modal:
+
+**Modal markup in `ui-session-countdown.blade.php`:**
+```blade
+<div class="session-modal-overlay" id="sessionModal" style="display: none;">
+    <div class="session-modal">
+        <h3>Session Expiring Soon</h3>
+        <p>Your session expires in <span id="modal-countdown">60</span> seconds.</p>
+        <div class="session-modal-actions">
+            <button onclick="location.reload()" class="btn-primary">Stay logged in</button>
+            <form method="POST" action="{{ route('logout') }}" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn-secondary">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
+```
+
+**JS logic in `session-countdown.js`:**
+- At 120s: show banner (existing)
+- At 60s: show modal overlay, disable page interaction
+- "Stay logged in" → `location.reload()` (refreshes `_auth_last_activity`)
+- At 0s: auto-submit logout form (existing)
+
+CSS: `.session-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; }`
+
+### 11. Session indicator tooltip (Feature 13)
+
+**In `ui-nav-bar.blade.php`:**
+```blade
+@auth
+<span class="session-dot" title="Session active"></span>
+@endauth
+```
+
+Change the existing `title="Session active"` — this was already in the SDD but now explicitly called out as a distinct feature. No additional CSS needed.
+
+### 12. Session indicator (B1)
 
 `@auth` block in nav bar near user panel:
 ```blade

@@ -364,3 +364,35 @@ Chain remains FROZEN. `/sdd-apply` implementer should action Gap A (strip `.togg
  - All 3 features (keyboard shortcuts §7i/§21, review next §7j/§22, slot validity icons §7k/§23) are now fully specified, cross-artifact consistent, and ready for `/sdd-apply`
  - Chain is re-frozen
 
+
+## CHAIN UNFROZEN — 6 advanced UX features — 2026-08-01
+
+### 🔴 Fixed
+ - (none — decision-level unfreeze to add new features)
+
+### 🟡 Addressed
+ - User requested 6 advanced UI/UX features:
+   1. §7l/§24 — Toast notifications (replace all alert() with showToast() from ui-common.js)
+   2. §7m/§25 — Undo stack (3-5 sec toast with Undo button, reverts approve/reject)
+   3. §7n/§26 — Animated transitions (row status flash, filter fade, group expand/collapse)
+   4. §7o/§27 — Smart grouping (Group by dropdown: None/Course/Lecturer, collapsible section headers)
+   5. §7p/§28 — Mini timeline (request lifecycle dots in detail modal: Submitted → Viewed → Reviewed)
+   6. §7q/§29 — Skeleton loading (shimmer rows on filter change, 300ms simulated delay)
+ - Existing infra reused: showToast() in ui-common.js:387, skeleton CSS in theme.css:1570, toast HTML in ui-template.blade.php:44
+ - Chain unfrozen to add to proposal.md (§7l-§7q), design.md (§24-§29), tasks.md (Task 10/11/12/8 updates)
+
+
+## CHAIN RE-FROZEN — 6 advanced UX features — 2026-08-01
+
+### 🔴 Fixed
+ - (none — all items were 🟡, fixed without critical blockers)
+
+### 🟡 Addressed
+ - **Skeleton on filter/sort changes:** Added `isInitialLoad` flag to design.md §29 + tasks Task 12; initial load shows 300ms skeleton, filter/sort changes show 150ms skeleton flash
+ - **Keyboard nav skips group headers:** Updated `highlightRow()` in design.md §21 to use `querySelectorAll('#dataTable tbody tr:not(.group-header)')` — group header rows are excluded from keyboard navigation; updated tasks Task 12 bullet
+ - **Undo after review-next disorientation:** Added design note in design.md §25 documenting the accepted UX quirk — toast shows undo for previous request while modal shows next request; noted as design-phase simulation quirk
+
+### ✅ PASS
+ - All 6 advanced UX features (toast §7l/§24, undo §7m/§25, animations §7n/§26, grouping §7o/§27, timeline §7p/§28, skeleton §7q/§29) are now fully specified, cross-artifact consistent, and ready for `/sdd-apply`
+ - Chain is re-frozen
+
