@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Create a new Blade template extending `layouts/ui-template`. The page mirrors the my-request-history page structure (page header → toolbar → table → pagination → summary cards → empty state → modal) but adds PL-specific features: Lecturer column, Urgency column, in-table Approve/Reject actions, and a default "Pending" status filter. All shared CSS comes from `theme.css`; page-specific CSS (modal, badges, buttons, cell-class-block, column widths) is copied from my-request-history's `@section('page-styles')` and adapted. All table rendering, filtering, sorting, and pagination logic follows the my-request-history JS pattern, reusing the shared helpers in `ui-common.js`. The 10 generic helpers currently page-local in my-request-history (`weekRanges`, `formatDateTime`, `statusClass`, `dayAbbr`, `isoDayName`, `formatClassBlock`, `formatReplacementBlock`, `getWeekRange`, `isInWeek`, `getWeekNumber`) are **promoted into `ui-common.js`** as the single source of truth — the new page consumes them from there, and my-request-history is refactored to do the same (its local copies are removed). The mock data (`approvalRequests`, `URGENCY_REFERENCE_DATE`) lives in a **new shared data module `public/js/mock-data.js`** loaded by the layout, separating data from logic. This follows the OOP encapsulation principle: shared logic lives in shared modules, not duplicated per-page. Beyond the core review workflow, 17 PL-efficiency features are added: bulk approve/reject (checkbox column + batch action bar), enhanced approve/reject confirm summaries, reject reason preset chips, urgency filter chips, request age sub-labels, approval notes modal, pending count badge on nav bar, viewed-row indicator, keyboard shortcuts (Arrow/Enter/A/R/Escape), review-next auto-advance after approve/reject, slot validity preview icons (✓/⚠/?) in the Proposed Replacement column, toast notifications (replacing browser alerts), undo stack (3-5 sec toast with Undo button), animated transitions (row status flash, filter fade, group expand/collapse), smart grouping (Group by dropdown: None/Course/Lecturer), mini request lifecycle timeline in detail modal, and skeleton loading placeholders.
+Create a new Blade template extending `layouts/ui-template`. The page mirrors the my-request-history page structure (page header → toolbar → table → pagination → summary cards → empty state → modal) but adds PL-specific features: Lecturer column, Urgency column, in-table Approve/Reject actions, and a default "Pending" status filter. All shared CSS comes from `theme.css`; page-specific CSS (modal, badges, buttons, cell-class-block, column widths) is copied from my-request-history's `@section('page-styles')` and adapted. All table rendering, filtering, sorting, and pagination logic follows the my-request-history JS pattern, reusing the shared helpers in `ui-common.js`. The 10 generic helpers currently page-local in my-request-history (`weekRanges`, `formatDateTime`, `statusClass`, `dayAbbr`, `isoDayName`, `formatClassBlock`, `formatReplacementBlock`, `getWeekRange`, `isInWeek`, `getWeekNumber`) are **promoted into `ui-common.js`** as the single source of truth — the new page consumes them from there, and my-request-history is refactored to do the same (its local copies are removed). The mock data (`MockData.approvalRequests`, `MockData.urgencyReferenceDate`) lives in a **shared data module `public/js/mock-data.js`** loaded by the layout, separating data from logic. This follows the OOP encapsulation principle: shared logic lives in shared modules, not duplicated per-page. Beyond the core review workflow, 17 PL-efficiency features are added: bulk approve/reject (checkbox column + batch action bar), enhanced approve/reject confirm summaries, reject reason preset chips, urgency filter chips, request age sub-labels, approval notes modal, pending count badge on nav bar, viewed-row indicator, keyboard shortcuts (Arrow/Enter/A/R/Escape), review-next auto-advance after approve/reject, slot validity preview icons (✓/⚠/?) in the Proposed Replacement column, toast notifications (replacing browser alerts), undo stack (3-5 sec toast with Undo button), animated transitions (row status flash, filter fade, group expand/collapse), smart grouping (Group by dropdown: None/Course/Lecturer), mini request lifecycle timeline in detail modal, and skeleton loading placeholders.
 
 ## Architecture Decisions
 
@@ -381,7 +381,7 @@ function approveRequest(id) {
 
 // FR 3.6 — mandatory rejection reason
 function openRejectModal(id) {
-    const r = approvalRequests.find(x => x.id === id);
+    const r = MockData.approvalRequests.find(x => x.id === id);
     if (!r) return;
     currentRejectId = id;
     document.getElementById('rejectReasonInput').value = '';
@@ -441,11 +441,11 @@ The `renderTable()` function follows the my-request-history pattern but with the
 
 ```javascript
 function updateSummary() {
-    const total = approvalRequests.length;
-    const pending = approvalRequests.filter(r => r.status === 'Pending').length;
-    const approved = approvalRequests.filter(r => r.status === 'Approved').length;
-    const rejected = approvalRequests.filter(r => r.status === 'Rejected').length;
-    const reviewed = approvalRequests.filter(r => ['Approved', 'Rejected', 'Completed'].includes(r.status)).length;
+    const total = MockData.approvalRequests.length;
+    const pending = MockData.approvalRequests.filter(r => r.status === 'Pending').length;
+    const approved = MockData.approvalRequests.filter(r => r.status === 'Approved').length;
+    const rejected = MockData.approvalRequests.filter(r => r.status === 'Rejected').length;
+    const reviewed = MockData.approvalRequests.filter(r => ['Approved', 'Rejected', 'Completed'].includes(r.status)).length;
 
     document.getElementById('summaryPending').textContent = pending;
     document.getElementById('summaryApproved').textContent = approved;
@@ -556,7 +556,7 @@ function updateBatchBar() {
 function bulkApprove() {
     const ids = [...selectedIds];
     const summary = ids.map(id => {
-        const r = approvalRequests.find(x => x.id === id);
+        const r = MockData.approvalRequests.find(x => x.id === id);
         return '#' + id + ' ' + r.courseCode + ' — ' + r.lecturer;
     }).join('\n');
     if (confirm('Approve ' + ids.length + ' request(s)?\n\n' + summary + '\n\nThis will notify the lecturers.')) {
@@ -653,7 +653,7 @@ Rendered inside column 2 (Requested Timestamp) below the formatted timestamp. CS
 function openApproveNotesModal(ids) {
     currentApproveIds = ids;
     const summary = ids.map(id => {
-        const r = approvalRequests.find(x => x.id === id);
+        const r = MockData.approvalRequests.find(x => x.id === id);
         return approveSummary(r);
     }).join('\n\n');
     document.getElementById('approveNotesSummary').textContent = summary;
@@ -686,7 +686,7 @@ Single Approve calls `openApproveNotesModal([id])`. Bulk Approve calls `openAppr
 
 ```javascript
 function updateNavBadge() {
-    const count = approvalRequests.filter(r => r.status === 'Pending').length;
+    const count = MockData.approvalRequests.filter(r => r.status === 'Pending').length;
     const badge = document.getElementById('navPendingBadge');
     if (badge) {
         badge.textContent = count;
