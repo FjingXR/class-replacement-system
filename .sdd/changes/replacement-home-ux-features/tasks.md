@@ -25,33 +25,7 @@
 - [ ] Add `change` event listener: update `pageState.pageSize`, reset `pageState.currentPage = 1`, call `buildTable()`
 - [ ] Test: changing rows per page re-renders table correctly
 
-## Task 3: F2 — Filter Presets (localStorage)
-**Estimate**: 30 min
-
-- [ ] Add `saveFilters()` function: saves `{ search, week }` to localStorage `'rh-filters'`
-- [ ] Add `loadFilters()` function: restores saved state from localStorage
-- [ ] Call `saveFilters()` in search input `input` handler
-- [ ] Call `saveFilters()` in week filter `change` handler
-- [ ] In `DOMContentLoaded`: call `populateWeekDropdown()` → `loadFilters()` → `buildTable()` (order matters)
-- [ ] Add reset button (✕ icon) in `toolbar-right`, next to `#resultCount`
-- [ ] Add `click` listener on reset button: clear localStorage, reset filters, call `buildTable()`
-- [ ] Test: filters persist across page reload; reset clears everything
-
-## Task 4: F5 — Keyboard Shortcuts
-**Estimate**: 45 min
-
-- [ ] Add `focusedRowIndex = -1` state variable
-- [ ] Add `keydown` listener on `document`
-- [ ] Implement Arrow Up/Down: move `focusedRowIndex`, clamp to `[0, currentFiltered.length - 1]`
-- [ ] Implement Arrow Left/Right: navigate pagination (prev/next page)
-- [ ] Implement Enter: call `goToReplacementWith(code, date)` for focused row
-- [ ] Implement Escape: check modal state → close modal + `stopPropagation()`; otherwise clear focus
-- [ ] Add `.row-focused` CSS class: `outline: 2px solid var(--color-primary); outline-offset: -2px;`
-- [ ] Add shortcut hint in toolbar: `<span class="keyboard-hint">↑↓ navigate · ←→ paginate · Enter arrange</span>`
-- [ ] Hide hint on mobile (≤768px): `.keyboard-hint { display: none; }` in media query
-- [ ] Test: keyboard navigation works correctly; modal + keyboard interaction doesn't conflict
-
-## Task 5: F6 — Quick View Modal
+## Task 3: F6 — Quick View Modal
 **Estimate**: 45 min
 
 - [ ] Add modal overlay HTML structure (reuse `.modal-overlay`, `.modal`, `.modal-header`, `.modal-body`, `.modal-footer`)
@@ -65,20 +39,20 @@
 - [ ] Update mobile card tap: open Quick View Modal instead of navigating directly
 - [ ] Test: modal opens on row click; arrangement button works; mobile bottom-sheet displays correctly
 
-## Task 6: Changelog Update
+## Task 4: Changelog Update
 **Estimate**: 10 min
 
-- [ ] Add entries to `page-changelogs/replacement-home-changelog.md` for each feature (F7, F1, F2, F5, F6)
+- [ ] Add entries to `page-changelogs/replacement-home-changelog.md` for each feature (F7, F1, F6)
 - [ ] Follow existing format: `| Timestamp | Location | Change | Detail |`
 
-## Task 7: Final Verification
+## Task 5: Final Verification
 **Estimate**: 10 min
 
 - [ ] Run `composer run lint:check` — confirm no new failures
 - [ ] Run `composer run types:check` — confirm no new failures
 - [ ] Verify total line count < 1500
-- [ ] Test all 5 features together (no conflicts)
+- [ ] Test all 3 features together (no conflicts)
 
 ---
 
-**Total estimated time**: ~3 hours
+**Total estimated time**: ~2 hours 15 min

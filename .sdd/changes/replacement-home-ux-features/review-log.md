@@ -60,3 +60,9 @@
 
 ### 🔴 Outstanding
 - None
+
+## Scope Update — 2026-08-03
+
+### Removed from scope
+- **F2 (Filter Presets)**: Dropped — with only 3 filter options (search + week), saving state adds complexity with no real UX benefit
+- **F5 (Keyboard Shortcuts)**: Dropped — partially implemented but verification found incomplete (no row focus navigation, no toolbar hint). Scope reduced from 5 features to 3 (F7, F1, F6)

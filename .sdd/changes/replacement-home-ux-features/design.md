@@ -2,14 +2,12 @@
 
 ## Technical Approach
 
-Enhance the existing `replacement-home-UI-design-template.blade.php` (623 lines) with 5 features using CSS + vanilla JS. All features are client-side only, reading from existing `MockData.conflictedClasses`. No backend changes, no new dependencies, no new files.
+Enhance the existing `replacement-home-UI-design-template.blade.php` (623 lines) with 3 features using CSS + vanilla JS. All features are client-side only, reading from existing `MockData.conflictedClasses`. No backend changes, no new dependencies, no new files.
 
 ## Architecture Decisions
 
 ### State Management
 - **Refactor `pageState`** to include `pageSize`: `pageState = { currentPage: 1, pageSize: 10 }`
-- **Add `focusedRowIndex`** for keyboard navigation: tracks position in `currentFiltered[]` (default: -1 = no focus)
-- **Filter state** saved to localStorage key `'rh-filters'` with shape `{ search: '', week: 'all' }`
 
 ### Feature Implementation
 
@@ -51,25 +49,6 @@ Enhance the existing `replacement-home-UI-design-template.blade.php` (623 lines)
   - On change: update `pageState.pageSize`, reset `pageState.currentPage = 1`, call `buildTable()`
 - **CSS**: Reuse `.filter-select` class from toolbar
 
-#### F2: Filter Presets (localStorage)
-- **JS**:
-  - `saveFilters()`: saves `{ search, week }` to localStorage `'rh-filters'`
-  - `loadFilters()`: restores saved state on DOMContentLoaded
-  - Call `saveFilters()` in search input `input` handler and week filter `change` handler
-  - Reset button: clears localStorage, resets filters, calls `buildTable()`
-- **HTML**: Add reset button (✕ icon) in `toolbar-right`, next to `#resultCount`
-
-#### F5: Keyboard Shortcuts
-- **Desktop only** (≤768px: hint hidden, card tap replaces functionality)
-- **JS**:
-  - `keydown` listener on `document`
-  - Arrow Up/Down: move `focusedRowIndex`, update `.row-focused` class
-  - Arrow Left/Right: navigate pagination (prev/next page)
-  - Enter: call `goToReplacementWith(code, date)` for focused row
-  - Escape: check modal state first → close modal + `stopPropagation()`; otherwise fall through to existing drawer handler
-- **CSS**: `.row-focused { outline: 2px solid var(--color-primary); outline-offset: -2px; }`
-- **HTML**: Add shortcut hint in toolbar: `<span class="keyboard-hint">↑↓ navigate · ←→ paginate · Enter arrange</span>`
-
 #### F6: Quick View Modal
 - **HTML**: Add modal overlay structure (reuse existing `.modal-overlay`, `.modal` classes)
 - **JS**:
@@ -86,7 +65,6 @@ Enhance the existing `replacement-home-UI-design-template.blade.php` (623 lines)
 
 ```
 DOMContentLoaded
-  → loadFilters() (restore localStorage)
   → populateWeekDropdown()
   → buildTable()
     → filter by search + week
@@ -99,20 +77,6 @@ DOMContentLoaded
     → updateResultCount()
 ```
 
-### Keyboard Navigation Flow
-
-```
-keydown
-  → if modal open: Escape closes modal, Arrow/Enter ignored
-  → if not modal:
-    → Arrow Up: focusedRowIndex-- (clamp to 0)
-    → Arrow Down: focusedRowIndex++ (clamp to last row)
-    → Arrow Left: prev page
-    → Arrow Right: next page
-    → Enter: goToReplacementWith(focused row)
-    → Escape: focusedRowIndex = -1 (clear focus)
-```
-
 ## Dependencies
 
 - `public/js/mock-data.js` — `MockData.conflictedClasses` (existing, no changes)
@@ -121,21 +85,19 @@ keydown
 
 ## Promoted to Shared
 
-No promotions needed — all new CSS classes (`.row-focused`, `.keyboard-hint`, `.quick-view-modal`, `.cell-class-block`) are page-specific. If these patterns are reused on 3+ pages in the future, they should be promoted to `theme.css` / `ui-common.js`.
+No promotions needed — all new CSS classes (`.quick-view-modal`, `.cell-class-block`) are page-specific. If these patterns are reused on 3+ pages in the future, they should be promoted to `theme.css` / `ui-common.js`.
 
 ## Mobile View
 
 - **F7**: Column consolidation works on mobile — merged "Original Class" cell displays same format
 - **F1**: Rows-per-page dropdown visible on mobile (full-width in card view pagination)
-- **F2**: Filter presets work on mobile (search + week filters in card view)
-- **F5**: Keyboard shortcuts hidden on mobile; card tap replaces row focus + Enter
 - **F6**: Modal converts to bottom-sheet on mobile (≤768px): `align-items: flex-end`, slide-up animation, 80vh max-height, drag handle element
 
 ## File Changes
 
 | File | Action | Lines Added (est.) |
 |------|--------|-------------------|
-| `replacement-home-UI-design-template.blade.php` | Enhance | +200 lines (CSS: ~50, HTML: ~30, JS: ~120) |
-| `page-changelogs/replacement-home-changelog.md` | Update | +10 lines (5 feature entries) |
+| `replacement-home-UI-design-template.blade.php` | Enhance | +150 lines (CSS: ~40, HTML: ~20, JS: ~90) |
+| `page-changelogs/replacement-home-changelog.md` | Update | +6 lines (3 feature entries) |
 
-**Total estimated lines**: 623 + 200 = ~823 lines (well under 1500 limit)
+**Total estimated lines**: 623 + 150 = ~773 lines (well under 1500 limit)

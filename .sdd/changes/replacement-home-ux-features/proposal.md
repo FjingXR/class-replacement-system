@@ -2,13 +2,13 @@
 
 ## Why This Change Is Needed
 
-The existing Replacement Home Dashboard is functional but lacks polish for power users. Lecturers with many conflicted classes need faster ways to scan, filter, and act on rows. The current page has 14 columns causing excessive horizontal scrolling, no rows-per-page control, no filter memory, no keyboard navigation, and requires clicking a specific button to arrange replacements. These 5 features address real usability gaps identified during testing, matching the UX improvements already applied to the My Request History page.
+The existing Replacement Home Dashboard is functional but lacks polish for power users. Lecturers with many conflicted classes need faster ways to scan, filter, and act on rows. The current page has 14 columns causing excessive horizontal scrolling, no rows-per-page control, and requires clicking a specific button to arrange replacements. These 3 features address real usability gaps identified during testing, matching the UX improvements already applied to the My Request History page.
 
 ## Scope
 
 ### In Scope
 
-Enhance the **existing** `replacement-home-UI-design-template.blade.php` with 5 features:
+Enhance the **existing** `replacement-home-UI-design-template.blade.php` with 3 features:
 
 **F7: Column Consolidation (14 → 9 columns)**
 - Merge 6 date/time columns (Week, Date, Day, Time, Hrs) into one "Original Class" column
@@ -37,24 +37,6 @@ Enhance the **existing** `replacement-home-UI-design-template.blade.php` with 5 
 - State: refactor `pageSize` from standalone `const` to `pageState.pageSize = 10` (default). Update `paginate()` call to read `cfg.state.pageSize`.
 - On change: update `pageState.pageSize`, reset `pageState.currentPage = 1`, re-render table
 - CSS: reuse `.filter-select` class from existing toolbar dropdowns
-
-**F2: Filter Presets (localStorage)**
-- Auto-save filter state to localStorage on every change (search input, week dropdown)
-- localStorage key: `'rh-filters'`
-- On page load (DOMContentLoaded), restore saved filters from localStorage (if exists)
-- Reset Filters button: small icon button (✕) in `toolbar-right`, next to `#resultCount`. Clears localStorage entry AND resets all filters to defaults.
-- State shape: `{ search: '', week: 'all' }` (reason filter intentionally excluded — was removed on 2026-07-20)
-- No UI for "saved presets" — just auto-remember last state
-
-**F5: Keyboard Shortcuts**
-- Desktop only (≤768px: shortcut hint hidden, card tap replaces row focus + Enter)
-- Arrow Left / Arrow Right: navigate pagination (prev/next page)
-- Arrow Up / Arrow Down: move focus between rows in the table
-- Enter: open the arrangement page for the focused row (call `goToReplacementWith(code, date)`)
-- Escape: clear focus / close any open modal (checks modal state first; if modal open, close modal and `stopPropagation()`; otherwise fall through to existing drawer handler)
-- Show keyboard shortcut hint in toolbar (small text: "↑↓ navigate · ←→ paginate · Enter arrange")
-- Visual focus indicator on current row (`.row-focused` class)
-- `focusedRowIndex` tracks position in `currentFiltered[]` — no `id` field needed in mock data
 
 **F6: Quick View Modal**
 - Click ANY row (not just the "Arrange Replacement" button) → open a detail modal
@@ -88,7 +70,7 @@ Enhance the **existing** `replacement-home-UI-design-template.blade.php` with 5 
 
 | File | Action |
 |------|--------|
-| `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php` | **Enhance** — add 5 features (CSS + JS + HTML) |
+| `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php` | **Enhance** — add 3 features (CSS + JS + HTML) |
 | `page-changelogs/replacement-home-changelog.md` | **Update** — add entries for each feature |
 
 No other files are modified.
