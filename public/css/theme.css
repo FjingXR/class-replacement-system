@@ -124,6 +124,7 @@ body {
     background: var(--color-primary-container);
     padding: 0 20px;
     gap: 0;
+    overflow: hidden;
 }
 
 .top-logo {
@@ -717,8 +718,6 @@ html.light .badge-replacement { background: var(--color-primary-dark); color: va
 @media (max-width: 768px) {
     .app-container { padding: 10px 12px; padding-top: 66px; }
     .top-logo { margin-right: 12px; }
-    .nav-items { gap: 2px; }
-    .nav-item { padding: 0 8px; font-size: 12px; }
     .user-info { display: none; }
     .pagination-bar { flex-direction: column; gap: 8px; align-items: center; }
     .toolbar-left { width: 100%; }
@@ -1312,6 +1311,11 @@ html.dark .semester-bar select:not(.week-select) {
 }
 
 /* ── Mobile Nav Overrides ── */
+@media (max-width: 1024px) {
+    .nav-items { display: none; }
+    .nav-hamburger { display: flex; }
+    .top-right { gap: 4px; padding-left: 12px; }
+}
 @media (max-width: 768px) {
     .nav-hamburger { display: flex; position: fixed; right: 12px; top: 12px; z-index: 100; background: var(--color-surface); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
     .nav-items { display: none; }
