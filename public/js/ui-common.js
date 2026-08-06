@@ -42,9 +42,43 @@ function updateWeekArrows(prevDisabled, nextDisabled) {
     if (next) next.disabled = nextDisabled;
 }
 
+// ───── Week helpers (shared by timetable pages) ─────
+
+function currentWeekIndex() {
+    const semesterStart = new Date(MockData.semester.startDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const idx = Math.floor((today - semesterStart) / 86400000 / 7);
+    return Math.max(0, Math.min(MockData.semester.weeks - 1, idx));
+}
+
+function updateProgress() {
+    const pct = ((currentWeek + 1) / MockData.semester.weeks) * 100;
+    const fill = document.getElementById('progressFill');
+    const label = document.getElementById('progressLabel');
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks;
+}
+
+function fmt(d) {
+    return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' }) + ' ' + d.getFullYear();
+}
+
+function updateWeekSubtitle() {
+    const el = document.getElementById('weekSubtitle');
+    if (el) {
+        el.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks + ' \u00B7 ' + fmt(weekData[currentWeek].start) + ' \u00B7 ' + fmt(weekData[currentWeek].end);
+    }
+}
+
+function updateWeekArrowState() {
+    var sel = document.getElementById('weekFilter');
+    updateWeekArrows(sel.selectedIndex <= 0, sel.selectedIndex >= sel.options.length - 1);
+}
+
 // ───── Today button (shared by all timetable pages) ─────
-// Each page must define: currentWeekIndex(), buildTimetable(), updateWeekSubtitle()
-// Optionally define: updateSummary(), updateProgress(), saveWeek()
+// Each page must define: buildTimetable()
+// Optionally define: updateSummary(), saveWeek()
 
 function jumpToToday() {
     currentWeek = currentWeekIndex();

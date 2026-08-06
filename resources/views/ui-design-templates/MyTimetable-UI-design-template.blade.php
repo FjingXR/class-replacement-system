@@ -248,13 +248,6 @@
         }
         const eventsData = eventsByWeek;
 
-        function currentWeekIndex() {
-            const semesterStart = new Date(MockData.semester.startDate);
-            const today = new Date('2026-08-02');
-            today.setHours(0, 0, 0, 0);
-            const idx = Math.floor((today - semesterStart) / 86400000 / 7);
-            return Math.max(0, Math.min(weekData.length - 1, idx));
-        }
         let currentWeek = currentWeekIndex();
 
         /* ───── Week persistence: keep the user's chosen week across refresh ───── */
@@ -267,21 +260,6 @@
         }
         function saveWeek() {
             try { localStorage.setItem(WEEK_KEY, String(currentWeek)); } catch (e) { /* storage unavailable — ignore */ }
-        }
-
-        function updateProgress() {
-            const pct = ((currentWeek + 1) / MockData.semester.weeks) * 100;
-            const fill = document.getElementById('progressFill');
-            const label = document.getElementById('progressLabel');
-            if (fill) fill.style.width = pct + '%';
-            if (label) label.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks;
-        }
-
-        function updateWeekSubtitle() {
-            const el = document.getElementById('weekSubtitle');
-            if (el) {
-                el.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks + ' \u00B7 ' + weekData[currentWeek].range;
-            }
         }
 
         function openModal(event) {

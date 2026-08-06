@@ -190,13 +190,6 @@
         });
 
         /* ───── State ───── */
-        function currentWeekIndex() {
-            const semesterStart = new Date(MockData.semester.startDate);
-            const today = new Date('2026-08-02');
-            today.setHours(0, 0, 0, 0);
-            const idx = Math.floor((today - semesterStart) / 86400000 / 7);
-            return Math.max(0, Math.min(weekData.length - 1, idx));
-        }
         let currentWeek = currentWeekIndex();
         let selectedCohortId = null;
 

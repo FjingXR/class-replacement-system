@@ -1173,10 +1173,6 @@
             }
         }
 
-        function updateWeekArrowState() {
-            var sel = document.getElementById('weekFilter');
-            updateWeekArrows(sel.selectedIndex <= 0, sel.selectedIndex >= sel.options.length - 1);
-        }
 
         document.addEventListener('DOMContentLoaded', function() {
             var weekSel = document.getElementById('weekFilter');

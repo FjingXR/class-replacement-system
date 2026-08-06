@@ -501,10 +501,6 @@
             }
         }
 
-        function updateWeekArrowState() {
-            const sel = document.getElementById('weekFilter');
-            updateWeekArrows(sel.selectedIndex <= 0, sel.selectedIndex >= sel.options.length - 1);
-        }
 
         function showKeyboardShortcuts() {
             var el = document.getElementById('keyboardModal');
