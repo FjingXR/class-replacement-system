@@ -86,6 +86,6 @@
 - [x] For each: confirm layout/behavior identical to before refactor (the ONLY expected visual change is `.badge-replacement` amber → primary blue)
 - [x] Confirm theme toggle, nav, week pickers, filters, modals all functional
 - [x] Confirm `composer run lint:check` passes (no PHP changes, only Blade)
-- [ ] Commit: `refactor: extract shared UI patterns into Blade partials + theme.css (Phase 1)`
+- [x] Commit: `refactor: extract shared UI patterns into Blade partials + theme.css (Phase 1)`
 
 **Effort:** ~1h

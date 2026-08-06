@@ -1,224 +1,127 @@
-# Spec: /sdd-propose for Mobile Responsive + Nav Drawer
+# Spec: /sdd-propose for Mobile Responsive — Replacement Home
 
-> **Cross-cutting change** — affects ALL existing UI pages, not a single new page.
+> **Single-page change** — affects only `replacement-home-UI-design-template.blade.php`.
 > This prompt overrides the standard `sdd-propose-ui-page.md` workflow where it conflicts.
 
 ## Context (read first)
 
 1. Read `CodingMAIN.md` §10.0 (UI Design Rules) — especially rule 9 (mobile responsive) and rule 10.
 2. Read `public/css/theme.css` — current shared CSS, existing `@media` breakpoints at 1024px and 768px.
-3. Read `resources/views/partials/ui-nav-bar.blade.php` — current desktop nav.
-4. Read `resources/views/layouts/ui-template.blade.php` — layout wrapper.
-5. Read `public/js/ui-common.js` — existing shared JS helpers.
-6. Read every page under `resources/views/ui-design-templates/` to inventory mobile issues:
-   - `student-my-timetable-UI-design-template.blade.php`
-   - `MyTimetable-UI-design-template.blade.php`
-   - `CohortTimetable-UI-design-template.blade.php`
-   - `my-request-history-UI-design-template.blade.php`
-   - `replacement-arrangement-UIdesign-template.blade.php`
-   - `replacement-home-UI-design-template.blade.php`
+3. Read `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php` — the page to enhance.
+4. Read `page-changelogs/replacement-home-changelog.md` — learn house style + existing changes.
 
-## Scope — all enhancements
+## Current mobile state
 
-### A. Nav Drawer (≤768px)
+Already done:
+- ✅ Card view (`.replacement-card`) replaces table on ≤768px
+- ✅ Grid wrapper, pagination bar, sort hint hidden on mobile
+
+Not done (required by Rule #10):
+- ❌ Summary cards not stacked on mobile (`.summary-bar` has no mobile CSS)
+- ❌ Filters not full-width on mobile (`.toolbar`, `.search-wrapper`, `.week-nav`)
+- ❌ Quick View modal not bottom-sheet on mobile (no mobile CSS for `#quickViewModal`)
+- ❌ Touch targets not audited (buttons/links may be < 44×44px)
+- ❌ No responsive typography (title, card text)
+- ❌ Keyboard shortcuts button hidden but not replaced with mobile alternative
+
+## Scope — enhancements
+
+### A. Summary Cards (≤768px)
 | Item | Detail |
 |------|--------|
-| Trigger | 3-line hamburger icon (☰) in top-left, replaces desktop links |
-| Drawer | Slides in from left, full height, dark surface background |
-| Items | Same `$navItems` array, stacked vertically, active indicator |
-| Close | Tap X button, tap overlay, or swipe left |
-| Overlay | Semi-transparent black backdrop, closes drawer on tap |
-| Body scroll | Locked when drawer open (`overflow: hidden`) |
-| Breakpoint | ≤768px |
+| Current | 5 cards in a row (`.summary-bar` flex) |
+| Target | 2-column grid: 3 cards top row, 2 cards bottom row |
+| CSS | `.summary-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }` in media query |
+| Full-width | Last row cards span full width if odd count |
 
-### B. Timetable Grid Card Layout (≤768px)
+### B. Toolbar / Filters (≤768px)
 | Item | Detail |
 |------|--------|
-| Convert | Data table → card layout (each day = one card) |
-| Card content | Day name, date, event blocks stacked vertically |
-| Scroll | Vertical scroll (no horizontal) |
-| Sticky | Day card header sticks on scroll |
+| Search input | Full width, stack above week picker |
+| Week nav | Full width below search |
+| Layout | Stack toolbar-left items vertically |
+| Result count | Hide on mobile (card view shows count implicitly) |
+| Keyboard shortcut button | Hide on mobile |
 
-### C. Summary Cards (≤768px)
-| Item | Detail |
-|------|--------|
-| Layout | 2-column grid (5 cards → 3+2) |
-| Fallback | 1-column if 2 still squishes |
-| Full-width | Cards span full width of container |
-
-### D. Legend Bar (≤768px)
-| Item | Detail |
-|------|--------|
-| Layout | Flex-wrap, items flow into 2 rows naturally |
-| Gap | Maintain consistent gap between items |
-
-### E. Semester Bar (≤768px)
-| Item | Detail |
-|------|--------|
-| Week select | Reduce min-width, allow text truncation |
-| Arrows + Today | Stack below select or reduce padding |
-| Full-width | Bar spans full width |
-
-### F. Page Header (≤768px)
-| Item | Detail |
-|------|--------|
-| Chips | Stack vertically with spacing |
-| Title | Reduce font size |
-| Description | Full width |
-
-### G. Bottom Sheet Modals (≤768px)
+### C. Quick View Modal → Bottom Sheet (≤768px)
 | Item | Detail |
 |------|--------|
 | Position | Slide up from bottom (not centered) |
 | Height | 80vh max, scrollable content |
-| Drag handle | Top handle bar for swipe-to-dismiss |
+| Drag handle | Top handle bar for visual affordance |
 | Overlay | Full-screen backdrop |
-| Animation | Slide up from bottom with transition |
+| Animation | Slide up with CSS transition |
+| Button | "Arrange Replacement" button full-width in footer |
+| Close button | Full-width below arrange button |
 
-### H. Touch Targets (WCAG 2.5.5)
+### D. Touch Targets (WCAG 2.5.5)
 | Item | Detail |
 |------|--------|
-| Minimum size | All buttons/links ≥ 44×44px |
-| Padding | Add tap area padding where needed |
-| Affects | Nav items, legend items, week arrows, Today button, modal close |
+| Minimum | All buttons/links ≥ 44×44px |
+| Affected | Week arrows, card tap area, modal buttons, arrange button |
+| Method | Add `min-height: 44px; min-width: 44px` where needed |
 
-### I. Swipe Gestures (≤768px)
+### E. Responsive Typography (≤768px)
 | Item | Detail |
 |------|--------|
-| Week navigation | Swipe left = next week, swipe right = previous week |
-| Visual hint | Subtle arrow indicator on swipe edges |
-| Threshold | Minimum 50px swipe distance |
-| Debounce | Prevent rapid swiping |
+| Page title | 24px → 20px |
+| Card code | 14px → 13px |
+| Card body | 12px → 11px |
+| Method | CSS `clamp()` or media query overrides |
 
-### J. Collapsible Day Rows (≤768px)
+### F. Card View Improvements (≤768px)
 | Item | Detail |
 |------|--------|
-| Behavior | Each day card collapsible (tap header to expand/collapse) |
-| Default | Expanded on load, collapsed on scroll past |
-| Icon | Chevron down/up indicator |
-| Animation | Smooth height transition |
-
-### K. Responsive Typography (≤768px)
-| Item | Detail |
-|------|--------|
-| Page title | Reduce from 24px to 20px |
-| Day labels | Reduce from 14px to 13px |
-| Event text | Reduce from 12px to 11px |
-| Method | CSS `clamp()` for fluid scaling |
-
-### L. Safe Area Insets
-| Item | Detail |
-|------|--------|
-| iPhone notch | `env(safe-area-inset-top)` for status bar |
-| Home indicator | `env(safe-area-inset-bottom)` for bottom nav |
-| CSS | `padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)` |
-
-### M. Full-width Form Inputs (≤768px)
-| Item | Detail |
-|------|--------|
-| Selects | `width: 100%` on mobile |
-| Text inputs | `width: 100%` on mobile |
-| Buttons | Full-width primary actions |
-
-### N. Skeleton Loading
-| Item | Detail |
-|------|--------|
-| When | While data loads (page init, week switch) |
-| Shape | Grey placeholder blocks matching layout (cards, rows, headers) |
-| Animation | Subtle shimmer/pulse effect |
-| Duration | Until `DOMContentLoaded` or data fetch completes |
-
-### O. Scroll Restoration
-| Item | Detail |
-|------|--------|
-| Behavior | Remember scroll position per page |
-| Trigger | Browser back/forward navigation |
-| Implementation | `sessionStorage` to save/restore `scrollTop` |
-| Scope | Timetable grid, request history list |
-
-### P. Toast Position (≤768px)
-| Item | Detail |
-|------|--------|
-| Mobile | Toasts at bottom-center (thumb-reachable) |
-| Desktop | Toasts stay top-right (existing) |
-| CSS | `bottom: 24px; left: 50%; transform: translateX(-50%)` on mobile |
-
-### Q. Viewport Meta
-| Item | Detail |
-|------|--------|
-| Tag | `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">` |
-| Location | `resources/views/layouts/ui-template.blade.php` `<head>` |
-| Purpose | Proper scaling + safe area support |
+| Card spacing | Reduce margin-bottom from 8px to 6px |
+| Card padding | Reduce from 14px 16px to 12px 14px |
+| Tap area | Entire card is tappable (already has `cursor: pointer`) |
+| Active state | Already has `transform: scale(0.99)` — keep |
 
 ## Files to change
 
 | File | Change type |
 |------|-------------|
-| `resources/views/partials/ui-nav-bar.blade.php` | **Rewrite** — hamburger + drawer markup |
-| `resources/views/layouts/ui-template.blade.php` | **Modify** — drawer container + overlay + safe-area |
-| `public/css/theme.css` | **Extend** — all mobile media queries (shared) |
-| `public/js/ui-common.js` | **Extend** — `initMobileNav()`, `initSwipeGesture()`, `initCollapsibleCards()` |
-| All 6 page templates | **Minimal** — verify no page-specific overrides break shared mobile rules |
+| `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php` | **Extend** — add mobile CSS in `@section('page-styles')` `@media` block |
+
+Only the page template is modified. No shared files (`theme.css`, `ui-common.js`) are touched — this is page-specific mobile work.
 
 ## Deliverables (SDD format)
 
 ### 1. `proposal.md`
-- Change name: `mobile-responsive`
-- Problem: all pages lack mobile layout; nav overflows; grid unscrollable; modals not mobile-friendly
-- Scope: cross-cutting (all 6 pages + shared files)
-- Out of scope: new pages, backend logic, new dependencies, Performance & Polish
+- Change name: `replacement-home-mobile-responsive`
+- Problem: replacement-home page lacks full mobile compliance with Rule #10
+- Scope: single page — `replacement-home-UI-design-template.blade.php`
+- Out of scope: shared nav drawer (already in `ui-template`), other pages, backend, new dependencies
 
 ### 2. `design.md`
-- §1 Nav drawer: markup, CSS, JS behavior, breakpoint
-- §2 Card layout: timetable grid → card conversion
-- §3 Shared mobile CSS: media queries for all components
-- §4 Bottom sheet modals: markup, CSS, JS
-- §5 Touch targets: audit + fixes
-- §6 Swipe gestures: JS implementation
-- §7 Collapsible cards: markup, CSS, JS
-- §8 Typography: responsive font sizes
-- §9 Safe area insets: CSS
-- §10 Full-width inputs: CSS
-- §11 Page-specific fixes (if any)
-- §12 Skeleton loading: markup, CSS, animation
-- §13 Scroll restoration: JS implementation
-- §14 Toast position: mobile CSS
-- §15 Viewport meta: HTML tag
-- §16 Promoted to shared: all new mobile CSS → `theme.css`, JS → `ui-common.js`
+- §1 Existing mobile state (what's already done)
+- §2 Summary cards mobile layout (2-column grid)
+- §3 Toolbar mobile layout (stacked filters, full-width)
+- §4 Quick View modal → bottom sheet (CSS + structure)
+- §5 Touch target audit + fixes
+- §6 Responsive typography
+- §7 Card view refinements
+- §8 Mobile view section (mandatory — document all mobile behaviors)
 
 ### 3. `tasks.md`
-- Task 1: Add hamburger + drawer markup to `ui-nav-bar.blade.php`
-- Task 2: Add drawer container + overlay + safe-area to `ui-template.blade.php`
-- Task 3: Add `initMobileNav()` to `ui-common.js`
-- Task 4: Add `initSwipeGesture()` to `ui-common.js`
-- Task 5: Add `initCollapsibleCards()` to `ui-common.js`
-- Task 6: Add mobile media queries to `theme.css` (all components)
-- Task 7: Add card layout CSS for timetable grid
-- Task 8: Add bottom sheet modal CSS
-- Task 9: Add touch target fixes to `theme.css`
-- Task 10: Add responsive typography to `theme.css`
-- Task 11: Add safe area insets to `theme.css`
-- Task 12: Add full-width input CSS
-- Task 13: Add skeleton loading CSS to `theme.css`
-- Task 14: Add scroll restoration JS to `ui-common.js`
-- Task 15: Add mobile toast position CSS to `theme.css`
-- Task 16: Add viewport meta to `ui-template.blade.php`
-- Task 15: Add skeleton loading CSS to `theme.css`
-- Task 16: Add scroll restoration JS to `ui-common.js`
-- Task 17: Add mobile toast position CSS to `theme.css`
-- Task 18: Add viewport meta to `ui-template.blade.php`
-- Task 19: Verify + fix each page template (6 pages)
-- Task 20: Lint + typecheck
-- Task 21: Changelog
+- Task 1: Summary cards — add 2-column grid CSS in media query
+- Task 2: Toolbar — add stacked layout CSS in media query
+- Task 3: Quick View modal — add bottom-sheet CSS in media query
+- Task 4: Touch targets — audit + add min-height/min-width
+- Task 5: Responsive typography — add clamp()/media query overrides
+- Task 6: Card view — refine spacing/padding for mobile
+- Task 7: Verify all mobile changes work together
+- Task 8: Lint + typecheck
+- Task 9: Update changelog
 
 ### 4. Changelog
-- `page-changelogs/mobile-responsive-changelog.md`
+- Update `page-changelogs/replacement-home-changelog.md` (ALREADY EXISTS — do NOT create new file)
 
 ## Constraints
-- No new dependencies (pure CSS + vanilla JS)
-- All mobile CSS in `theme.css` (shared, not page-specific `@section('page-styles')`)
-- Hamburger icon: inline SVG (no icon library)
-- Drawer animation: CSS `transform: translateX()` + `transition: 0.3s`
-- Must not break desktop layout (all mobile rules inside `@media (max-width: 768px)`)
-- Card layout must show same data as grid (no info loss)
+- No new dependencies (pure CSS)
+- All mobile CSS in the page's `@section('page-styles')` inside `@media (max-width: 768px)`
+- Must not break desktop layout (all mobile rules inside media query)
+- Must not break existing card view (`.replacement-card` already works)
+- Quick View modal bottom-sheet must reuse existing `.modal-overlay` / `.modal` classes from `theme.css`
 - Touch targets must meet WCAG 2.5.5 (≥44×44px)
+- Commit prefix: `ui:`

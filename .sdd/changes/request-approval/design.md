@@ -940,7 +940,7 @@ function renderTable() {
 
 Add a visual lifecycle timeline at the top of the detail modal (`.modal-body`), before Section 1.
 
-**Mock data addition:** Add `viewedAt` (ISO string or null) and `reviewedAt` (ISO string or null) to each `approvalRequests` entry. For Pending items, `reviewedAt` is null. For all items, `viewedAt` is set to a time after `requestedAt`.
+**Mock data addition:** Add `viewedAt` (ISO string or null) and `reviewedAt` (ISO string or null) to each `MockData.approvalRequests` entry. For Pending items, `reviewedAt` is null. For all items, `viewedAt` is set to a time after `requestedAt`.
 
 **HTML (generated in `openModal()`):**
 ```javascript
@@ -1030,7 +1030,7 @@ if (!isInitialLoad) {
 
 - `theme.css` — shared component CSS (loaded via layout `<link>`)
 - `ui-common.js` — shared JS module (loaded via layout `<script>`): `to12h()`, `formatDate()`, `compareBy()`, `makeSortableHeader()`, `paginate()`, `updateResultCount()`, `closeOnOverlayClick()`, plus the 10 promoted helpers from my-request-history (`weekRanges`, `formatDateTime()`, `statusClass()`, `dayAbbr()`, `isoDayName()`, `formatClassBlock()`, `formatReplacementBlock()`, `getWeekRange()`, `isInWeek()`, `getWeekNumber()`) — note: `closeOnEsc()` is NOT used on this page (replaced by ONE keydown handler that closes the topmost modal, see §12)
-- `mock-data.js` — **NEW shared data module** (loaded via layout `<script>` after ui-common.js): `approvalRequests` (20 entries) + `URGENCY_REFERENCE_DATE`
+- `mock-data.js` — **shared data module** (loaded via layout `<script>` after ui-common.js): `MockData.approvalRequests` (20 entries) + `MockData.urgencyReferenceDate`
 - `partials/ui-summary-bar.blade.php` — reuse for summary cards
 - `partials/ui-nav-bar.blade.php` — auto-included by layout (needs "Request Approval" link added)
 - `layouts/ui-template.blade.php` — base layout with `@yield` sections (modified to add the mock-data.js script tag)
@@ -1039,8 +1039,8 @@ if (!isInitialLoad) {
 
 | File | Change |
 |------|--------|
-| `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php` | **Create** — full page with CSS, HTML, JS (references `approvalRequests` + `URGENCY_REFERENCE_DATE` from mock-data.js, does not embed them) |
-| `public/js/mock-data.js` | **Create** — shared data module: `approvalRequests` (20 entries) + `URGENCY_REFERENCE_DATE` |
+| `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php` | **Create** — full page with CSS, HTML, JS (reads `MockData.approvalRequests` + `MockData.urgencyReferenceDate` from mock-data.js, does not embed them) |
+| `public/js/mock-data.js` | **Create** — shared data module: `MockData.approvalRequests` (20 entries) + `MockData.urgencyReferenceDate` |
 | `resources/views/layouts/ui-template.blade.php` | **Modify** — add `<script src="/js/mock-data.js"></script>` after ui-common.js |
 | `resources/views/partials/ui-nav-bar.blade.php` | **Modify** — add "Request Approval" nav link after "Replacement Arrangement" |
 | `routes/web.php` | **Modify** — add `/request-approval-ui` route |

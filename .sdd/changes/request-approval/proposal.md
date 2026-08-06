@@ -118,7 +118,7 @@ Mock data: ~4-5 of the 20 entries have `slotValidity: 'conflict'` (e.g. "Room al
 
 The mock data lives in a **new shared module `public/js/mock-data.js`** (data separated from logic — encapsulation). It defines two globals consumed by the page:
 
-- `approvalRequests` — the 20 request entries
+- `MockData.approvalRequests` — the 20 request entries
 - `URGENCY_REFERENCE_DATE` — the fixed demo reference date (`2026-08-29T00:00:00`)
 
 The layout loads `mock-data.js` via `<script src="/js/mock-data.js"></script>` right after `ui-common.js` (both before the page's inline script). The page script references the globals directly — it does NOT redeclare them. No other page's inline mock data is touched (my-request-history keeps its own distinct inline dataset; migrating other pages' data into `mock-data.js` is future work).

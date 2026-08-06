@@ -396,3 +396,17 @@ Chain remains FROZEN. `/sdd-apply` implementer should action Gap A (strip `.togg
  - All 6 advanced UX features (toast §7l/§24, undo §7m/§25, animations §7n/§26, grouping §7o/§27, timeline §7p/§28, skeleton §7q/§29) are now fully specified, cross-artifact consistent, and ready for `/sdd-apply`
  - Chain is re-frozen
 
+
+## CHAIN RE-FROZEN — MockData convention fix — 2026-08-01
+
+### 🔴 Fixed
+ - **Convention compliance:** All 3 artifacts updated to reference `MockData.approvalRequests` / `MockData.urgencyReferenceDate` instead of bare globals `approvalRequests` / `URGENCY_REFERENCE_DATE`. Matches mandated spec (AGENTS.md rule 4 / sdd-propose-ui-page.md §4): "read from `window.MockData.*`."
+ - proposal.md: §6, §7m, §10.6, Files Changed table — all updated
+ - design.md: Technical Approach, §4 comment, §5 note, §7/§8/§9/§12/§25/§28 code snippets, §30 Dependencies, File Changes table — all updated
+ - tasks.md: Tasks 5, 8, 12 — all updated
+ - Note: `const approvalRequests = [` in design.md §4 stays as-is — it shows the mock-data.js file content (the data definition), not page-script usage
+
+### ✅ PASS
+ - All artifacts now consistent with `window.MockData.*` convention
+ - Chain re-frozen
+
