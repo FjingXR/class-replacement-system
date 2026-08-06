@@ -1,0 +1,1161 @@
+@extends('layouts.ui-template', ['activeNav' => 'request-approval'])
+
+@section('title', 'Request Approval')
+
+@section('page-styles')
+
+        /* ───── Clear Button ───── */
+        .btn-clear {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--color-outline);
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            margin-left: 8px;
+        }
+        .btn-clear:hover {
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface);
+        }
+
+        /* ───── Column Widths ───── */
+        .col-no { width: 50px; }
+        .timetable td.col-requested-at { width: 145px; white-space: normal; }
+        .col-code { width: 200px; }
+        .col-original { width: 170px; }
+        .col-replacement { width: 170px; }
+        .col-original, .col-replacement { white-space: normal; }
+        .col-students { width: 70px; }
+        .col-lecturer { width: 130px; }
+        .col-urgency { width: 90px; }
+        .col-status { width: 130px; }
+        .col-actions { width: 140px; text-align: center; }
+
+        .grid-scroll .timetable { min-width: 1335px; }
+
+        .col-replacement .cell-class-block .class-time {
+            font-weight: 600;
+        }
+        .col-replacement .cell-class-block .class-time.status-pending {
+            color: #f59e0b;
+        }
+        .col-replacement .cell-class-block .class-time.status-approved {
+            color: #10b981;
+        }
+        .col-replacement .cell-class-block .class-time.status-rejected {
+            color: #ef4444;
+        }
+        .col-replacement .cell-class-block .class-time.status-cancelled {
+            color: var(--color-on-surface-variant);
+            opacity: 0.6;
+        }
+        .col-replacement .cell-class-block .class-time.status-completed {
+            color: #3b82f6;
+        }
+
+        /* ───── Status Badges ───── */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: filter 0.15s;
+        }
+        .badge:hover {
+            filter: brightness(1.1);
+        }
+        .badge-subtitle {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+        .status-pending {
+            background: var(--color-tertiary-container);
+            color: var(--color-on-tertiary-container);
+        }
+        .status-approved {
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
+        }
+        .status-rejected {
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+        }
+        .status-cancelled {
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface-variant);
+        }
+        .status-completed {
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+        }
+
+        /* ───── Urgency Badges ───── */
+        .urgency-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+        .urgency-urgent { background: var(--color-error-container); color: var(--color-on-error-container); }
+        .urgency-normal { background: var(--color-secondary-container); color: var(--color-on-secondary-container); }
+
+        /* ───── Action Buttons ───── */
+        .btn-approve { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--color-secondary); background: transparent; color: var(--color-secondary); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
+        .btn-approve:hover { background: var(--color-secondary); color: var(--color-on-secondary); }
+        .btn-reject { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--color-error); background: transparent; color: var(--color-error); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
+        .btn-reject:hover { background: var(--color-error); color: var(--color-on-error); }
+        .btn-view { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--color-outline); background: transparent; color: var(--color-on-surface-variant); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+        .btn-view:hover { background: var(--color-surface-variant); }
+
+        /* ───── Summary Card Colors ───── */
+        .summary-card.card-total .summary-value { color: var(--color-on-primary-container); }
+        .summary-card.card-approved .summary-value { color: var(--color-secondary); }
+        .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
+        .summary-card.card-rejected .summary-value { color: var(--color-error); }
+        .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
+        .summary-card.card-hours {
+            border: 1px dashed var(--color-outline-strong);
+            background: var(--color-surface-variant);
+        }
+        .summary-card.card-total {
+            border: 2px solid var(--color-primary);
+            background: var(--color-primary-container);
+        }
+
+        .modal-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-on-surface-variant);
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 10px 0 4px;
+        }
+        .modal-section-title:first-child {
+            padding-top: 0;
+        }
+
+        .btn-danger {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--color-error);
+            background: transparent;
+            color: var(--color-error);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .btn-danger:hover {
+            background: var(--color-error);
+            color: #fff;
+        }
+        .btn-outline {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--color-outline);
+            background: transparent;
+            color: var(--color-on-surface);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-outline:hover {
+            background: var(--color-surface-variant);
+        }
+
+        /* ───── Bulk Selection ───── */
+        .col-checkbox { width: 40px; text-align: center; }
+        .col-checkbox input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--color-primary); cursor: pointer; }
+        .row-selected { background: var(--color-primary-container) !important; }
+        .batch-bar {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--color-surface-variant);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+        .batch-bar.visible { display: flex; }
+        .batch-bar .batch-count { font-size: 13px; font-weight: 600; color: var(--color-on-surface); }
+
+        /* ───── Urgency Filter Chips ───── */
+        .urgency-filter { display: inline-flex; gap: 4px; margin-left: 8px; }
+        .urgency-filter-chip {
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--color-outline);
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .urgency-filter-chip.active {
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+            border-color: var(--color-primary);
+        }
+        .urgency-filter-chip:hover:not(.active) { background: var(--color-surface-variant); }
+
+        /* ───── Request Age Indicator ───── */
+        .request-age { font-size: 11px; color: var(--color-on-surface-variant); margin-top: 2px; }
+        .request-age::before { content: '● '; font-size: 8px; }
+        .age-fresh::before { color: var(--color-primary); }
+        .age-waiting::before { color: var(--color-tertiary); }
+        .age-stale::before { color: var(--color-error); }
+
+        /* ───── Reject Preset Chips ───── */
+        .reject-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+        .reject-preset-chip {
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--color-outline);
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .reject-preset-chip:hover { background: var(--color-surface-variant); }
+
+        /* ───── Nav Badge ───── */
+        .nav-badge {
+            display: inline-block;
+            min-width: 18px;
+            height: 18px;
+            line-height: 18px;
+            border-radius: 9px;
+            background: var(--color-error);
+            color: var(--color-on-error);
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            margin-left: 6px;
+            padding: 0 5px;
+        }
+
+        /* ───── Viewed Row Indicator ───── */
+        .row-viewed td:first-child { border-left: 3px solid var(--color-primary); }
+
+        /* ───── Keyboard Highlight ───── */
+        .row-active { background: var(--color-primary-container) !important; border-left: 3px solid var(--color-primary); }
+
+        /* ───── Slot Validity Icons ───── */
+        .slot-icon { font-size: 11px; margin-left: 4px; font-weight: 600; }
+        .slot-valid { color: var(--color-primary); }
+        .slot-conflict { color: var(--color-error); }
+        .slot-tentative { color: var(--color-tertiary); }
+
+        /* ───── Row Flash Animations ───── */
+        .row-flash-approved { animation: flashGreen 0.6s ease; }
+        .row-flash-rejected { animation: flashRed 0.6s ease; }
+        @keyframes flashGreen { 0% { background: var(--color-secondary-container); } 100% { background: transparent; } }
+        @keyframes flashRed { 0% { background: var(--color-error-container); } 100% { background: transparent; } }
+
+
+        /* ───── Mini Request Timeline ───── */
+        .request-timeline { display: flex; align-items: center; gap: 0; padding: 12px 0 16px; border-bottom: 1px solid var(--color-outline-variant); margin-bottom: 16px; }
+        .timeline-step { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; }
+        .timeline-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--color-outline); background: var(--color-surface); transition: all 0.3s; }
+        .timeline-step.completed .timeline-dot { background: var(--color-secondary); border-color: var(--color-secondary); }
+        .timeline-step.active .timeline-dot { background: var(--color-tertiary); border-color: var(--color-tertiary); animation: pulse 1.5s infinite; }
+        .timeline-label { font-size: 11px; font-weight: 500; color: var(--color-on-surface-variant); }
+        .timeline-time { font-size: 10px; color: var(--color-on-surface-variant); opacity: 0.7; }
+        .timeline-connector { flex: 1; height: 2px; background: var(--color-outline-variant); min-width: 40px; }
+        .timeline-connector.completed { background: var(--color-secondary); }
+        .timeline-connector.active { background: linear-gradient(90deg, var(--color-secondary), var(--color-tertiary)); }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4); } 50% { box-shadow: 0 0 0 6px rgba(156, 39, 176, 0); } }
+
+        /* ───── Responsive Card View ───── */
+        .request-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
+        .request-card:hover {
+            background: var(--color-surface-variant);
+            box-shadow: var(--shadow-sm);
+        }
+        .request-card:active {
+            transform: scale(0.99);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .card-code {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-on-surface);
+        }
+        .card-body {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            line-height: 1.6;
+        }
+        .card-body strong {
+            color: var(--color-on-surface);
+            font-weight: 600;
+        }
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--color-outline);
+            font-size: 11px;
+            color: var(--color-on-surface-variant);
+        }
+        .card-age { font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
+            .card-view { display: block; }
+        }
+
+@endsection
+
+@section('content')
+<div class="page-header">
+    <h1>Request Approval</h1>
+    <p>Review and manage replacement requests from lecturers in your program.</p>
+</div>
+
+<div class="toolbar">
+    <div class="toolbar-left">
+        <input class="search-input" id="searchInput" placeholder="Search course code, name, or lecturer...">
+        <select class="filter-select" id="statusFilter">
+            <option value="all">All Status</option>
+            <option value="Pending" selected>Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Completed">Completed</option>
+        </select>
+        <div class="urgency-filter" id="urgencyFilter">
+            <button class="urgency-filter-chip active" data-urgency="all" onclick="setUrgencyFilter('all')">All</button>
+            <button class="urgency-filter-chip" data-urgency="urgent" onclick="setUrgencyFilter('urgent')">Urgent</button>
+            <button class="urgency-filter-chip" data-urgency="normal" onclick="setUrgencyFilter('normal')">Normal</button>
+        </div>
+        @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeekFilter()', 'nextOnclick' => 'nextWeekFilter()', 'selectId' => 'weekFilter', 'selectOnclick' => 'weekFilterChanged(this.value)', 'showTodayBtn' => false])
+        <button class="btn-clear" id="clearFilters">Reset Filters</button>
+    </div>
+    <div class="toolbar-right">
+        <span class="result-count" id="resultCount"></span>
+    </div>
+</div>
+
+<div class="sort-hint">Click column headers to sort (Requested Timestamp, Original Class, Proposed Replacement, Urgency, Status)</div>
+
+<div class="batch-bar" id="batchBar">
+    <span class="batch-count" id="batchCount"></span>
+    <button class="btn-approve" onclick="bulkApprove()">Approve Selected</button>
+    <button class="btn-reject" onclick="bulkReject()">Reject Selected</button>
+</div>
+
+<div class="grid-wrapper" id="gridWrapper">
+    <div class="grid-scroll">
+        <table class="timetable" id="timetable">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="pagination-bar" id="paginationBar">
+    <span class="pagination-info" id="paginationInfo"></span>
+    <div class="pagination-controls" id="paginationControls"></div>
+</div>
+
+@include('partials.ui-summary-bar', ['cards' => [
+    ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending Requests'],
+    ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved'],
+    ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected'],
+    ['class' => 'card-total', 'valueId' => 'summaryReviewed', 'label' => 'Total Reviewed']
+]])
+
+<div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+    </div>
+    <h3 id="emptyTitle">No requests found</h3>
+    <p id="emptyText">No requests match your search or filter criteria.</p>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Request Details</h2>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+            <div class="modal-footer-left">
+                <button class="btn-danger" id="rejectRequestBtn" onclick="openRejectModal(currentModalId)" style="display:none">✕ Reject</button>
+            </div>
+            <div class="modal-footer-right">
+                <button class="btn-outline" id="approveRequestBtn" onclick="approveRequest(currentModalId)" style="display:none">✓ Approve</button>
+                <button class="btn-outline" id="closeModalBtn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="rejectReasonModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Rejection Reason</h2>
+            <button class="modal-close" onclick="closeRejectModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="reject-presets">
+                <button class="reject-preset-chip" onclick="applyRejectPreset('Venue unavailable')">Venue unavailable</button>
+                <button class="reject-preset-chip" onclick="applyRejectPreset('Insufficient notice')">Insufficient notice</button>
+                <button class="reject-preset-chip" onclick="applyRejectPreset('Slot conflict')">Slot conflict</button>
+                <button class="reject-preset-chip" onclick="applyRejectPreset('Lecturer unavailable')">Lecturer unavailable</button>
+                <button class="reject-preset-chip" onclick="applyRejectPreset('')">Other</button>
+            </div>
+            <p style="margin-bottom:8px;font-size:13px;color:var(--color-on-surface-variant)">Please provide a reason for rejection (required):</p>
+            <textarea id="rejectReasonInput" placeholder="Enter rejection reason..." rows="4" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:4px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
+        </div>
+        <div class="modal-footer">
+            <div class="modal-footer-left">
+                <button class="btn-outline" id="cancelRejectBtn" onclick="closeRejectModal()">Cancel</button>
+            </div>
+            <div class="modal-footer-right">
+                <button class="btn-danger" id="confirmRejectBtn" disabled onclick="rejectRequest()">Confirm Reject</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="approveNotesModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Approve Request</h2>
+            <button class="modal-close" onclick="closeApproveNotesModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div id="approveNotesSummary" style="margin-bottom:12px;font-size:13px;white-space:pre-line;color:var(--color-on-surface)"></div>
+            <p style="margin-bottom:8px;font-size:13px;color:var(--color-on-surface-variant)">Notes (optional):</p>
+            <textarea id="approveNotesInput" placeholder="Optional note for the audit trail..." rows="2" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:4px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
+        </div>
+        <div class="modal-footer">
+            <div class="modal-footer-left"></div>
+            <div class="modal-footer-right">
+                <button class="btn-outline" onclick="closeApproveNotesModal()">Cancel</button>
+                <button class="btn-approve" id="confirmApproveBtn" onclick="confirmApproveWithNotes()">✓ Approve</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('page-scripts')
+        // ── Shared data from mock-data.js ──
+
+        // ── Page-local urgency helpers ──
+        function urgencyLevel(classDate) {
+            const target = new Date(classDate + 'T00:00:00');
+            const diffDays = Math.ceil((target - MockData.urgencyReferenceDate) / (1000 * 60 * 60 * 24));
+            return diffDays <= 3 ? 'urgent' : 'normal';
+        }
+
+        function urgencyClass(level) {
+            return level === 'urgent' ? 'urgency-urgent' : 'urgency-normal';
+        }
+
+        function urgencyLabel(level) {
+            return level === 'urgent' ? 'Urgent' : 'Normal';
+        }
+
+        function urgencyDays(classDate) {
+            const target = new Date(classDate + 'T00:00:00');
+            return Math.ceil((target - MockData.urgencyReferenceDate) / (1000 * 60 * 60 * 24));
+        }
+
+        // ── Slot validity helper ──
+        function slotValidityHtml(r) {
+            if (r.slotValidity === 'conflict') {
+                return '<span class="slot-icon slot-conflict">⚠</span>' + (r.conflictReason ? ' <span style="color:var(--color-error);font-size:11px">' + r.conflictReason + '</span>' : '');
+            }
+            return '<span class="slot-icon slot-valid">✓</span>';
+        }
+
+        // ── Request age helper (§7.5) ──
+        function requestAgeHtml(requestedAt) {
+            const diff = Math.floor((Date.now() - new Date(requestedAt).getTime()) / 86400000);
+            const cls = diff <= 1 ? 'age-fresh' : diff <= 3 ? 'age-waiting' : 'age-stale';
+            return '<div class="request-age ' + cls + '">' + diff + ' day' + (diff !== 1 ? 's' : '') + ' ago</div>';
+        }
+
+        // ── Short date helper ──
+        function formatShortDate(iso) {
+            if (!iso) return '—';
+            const d = new Date(iso + 'T00:00:00');
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        }
+
+        // ── Approve summary helper (§7.2) ──
+        function approveSummary(r) {
+            return '#' + r.id + ' ' + r.courseCode + ' — ' + r.courseName +
+                '\nLecturer: ' + r.lecturer +
+                '\nOriginal: ' + dayAbbr(r.classDay) + ' ' + formatShortDate(r.classDate) + ' ' + r.timeStart + '–' + r.timeEnd +
+                '\nReplacement: ' + formatShortDate(r.replacementDate) + ' ' + r.replacementTime +
+                '\nVenue: ' + (r.replacementVenue || r.venue);
+        }
+
+        // ── Sort state ──
+        let sortState = { field: 'requestedAt', dir: 'asc' };
+        let currentPage = 1;
+        const PAGE_SIZE = 10;
+
+        // ── Feature state ──
+        let selectedIds = new Set();
+        let viewedIds = new Set();
+        let currentApproveIds = [];
+        let currentRejectId = null;
+        let urgencyFilter = 'all';
+        let activeRowIndex = -1;
+        let isInitialLoad = true;
+
+        // ── Table columns ──
+        const columns = [
+            { label: '#', sortable: false },
+            { label: 'Requested Timestamp', sortable: true, field: 'requestedAt' },
+            { label: 'Lecturer', sortable: false },
+            { label: 'Course Code & Name', sortable: false },
+            { label: 'Original Class', sortable: true, field: 'classDate' },
+            { label: 'Proposed Replacement', sortable: true, field: 'replacementDate' },
+            { label: 'Students', sortable: false },
+            { label: 'Urgency', sortable: true, field: 'urgencyDays' },
+            { label: 'Status', sortable: true, field: 'status' },
+            { label: 'Actions', sortable: false }
+        ];
+
+        // ── Filter state ──
+        let currentFiltered = [];
+
+        // ── Render table header ──
+        function renderHeader() {
+            const thead = document.getElementById('tableHead');
+            let html = '<tr><th class="col-checkbox"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>';
+            columns.forEach((col, i) => {
+                if (col.sortable) {
+                    const arrow = sortState.field === col.field ? (sortState.dir === 'asc' ? ' ▲' : ' ▼') : '';
+                    html += '<th class="sortable" onclick="toggleSort(\'' + col.field + '\')">' + col.label + arrow + '</th>';
+                } else {
+                    html += '<th>' + col.label + '</th>';
+                }
+            });
+            html += '</tr>';
+            thead.innerHTML = html;
+        }
+
+        // ── Sort logic ──
+        function toggleSort(field) {
+            if (sortState.field === field) {
+                sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortState.field = field;
+                sortState.dir = 'asc';
+            }
+            currentPage = 1;
+            renderTable();
+        }
+
+        function sortData(data) {
+            const field = sortState.field;
+            const dir = sortState.dir === 'asc' ? 1 : -1;
+            return [...data].sort((a, b) => {
+                let va, vb;
+                if (field === 'urgencyDays') {
+                    va = urgencyDays(a.classDate);
+                    vb = urgencyDays(b.classDate);
+                    return (va - vb) * dir;
+                }
+                va = a[field] || '';
+                vb = b[field] || '';
+                if (typeof va === 'string') return va.localeCompare(vb) * dir;
+                return (va - vb) * dir;
+            });
+        }
+
+        // ── Filter logic ──
+        function filterData() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const week = document.getElementById('weekFilter').value;
+
+            let result = MockData.approvalRequests.filter(r => {
+                if (status !== 'all' && r.status !== status) return false;
+                if (week !== 'all' && !isInWeek(r.classDate, week)) return false;
+                if (search) {
+                    const haystack = (r.courseCode + ' ' + r.courseName + ' ' + r.lecturer).toLowerCase();
+                    if (!haystack.includes(search)) return false;
+                }
+                return true;
+            });
+
+            if (urgencyFilter !== 'all') {
+                result = result.filter(r => urgencyLevel(r.classDate) === urgencyFilter);
+            }
+
+            return result;
+        }
+
+        // ── Render a single row ──
+        function renderRow(r, offset, i) {
+            const level = urgencyLevel(r.classDate);
+            const isSelected = selectedIds.has(r.id);
+            const isViewed = viewedIds.has(r.id);
+            let rowClass = '';
+            if (isViewed) rowClass += ' row-viewed';
+            if (isSelected) rowClass += ' row-selected';
+
+            let html = '<tr data-id="' + r.id + '"' + (rowClass ? ' class="' + rowClass.trim() + '"' : '') + '>';
+
+            // Checkbox column
+            if (r.status === 'Pending') {
+                html += '<td class="col-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="toggleRowSelect(' + r.id + ')"></td>';
+            } else {
+                html += '<td class="col-checkbox"></td>';
+            }
+
+            html += '<td>' + (offset + i + 1) + '</td>';
+            html += '<td>' + formatDateTime(r.requestedAt) + requestAgeHtml(r.requestedAt) + '</td>';
+            html += '<td>' + r.lecturer + '</td>';
+            html += '<td><div class="cell-code">' + r.courseCode + '</div><div class="cell-name">' + r.courseName + '</div></td>';
+            html += '<td>' + formatClassBlock(r) + '</td>';
+
+            // Proposed Replacement with slot validity icon
+            const slotIcon = r.slotValidity === 'conflict'
+                ? '<span class="slot-icon slot-conflict" title="Conflict">⚠</span>'
+                : '<span class="slot-icon slot-valid" title="Slot available">✓</span>';
+            html += '<td>' + formatReplacementBlock(r) + ' ' + slotIcon + '</td>';
+
+            html += '<td>' + r.totalStudents + '</td>';
+            html += '<td><span class="urgency-badge ' + urgencyClass(level) + '">' + urgencyLabel(level) + '</span></td>';
+            html += '<td><span class="badge ' + statusClass(r.status) + '" onclick="openModal(' + (offset + i) + ')" style="cursor:pointer">' + r.status + '</span></td>';
+
+            const actions = r.status === 'Pending'
+                ? '<button class="btn-approve" onclick="approveRequest(' + r.id + ')">✓ Approve</button> <button class="btn-reject" onclick="openRejectModal(' + r.id + ')">✕ Reject</button>'
+                : '<button class="btn-view" onclick="openModal(' + (offset + i) + ')">👁 View</button>';
+            html += '<td>' + actions + '</td>';
+            html += '</tr>';
+            return html;
+        }
+
+        // ── Render table body ──
+        function renderBody() {
+            const tbody = document.getElementById('tableBody');
+            const sorted = sortData(currentFiltered);
+            const offset = (currentPage - 1) * PAGE_SIZE;
+            const page = sorted.slice(offset, offset + PAGE_SIZE);
+
+            if (page.length === 0) {
+                tbody.innerHTML = '';
+                document.getElementById('emptyState').style.display = '';
+                document.getElementById('gridWrapper').style.display = 'none';
+                document.getElementById('paginationBar').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('gridWrapper').style.display = '';
+            document.getElementById('paginationBar').style.display = '';
+
+            let html = '';
+            page.forEach((r, i) => {
+                html += renderRow(r, offset, i);
+            });
+            tbody.innerHTML = html;
+
+            updateBatchBar();
+            highlightRow();
+        }
+
+        // ── Update summary cards ──
+        function updateSummary() {
+            const pending = MockData.approvalRequests.filter(r => r.status === 'Pending').length;
+            const approved = MockData.approvalRequests.filter(r => r.status === 'Approved').length;
+            const rejected = MockData.approvalRequests.filter(r => r.status === 'Rejected').length;
+            const reviewed = MockData.approvalRequests.filter(r => ['Approved', 'Rejected', 'Completed'].includes(r.status)).length;
+
+            document.getElementById('summaryPending').textContent = pending;
+            document.getElementById('summaryApproved').textContent = approved;
+            document.getElementById('summaryRejected').textContent = rejected;
+            document.getElementById('summaryReviewed').textContent = reviewed;
+        }
+
+        // ── Update pagination ──
+        function updatePagination() {
+            const total = currentFiltered.length;
+            const totalPages = Math.ceil(total / PAGE_SIZE);
+            const info = document.getElementById('paginationInfo');
+            const controls = document.getElementById('paginationControls');
+
+            if (total === 0) {
+                info.textContent = 'No results';
+                controls.innerHTML = '';
+                return;
+            }
+
+            const start = (currentPage - 1) * PAGE_SIZE + 1;
+            const end = Math.min(currentPage * PAGE_SIZE, total);
+            info.textContent = 'Showing ' + start + '-' + end + ' of ' + total;
+
+            let html = '';
+            if (currentPage > 1) {
+                html += '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')">‹</button>';
+            }
+            for (let p = 1; p <= totalPages; p++) {
+                html += '<button class="page-btn' + (p === currentPage ? ' active' : '') + '" onclick="goToPage(' + p + ')">' + p + '</button>';
+            }
+            if (currentPage < totalPages) {
+                html += '<button class="page-btn" onclick="goToPage(' + (currentPage + 1) + ')">›</button>';
+            }
+            controls.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderBody();
+            updatePagination();
+        }
+
+        // ── Update result count ──
+        function updateResultCount() {
+            document.getElementById('resultCount').textContent = currentFiltered.length + ' result' + (currentFiltered.length !== 1 ? 's' : '');
+        }
+
+        // ── Update nav badge (§7.7) ──
+        function updateNavBadge() {
+            const count = MockData.approvalRequests.filter(r => r.status === 'Pending').length;
+            const badge = document.getElementById('navPendingBadge');
+            if (badge) {
+                badge.textContent = count;
+                badge.style.display = count > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        // ── Main render ──
+        function renderTable() {
+            currentFiltered = filterData();
+            renderHeader();
+            renderBody();
+            updateSummary();
+            updatePagination();
+            updateResultCount();
+        }
+
+        // ── Skeleton loading (§7q) ──
+        function showSkeleton() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                let row = '<tr>';
+                for (let j = 0; j < 11; j++) {
+                    row += '<td><div class="skeleton" style="height:16px;width:' + (50 + Math.random() * 40) + '%"></div></td>';
+                }
+                row += '</tr>';
+                tbody.innerHTML += row;
+            }
+            document.querySelectorAll('.summary-card .summary-value').forEach(el => {
+                el.innerHTML = '<div class="skeleton" style="height:24px;width:40px;display:inline-block"></div>';
+            });
+        }
+
+        // ── Bulk selection (§7.1) ──
+        function toggleSelectAll() {
+            const visible = currentFiltered.filter(r => r.status === 'Pending');
+            if (selectedIds.size === visible.length) { selectedIds.clear(); }
+            else { visible.forEach(r => selectedIds.add(r.id)); }
+            renderTable();
+        }
+
+        function toggleRowSelect(id) {
+            if (selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id);
+            renderTable();
+        }
+
+        function updateBatchBar() {
+            const bar = document.getElementById('batchBar');
+            const count = document.getElementById('batchCount');
+            if (selectedIds.size === 0) { bar.classList.remove('visible'); return; }
+            bar.classList.add('visible');
+            count.textContent = selectedIds.size + ' selected';
+        }
+
+        function bulkApprove() {
+            const ids = [...selectedIds];
+            const summary = ids.map(id => {
+                const r = MockData.approvalRequests.find(x => x.id === id);
+                return '#' + id + ' ' + r.courseCode + ' — ' + r.lecturer;
+            }).join('\n');
+            if (confirm('Approve ' + ids.length + ' request(s)?\n\n' + summary + '\n\nThis will notify the lecturers.')) {
+                ids.forEach(id => {
+                    const r = MockData.approvalRequests.find(x => x.id === id);
+                    r.status = 'Approved';
+                });
+                selectedIds.clear();
+                renderTable();
+                updateNavBadge();
+                showToast(ids.length + ' request(s) approved.', function() {
+                    ids.forEach(id => {
+                        const r = MockData.approvalRequests.find(x => x.id === id);
+                        r.status = 'Pending';
+                    });
+                    renderTable();
+                    updateNavBadge();
+                });
+            }
+        }
+
+        function bulkReject() {
+            currentRejectId = null;
+            document.getElementById('rejectReasonInput').value = '';
+            document.getElementById('confirmRejectBtn').disabled = true;
+            document.getElementById('rejectReasonModal').classList.add('show');
+            document.getElementById('rejectReasonInput').focus();
+        }
+
+        // ── Reject presets (§7.3) ──
+        function applyRejectPreset(text) {
+            const input = document.getElementById('rejectReasonInput');
+            input.value = text;
+            updateRejectConfirmState();
+            input.focus();
+        }
+
+        // ── Urgency filter (§7.4) ──
+        function setUrgencyFilter(level) {
+            urgencyFilter = level;
+            document.querySelectorAll('.urgency-filter-chip').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.urgency === level);
+            });
+            currentPage = 1;
+            renderTable();
+        }
+
+        // ── Week filter change handler ──
+        function weekFilterChanged() {
+            currentPage = 1;
+            renderTable();
+        }
+
+        // ── Mini timeline (§7p) ──
+        function buildTimeline(r) {
+            const steps = [
+                { label: 'Submitted', time: r.requestedAt, done: true },
+                { label: 'Viewed', time: r.viewedAt, done: !!r.viewedAt },
+                { label: 'Reviewed', time: r.reviewedAt, done: !!r.reviewedAt }
+            ];
+            let html = '<div class="request-timeline">';
+            steps.forEach((s, i) => {
+                const cls = s.done ? 'completed' : (i === steps.filter(x => !x.done).length ? 'active' : 'pending');
+                html += '<div class="timeline-step ' + cls + '">';
+                html += '<div class="timeline-dot"></div>';
+                html += '<div class="timeline-label">' + s.label + '</div>';
+                html += '<div class="timeline-time">' + (s.time ? formatDateTime(s.time) : '—') + '</div>';
+                html += '</div>';
+                if (i < steps.length - 1) html += '<div class="timeline-connector ' + (s.done ? 'completed' : '') + '"></div>';
+            });
+            html += '</div>';
+            return html;
+        }
+
+        // ── Modal ──
+        let currentModalId = null;
+
+        function openModal(index) {
+            const r = currentFiltered[index];
+            if (!r) return;
+            currentModalId = r.id;
+            viewedIds.add(r.id);
+
+            const body = document.getElementById('modalBody');
+            let html = '';
+
+            // Timeline
+            html += buildTimeline(r);
+
+            // Section 1: Request Information
+            html += '<div class="modal-section"><div class="modal-section-title">Request Information</div>';
+            html += '<p><strong>Lecturer:</strong> ' + r.lecturer + '</p>';
+            html += '<p><strong>Course:</strong> ' + r.courseCode + ' — ' + r.courseName + '</p>';
+            html += '<p><strong>Requested:</strong> ' + formatDateTime(r.requestedAt) + '</p>';
+            html += '<p><strong>Status:</strong> <span class="badge ' + statusClass(r.status) + '">' + r.status + '</span></p>';
+            if (r.rejectionReason) {
+                html += '<p style="color:var(--color-error)"><strong>Rejection Reason:</strong> ' + r.rejectionReason + '</p>';
+            }
+            html += '</div>';
+
+            // Section 2: Original Class Detail
+            html += '<div class="modal-section"><div class="modal-section-title">Original Class Detail</div>';
+            html += '<p><strong>Date:</strong> ' + r.classDay + ', ' + r.classDate + '</p>';
+            html += '<p><strong>Time:</strong> ' + r.timeStart + ' – ' + r.timeEnd + ' (' + r.duration + 'h)</p>';
+            html += '<p><strong>Venue:</strong> ' + r.venue + '</p>';
+            html += '<p><strong>Students:</strong> ' + r.totalStudents + ' (' + r.cohorts.join(', ') + ')</p>';
+            html += '</div>';
+
+            // Section 3: Requested Replacement Class
+            html += '<div class="modal-section"><div class="modal-section-title">Requested Replacement Class</div>';
+            html += '<p><strong>Date:</strong> ' + r.replacementDate + '</p>';
+            html += '<p><strong>Time:</strong> ' + r.replacementTime + '</p>';
+            html += '<p><strong>Venue:</strong> ' + r.replacementVenue + '</p>';
+            html += '<p><strong>Slot Validity:</strong> ' + slotValidityHtml(r) + '</p>';
+            html += '</div>';
+
+            // Section 4: Review (if reviewed)
+            if (r.reviewedBy) {
+                html += '<div class="modal-section"><div class="modal-section-title">Review</div>';
+                html += '<p><strong>Reviewed By:</strong> ' + r.reviewedBy + '</p>';
+                html += '<p><strong>Reviewed At:</strong> ' + formatDateTime(r.reviewedAt) + '</p>';
+                if (r.remarks) {
+                    html += '<p><strong>Remarks:</strong> ' + r.remarks + '</p>';
+                }
+                html += '</div>';
+            }
+
+            body.innerHTML = html;
+
+            // Toggle footer buttons
+            document.getElementById('rejectRequestBtn').style.display = r.status === 'Pending' ? '' : 'none';
+            document.getElementById('approveRequestBtn').style.display = r.status === 'Pending' ? '' : 'none';
+            document.getElementById('closeModalBtn').style.display = r.status === 'Pending' ? 'none' : '';
+
+            document.getElementById('modalOverlay').classList.add('show');
+            renderTable();
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            currentModalId = null;
+        }
+
+        // ── Approve (§7.6 — approval notes modal) ──
+        function approveRequest(id) {
+            openApproveNotesModal([id]);
+        }
+
+        function openApproveNotesModal(ids) {
+            currentApproveIds = ids;
+            const summary = ids.map(id => {
+                const r = MockData.approvalRequests.find(x => x.id === id);
+                return approveSummary(r);
+            }).join('\n\n');
+            document.getElementById('approveNotesSummary').textContent = summary;
+            document.getElementById('approveNotesInput').value = '';
+            document.getElementById('approveNotesModal').classList.add('show');
+            document.getElementById('approveNotesInput').focus();
+        }
+
+        function confirmApproveWithNotes() {
+            const notes = document.getElementById('approveNotesInput').value.trim();
+            const ids = currentApproveIds;
+            const prevStatuses = {};
+            ids.forEach(id => { const r = MockData.approvalRequests.find(x => x.id === id); prevStatuses[id] = r.status; r.status = 'Approved'; });
+            const label = ids.length === 1 ? 'Request #' + ids[0] : ids.length + ' requests';
+            const notesLine = notes ? '\nNotes: ' + notes : '';
+            closeApproveNotesModal();
+            selectedIds.clear();
+            renderTable();
+            updateNavBadge();
+            showToast(label + ' approved.' + notesLine, function() {
+                ids.forEach(id => { const r = MockData.approvalRequests.find(x => x.id === id); r.status = prevStatuses[id]; });
+                renderTable();
+                updateNavBadge();
+            });
+            reviewNextAfterAction(ids[0]);
+        }
+
+        function closeApproveNotesModal() {
+            document.getElementById('approveNotesModal').classList.remove('show');
+            currentApproveIds = [];
+        }
+
+        // ── Reject modal ──
+        function openRejectModal(id) {
+            currentRejectId = id;
+            document.getElementById('rejectReasonInput').value = '';
+            document.getElementById('confirmRejectBtn').disabled = true;
+            document.getElementById('rejectReasonModal').classList.add('show');
+            document.getElementById('rejectReasonInput').focus();
+        }
+
+        function updateRejectConfirmState() {
+            const hasReason = document.getElementById('rejectReasonInput').value.trim().length > 0;
+            document.getElementById('confirmRejectBtn').disabled = !hasReason;
+        }
+
+        function rejectRequest() {
+            const reason = document.getElementById('rejectReasonInput').value.trim();
+            if (!reason) {
+                showToast('Please provide a rejection reason.', null, 3000);
+                return;
+            }
+            const isBulk = currentRejectId === null;
+            const ids = isBulk ? [...selectedIds] : [currentRejectId];
+            const prevStatuses = {};
+            ids.forEach(id => { const r = MockData.approvalRequests.find(x => x.id === id); prevStatuses[id] = r.status; r.status = 'Rejected'; });
+            const label = isBulk ? ids.length + ' request(s)' : 'Request #' + currentRejectId;
+            closeRejectModal();
+            selectedIds.clear();
+            renderTable();
+            updateNavBadge();
+            showToast(label + ' rejected.', function() {
+                ids.forEach(id => { const r = MockData.approvalRequests.find(x => x.id === id); r.status = prevStatuses[id]; });
+                renderTable();
+                updateNavBadge();
+            });
+            reviewNextAfterAction(isBulk ? null : currentRejectId);
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectReasonModal').classList.remove('show');
+            currentRejectId = null;
+        }
+
+        // ── Review next auto-advance (§7j) ──
+        function reviewNextAfterAction(actedOnId) {
+            const actedIndex = actedOnId ? currentFiltered.findIndex(r => r.id === actedOnId) : -1;
+            let nextIndex = -1;
+            for (let i = actedIndex + 1; i < currentFiltered.length; i++) {
+                if (currentFiltered[i].status === 'Pending') { nextIndex = i; break; }
+            }
+            if (nextIndex >= 0) {
+                activeRowIndex = nextIndex;
+                openModal(nextIndex);
+            } else {
+                activeRowIndex = -1;
+                closeModal();
+            }
+        }
+
+        // ── Keyboard shortcuts (§7i) ──
+        function highlightRow() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            rows.forEach((tr, i) => {
+                tr.classList.toggle('row-active', i === activeRowIndex);
+            });
+        }
+
+        // ── Populate week filter ──
+        function populateWeekFilter() {
+            const select = document.getElementById('weekFilter');
+            select.innerHTML = '<option value="all">All Weeks</option>';
+            weekRanges.forEach((w, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = w.label;
+                select.appendChild(opt);
+            });
+        }
+
+        // ── Reset filters ──
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = 'Pending';
+            document.getElementById('weekFilter').value = 'all';
+            urgencyFilter = 'all';
+            selectedIds.clear();
+            currentPage = 1;
+            sortState = { field: 'requestedAt', dir: 'asc' };
+            document.querySelectorAll('.urgency-filter-chip').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.urgency === 'all');
+            });
+            renderTable();
+        }
+
+        // ── DOMContentLoaded ──
+        document.addEventListener('DOMContentLoaded', function() {
+            populateWeekFilter();
+            document.getElementById('statusFilter').value = 'Pending';
+
+            // Skeleton loading
+            showSkeleton();
+            setTimeout(function() {
+                isInitialLoad = false;
+                renderTable();
+                updateNavBadge();
+            }, 300);
+
+            document.getElementById('searchInput').addEventListener('input', function() { currentPage = 1; renderTable(); });
+            document.getElementById('statusFilter').addEventListener('change', function() { currentPage = 1; renderTable(); });
+            document.getElementById('clearFilters').addEventListener('click', resetFilters);
+
+            document.getElementById('modalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+            document.getElementById('rejectReasonModal').addEventListener('click', function(e) {
+                if (e.target === this) closeRejectModal();
+            });
+            document.getElementById('approveNotesModal').addEventListener('click', function(e) {
+                if (e.target === this) closeApproveNotesModal();
+            });
+
+            document.getElementById('rejectReasonInput').addEventListener('input', updateRejectConfirmState);
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Modal close — 3-layer Escape
+                if (e.key === 'Escape') {
+                    if (document.getElementById('approveNotesModal').classList.contains('show')) {
+                        closeApproveNotesModal();
+                    } else if (document.getElementById('rejectReasonModal').classList.contains('show')) {
+                        closeRejectModal();
+                    } else if (document.getElementById('modalOverlay').classList.contains('show')) {
+                        closeModal();
+                    } else {
+                        activeRowIndex = -1;
+                        highlightRow();
+                    }
+                    return;
+                }
+
+                // Pause keyboard nav when modal is open
+                if (document.querySelector('.modal-overlay.show')) return;
+                if (!currentFiltered.length) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeRowIndex = Math.min(activeRowIndex + 1, currentFiltered.length - 1);
+                    highlightRow();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeRowIndex = Math.max(activeRowIndex - 1, 0);
+                    highlightRow();
+                } else if (e.key === 'Enter' && activeRowIndex >= 0) {
+                    openModal(activeRowIndex);
+                } else if ((e.key === 'a' || e.key === 'A') && activeRowIndex >= 0) {
+                    const r = currentFiltered[activeRowIndex];
+                    if (r.status === 'Pending') approveRequest(r.id);
+                } else if ((e.key === 'r' || e.key === 'R') && activeRowIndex >= 0) {
+                    const r = currentFiltered[activeRowIndex];
+                    if (r.status === 'Pending') openRejectModal(r.id);
+                }
+            });
+        });
+@endsection

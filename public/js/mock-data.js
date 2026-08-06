@@ -561,6 +561,7 @@ const approvalRequests = [
         replacementVenue: 'C201',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: '2026-08-28T14:30:00',
         remarks: null
     },
     {
@@ -587,6 +588,7 @@ const approvalRequests = [
         replacementVenue: 'D103',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: '2026-08-29T16:00:00',
         remarks: null
     },
     {
@@ -614,6 +616,7 @@ const approvalRequests = [
         replacementVenue: 'C202',
         reviewedBy: 'Dr. Siti (PL)',
         reviewedAt: '2026-09-01T08:30:00',
+        viewedAt: '2026-08-30T14:00:00',
         remarks: null
     },
     {
@@ -641,6 +644,7 @@ const approvalRequests = [
         replacementVenue: 'E201',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: '2026-08-30T15:00:00',
         remarks: 'Students have lab session on original date'
     },
     {
@@ -667,6 +671,7 @@ const approvalRequests = [
         replacementVenue: 'D104',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: '2026-08-31T10:00:00',
         remarks: null
     },
     {
@@ -694,6 +699,7 @@ const approvalRequests = [
         replacementVenue: 'C202',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: '2026-09-01T14:00:00',
         remarks: null
     },
     {
@@ -720,6 +726,7 @@ const approvalRequests = [
         replacementVenue: 'E202',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: '2026-09-03T11:00:00',
         remarks: null
     },
     {
@@ -747,6 +754,7 @@ const approvalRequests = [
         replacementVenue: 'D103',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: '2026-09-05T17:00:00',
         remarks: null
     },
     {
@@ -773,6 +781,7 @@ const approvalRequests = [
         replacementVenue: 'C201',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: '2026-09-08T14:00:00',
         remarks: null
     },
     {
@@ -799,6 +808,7 @@ const approvalRequests = [
         replacementVenue: 'D104',
         reviewedBy: 'Dr. Siti (PL)',
         reviewedAt: '2026-09-02T10:15:00',
+        viewedAt: '2026-09-02T09:45:00',
         remarks: null
     },
     {
@@ -826,6 +836,7 @@ const approvalRequests = [
         replacementVenue: 'E202',
         reviewedBy: 'Prof. Lim (PL)',
         reviewedAt: '2026-09-03T09:45:00',
+        viewedAt: '2026-09-02T16:00:00',
         remarks: 'Venue swap approved with Room E202'
     },
     {
@@ -852,6 +863,7 @@ const approvalRequests = [
         replacementVenue: 'C202',
         reviewedBy: 'Dr. Siti (PL)',
         reviewedAt: '2026-09-04T14:00:00',
+        viewedAt: '2026-09-04T09:30:00',
         remarks: null
     },
     {
@@ -879,6 +891,7 @@ const approvalRequests = [
         replacementVenue: 'D103',
         reviewedBy: 'Prof. Lim (PL)',
         reviewedAt: '2026-09-04T16:30:00',
+        viewedAt: '2026-09-05T13:00:00',
         remarks: null
     },
     {
@@ -905,6 +918,7 @@ const approvalRequests = [
         replacementVenue: 'E201',
         reviewedBy: 'Dr. Siti (PL)',
         reviewedAt: '2026-09-06T11:00:00',
+        viewedAt: '2026-09-06T10:00:00',
         remarks: null
     },
     {
@@ -932,6 +946,7 @@ const approvalRequests = [
         replacementVenue: 'C201',
         reviewedBy: 'Prof. Lim (PL)',
         reviewedAt: '2026-09-07T09:20:00',
+        viewedAt: '2026-09-07T11:00:00',
         remarks: null
     },
     {
@@ -958,6 +973,7 @@ const approvalRequests = [
         replacementVenue: 'D104',
         reviewedBy: 'Dr. Siti (PL)',
         reviewedAt: '2026-09-08T10:40:00',
+        viewedAt: '2026-09-08T14:30:00',
         remarks: null
     },
     {
@@ -985,6 +1001,7 @@ const approvalRequests = [
         replacementVenue: 'E202',
         reviewedBy: 'Prof. Lim (PL)',
         reviewedAt: '2026-09-09T15:10:00',
+        viewedAt: '2026-09-09T17:00:00',
         remarks: 'Suggest contacting part-time lecturer pool'
     },
     {
@@ -1011,6 +1028,7 @@ const approvalRequests = [
         replacementVenue: 'C202',
         reviewedBy: 'Dr. Siti (PL)',
         reviewedAt: '2026-09-02T13:25:00',
+        viewedAt: '2026-09-01T10:00:00',
         remarks: null
     },
     {
@@ -1038,6 +1056,7 @@ const approvalRequests = [
         replacementVenue: 'D103',
         reviewedBy: 'Prof. Lim (PL)',
         reviewedAt: '2026-09-03T08:50:00',
+        viewedAt: '2026-09-02T14:00:00',
         remarks: null
     },
     {
@@ -1064,6 +1083,7 @@ const approvalRequests = [
         replacementVenue: 'E201',
         reviewedBy: null,
         reviewedAt: null,
+        viewedAt: null,
         remarks: 'Request withdrawn by lecturer'
     }
 ];

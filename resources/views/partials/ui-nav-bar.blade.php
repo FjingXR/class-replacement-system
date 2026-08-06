@@ -4,6 +4,7 @@
     ['key'=>'my-timetable','label'=>'My Timetable','href'=>'/my-timetable-ui'],
     ['key'=>'cohort-timetables','label'=>'Cohort Timetables','href'=>'/cohort-timetable-ui'],
     ['key'=>'replacement-arrangement','label'=>'Replacement Arrangement','href'=>'/replacement-home-ui'],
+    ['key'=>'request-approval','label'=>'Request Approval','href'=>'/request-approval-ui','badge'=>true],
     ['key'=>'replacement-history','label'=>'Replacement History','href'=>'/my-request-history-ui'],
   ];
 @endphp
@@ -15,7 +16,7 @@
 
     <div class="nav-items">
         @foreach ($items as $it)
-        <a class="nav-item {{ $activeNav === $it['key'] ? 'active' : '' }}" href="{{ $it['href'] }}">{{ $it['label'] }}</a>
+        <a class="nav-item {{ $activeNav === $it['key'] ? 'active' : '' }}" href="{{ $it['href'] }}">{{ $it['label'] }}@if($it['badge'] ?? false)<span class="nav-badge" id="navPendingBadge"></span>@endif</a>
         @endforeach
     </div>
 
