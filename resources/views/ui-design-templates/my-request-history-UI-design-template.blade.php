@@ -71,7 +71,7 @@
         }
 
         /* ───── Column Widths ───── */
-        .col-requested-at { width: 145px; }
+        .col-requested-at { width: 180px; }
         .col-type { width: 80px; }
         .col-original { width: 170px; }
         .col-replacement { width: 170px; }
