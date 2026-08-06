@@ -762,7 +762,7 @@
                 { label: 'Requested Venue', cls: 'col-venue', sortable: false },
                 { label: 'Students', cls: 'col-students', sortable: false },
                 { label: 'Affected Cohort(s)', cls: 'col-cohort', sortable: false },
-                { label: 'Status (Click for detail)', cls: 'col-status', sortable: false },
+                { label: 'Status', cls: 'col-status', sortable: false },
                 { label: 'Quick Cancel', cls: 'col-actions', sortable: false },
             ];
             columns.forEach(function(col) {
@@ -806,7 +806,7 @@
 
                     const globalIndex = offset + i;
                     const isPending = r.status === 'Pending';
-                    const badgeHtml = '<span class="badge ' + statusClass(r.status) + '" onclick="openModal(' + globalIndex + ')">' + r.status + '</span>';
+                    const badgeHtml = '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>';
 
                     const days = getRequestAge(r.requestedAt);
                     const ageCls = ageClass(days);
@@ -850,6 +850,11 @@
                         td.innerHTML = cell.html;
                         row.appendChild(td);
                     });
+                    row.addEventListener('click', function(e) {
+                        if (e.target.closest('.bulk-checkbox') || e.target.closest('.btn-inline-cancel')) return;
+                        openModal(globalIndex);
+                    });
+                    row.style.cursor = 'pointer';
                     body.appendChild(row);
                 });
             }
