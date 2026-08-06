@@ -420,6 +420,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     min-width: 1350px;
+    table-layout: fixed;
 }
 .timetable th, .timetable td {
     border: 1px solid var(--color-outline);
@@ -743,6 +744,8 @@ html.light .badge-replacement { background: var(--color-primary-dark); color: va
     border-radius: 16px;
     box-shadow: var(--shadow-lg);
     max-width: 480px; width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
     animation: modalIn 0.2s ease;
 }
 @keyframes modalIn {
