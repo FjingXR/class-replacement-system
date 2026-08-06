@@ -143,6 +143,7 @@
         @media (max-width: 768px) {
             .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
             .card-view { display: block; }
+            #kbShortcutsBtn { display: none !important; }
         }
 
 @endsection
@@ -150,11 +151,7 @@
 @section('content')
 
         <!-- ─── Page Header ─── -->
-        <div class="page-header">
-            <h1 class="page-title">Replacement Arrangement</h1>
-            <span class="semester-chip" id="semesterChip"></span>
-            <p class="page-desc">The following classes require replacement arrangements. Select a class to submit a replacement request.</p>
-        </div>
+        @include('partials.ui-page-header', ['title' => 'Replacement Arrangement', 'description' => 'The following classes require replacement arrangements. Select a class to submit a replacement request.'])
 
         <!-- ─── Toolbar ─── -->
         <div class="toolbar">
@@ -166,15 +163,11 @@
                     </svg>
                     <input class="search-input" id="searchInput" placeholder="Search by course code or name...">
                 </div>
-                <div class="week-nav">
-                    <button class="week-arrow" onclick="prevWeekFilter()" aria-label="Previous week">&#8249;</button>
-                    <select class="week-select" id="weekFilter" onchange="weekFilterChanged(this.value)"></select>
-                    <button class="week-arrow" onclick="nextWeekFilter()" aria-label="Next week">&#8250;</button>
-                </div>
+                @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeekFilter()', 'nextOnclick' => 'nextWeekFilter()', 'selectId' => 'weekFilter', 'selectOnclick' => 'weekFilterChanged(this.value)', 'showTodayBtn' => false])
             </div>
             <div class="toolbar-right">
                 <span class="result-count" id="resultCount">Showing 14 of 14 classes</span>
-                <button class="btn-icon" onclick="showKeyboardShortcuts()" title="Keyboard Shortcuts" style="margin-left:auto; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid var(--color-outline); border-radius:8px; color:var(--color-on-surface-variant); background:var(--color-surface); cursor:pointer;">
+                <button id="kbShortcutsBtn" class="btn-icon" onclick="showKeyboardShortcuts()" title="Keyboard Shortcuts" style="margin-left:auto; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border:1px solid var(--color-outline); border-radius:8px; color:var(--color-on-surface-variant); background:var(--color-surface); cursor:pointer;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><path d="M6 8h.001"/><path d="M10 8h.001"/><path d="M14 8h.001"/><path d="M18 8h.001"/><path d="M8 12h.001"/><path d="M12 12h.001"/><path d="M16 12h.001"/><path d="M7 16h10"/></svg>
                 </button>
             </div>
@@ -183,14 +176,7 @@
         <div class="sort-hint">Click <strong>Course Code &amp; Name</strong> or <strong>Original Class</strong> to sort</div>
 
         <!-- ─── Grid Wrapper ─── -->
-        <div class="grid-wrapper">
-            <div class="grid-scroll">
-                <table class="timetable" id="timetable">
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-        </div>
+        @include('partials.ui-grid-table')
 
         <!-- ─── Card View (mobile) ─── -->
         <div class="card-view" id="cardView"></div>
@@ -214,16 +200,7 @@
         ])
 
         <!-- ─── Empty State ─── -->
-        <div class="empty-state" id="emptyState" style="display:none">
-            <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            <h3 class="empty-title">No classes currently require replacement arrangements.</h3>
-            <p class="empty-text">Try adjusting your search or filter criteria.</p>
-        </div>
+        @include('partials.ui-empty-state', ['title' => 'No classes currently require replacement arrangements.', 'text' => 'Try adjusting your search or filter criteria.'])
 
         <!-- Keyboard Shortcuts Modal -->
         <div class="modal-overlay" id="keyboardModal">

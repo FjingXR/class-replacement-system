@@ -129,11 +129,7 @@
 @section('content')
 
         <!-- ─── Page Header ─── -->
-        <div class="page-header">
-            <h1 class="page-title">My Timetable</h1>
-            <span class="semester-chip" id="semesterChip"></span>
-            <p class="page-desc">View your weekly class schedule and manage replacement requests across all cohorts.</p>
-        </div>
+        @include('partials.ui-page-header', ['title' => 'My Timetable', 'description' => 'View your weekly class schedule and manage replacement requests across all cohorts.'])
 
         <!-- ─── Semester Progress ─── -->
         <div class="semester-progress" id="semesterProgress">
@@ -143,39 +139,15 @@
 
         <!-- ─── Semester Bar ─── -->
         <div class="semester-bar">
-            <div class="week-nav">
-                <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
-                <select class="week-select" id="weekSelect" onchange="selectWeek(this.value)"></select>
-                <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
-            </div>
-            @include('partials.ui-today-btn')
+            @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelect', 'selectOnclick' => 'selectWeek(this.value)'])
         </div>
 
         <!-- ─── Week Subtitle ─── -->
         <div class="week-subtitle" id="weekSubtitle"></div>
 
         <!-- ─── Grid Wrapper ─── -->
-        <div class="grid-wrapper">
-            <div class="grid-scroll" id="gridScroll">
-                <table class="timetable" id="timetable">
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-            <div class="empty-state" id="emptyState" style="display:none;">
-                <div class="empty-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                        <line x1="16" y1="2" x2="16" y2="6"/>
-                        <line x1="8" y1="2" x2="8" y2="6"/>
-                        <line x1="3" y1="10" x2="21" y2="10"/>
-                        <line x1="10" y1="14" x2="14" y2="18"/>
-                        <line x1="14" y1="14" x2="10" y2="18"/>
-                    </svg>
-                </div>
-                <div class="empty-title">No classes this week<br>All classes for this week have been cancelled.</div>
-            </div>
-        </div>
+        @include('partials.ui-grid-table')
+            @include('partials.ui-empty-state', ['title' => 'No classes this week', 'text' => 'All classes for this week have been cancelled.'])
 
         <!-- ─── Legend Bar ─── -->
         @include('partials.ui-legend-bar')
@@ -192,31 +164,16 @@
         ])
 
     <!-- ═══ Class Detail Modal ═══ -->
-    <div class="modal-overlay" id="classModal" style="display:none" onclick="closeModalOutside(event)">
-        <div class="modal">
-            <div class="modal-header">
-                <span class="modal-title" id="modalTitle">Class Details</span>
-                <span class="modal-status-badge" id="modalStatusBadge">Normal</span>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer">
-                <div class="modal-footer-left">
-                    <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="23 4 23 10 17 10"/>
-                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-                        </svg>
-                        Replace Now
-                    </button>
-                    <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()"></button>
-                </div>
-                <div class="modal-footer-right">
-                    <button class="btn-close-modal" onclick="closeModal()">Close</button>
-                </div>
-            </div>
+    @section('modal-footer')
+        <div class="modal-footer-left">
+            <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement()">Replace Now</button>
+            <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()"></button>
         </div>
-    </div>
+        <div class="modal-footer-right">
+            <button class="btn-close-modal" onclick="closeModal()">Close</button>
+        </div>
+    @endsection
+    @include('partials.ui-class-detail-modal')
 
     <!-- ═══ Cancel Confirmation Modal ═══ -->
     <div class="cancel-overlay" id="cancelConfirmOverlay" style="display:none" onclick="if(event.target===this)closeCancelConfirm(false)">

@@ -71,3 +71,9 @@
 ## Lint/Type Check
 - PHPStan: 20 pre-existing errors in Models/Providers/Seeders (none in files we modified)
 - Pint: not run (timed out; no PHP files modified in our changes — all Blade/JS/CSS)
+
+---
+
+## [2026-08-04] Refactored: replaced inline page-header/week-nav/empty-state/grid-table/modal with `@include('partials.…')` (OOP Phase 1)
+
+Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table`, `ui-empty-state`, `ui-class-detail-modal` partials.

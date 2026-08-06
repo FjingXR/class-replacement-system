@@ -438,6 +438,11 @@ These ten rules are **non-negotiable** for every page and every future change:
 
 ### 2. Composition
 - **Blade partials** via `@include('partials.ui-nav-bar', ['activeNav' => ...])`, `@include('partials.ui-summary-bar', ['cards' => [...]])`, `partials.head`, `partials.settings-heading`.
+- `ui-page-header` — page title + semester chip + description
+- `ui-week-nav` — week navigation arrows + select + optional today button
+- `ui-empty-state` — empty state with icon, title, text, optional CTA
+- `ui-grid-table` — grid-wrapper + scrollable timetable shell
+- `ui-class-detail-modal` — modal overlay for class details
 - PHP: Laravel service classes + middleware composition (e.g. `App\Concerns\PasswordValidationRules` trait mixed into Fortify actions).
 
 ### 3. Encapsulation & DRY — shared modules
@@ -521,6 +526,11 @@ dataset/cohorts.md, lecturers.md     ← master datasets
 resources/views/layouts/ui-template.blade.php   ← shared layout (inheritance)
 resources/views/partials/ui-nav-bar.blade.php   ← shared nav (composition)
 resources/views/partials/ui-summary-bar.blade.php
+resources/views/partials/ui-page-header.blade.php        ← page header partial (title + chips + description)
+resources/views/partials/ui-week-nav.blade.php           ← week navigation partial (arrows + select + today btn)
+resources/views/partials/ui-empty-state.blade.php        ← empty state partial (icon + title + text + CTA)
+resources/views/partials/ui-grid-table.blade.php         ← grid table partial (wrapper + scroll + table shell)
+resources/views/partials/ui-class-detail-modal.blade.php ← class detail modal partial (overlay + header + body + footer)
 public/css/theme.css                 ← ALL shared CSS
 public/js/ui-common.js               ← ALL shared JS helpers
 public/js/mock-data.js               ← ALL mock data (window.MockData), single source — pages READ ONLY

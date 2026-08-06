@@ -46,3 +46,4 @@
 | 2026-08-03 | `@section('page-scripts')` | Today badge in buildTimetable() | Day label now includes `<span class="today-badge">Today</span>` when `day.today` is true. |
 | 2026-08-03 | `@section('page-scripts')` | todayMs uses real-time | Changed `new Date('2026-09-18')` to `new Date()` — today column now highlights the actual current day instead of hardcoded date. |
 | 2026-08-03 | `@section('page-scripts')` | currentWeekIndex uses real-time | Changed `new Date('2026-09-18')` to `new Date()` — default week selection uses actual current date. |
+| 2026-08-04 | — | Refactored: replaced inline page-header/week-nav/empty-state/grid-table/modal with `@include('partials.…')` (OOP Phase 1) | Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table`, `ui-empty-state`, `ui-class-detail-modal` partials. |

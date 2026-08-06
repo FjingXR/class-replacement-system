@@ -94,3 +94,9 @@
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
 | 2026-08-03 | Toast styles section | Add `.toast-link` CSS | Added link styling (color, underline, hover state) for toast link button. |
+
+### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php` — OOP Phase 1 partial extraction
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-04 | — | Refactored: replaced inline page-header/week-nav/grid-table with `@include('partials.…')` (OOP Phase 1) | Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table` partials. |

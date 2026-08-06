@@ -128,3 +128,9 @@
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
 | 2026-07-30 | All sections | Task completion | All 8 task sections marked complete with implementation details and verified test results |
+
+### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php` — OOP Phase 1 partial extraction
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-04 | — | Refactored: replaced inline page-header/week-nav/empty-state/grid-table/modal with `@include('partials.…')` (OOP Phase 1) | Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table`, `ui-empty-state`, `ui-class-detail-modal` partials. |

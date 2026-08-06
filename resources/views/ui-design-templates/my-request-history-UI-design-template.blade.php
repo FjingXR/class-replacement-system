@@ -444,11 +444,7 @@
 @section('content')
 
         <!-- ─── Page Header ─── -->
-        <div class="page-header">
-            <h1 class="page-title">My Request History</h1>
-            <span class="semester-chip" id="semesterChip"></span>
-            <p class="page-desc">View and monitor all replacement requests submitted during the current semester.</p>
-        </div>
+        @include('partials.ui-page-header', ['title' => 'My Request History', 'description' => 'View and monitor all replacement requests submitted during the current semester.'])
 
         <!-- ─── Toolbar ─── -->
         <div class="toolbar">
@@ -468,11 +464,7 @@
                     <option value="Cancelled">Cancelled</option>
                     <option value="Completed">Completed</option>
                 </select>
-                <div class="week-nav">
-                    <button class="week-arrow" onclick="prevWeekFilter()" aria-label="Previous week">&#8249;</button>
-                    <select class="week-select" id="weekFilter" onchange="weekFilterChanged()"></select>
-                    <button class="week-arrow" onclick="nextWeekFilter()" aria-label="Next week">&#8250;</button>
-                </div>
+                @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeekFilter()', 'nextOnclick' => 'nextWeekFilter()', 'selectId' => 'weekFilter', 'selectOnclick' => 'weekFilterChanged(this.value)', 'showTodayBtn' => false])
                 <label class="toggle-wrapper" id="completedToggle">
                     <input type="checkbox" id="hideCompleted" checked>
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -488,14 +480,7 @@
         <div class="sort-hint">Click column headers to sort (Requested At, Course Code, Original Class)</div>
 
         <!-- ─── Grid Wrapper ─── -->
-        <div class="grid-wrapper" id="gridWrapper">
-            <div class="grid-scroll">
-                <table class="timetable" id="timetable">
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-        </div>
+        @include('partials.ui-grid-table', ['wrapperId' => 'gridWrapper'])
 
         <!-- ─── Card View (mobile) ─── -->
         <div class="card-view" id="cardView"></div>
@@ -526,17 +511,7 @@
         ])
 
         <!-- ─── Empty State ─── -->
-        <div class="empty-state" id="emptyState" style="display:none">
-            <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            <h3 class="empty-title" id="emptyTitle">You haven't submitted any replacement requests for this semester.</h3>
-            <p class="empty-text" id="emptyText">Submit a replacement request for any conflicted class.</p>
-            <button class="empty-cta" id="emptyCta" onclick="window.location.href='/replacement-arrangement'" style="display:none">Submit a Replacement Request</button>
-        </div>
+        @include('partials.ui-empty-state', ['title' => "You haven't submitted any replacement requests for this semester.", 'text' => 'Submit a replacement request for any conflicted class.', 'ctaLabel' => 'Submit a Replacement Request', 'ctaOnclick' => "window.location.href='/replacement-arrangement'"])
 
     <!-- ═══ View Details Modal ═══ -->
     <div class="modal-overlay" id="modalOverlay">

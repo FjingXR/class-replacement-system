@@ -97,6 +97,12 @@
 | 2026-08-03 04:30 | Lines 1203–1208 | Batch cancel toast | Refactored `confirmBatchCancelAction` click handler: saves removed items before filter, calls `showToast('{N} requests cancelled.', undoCallback)` to allow re-insertion. |
 | 2026-08-03 05:30 | Line 775 | Bug fix | Changed `const mockRequests` to `let mockRequests` — batch cancel handler was reassigning the variable (`mockRequests = mockRequests.filter(...)`) which threw `TypeError: Assignment to constant variable`. |
 
+### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php` — OOP Phase 1 partial extraction
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-04 | — | Refactored: replaced inline page-header/week-nav/empty-state/grid-table with `@include('partials.…')` (OOP Phase 1) | Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table`, `ui-empty-state` partials. |
+
 ### `routes/web.php`
 
 | Timestamp | Location | Change | Detail |

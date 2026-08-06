@@ -1,5 +1,15 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-03] Mobile Responsive: Quick View Bottom Sheet + Touch Targets
+
+### Added
+- **Quick View modal → bottom-sheet on mobile (≤768px)**: Modal slides up from bottom, 80vh max height, scrollable body, drag handle bar, full-screen backdrop, full-width buttons in footer
+- **Touch targets**: Upgraded from 40px (tablet) to 44px (WCAG 2.5.5) on mobile for week arrows, modal buttons, and arrange button
+- **Toolbar week-nav**: Full-width stacked layout on mobile (search above, week picker below)
+
+### Changed
+- Modal animation: bottom-sheet slide-up on mobile (replaces centered scale on small screens)
+
 ## [2026-08-03] Refactor: Rows Per Page promoted to shared OOP component
 
 ### Changed
@@ -60,6 +70,7 @@
 | 2026-08-03 | CSS + JS columns + cells | F7: Column consolidation (14 → 9) | Merged Week/Date/Day/Time/Duration into single "Original Class" column using `formatClassBlock(c)` + `dayAbbr()` helpers; merged Type into Course Code as `(L)`/`(T)` suffix; added `.cell-class-block` / `.class-day-date` / `.class-time` / `.class-duration` CSS; removed `.col-type`/`.col-week`/`.col-date`/`.col-day`/`.col-time`/`.col-duration`; added `event.stopPropagation()` on action button; sort hint updated |
 | 2026-08-03 | CSS + HTML + JS | F1: Rows Per Page selector | Added `state.rpp` (default 5), `setRpp(n)` function, `rppSelect` dropdown (5/10/25/50), CSS for `.rows-per-page`/`.rpp-label`/`.rpp-select`; replaced `pageSize` with `state.rpp` in offset/slice/paginate; resets to page 1 on change; hidden on mobile |
 | 2026-08-03 | HTML + JS | F5: Keyboard Shortcuts modal | Added help icon button in toolbar; added `#keyboardModal` overlay with 7-row shortcuts table (/, Esc, →, ←, Enter, ?); added `showKeyboardShortcuts()`/`hideKeyboardShortcuts()` functions; added global `keydown` listener for `/` (focus search), `Esc` (close modal or clear filters), `?` (open modal), `ArrowRight`/`ArrowLeft` (page navigation); added `clearAll()`/`goNextPage()`/`goPrevPage()` helper functions |
+| 2026-08-04 | — | Refactored: replaced inline page-header/week-nav/empty-state/grid-table/modal with `@include('partials.…')` (OOP Phase 1) | Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table`, `ui-empty-state` partials. |
 
 ### `routes/web.php`
 

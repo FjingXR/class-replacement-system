@@ -827,17 +827,11 @@
         </svg>
     </button>
 
-    <div class="page-header">
-        <span class="semester-chip" id="semesterChip"></span>
-    </div>
+    @include('partials.ui-page-header', [])
 
         <div class="toolbar">
             <div class="toolbar-left">
-                <div class="week-nav">
-                    <button class="week-arrow" onclick="prevWeek()" aria-label="Previous week">&#8249;</button>
-                    <select class="selector-dropdown" id="weekSelector" onchange="onWeekChange()"></select>
-                    <button class="week-arrow" onclick="nextWeek()" aria-label="Next week">&#8250;</button>
-                </div>
+                @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'onWeekChange()', 'selectClass' => 'selector-dropdown', 'showTodayBtn' => false])
             </div>
             <div class="toolbar-center">
                 <div class="toolbar-subtitle">BMIT6767 Kylian Mbappe Dembele (L)</div>
@@ -858,14 +852,7 @@
             <span class="progress-text" id="progressText">Selected 0 of 4 slots</span>
         </div>
 
-        <div class="grid-wrapper">
-            <div class="grid-scroll" id="gridScroll">
-                <table class="timetable" id="timetable">
-                    <thead id="tableHead"></thead>
-                    <tbody id="tableBody"></tbody>
-                </table>
-            </div>
-        </div>
+        @include('partials.ui-grid-table')
 
         <div class="legend">
             <div class="legend-item">
