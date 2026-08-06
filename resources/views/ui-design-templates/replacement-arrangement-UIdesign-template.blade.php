@@ -1496,7 +1496,7 @@
         }
 
         function updateProgress() {
-            const count = selectedCells.length;
+            const count = getGlobalTotal();
             const max = MAX_SELECTION;
             const pct = max > 0 ? (count / max) * 100 : 0;
             const fill = document.getElementById('progressFill');
