@@ -938,9 +938,11 @@ html.dark .semester-bar select:not(.week-select) {
 }
 
 /* ── Time column ───────────────────────────────────────────── */
+.time-header-col,
 .time-col {
-    width: 130px;
-    min-width: 130px;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
     left: 0;
     position: sticky;
     z-index: 15;

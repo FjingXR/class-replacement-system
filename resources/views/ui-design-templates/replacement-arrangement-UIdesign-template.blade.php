@@ -206,16 +206,18 @@
         }
 
         .time-header-col {
-            width: 130px;
-            min-width: 130px;
+            width: 110px;
+            min-width: 110px;
+            max-width: 110px;
             left: 0;
             z-index: 30 !important;
         }
         thead .time-header-col { z-index: 40 !important; }
 
         .time-col {
-            width: 130px;
-            min-width: 130px;
+            width: 110px;
+            min-width: 110px;
+            max-width: 110px;
             left: 0;
             position: sticky;
             z-index: 15;
@@ -268,7 +270,7 @@
 
         .timetable td.hour-cell {
             padding: 0;
-            height: 52px;
+            height: 80px;
             min-width: 80px;
             cursor: default;
         }
@@ -673,7 +675,7 @@
                 padding: 8px 14px;
                 font-size: 12px;
             }
-            .time-header-col, .time-col { width: 100px; min-width: 100px; }
+            .time-header-col, .time-col { width: 14%; min-width: 120px; }
             .hour-header, .timetable td.hour-cell { min-width: 60px; }
             .header-logo { height: 44px; }
             .sel-summary-grid { grid-template-columns: 1fr; }
