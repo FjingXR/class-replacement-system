@@ -13,6 +13,8 @@
         .col-reason { width: 140px; vertical-align: middle; }
         .col-action { width: 150px; }
 
+        .grid-scroll .timetable { min-width: 1120px; }
+
         /* ───── Urgency ───── */
         .urgency-high { color: var(--color-error); font-weight: 700; }
         .urgency-mid { color: var(--color-secondary); font-weight: 600; }

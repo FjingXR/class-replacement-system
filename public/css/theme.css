@@ -419,7 +419,6 @@ body {
 .timetable {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1350px;
     table-layout: fixed;
 }
 .timetable th, .timetable td {
@@ -713,6 +712,7 @@ html.light .badge-replacement { background: var(--color-primary-dark); color: va
     .toolbar-left { justify-content: flex-start; }
     .search-input { width: 100%; }
     .filter-select { width: auto; flex: 0 0 auto; }
+    .pagination-bar { flex-wrap: wrap; gap: 8px; }
 }
 @media (max-width: 768px) {
     .app-container { padding: 10px 12px; padding-top: 66px; }
