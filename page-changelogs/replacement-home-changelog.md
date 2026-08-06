@@ -1,5 +1,10 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-06] Bug Fix: qvArrange() Navigation Broken
+
+### Fixed
+- **`qvArrange()` JS bug**: `hideQuickView()` nullified `qvCurrent` before reading its `code`/`date`, causing a `TypeError`. Fix: saved values to local vars first, then hide, then navigate.
+
 ## [2026-08-03] Mobile Responsive: Quick View Bottom Sheet + Touch Targets
 
 ### Added

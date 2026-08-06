@@ -503,8 +503,10 @@
 
         function qvArrange() {
             if (qvCurrent) {
+                var c = qvCurrent.code;
+                var d = qvCurrent.date;
                 hideQuickView();
-                goToReplacementWith(qvCurrent.code, qvCurrent.date);
+                goToReplacementWith(c, d);
             }
         }
 
