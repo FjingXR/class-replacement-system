@@ -299,6 +299,7 @@
         .cell-occupied {
             background: var(--color-error-container);
             cursor: not-allowed;
+            height: 100%;
         }
 
         .cell-selected {
@@ -330,11 +331,13 @@
         .cell-pending {
             background: var(--color-tertiary-container);
             cursor: not-allowed;
+            height: 100%;
         }
 
         .cell-reserved {
             background: var(--color-surface-variant);
             cursor: not-allowed;
+            height: 100%;
         }
 
         .timetable tr:last-child td { border-bottom: none; }
