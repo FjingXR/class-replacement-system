@@ -6,7 +6,7 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--color-surface-variant); border-radius: 4px; }
+::-webkit-scrollbar-track { background: var(--color-surface-variant); border-radius: 4px; margin: 0 2px; }
 ::-webkit-scrollbar-thumb { background: var(--color-outline-strong); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-on-surface-variant); }
 .grid-scroll { scrollbar-color: var(--color-outline-strong) var(--color-surface-variant); scrollbar-width: thin; }
@@ -416,7 +416,7 @@ body {
     overflow: hidden;
 }
 .grid-scroll {
-    overflow-x: auto;
+    overflow-x: scroll;
 }
 .timetable {
     width: 100%;
@@ -714,7 +714,7 @@ html.light .badge-replacement { background: var(--color-primary-dark); color: va
 
 /* ───── Responsive ───── */
 @media (max-width: 1024px) {
-    .grid-scroll { overflow-x: auto; }
+    .grid-scroll { overflow-x: scroll; }
     .toolbar { flex-direction: column; align-items: stretch; }
     .toolbar-left { justify-content: flex-start; }
     .search-input { width: 100%; }
