@@ -1,5 +1,9 @@
 name: replacement-home-mobile-responsive
 created: 2026-08-03
-status: proposed
+status: frozen
 scope: single-page
 page: replacement-home-UI-design-template.blade.php
+features:
+  - M1: Quick View Modal → Bottom Sheet
+  - M3: Keyboard Shortcuts Modal → Bottom Sheet (optional, for consistency)
+  - M4: Toolbar Mobile Layout

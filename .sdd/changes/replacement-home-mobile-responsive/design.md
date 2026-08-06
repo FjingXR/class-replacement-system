@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Add page-specific mobile CSS in `replacement-home-UI-design-template.blade.php`'s existing `@media (max-width: 768px)` block. Two changes: Quick View modal → bottom-sheet, and touch target upgrades. All CSS is page-level — no shared files modified.
+Add page-specific mobile CSS in `replacement-home-UI-design-template.blade.php`'s existing `@media (max-width: 768px)` block. Three changes: Quick View modal → bottom-sheet, Keyboard Shortcuts modal → bottom-sheet, and toolbar layout improvements. All CSS is page-level — no shared files modified.
 
 ## Architecture Decisions
 
@@ -47,30 +47,64 @@ The Quick View modal (`#quickViewModal`) currently uses the shared `.modal-overl
 
 **HTML change:** Add drag handle div to modal markup (page template only).
 
-### M2: Touch Targets (WCAG 2.5.5)
+### M3: Keyboard Shortcuts Modal → Bottom Sheet (≤768px)
 
-The shared `theme.css` sets 40px min at tablet breakpoint (≤1024px). We upgrade to 44px on mobile:
+Same pattern as M1 but for `#keyboardModal`. Lower priority since the keyboard shortcuts button is hidden on mobile (`#kbShortcutsBtn { display: none }`), but included for consistency.
+
+**CSS overrides:**
+```css
+#keyboardModal .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+}
+#keyboardModal .modal {
+    max-width: 100%;
+    max-height: 60vh;             /* shorter content */
+    border-radius: 16px 16px 0 0;
+    overflow-y: auto;
+    animation: sheetUp 0.25s ease;
+}
+#keyboardModal .modal-footer {
+    flex-direction: column;
+}
+#keyboardModal .modal-footer .btn-close-modal {
+    width: 100%;
+}
+```
+
+**HTML change:** Add drag handle div to keyboard modal markup.
+
+### M4: Toolbar Mobile Layout (≤768px)
+
+The shared `theme.css` already makes the toolbar column layout at 1024px and full-width at 768px. Page-specific improvements:
 
 ```css
 @media (max-width: 768px) {
-    #quickViewModal .modal-close,
-    #quickViewModal .btn-action,
-    #quickViewModal .btn-close-modal,
-    .week-arrow,
-    .replacement-card {
-        min-height: 44px;
-        min-width: 44px;
+    .week-nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .week-select {
+        flex: 1;
+        min-width: 0;
+    }
+    .toolbar-right {
+        justify-content: space-between;
+        padding-top: 8px;
+        border-top: 1px solid var(--color-outline);
     }
 }
 ```
 
+**Rationale:** Week-nav arrows + select span full width for easier tapping; result count and keyboard button (if visible) separated with subtle border.
+
 ### Data Flow
 
-No JS changes — pure CSS enhancement. The existing `quickView()` and `hideQuickView()` functions work unchanged; only the visual presentation differs on mobile.
+No JS changes — pure CSS enhancement. The existing `quickView()`, `hideQuickView()`, `showKeyboardShortcuts()`, `hideKeyboardShortcuts()` functions work unchanged; only the visual presentation differs on mobile.
 
 ## Dependencies
 
-- `public/css/theme.css` — existing `.modal-overlay`, `.modal`, `.modal-footer` classes (no changes)
+- `public/css/theme.css` — existing `.modal-overlay`, `.modal`, `.modal-footer`, `.toolbar` classes (no changes)
 - `public/js/ui-common.js` — no changes
 
 ## Promoted to Shared
@@ -80,13 +114,14 @@ No promotions — all CSS is page-specific. If bottom-sheet modal pattern is nee
 ## Mobile View
 
 - **M1**: Quick View modal converts to bottom-sheet on ≤768px: slides up from bottom, 80vh max, drag handle, full-width buttons, scrollable body
-- **M2**: Touch targets upgraded to 44×44px on mobile (WCAG 2.5.5)
-- **Already done**: Summary cards 1-column, responsive typography (clamp), full-width inputs, safe area insets, card view, grid hidden — all in shared `theme.css`
+- **M3**: Keyboard shortcuts modal converts to bottom-sheet on ≤768px: slides up from bottom, 60vh max, drag handle, full-width close button
+- **M4**: Toolbar layout improved: week-nav full-width, result count + buttons aligned with separator
+- **Already done**: Summary cards 1-column, responsive typography (clamp), full-width inputs, safe area insets, touch targets 48px (8dp), card view, grid hidden — all in shared `theme.css`
 
 ## File Changes
 
 | File | Action | Lines Added (est.) |
 |------|--------|-------------------|
-| `replacement-home-UI-design-template.blade.php` | Extend `@media` block | +25 lines (CSS: ~20, HTML: ~5 for drag handle) |
+| `replacement-home-UI-design-template.blade.php` | Extend `@media` block + add sheet-handle divs | +35 lines (CSS: ~25, HTML: ~10 for 2 drag handles) |
 
-**Total estimated lines**: 680 + 25 = ~705 lines (well under 1500 limit)
+**Total estimated lines**: 609 + 35 = ~644 lines (well under 1500 limit)

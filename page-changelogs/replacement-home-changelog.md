@@ -1,5 +1,10 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-06] Touch Target Upgrade: 44px → 48px (8dp)
+
+### Changed
+- **Touch targets**: Upgraded from 44×44px to 48×48px (8dp) in `theme.css` for all mobile buttons/links. Pill-tab padding also increased to 12px.
+
 ## [2026-08-06] Bug Fix: qvArrange() Navigation Broken
 
 ### Fixed
