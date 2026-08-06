@@ -110,6 +110,7 @@
 |-----------|----------|--------|--------|
 | 2026-08-06 | Lines 8–12 | Scrollbar visibility | Increased scrollbar height 6px→8px, added track background (`surface-variant`), added `scrollbar-color`/`scrollbar-width` on `.grid-scroll` for cross-browser visibility |
 | 2026-08-06 | Line 514 | Cell type style | Added `.cell-type` (opacity 0.5, font-size 12px) for inline type label ` (L)` / ` (T)` in merged Course Code column |
+| 2026-08-06 | Line 834, 74 | Requested At two-line format | Added `<br>` between date/time and relative age — now shows `30 Jun 2026, 8:03 PM` / `(37 days ago)`. Added `white-space: normal` to `.timetable td.col-requested-at` to override global `nowrap`. |
 | 2026-08-06 | Line 419 | Scrollbar always-visible | Changed `.grid-scroll` from `overflow-x: auto` to `overflow-x: scroll` so horizontal scrollbar is always rendered (not just on hover), ensuring users discover scrollable right-side columns |
 
 ### `routes/web.php`

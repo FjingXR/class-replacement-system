@@ -71,7 +71,7 @@
         }
 
         /* ───── Column Widths ───── */
-        .col-requested-at { width: 180px; }
+        .timetable td.col-requested-at { width: 180px; white-space: normal; }
         .col-original { width: 170px; }
         .col-replacement { width: 170px; }
         .col-original, .col-replacement { white-space: normal; }
@@ -831,7 +831,7 @@
                     row.appendChild(checkTd);
 
                     var cells = [
-                        { html: '<span class="' + ageCls + '">' + formatDateTime(r.requestedAt) + ' <span class="age-relative">(' + relativeTime(days) + ')</span></span>', cls: 'col-requested-at' },
+                        { html: '<span class="' + ageCls + '">' + formatDateTime(r.requestedAt) + '<br><span class="age-relative">(' + relativeTime(days) + ')</span></span>', cls: 'col-requested-at' },
                         { html: '<span class="cell-code">' + r.courseCode + ' <span class="cell-type">(' + r.classType + ')</span></span><span class="cell-name">' + r.courseName + '</span>', cls: 'col-code' },
                         { html: formatClassBlock(r), cls: 'col-original' },
                         { html: formatReplacementBlock(r), cls: 'col-replacement' },
