@@ -80,6 +80,8 @@
         .col-cohort { width: 120px; }
         .col-status { width: 130px; }
 
+        .grid-scroll .timetable { min-width: 1315px; }
+
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;
         }
