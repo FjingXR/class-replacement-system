@@ -6,7 +6,7 @@
 - [x] Add CSS: `.progress-wrapper`, `.progress-bar`, `.progress-fill`, `.progress-text`
 - [x] Add JS function `updateProgress()`
 - [x] Call `updateProgress()` inside existing `updateCounter()` function
-- [ ] Test: select slots → progress bar updates; clear → resets
+- [x] Test: select slots → progress bar updates; clear → resets
 
 ## Task 2: F4 — Venue Capacity Badge
 
@@ -14,7 +14,7 @@
 - [x] Add JS function `buildVenueDropdown()` using `MockData.venues[]`
 - [x] Add CSS: `.venue-warning { color: var(--color-error); margin-left: 4px; }`
 - [x] Call `buildVenueDropdown()` in DOMContentLoaded
-- [ ] Test: venue dropdown shows capacity; warning icon if capacity < students
+- [x] Test: venue dropdown shows capacity; warning icon if capacity < students
 
 ## Task 3: F7 — Conflict Warning Toast
 
@@ -22,7 +22,7 @@
 - [x] Add toast CSS: `.toast { position: fixed; bottom: 24px; ... }`
 - [x] Add JS function `showToast(message, callback?)`
 - [x] Integrate `checkConflict()` into `toggleCell()` on selection
-- [ ] Test: select slot that overlaps with myTimetable → yellow toast appears
+- [x] Test: select slot that overlaps with myTimetable → yellow toast appears
 
 ## Task 4: F2 — Selection Undo (Ctrl+Z)
 
@@ -31,7 +31,7 @@
 - [x] Add JS function `undoSelection()` — pop last entry, reverse action
 - [x] Integrate `pushHistory()` into `toggleCell()` on both select and deselect
 - [x] Add Ctrl+Z handler in `handleKeyDown(e)` (see Task 5)
-- [ ] Test: select slot → Ctrl+Z → slot deselected; deselect → Ctrl+Z → slot re-selected
+- [x] Test: select slot → Ctrl+Z → slot deselected; deselect → Ctrl+Z → slot re-selected
 
 ## Task 5: F1 — Keyboard Shortters
 
@@ -43,7 +43,7 @@
 - [x] Add JS function `focusCell(day, hour)`, `unfocusCell()`
 - [x] Add JS function `showHelp()`, `hideHelp()`
 - [x] Add event listener: `document.addEventListener('keydown', handleKeyDown)`
-- [ ] Test: arrow keys navigate; Enter/Space toggle; Escape closes; ? shows help
+- [x] Test: arrow keys navigate; Enter/Space toggle; Escape closes; ? shows help
 
 ## Task 6: Changelog + Final Testing
 
