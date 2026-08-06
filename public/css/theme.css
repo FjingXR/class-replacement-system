@@ -526,6 +526,32 @@ html.light .badge-replacement { background: var(--color-primary-dark); color: va
 .badge-pending { background: var(--color-tertiary); color: var(--color-on-tertiary); }
 .badge-conflict { background: var(--color-error); color: var(--color-on-error); }
 
+/* ───── Cell Class Block (multi-line cell) ───── */
+.cell-class-block {
+    line-height: 1.55;
+    white-space: pre-line;
+}
+.cell-class-block .class-day-date {
+    font-weight: 600;
+    color: var(--color-on-surface);
+}
+.cell-class-block .class-time {
+    font-size: 12px;
+    color: var(--color-on-surface-variant);
+}
+.cell-class-block .class-duration {
+    color: var(--color-on-surface);
+    font-weight: 500;
+}
+
+/* ───── Table Column Widths ───── */
+.col-no { width: 50px; }
+.col-code { width: 200px; }
+.col-students { width: 80px; }
+
+/* ───── Card View (responsive) ───── */
+.card-view { display: none; }
+
 /* ───── Action Button ───── */
 .btn-action {
     padding: 8px 16px;

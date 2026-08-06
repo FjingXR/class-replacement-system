@@ -5,34 +5,13 @@
 @section('page-styles')
 
         /* ───── Column Widths ───── */
-        .col-no { width: 50px; }
-        .col-code { width: 200px; }
         .col-original { width: 200px; }
         .col-original { white-space: normal; }
         .col-urgency { width: 100px; }
         .col-venue { width: 70px; }
-        .col-students { width: 80px; }
         .col-cohort { width: 130px; }
         .col-reason { width: 140px; vertical-align: middle; }
         .col-action { width: 150px; }
-
-        /* ───── Multi-line Cell ───── */
-        .cell-class-block {
-            line-height: 1.55;
-            white-space: pre-line;
-        }
-        .cell-class-block .class-day-date {
-            font-weight: 600;
-            color: var(--color-on-surface);
-        }
-        .cell-class-block .class-time {
-            font-size: 12px;
-            color: var(--color-on-surface-variant);
-        }
-        .cell-class-block .class-duration {
-            color: var(--color-on-surface);
-            font-weight: 500;
-        }
 
         /* ───── Urgency ───── */
         .urgency-high { color: var(--color-error); font-weight: 700; }
@@ -88,7 +67,6 @@
         }
 
         /* ───── Responsive Card View ───── */
-        .card-view { display: none; }
         .replacement-card {
             background: var(--color-surface);
             border: 1px solid var(--color-outline);
@@ -262,10 +240,6 @@
                 'Emergency Leave': 'badge-emergency-leave'
             };
             return map[reason] || '';
-        }
-
-        function dayAbbr(day) {
-            return day.substring(0, 3);
         }
 
         function formatClassBlock(c) {
@@ -477,28 +451,6 @@
 
         function goToReplacementWith(code, date) {
             window.location.href = '/replacement-arrangement?code=' + encodeURIComponent(code) + '&date=' + encodeURIComponent(date);
-        }
-
-        function weekFilterChanged() {
-            pageState.currentPage = 1;
-            buildTable();
-            updateWeekArrowState();
-        }
-
-        function prevWeekFilter() {
-            const sel = document.getElementById('weekFilter');
-            if (sel.selectedIndex > 0) {
-                sel.selectedIndex--;
-                sel.dispatchEvent(new Event('change'));
-            }
-        }
-
-        function nextWeekFilter() {
-            const sel = document.getElementById('weekFilter');
-            if (sel.selectedIndex < sel.options.length - 1) {
-                sel.selectedIndex++;
-                sel.dispatchEvent(new Event('change'));
-            }
         }
 
 

@@ -120,7 +120,6 @@
 @endsection
 
 @section('page-scripts')
-        const dayNames = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
 
         /* ════════════════════════════════════════════
            MOCK DATA — Weeks, Faculties, Cohorts, Events

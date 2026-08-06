@@ -199,7 +199,6 @@
 @endsection
 
 @section('page-scripts')
-        const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
         const weekData = (function() {
             const start = new Date(MockData.semester.startDate); // semester start, Monday

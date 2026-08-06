@@ -57,8 +57,6 @@
 @endsection
 
 @section('page-scripts')
-        const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
-        const dayNamesCorrect = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
         function fmtShort(d) {
             return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' });
@@ -195,7 +193,7 @@
                 { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
                 { label: 'Lecturer', value: event.lecturer },
                 { label: 'Venue', value: event.venue || '\u2014' },
-                { label: 'Day', value: dayNamesCorrect[event.di] },
+                { label: 'Day', value: dayNames[event.di] },
                 { label: 'Date', value: weekData[currentWeek].days[event.di].date },
                 { label: 'Time', value: startStr + ' \u2013 ' + endStr },
                 { label: 'Status', value: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) },

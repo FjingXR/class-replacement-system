@@ -501,3 +501,36 @@ function dismissToast() {
     if (bar) bar.classList.remove('visible');
     clearTimeout(_toastTimer);
 }
+
+// ───── Day Helpers ─────
+
+const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+
+function dayAbbr(day) {
+    return day.substring(0, 3);
+}
+
+// ───── Week Filter Navigation ─────
+
+function weekFilterChanged(opts) {
+    pageState.currentPage = 1;
+    if (opts && typeof opts.onBeforeRebuild === 'function') opts.onBeforeRebuild();
+    buildTable();
+    updateWeekArrowState();
+}
+
+function prevWeekFilter() {
+    const sel = document.getElementById('weekFilter');
+    if (sel.selectedIndex > 0) {
+        sel.selectedIndex--;
+        sel.dispatchEvent(new Event('change'));
+    }
+}
+
+function nextWeekFilter() {
+    const sel = document.getElementById('weekFilter');
+    if (sel.selectedIndex < sel.options.length - 1) {
+        sel.selectedIndex++;
+        sel.dispatchEvent(new Event('change'));
+    }
+}

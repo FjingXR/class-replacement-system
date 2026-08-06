@@ -71,35 +71,15 @@
         }
 
         /* ───── Column Widths ───── */
-        .col-no { width: 50px; }
         .col-requested-at { width: 145px; }
-        .col-code { width: 200px; }
         .col-type { width: 80px; }
         .col-original { width: 170px; }
         .col-replacement { width: 170px; }
         .col-original, .col-replacement { white-space: normal; }
         .col-venue { width: 75px; }
-        .col-students { width: 80px; }
         .col-cohort { width: 120px; }
         .col-status { width: 130px; }
 
-        /* ───── Multi-line Cell ───── */
-        .cell-class-block {
-            line-height: 1.55;
-            white-space: pre-line;
-        }
-        .cell-class-block .class-day-date {
-            font-weight: 600;
-            color: var(--color-on-surface);
-        }
-        .cell-class-block .class-time {
-            font-size: 12px;
-            color: var(--color-on-surface-variant);
-        }
-        .cell-class-block .class-duration {
-            color: var(--color-on-surface);
-            font-weight: 500;
-        }
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;
         }
@@ -385,7 +365,6 @@
         }
 
         /* ───── Responsive Card View ───── */
-        .card-view { display: none; }
         .request-card {
             background: var(--color-surface);
             border: 1px solid var(--color-outline);
@@ -609,9 +588,6 @@
             return map[status] || '';
         }
 
-        function dayAbbr(day) {
-            return day.substring(0, 3);
-        }
 
         function isoDayName(iso) {
             var p = iso.split('-');
@@ -1155,22 +1131,6 @@
             saveFilters();
             renderTable();
             updateWeekArrowState();
-        }
-
-        function prevWeekFilter() {
-            var sel = document.getElementById('weekFilter');
-            if (sel.selectedIndex > 0) {
-                sel.selectedIndex--;
-                sel.dispatchEvent(new Event('change'));
-            }
-        }
-
-        function nextWeekFilter() {
-            var sel = document.getElementById('weekFilter');
-            if (sel.selectedIndex < sel.options.length - 1) {
-                sel.selectedIndex++;
-                sel.dispatchEvent(new Event('change'));
-            }
         }
 
 
