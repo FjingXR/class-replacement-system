@@ -5,10 +5,11 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-outline-strong); border-radius: 3px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-surface-variant); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--color-outline-strong); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-on-surface-variant); }
+.grid-scroll { scrollbar-color: var(--color-outline-strong) var(--color-surface-variant); scrollbar-width: thin; }
 
 ::selection { background: var(--color-primary); color: var(--color-on-primary); }
 
@@ -508,6 +509,11 @@ html.dark .filter-select {
     font-weight: 400;
     opacity: 0.7;
     display: block;
+    font-size: 12px;
+}
+.cell-type {
+    font-weight: 400;
+    opacity: 0.5;
     font-size: 12px;
 }
 
@@ -1531,7 +1537,7 @@ html.dark .semester-bar select:not(.week-select) {
     }
 }
 
-/* ── Mobile: 44px minimum touch targets ── */
+/* ── Mobile: 48px minimum touch targets (8dp) ── */
 @media (max-width: 768px) {
     .btn,
     .btn-sm,
@@ -1539,15 +1545,15 @@ html.dark .semester-bar select:not(.week-select) {
     .btn-pill,
     button,
     a {
-        min-height: 44px;
-        min-width: 44px;
+        min-height: 48px;
+        min-width: 48px;
     }
 
-    .btn-sm { min-height: 40px; }
+    .btn-sm { min-height: 44px; }
 
     .pill-tab {
-        padding: 10px 16px;
-        min-height: 44px;
+        padding: 12px 16px;
+        min-height: 48px;
     }
 }
 

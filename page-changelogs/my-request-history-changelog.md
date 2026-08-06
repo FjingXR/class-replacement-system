@@ -102,6 +102,14 @@
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
 | 2026-08-04 | — | Refactored: replaced inline page-header/week-nav/empty-state/grid-table with `@include('partials.…')` (OOP Phase 1) | Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table`, `ui-empty-state` partials. |
+| 2026-08-06 | Lines 758, 835–838 | Column merge | Merged `Type` column into `Course Code & Name` — now shows `BMIT6767 (T)` / `Object-Ooped Programming` on two lines. Removed `.col-type` CSS, reduced min-width 1315px→1235px. |
+
+### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-06 | Lines 8–12 | Scrollbar visibility | Increased scrollbar height 6px→8px, added track background (`surface-variant`), added `scrollbar-color`/`scrollbar-width` on `.grid-scroll` for cross-browser visibility |
+| 2026-08-06 | Line 514 | Cell type style | Added `.cell-type` (opacity 0.5, font-size 12px) for inline type label ` (L)` / ` (T)` in merged Course Code column |
 
 ### `routes/web.php`
 

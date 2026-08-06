@@ -72,7 +72,6 @@
 
         /* ───── Column Widths ───── */
         .col-requested-at { width: 180px; }
-        .col-type { width: 80px; }
         .col-original { width: 170px; }
         .col-replacement { width: 170px; }
         .col-original, .col-replacement { white-space: normal; }
@@ -80,7 +79,7 @@
         .col-cohort { width: 120px; }
         .col-status { width: 130px; }
 
-        .grid-scroll .timetable { min-width: 1315px; }
+        .grid-scroll .timetable { min-width: 1235px; }
 
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;
@@ -756,7 +755,6 @@
             const columns = [
                 { label: 'Requested At', cls: 'col-requested-at', sortable: true, field: 'requestedAt' },
                 { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'courseCode' },
-                { label: 'Type', cls: 'col-type', sortable: false },
                 { label: 'Original Class', cls: 'col-original', sortable: true, field: 'classDate' },
                 { label: 'Requested Replacement', cls: 'col-replacement', sortable: false },
                 { label: 'Requested Venue', cls: 'col-venue', sortable: false },
@@ -834,8 +832,7 @@
 
                     var cells = [
                         { html: '<span class="' + ageCls + '">' + formatDateTime(r.requestedAt) + ' <span class="age-relative">(' + relativeTime(days) + ')</span></span>', cls: 'col-requested-at' },
-                        { html: '<span class="cell-code">' + r.courseCode + '</span><span class="cell-name">' + r.courseName + '</span>', cls: 'col-code' },
-                        { html: r.classType === 'L' ? 'Lecture' : 'Tutorial', cls: 'col-type' },
+                        { html: '<span class="cell-code">' + r.courseCode + ' <span class="cell-type">(' + r.classType + ')</span></span><span class="cell-name">' + r.courseName + '</span>', cls: 'col-code' },
                         { html: formatClassBlock(r), cls: 'col-original' },
                         { html: formatReplacementBlock(r), cls: 'col-replacement' },
                         { html: r.venue, cls: 'col-venue' },
