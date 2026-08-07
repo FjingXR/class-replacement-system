@@ -216,22 +216,6 @@
         }
         .reject-preset-chip:hover { background: var(--color-surface-variant); }
 
-        /* ───── Nav Badge ───── */
-        .nav-badge {
-            display: inline-block;
-            min-width: 18px;
-            height: 18px;
-            line-height: 18px;
-            border-radius: 9px;
-            background: var(--color-error);
-            color: var(--color-on-error);
-            font-size: 11px;
-            font-weight: 600;
-            text-align: center;
-            margin-left: 6px;
-            padding: 0 5px;
-        }
-
         /* ───── Viewed Row Indicator ───── */
         .row-viewed td:first-child { border-left: 3px solid var(--color-primary); }
 
