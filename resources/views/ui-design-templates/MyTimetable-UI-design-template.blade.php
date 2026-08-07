@@ -204,7 +204,7 @@
             const start = new Date(MockData.semester.startDate); // semester start, Monday
             start.setHours(0, 0, 0, 0);
             const arr = [];
-            const todayMs = (function() { const t = new Date('2026-08-02'); t.setHours(0, 0, 0, 0); return t.getTime(); })();
+            const todayMs = (function() { const t = new Date('2026-08-07'); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
             const fmtShort = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
             for (let w = 1; w <= 14; w++) {

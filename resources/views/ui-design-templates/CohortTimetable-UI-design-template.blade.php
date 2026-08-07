@@ -129,7 +129,7 @@
             const start = new Date(MockData.semester.startDate);
             start.setHours(0, 0, 0, 0);
             const arr = [];
-            const todayMs = (function() { const t = new Date('2026-08-02'); t.setHours(0, 0, 0, 0); return t.getTime(); })();
+            const todayMs = (function() { const t = new Date('2026-08-07'); t.setHours(0, 0, 0, 0); return t.getTime(); })();
             for (let w = 1; w <= 14; w++) {
                 const ms = start.getTime() + (w - 1) * 7 * 86400000;
                 const mon = new Date(ms);
