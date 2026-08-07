@@ -807,16 +807,6 @@
             document.getElementById('resultCount').textContent = currentFiltered.length + ' result' + (currentFiltered.length !== 1 ? 's' : '');
         }
 
-        // ── Update nav badge (§7.7) ──
-        function updateNavBadge() {
-            const count = MockData.approvalRequests.filter(r => r.status === 'Pending').length;
-            const badge = document.getElementById('navPendingBadge');
-            if (badge) {
-                badge.textContent = count;
-                badge.style.display = count > 0 ? 'inline-block' : 'none';
-            }
-        }
-
         // ── Main render ──
         function renderTable() {
             currentFiltered = filterData();

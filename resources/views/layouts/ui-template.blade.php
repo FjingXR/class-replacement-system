@@ -35,6 +35,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             updateIcon(document.documentElement.classList.contains('dark')); initMobileNav();
+            if (typeof updateNavBadge === 'function') updateNavBadge();
         });
 
         @yield('page-scripts')

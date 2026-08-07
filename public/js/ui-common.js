@@ -622,3 +622,14 @@ function getTodayMs() {
     t.setHours(0, 0, 0, 0);
     return t.getTime();
 }
+
+function updateNavBadge() {
+    var count = (window.MockData && MockData.approvalRequests)
+        ? MockData.approvalRequests.filter(function(r) { return r.status === 'Pending'; }).length
+        : 0;
+    var badge = document.getElementById('navPendingBadge');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+}
