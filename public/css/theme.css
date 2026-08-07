@@ -1739,6 +1739,95 @@ body {
     }
 }
 
+/* ── Promoted to theme.css (request-approval-bugfixes) ── */
+/* ── Status Badges (request-approval, my-request-history) ───── */
+.status-pending {
+    background: var(--color-tertiary-container);
+    color: var(--color-on-tertiary-container);
+}
+.status-approved {
+    background: var(--color-secondary-container);
+    color: var(--color-on-secondary-container);
+}
+.status-rejected {
+    background: var(--color-error-container);
+    color: var(--color-on-error-container);
+}
+.status-cancelled {
+    background: var(--color-surface-variant);
+    color: var(--color-on-surface-variant);
+}
+.status-completed {
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+}
+
+/* ── Promoted to theme.css (request-approval-bugfixes) ── */
+/* ── Modal Section Title (request-approval, my-request-history) ── */
+.modal-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-on-surface-variant);
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 10px 0 4px;
+}
+.modal-section-title:first-child {
+    padding-top: 0;
+}
+
+/* ── Promoted to theme.css (request-approval-bugfixes) ── */
+/* ── Danger & Outline Buttons (request-approval, my-request-history) ── */
+.btn-danger {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--color-error);
+    background: transparent;
+    color: var(--color-error);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.btn-danger:hover {
+    background: var(--color-error);
+    color: #fff;
+}
+.btn-outline {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--color-outline);
+    background: transparent;
+    color: var(--color-on-surface);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-outline:hover {
+    background: var(--color-surface-variant);
+}
+
+/* ── Promoted to theme.css (request-approval-bugfixes) ── */
+/* ── Bulk Selection (request-approval, my-request-history) ───── */
+.col-checkbox { width: 40px; text-align: center; }
+.bulk-checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+}
+.bulk-checkbox:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+.row-selected { background: var(--color-primary-container) !important; }
+
 /* ── Toast/Undo Bar ─────────────────────────────────────────── */
 .toast-bar {
     display: none;

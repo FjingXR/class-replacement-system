@@ -4,6 +4,54 @@
 
 @section('page-styles')
 
+        /* ───── Toggle ───── */
+        .toggle-wrapper {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .toggle-wrapper input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+        .toggle-track {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            border-radius: 10px;
+            background: var(--color-outline);
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .toggle-wrapper input:checked + .toggle-track {
+            background: var(--color-primary, #4f46e5);
+        }
+        .toggle-wrapper input:checked + .toggle-track .toggle-thumb {
+            transform: translateX(16px);
+        }
+        .toggle-label {
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+            font-weight: 500;
+        }
+
         /* ───── Clear Button ───── */
         .btn-clear {
             padding: 6px 12px;
@@ -57,7 +105,7 @@
             color: #3b82f6;
         }
 
-        /* ───── Status Badges ───── */
+        /* ───── Status Badges (page-specific overrides) ───── */
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -76,26 +124,6 @@
             font-weight: 400;
             opacity: 0.7;
             margin-top: 2px;
-        }
-        .status-pending {
-            background: var(--color-tertiary-container);
-            color: var(--color-on-tertiary-container);
-        }
-        .status-approved {
-            background: var(--color-secondary-container);
-            color: var(--color-on-secondary-container);
-        }
-        .status-rejected {
-            background: var(--color-error-container);
-            color: var(--color-on-error-container);
-        }
-        .status-cancelled {
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
-        }
-        .status-completed {
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
         }
 
         /* ───── Urgency Badges ───── */
@@ -126,67 +154,26 @@
             background: var(--color-primary-container);
         }
 
-        .modal-section-title {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--color-on-surface-variant);
-            opacity: 0.7;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding: 10px 0 4px;
-        }
-        .modal-section-title:first-child {
-            padding-top: 0;
-        }
 
-        .btn-danger {
-            padding: 8px 20px;
-            border-radius: 8px;
-            border: 1px solid var(--color-error);
-            background: transparent;
-            color: var(--color-error);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s, color 0.15s;
-        }
-        .btn-danger:hover {
-            background: var(--color-error);
-            color: #fff;
-        }
-        .btn-outline {
-            padding: 8px 20px;
-            border-radius: 8px;
-            border: 1px solid var(--color-outline);
-            background: transparent;
-            color: var(--color-on-surface);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .btn-outline:hover {
-            background: var(--color-surface-variant);
-        }
 
-        /* ───── Bulk Selection ───── */
-        .col-checkbox { width: 40px; text-align: center; }
+        /* ───── Bulk Selection (page-specific overrides) ───── */
         .col-checkbox input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--color-primary); cursor: pointer; }
-        .row-selected { background: var(--color-primary-container) !important; }
-        .batch-bar {
+        .bulk-action-bar {
             display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
             align-items: center;
             gap: 12px;
-            padding: 8px 16px;
-            background: var(--color-surface-variant);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-sm);
-            margin-bottom: 8px;
+            padding: 10px 16px;
+            background: var(--color-surface);
+            border-top: 1px solid var(--color-outline);
+            box-shadow: var(--shadow-lg);
         }
-        .batch-bar.visible { display: flex; }
-        .batch-bar .batch-count { font-size: 13px; font-weight: 600; color: var(--color-on-surface); }
+        .bulk-action-bar.visible { display: flex; }
+        .bulk-action-bar .bulk-count { font-size: 13px; font-weight: 600; color: var(--color-on-surface); }
 
         /* ───── Urgency Filter Chips ───── */
         .urgency-filter { display: inline-flex; gap: 4px; margin-left: 8px; }
@@ -249,7 +236,7 @@
         .row-viewed td:first-child { border-left: 3px solid var(--color-primary); }
 
         /* ───── Keyboard Highlight ───── */
-        .row-active { background: var(--color-primary-container) !important; border-left: 3px solid var(--color-primary); }
+        .row-focused { background: var(--color-primary-container) !important; border-left: 3px solid var(--color-primary); }
 
         /* ───── Slot Validity Icons ───── */
         .slot-icon { font-size: 11px; margin-left: 4px; font-weight: 600; }
@@ -328,7 +315,11 @@
 
         @media (max-width: 768px) {
             .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
+            .requests-cards { display: grid !important; gap: 12px; padding: 12px; }
             .card-view { display: block; }
+        }
+        @media (min-width: 769px) {
+            .requests-cards { display: none !important; }
         }
 
 @endsection
@@ -356,6 +347,11 @@
             <button class="urgency-filter-chip" data-urgency="normal" onclick="setUrgencyFilter('normal')">Normal</button>
         </div>
         @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeekFilter()', 'nextOnclick' => 'nextWeekFilter()', 'selectId' => 'weekFilter', 'selectOnclick' => 'weekFilterChanged(this.value)', 'showTodayBtn' => false])
+        <label class="toggle-wrapper" id="completedToggle">
+            <input type="checkbox" id="hideCompletedToggle" checked onchange="toggleHideCompleted()">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Hide Completed</span>
+        </label>
         <button class="btn-clear" id="clearFilters">Reset Filters</button>
     </div>
     <div class="toolbar-right">
@@ -364,12 +360,6 @@
 </div>
 
 <div class="sort-hint">Click column headers to sort (Requested Timestamp, Original Class, Proposed Replacement, Urgency, Status)</div>
-
-<div class="batch-bar" id="batchBar">
-    <span class="batch-count" id="batchCount"></span>
-    <button class="btn-approve" onclick="bulkApprove()">Approve Selected</button>
-    <button class="btn-reject" onclick="bulkReject()">Reject Selected</button>
-</div>
 
 <div class="grid-wrapper" id="gridWrapper">
     <div class="grid-scroll">
@@ -380,12 +370,22 @@
     </div>
 </div>
 
+<div class="requests-cards" id="requestsCards" style="display:none"></div>
+
 <div class="pagination-bar" id="paginationBar">
+    @include('partials.ui-rpp', ['id' => 'rowsPerPage', 'default' => 10, 'options' => [10, 20, 50]])
     <span class="pagination-info" id="paginationInfo"></span>
     <div class="pagination-controls" id="paginationControls"></div>
 </div>
 
+<div class="bulk-action-bar" id="bulkActionBar">
+    <span class="bulk-count" id="bulkCount"></span>
+    <button class="btn-approve" onclick="bulkApprove()">Approve Selected</button>
+    <button class="btn-reject" onclick="bulkReject()">Reject Selected</button>
+</div>
+
 @include('partials.ui-summary-bar', ['cards' => [
+    ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests'],
     ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending Requests'],
     ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved'],
     ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected'],
@@ -504,7 +504,9 @@
 
         // ── Request age helper (§7.5) ──
         function requestAgeHtml(requestedAt) {
-            const diff = Math.floor((Date.now() - new Date(requestedAt).getTime()) / 86400000);
+            const REFERENCE_DATE = new Date('2026-08-29T00:00:00');
+            const diff = Math.floor((REFERENCE_DATE - new Date(requestedAt).getTime()) / 86400000);
+            if (diff < 0) return '<div class="request-age request-age--unknown">—</div>';
             const cls = diff <= 1 ? 'age-fresh' : diff <= 3 ? 'age-waiting' : 'age-stale';
             return '<div class="request-age ' + cls + '">' + diff + ' day' + (diff !== 1 ? 's' : '') + ' ago</div>';
         }
@@ -515,6 +517,35 @@
             const d = new Date(iso + 'T00:00:00');
             const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
             return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        }
+
+        // ── Filter persistence (§7) ──
+        function saveFilters() {
+            const state = {
+                weekFilter: document.getElementById('weekFilter')?.value || 'all',
+                statusFilter: document.getElementById('statusFilter')?.value || 'Pending',
+                urgencyFilter: urgencyFilter,
+                rpp: rpp,
+                sortField: sortState.field,
+                sortDir: sortState.dir,
+                hideCompleted: hideCompleted
+            };
+            localStorage.setItem('request-approval-filters', JSON.stringify(state));
+        }
+
+        function restoreFilters() {
+            const saved = localStorage.getItem('request-approval-filters');
+            if (!saved) return false;
+            try {
+                const state = JSON.parse(saved);
+                if (state.weekFilter) document.getElementById('weekFilter').value = state.weekFilter;
+                if (state.statusFilter) document.getElementById('statusFilter').value = state.statusFilter;
+                if (state.urgencyFilter) { urgencyFilter = state.urgencyFilter; document.querySelectorAll('.urgency-filter-chip').forEach(btn => { btn.classList.toggle('active', btn.dataset.urgency === urgencyFilter); }); }
+                if (state.rpp) { rpp = state.rpp; document.getElementById('rowsPerPage').value = state.rpp; }
+                if (state.sortField) { sortState.field = state.sortField; sortState.dir = state.sortDir || 'asc'; }
+                if (state.hideCompleted !== undefined) { hideCompleted = state.hideCompleted; document.getElementById('hideCompletedToggle').checked = hideCompleted; }
+                return true;
+            } catch (e) { return false; }
         }
 
         // ── Approve summary helper (§7.2) ──
@@ -529,7 +560,8 @@
         // ── Sort state ──
         let sortState = { field: 'requestedAt', dir: 'asc' };
         let currentPage = 1;
-        const PAGE_SIZE = 10;
+        let rpp = 10;
+        const RPP_OPTIONS = [10, 20, 50];
 
         // ── Feature state ──
         let selectedIds = new Set();
@@ -537,8 +569,26 @@
         let currentApproveIds = [];
         let currentRejectId = null;
         let urgencyFilter = 'all';
-        let activeRowIndex = -1;
+        let focusedRowIndex = -1;
         let isInitialLoad = true;
+        let hideCompleted = true;
+
+        // ── RPP (rows per page) ──
+        function initLocalRpp() {
+            const saved = localStorage.getItem('request-approval-rpp');
+            if (saved && RPP_OPTIONS.includes(parseInt(saved))) {
+                rpp = parseInt(saved);
+                document.getElementById('rowsPerPage').value = saved;
+            }
+        }
+
+        function toggleHideCompleted() {
+            hideCompleted = document.getElementById('hideCompletedToggle').checked;
+            currentPage = 1;
+            renderTable();
+            updateSummary();
+            saveFilters();
+        }
 
         // ── Table columns ──
         const columns = [
@@ -583,6 +633,7 @@
             }
             currentPage = 1;
             renderTable();
+            saveFilters();
         }
 
         function sortData(data) {
@@ -611,6 +662,7 @@
             let result = MockData.approvalRequests.filter(r => {
                 if (status !== 'all' && r.status !== status) return false;
                 if (week !== 'all' && !isInWeek(r.classDate, week)) return false;
+                if (hideCompleted && r.status === 'Completed') return false;
                 if (search) {
                     const haystack = (r.courseCode + ' ' + r.courseName + ' ' + r.lecturer).toLowerCase();
                     if (!haystack.includes(search)) return false;
@@ -657,11 +709,11 @@
 
             html += '<td>' + r.totalStudents + '</td>';
             html += '<td><span class="urgency-badge ' + urgencyClass(level) + '">' + urgencyLabel(level) + '</span></td>';
-            html += '<td><span class="badge ' + statusClass(r.status) + '" onclick="openModal(' + (offset + i) + ')" style="cursor:pointer">' + r.status + '</span></td>';
+            html += '<td><span class="badge ' + statusClass(r.status) + '" onclick="openModalById(' + r.id + ')" style="cursor:pointer">' + r.status + '</span></td>';
 
             const actions = r.status === 'Pending'
                 ? '<button class="btn-approve" onclick="approveRequest(' + r.id + ')">✓ Approve</button> <button class="btn-reject" onclick="openRejectModal(' + r.id + ')">✕ Reject</button>'
-                : '<button class="btn-view" onclick="openModal(' + (offset + i) + ')">👁 View</button>';
+                : '<button class="btn-view" onclick="openModalById(' + r.id + ')">👁 View</button>';
             html += '<td>' + actions + '</td>';
             html += '</tr>';
             return html;
@@ -671,8 +723,8 @@
         function renderBody() {
             const tbody = document.getElementById('tableBody');
             const sorted = sortData(currentFiltered);
-            const offset = (currentPage - 1) * PAGE_SIZE;
-            const page = sorted.slice(offset, offset + PAGE_SIZE);
+            const offset = (currentPage - 1) * rpp;
+            const page = sorted.slice(offset, offset + rpp);
 
             if (page.length === 0) {
                 tbody.innerHTML = '';
@@ -698,11 +750,16 @@
 
         // ── Update summary cards ──
         function updateSummary() {
-            const pending = MockData.approvalRequests.filter(r => r.status === 'Pending').length;
-            const approved = MockData.approvalRequests.filter(r => r.status === 'Approved').length;
-            const rejected = MockData.approvalRequests.filter(r => r.status === 'Rejected').length;
-            const reviewed = MockData.approvalRequests.filter(r => ['Approved', 'Rejected', 'Completed'].includes(r.status)).length;
+            const total = MockData.approvalRequests.length;
+            const source = hideCompleted
+                ? MockData.approvalRequests.filter(r => r.status !== 'Completed')
+                : MockData.approvalRequests;
+            const pending = source.filter(r => r.status === 'Pending').length;
+            const approved = source.filter(r => r.status === 'Approved').length;
+            const rejected = source.filter(r => r.status === 'Rejected').length;
+            const reviewed = source.filter(r => ['Approved', 'Rejected', 'Completed'].includes(r.status)).length;
 
+            document.getElementById('summaryTotal').textContent = total;
             document.getElementById('summaryPending').textContent = pending;
             document.getElementById('summaryApproved').textContent = approved;
             document.getElementById('summaryRejected').textContent = rejected;
@@ -712,7 +769,7 @@
         // ── Update pagination ──
         function updatePagination() {
             const total = currentFiltered.length;
-            const totalPages = Math.ceil(total / PAGE_SIZE);
+            const totalPages = Math.ceil(total / rpp);
             const info = document.getElementById('paginationInfo');
             const controls = document.getElementById('paginationControls');
 
@@ -722,8 +779,8 @@
                 return;
             }
 
-            const start = (currentPage - 1) * PAGE_SIZE + 1;
-            const end = Math.min(currentPage * PAGE_SIZE, total);
+            const start = (currentPage - 1) * rpp + 1;
+            const end = Math.min(currentPage * rpp, total);
             info.textContent = 'Showing ' + start + '-' + end + ' of ' + total;
 
             let html = '';
@@ -768,6 +825,33 @@
             updateSummary();
             updatePagination();
             updateResultCount();
+            renderCards();
+        }
+
+        // ── Render cards (mobile responsive view) ──
+        function renderCards() {
+            const container = document.getElementById('requestsCards');
+            if (!container) return;
+            container.innerHTML = '';
+            currentFiltered.forEach(function(r, i) {
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.setAttribute('data-id', r.id);
+                card.innerHTML =
+                    '<div class="card-header">' +
+                        '<span class="card-code">#' + r.id + '</span>' +
+                        '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
+                    '</div>' +
+                    '<div class="card-body">' +
+                        '<div><strong>Course:</strong> ' + r.courseCode + ' - ' + r.courseName + '</div>' +
+                        '<div><strong>Date:</strong> ' + formatShortDate(r.classDate) + ' ' + to12h(r.timeStart) + '</div>' +
+                        '<div><strong>Lecturer:</strong> ' + r.lecturerName + '</div>' +
+                        '<div><strong>Urgency:</strong> <span class="urgency-badge ' + urgencyClass(urgencyLevel(r.classDate)) + '">' + urgencyLabel(urgencyLevel(r.classDate)) + '</span></div>' +
+                        '<div>' + requestAgeHtml(r.requestedAt) + '</div>' +
+                    '</div>';
+                card.addEventListener('click', function() { openModalById(r.id); });
+                container.appendChild(card);
+            });
         }
 
         // ── Skeleton loading (§7q) ──
@@ -801,8 +885,8 @@
         }
 
         function updateBatchBar() {
-            const bar = document.getElementById('batchBar');
-            const count = document.getElementById('batchCount');
+            const bar = document.getElementById('bulkActionBar');
+            const count = document.getElementById('bulkCount');
             if (selectedIds.size === 0) { bar.classList.remove('visible'); return; }
             bar.classList.add('visible');
             count.textContent = selectedIds.size + ' selected';
@@ -810,27 +894,7 @@
 
         function bulkApprove() {
             const ids = [...selectedIds];
-            const summary = ids.map(id => {
-                const r = MockData.approvalRequests.find(x => x.id === id);
-                return '#' + id + ' ' + r.courseCode + ' — ' + r.lecturer;
-            }).join('\n');
-            if (confirm('Approve ' + ids.length + ' request(s)?\n\n' + summary + '\n\nThis will notify the lecturers.')) {
-                ids.forEach(id => {
-                    const r = MockData.approvalRequests.find(x => x.id === id);
-                    r.status = 'Approved';
-                });
-                selectedIds.clear();
-                renderTable();
-                updateNavBadge();
-                showToast(ids.length + ' request(s) approved.', function() {
-                    ids.forEach(id => {
-                        const r = MockData.approvalRequests.find(x => x.id === id);
-                        r.status = 'Pending';
-                    });
-                    renderTable();
-                    updateNavBadge();
-                });
-            }
+            openApproveNotesModal(ids);
         }
 
         function bulkReject() {
@@ -857,12 +921,14 @@
             });
             currentPage = 1;
             renderTable();
+            saveFilters();
         }
 
         // ── Week filter change handler ──
         function weekFilterChanged() {
             currentPage = 1;
             renderTable();
+            saveFilters();
         }
 
         // ── Mini timeline (§7p) ──
@@ -873,8 +939,9 @@
                 { label: 'Reviewed', time: r.reviewedAt, done: !!r.reviewedAt }
             ];
             let html = '<div class="request-timeline">';
+            let foundFirstIncomplete = false;
             steps.forEach((s, i) => {
-                const cls = s.done ? 'completed' : (i === steps.filter(x => !x.done).length ? 'active' : 'pending');
+                const cls = s.done ? 'completed' : (!foundFirstIncomplete && (foundFirstIncomplete = true) ? 'active' : 'pending');
                 html += '<div class="timeline-step ' + cls + '">';
                 html += '<div class="timeline-dot"></div>';
                 html += '<div class="timeline-label">' + s.label + '</div>';
@@ -889,8 +956,8 @@
         // ── Modal ──
         let currentModalId = null;
 
-        function openModal(index) {
-            const r = currentFiltered[index];
+        function openModalById(id) {
+            const r = MockData.approvalRequests.find(x => x.id === id);
             if (!r) return;
             currentModalId = r.id;
             viewedIds.add(r.id);
@@ -948,6 +1015,12 @@
 
             document.getElementById('modalOverlay').classList.add('show');
             renderTable();
+        }
+
+        function openModal(index) {
+            const r = currentFiltered[index];
+            if (!r) return;
+            openModalById(r.id);
         }
 
         function closeModal() {
@@ -1046,10 +1119,10 @@
                 if (currentFiltered[i].status === 'Pending') { nextIndex = i; break; }
             }
             if (nextIndex >= 0) {
-                activeRowIndex = nextIndex;
-                openModal(nextIndex);
+                focusedRowIndex = nextIndex;
+                openModalById(currentFiltered[nextIndex].id);
             } else {
-                activeRowIndex = -1;
+                focusedRowIndex = -1;
                 closeModal();
             }
         }
@@ -1058,7 +1131,7 @@
         function highlightRow() {
             const rows = document.querySelectorAll('#tableBody tr');
             rows.forEach((tr, i) => {
-                tr.classList.toggle('row-active', i === activeRowIndex);
+                tr.classList.toggle('row-focused', i === focusedRowIndex);
             });
         }
 
@@ -1080,13 +1153,32 @@
             document.getElementById('statusFilter').value = 'Pending';
             document.getElementById('weekFilter').value = 'all';
             urgencyFilter = 'all';
+            rpp = 10;
+            document.getElementById('rowsPerPage').value = '10';
+            hideCompleted = true;
+            document.getElementById('hideCompletedToggle').checked = true;
             selectedIds.clear();
+            viewedIds.clear();
             currentPage = 1;
             sortState = { field: 'requestedAt', dir: 'asc' };
             document.querySelectorAll('.urgency-filter-chip').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.urgency === 'all');
             });
+            localStorage.removeItem('request-approval-filters');
             renderTable();
+        }
+
+        // ── Deep link support ──
+        function checkDeepLink() {
+            const params = new URLSearchParams(window.location.search);
+            const id = parseInt(params.get('id'));
+            if (!id) return;
+            const r = MockData.approvalRequests.find(function(x) { return x.id === id; });
+            if (!r) {
+                if (typeof showToast === 'function') showToast('Request #' + id + ' not found', 'error');
+                return;
+            }
+            openModalById(id);
         }
 
         // ── DOMContentLoaded ──
@@ -1098,12 +1190,27 @@
             showSkeleton();
             setTimeout(function() {
                 isInitialLoad = false;
+                restoreFilters();
+                initLocalRpp();
                 renderTable();
                 updateNavBadge();
+                checkDeepLink();
             }, 300);
 
-            document.getElementById('searchInput').addEventListener('input', function() { currentPage = 1; renderTable(); });
-            document.getElementById('statusFilter').addEventListener('change', function() { currentPage = 1; renderTable(); });
+            initRpp({
+                selectId: 'rowsPerPage',
+                storageKey: 'request-approval-rpp',
+                defaultVal: 10,
+                onChange: function(size) {
+                    rpp = size;
+                    currentPage = 1;
+                    renderTable();
+                    saveFilters();
+                }
+            });
+
+            document.getElementById('searchInput').addEventListener('input', function() { currentPage = 1; renderTable(); saveFilters(); });
+            document.getElementById('statusFilter').addEventListener('change', function() { currentPage = 1; renderTable(); saveFilters(); });
             document.getElementById('clearFilters').addEventListener('click', resetFilters);
 
             document.getElementById('modalOverlay').addEventListener('click', function(e) {
@@ -1129,7 +1236,7 @@
                     } else if (document.getElementById('modalOverlay').classList.contains('show')) {
                         closeModal();
                     } else {
-                        activeRowIndex = -1;
+                        focusedRowIndex = -1;
                         highlightRow();
                     }
                     return;
@@ -1141,19 +1248,19 @@
 
                 if (e.key === 'ArrowDown') {
                     e.preventDefault();
-                    activeRowIndex = Math.min(activeRowIndex + 1, currentFiltered.length - 1);
+                    focusedRowIndex = Math.min(focusedRowIndex + 1, currentFiltered.length - 1);
                     highlightRow();
                 } else if (e.key === 'ArrowUp') {
                     e.preventDefault();
-                    activeRowIndex = Math.max(activeRowIndex - 1, 0);
+                    focusedRowIndex = Math.max(focusedRowIndex - 1, 0);
                     highlightRow();
-                } else if (e.key === 'Enter' && activeRowIndex >= 0) {
-                    openModal(activeRowIndex);
-                } else if ((e.key === 'a' || e.key === 'A') && activeRowIndex >= 0) {
-                    const r = currentFiltered[activeRowIndex];
+                } else if (e.key === 'Enter' && focusedRowIndex >= 0) {
+                    openModalById(currentFiltered[focusedRowIndex].id);
+                } else if ((e.key === 'a' || e.key === 'A') && focusedRowIndex >= 0) {
+                    const r = currentFiltered[focusedRowIndex];
                     if (r.status === 'Pending') approveRequest(r.id);
-                } else if ((e.key === 'r' || e.key === 'R') && activeRowIndex >= 0) {
-                    const r = currentFiltered[activeRowIndex];
+                } else if ((e.key === 'r' || e.key === 'R') && focusedRowIndex >= 0) {
+                    const r = currentFiltered[focusedRowIndex];
                     if (r.status === 'Pending') openRejectModal(r.id);
                 }
             });

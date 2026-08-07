@@ -1,5 +1,88 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-07] Layout Consistency — Align with my-request-history structure
+
+### Summary
+
+Restructured page layout to match my-request-history pattern. Moved summary bar from top to bottom of page. Moved RPP selector from filter toolbar to pagination bar below the grid. Updated RPP to use shared `ui-rpp` partial and `initRpp()` from `ui-common.js`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-07 | HTML structure | Layout restructure | Reordered: toolbar → grid → pagination bar → bulk action bar → summary bar (was: summary bar → toolbar → bulk action → grid → pagination) |
+| 2026-08-07 | Pagination bar | RPP moved | Added `@include('partials.ui-rpp')` to pagination bar; removed inline `<select id="rppSelect">` from filter toolbar |
+| 2026-08-07 | Bulk action bar | Position moved | Moved from above grid to below pagination bar (hidden until items selected) |
+| 2026-08-07 | Summary bar | Position moved | Moved from top of page to very bottom (below bulk action bar) |
+| 2026-08-07 | JS: initRpp | Refactor | Replaced local `changeRpp()`/`initRpp()` with shared `initRpp()` from `ui-common.js` |
+| 2026-08-07 | JS: rppSelect → rowsPerPage | Refactor | Updated all DOM references from `rppSelect` to `rowsPerPage` to match partial |
+
+---
+
+## [2026-08-06] Tasks 19-24: SDD Change Request — Bug Fixes, CSS Promotion, Feature Alignment, New Features
+
+### Summary
+
+SDD change request applied across request-approval and my-request-history pages. Bug fixes for `openModal` (unified to `openModalById`), `buildTimeline` (unified timeline classes), `requestAgeHtml` (unified age format with `age-fresh`/`age-waiting`/`age-stale`), and `viewedIds` tracking. 11 CSS classes promoted from both pages to `theme.css` (status badges, modal section title, buttons, bulk selection). Feature alignment: bulk action bar, age format, keyboard highlight, and timeline now use shared implementations. New features: RPP (rows per page), filter persistence via localStorage, Hide Completed toggle, deep link support (`?id=N`), and responsive card view. Removed: groupFilter dropdown.
+
+### Files Changed
+
+#### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-06 | After line 1741 | CSS promotion | Added 11 promoted classes: `.status-pending`, `.status-approved`, `.status-rejected`, `.status-cancelled`, `.status-completed` (status badges), `.modal-section-title` (modal section header), `.btn-danger`, `.btn-outline` (action buttons), `.col-checkbox`, `.row-selected`, `.bulk-checkbox` (bulk selection) |
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-06 | Page styles | CSS dedup | Verified no duplicated CSS classes remain — `.status-*` in page are nested selectors (`.col-replacement .cell-class-block .class-time.status-*`) distinct from standalone promoted classes |
+| 2026-08-06 | JS: openModalById | Bug fix | Unified modal opener — `openModal(index)` now delegates to `openModalById(id)` |
+| 2026-08-06 | JS: buildTimeline | Feature alignment | Timeline uses unified `.request-timeline` / `.timeline-step` / `.timeline-dot` / `.timeline-connector` classes |
+| 2026-08-06 | JS: requestAgeHtml | Feature alignment | Unified age format: `age-fresh` (≤1 day), `age-waiting` (≤3 days), `age-stale` (>3 days) with colored dots |
+| 2026-08-06 | JS: viewedIds | Bug fix | `viewedIds` Set properly tracks opened requests; `openModalById` adds to set |
+| 2026-08-06 | JS: rpp | New feature | RPP dropdown with options 10/20/50, persisted via `saveFilters()` |
+| 2026-08-06 | JS: saveFilters/restoreFilters | New feature | Full filter persistence: week, status, urgency, rpp, sort, hideCompleted |
+| 2026-08-06 | JS: hideCompleted | New feature | Toggle filters out Completed entries from table and summary counts |
+| 2026-08-06 | JS: checkDeepLink | New feature | `?id=N` URL parameter opens specific request modal on page load |
+| 2026-08-06 | JS: renderCards | New feature | Responsive card view for mobile (<768px) replaces table grid |
+| 2026-08-06 | Toolbar HTML | New elements | Added RPP select, Hide Completed toggle, urgency filter chips |
+| 2026-08-06 | Group filter | Removed | Removed groupFilter dropdown (None/Course/Lecturer) — no longer needed |
+
+---
+
+## [2026-08-06] Tasks 19-21: Hide Completed Toggle, Deep Link, Responsive Cards
+
+### Summary
+
+Added "Hide Completed" toggle to filter out completed requests from view and summary counts. Added deep link support via `?id=N` URL parameter to open a specific request modal on page load. Added responsive card view for mobile devices that replaces the table grid on small screens.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-06 | Page styles | Toggle CSS | Added `.toggle-wrapper`, `.toggle-track`, `.toggle-thumb`, `.toggle-label` styles matching my-request-history pattern |
+| 2026-08-06 | Toolbar HTML | Toggle toggle | Added `<label class="toggle-wrapper">` with checkbox after RPP selector, before Reset Filters button |
+| 2026-08-06 | Feature state | New variable | Added `let hideCompleted = true;` — default ON |
+| 2026-08-06 | filterData() | Hide Completed | Added `if (hideCompleted && r.status === 'Completed') return false;` filter |
+| 2026-08-06 | updateSummary() | Respect toggle | Summary cards now exclude Completed entries when `hideCompleted` is true |
+| 2026-08-06 | resetFilters() | Reset toggle | Resets `hideCompleted = true` and checkbox `.checked = true` |
+| 2026-08-06 | saveFilters() | Already saved | `hideCompleted` was already persisted in filter state |
+| 2026-08-06 | restoreFilters() | Restore toggle | Now also sets `document.getElementById('hideCompletedToggle').checked` |
+| 2026-08-06 | After renderTable() | Deep link | Added `checkDeepLink()` function parsing `?id=N` URL param |
+| 2026-08-06 | DOMContentLoaded | Deep link call | `checkDeepLink()` called after `renderTable()` in initial load timeout |
+| 2026-08-06 | After grid wrapper | Card container | Added `<div class="requests-cards" id="requestsCards">` for mobile card view |
+| 2026-08-06 | After renderTable() | renderCards() | Added `renderCards()` function rendering request cards with status, course, date, lecturer, urgency, age |
+| 2026-08-06 | renderTable() | Call renderCards | `renderCards()` called at end of `renderTable()` |
+| 2026-08-06 | Page styles | Responsive CSS | Added `@media (max-width: 768px)` to show cards/hide grid; `@media (min-width: 769px)` to hide cards |
+
+---
+
 ## [2026-08-06] Initial Implementation — 17 PL-Efficiency Features
 
 ### Summary
