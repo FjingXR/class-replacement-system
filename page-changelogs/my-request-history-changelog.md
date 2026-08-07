@@ -1,5 +1,30 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-06] Tasks 19-24: SDD Change Request — Bug Fixes, CSS Promotion, Feature Alignment
+
+### Summary
+
+SDD change request applied. Bug fix: `openModal(index)` now delegates to `openModalById(id)` for consistent modal handling. Feature alignment: unified timeline classes (`.timeline-step`, `.timeline-dot`, `.timeline-connector`, `.timeline-text`) and unified request age format (`age-fresh`/`age-waiting`/`age-stale` with colored dots). 11 CSS classes promoted to `theme.css` — no duplicated CSS remains in page template.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-06 | JS: openModalById | Bug fix | Unified modal opener — `openModal(index)` now delegates to `openModalById(id)` |
+| 2026-08-06 | CSS: timeline classes | Feature alignment | Timeline uses unified `.timeline-step`, `.timeline-dot`, `.timeline-connector`, `.timeline-text` classes (matching request-approval pattern) |
+| 2026-08-06 | CSS: request age | Feature alignment | Unified age format: `.age-fresh` (≤1 day, primary color), `.age-waiting` (≤3 days, tertiary color), `.age-stale` (>3 days, error color) with colored dots |
+| 2026-08-06 | Page styles | CSS dedup | Verified no duplicated CSS classes remain — promoted classes (status badges, buttons, bulk selection) now only in `theme.css` |
+
+#### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-06 | After line 1741 | CSS promotion | Added 11 promoted classes shared by request-approval and my-request-history: `.status-pending`, `.status-approved`, `.status-rejected`, `.status-cancelled`, `.status-completed`, `.modal-section-title`, `.btn-danger`, `.btn-outline`, `.col-checkbox`, `.row-selected`, `.bulk-checkbox` |
+
+---
+
 ## [2026-08-03] Refactor: Rows Per Page promoted to shared OOP component
 
 ### Changed
