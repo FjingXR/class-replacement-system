@@ -616,3 +616,9 @@ function getWeekNumber(iso) {
     }
     return '';
 }
+
+function getTodayMs() {
+    var t = new Date();
+    t.setHours(0, 0, 0, 0);
+    return t.getTime();
+}
