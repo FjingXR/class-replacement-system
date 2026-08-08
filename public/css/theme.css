@@ -1811,6 +1811,11 @@ body {
     background: var(--color-error);
     color: #fff;
 }
+.btn-danger:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
 .btn-outline {
     padding: 8px 20px;
     border-radius: 8px;

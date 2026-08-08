@@ -1024,7 +1024,6 @@
                 renderTable();
                 updateNavBadge();
             });
-            reviewNextAfterAction(ids[0]);
         }
 
         function closeApproveNotesModal() {
@@ -1066,7 +1065,6 @@
                 renderTable();
                 updateNavBadge();
             });
-            reviewNextAfterAction(isBulk ? null : currentRejectId);
         }
 
         function closeRejectModal() {
