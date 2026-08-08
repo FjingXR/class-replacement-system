@@ -180,8 +180,7 @@
         .timetable {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
-            min-width: 900px;
+            table-layout: auto;
         }
 
         .timetable th, .timetable td {

@@ -71,18 +71,8 @@
         }
 
         /* ───── Column Widths ───── */
-        .col-checkbox { width: 40px; }
-        .timetable th.col-requested-at, .timetable td.col-requested-at { width: 125px; white-space: normal; }
-        .col-code { width: 180px; }
-        .col-original { width: 170px; }
-        .col-replacement { width: 170px; }
+        .col-checkbox { width: 40px; text-align: center; }
         .col-original, .col-replacement { white-space: normal; }
-        .col-venue { width: 75px; }
-        .col-students { width: 70px; }
-        .col-cohort { width: 120px; }
-        .col-status { width: 130px; }
-
-        .grid-scroll .timetable { min-width: 1150px; table-layout: fixed; }
 
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;
@@ -206,7 +196,7 @@
         .age-stale { color: var(--color-error); }
 
         /* ───── F4: Quick Actions in Rows ───── */
-        .col-actions { width: 70px; text-align: center; }
+        .col-actions { text-align: center; }
         .btn-inline-cancel {
             padding: 4px 10px;
             border-radius: 6px;
