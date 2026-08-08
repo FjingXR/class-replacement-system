@@ -1708,6 +1708,10 @@ body {
     width: 80%;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .skeleton { animation: none; }
+}
+
 /* ── Mobile: toast position ── */
 @media (max-width: 768px) {
     .copy-toast {

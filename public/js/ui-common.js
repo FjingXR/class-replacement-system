@@ -409,15 +409,58 @@ function initCollapsibleCards() {
 
 function showSkeleton(container, type = 'rows', count = 5) {
     container.innerHTML = '';
+    const isTbody = container.tagName === 'TBODY';
     for (let i = 0; i < count; i++) {
-        const el = document.createElement('div');
-        el.className = `skeleton skeleton-${type === 'rows' ? 'row' : 'card'}`;
-        container.appendChild(el);
+        if (isTbody) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 9;
+            td.innerHTML = '<div class="skeleton skeleton-row"></div>';
+            tr.appendChild(td);
+            container.appendChild(tr);
+        } else {
+            const el = document.createElement('div');
+            el.className = `skeleton skeleton-${type === 'rows' ? 'row' : 'card'}`;
+            container.appendChild(el);
+        }
     }
 }
 
 function hideSkeleton(container) {
-    container.innerHTML = '';
+    if (!container) return;
+    container.querySelectorAll('.skeleton, .skeleton-row, .skeleton-card').forEach(el => el.remove());
+    container.querySelectorAll('tr').forEach(tr => {
+        if (tr.querySelector('.skeleton')) tr.remove();
+    });
+}
+
+function withSkeleton(callback, container, count = 10, delay = 400) {
+    showSkeleton(container, 'rows', count);
+    const hide = () => setTimeout(() => hideSkeleton(container), delay);
+    setTimeout(() => {
+        try {
+            const result = callback();
+            if (result && typeof result.then === 'function') {
+                return result.then(hide, (err) => { hide(); throw err; });
+            }
+            hide();
+        } catch (err) { hide(); throw err; }
+    }, 50);
+}
+
+function showSummarySkeleton() {
+    document.querySelectorAll('.summary-card .summary-value').forEach(el => {
+        el.dataset.original = el.innerHTML;
+        el.innerHTML = '<div class="skeleton" style="height:24px;width:40px;display:inline-block"></div>';
+    });
+}
+
+function hideSummarySkeleton() {
+    document.querySelectorAll('.summary-card .summary-value').forEach(el => {
+        if (el.dataset.original !== undefined) {
+            delete el.dataset.original;
+        }
+    });
 }
 
 // ───── Scroll Restoration ─────
@@ -429,6 +472,20 @@ function saveScrollPosition(key) {
 function restoreScrollPosition(key) {
     const pos = sessionStorage.getItem('scroll_' + key);
     if (pos) window.scrollTo(0, parseInt(pos));
+}
+
+function clearScrollPosition(key) {
+    sessionStorage.removeItem('scroll_' + key);
+}
+
+function initScrollRestore(pageKey) {
+    window.addEventListener('pageshow', (e) => {
+        if (e.persisted) restoreScrollPosition(pageKey);
+    });
+    document.querySelectorAll('.nav-item, .nav-drawer-item').forEach(link => {
+        link.addEventListener('click', () => clearScrollPosition(pageKey));
+    });
+    window._scrollToTop = function() { window.scrollTo(0, 0); };
 }
 
 // Auto-save on scroll (debounced)

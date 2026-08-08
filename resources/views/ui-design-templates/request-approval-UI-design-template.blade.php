@@ -916,23 +916,6 @@
             });
         }
 
-        // ── Skeleton loading (§7q) ──
-        function showSkeleton() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            for (let i = 0; i < 10; i++) {
-                let row = '<tr>';
-                for (let j = 0; j < 11; j++) {
-                    row += '<td><div class="skeleton" style="height:16px;width:' + (50 + Math.random() * 40) + '%"></div></td>';
-                }
-                row += '</tr>';
-                tbody.innerHTML += row;
-            }
-            document.querySelectorAll('.summary-card .summary-value').forEach(el => {
-                el.innerHTML = '<div class="skeleton" style="height:24px;width:40px;display:inline-block"></div>';
-            });
-        }
-
         // ── Bulk selection (§7.1) ──
         function toggleSelectAll() {
             const visible = currentFiltered.filter(r => r.status === 'Pending');
@@ -1254,15 +1237,16 @@
             document.getElementById('statusFilter').value = 'Pending';
 
             // Skeleton loading
-            showSkeleton();
-            setTimeout(function() {
+            showSummarySkeleton();
+            withSkeleton(function() {
                 isInitialLoad = false;
                 restoreFilters();
                 initLocalRpp();
                 renderTable();
                 updateNavBadge();
                 checkDeepLink();
-            }, 300);
+                hideSummarySkeleton();
+            }, document.getElementById('tableBody'), 10, 400);
 
             initRpp({
                 selectId: 'rowsPerPage',
@@ -1271,13 +1255,27 @@
                 onChange: function(size) {
                     rpp = size;
                     currentPage = 1;
-                    renderTable();
+                    window.scrollTo(0, 0);
+                    showSummarySkeleton();
+                    withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
                     saveFilters();
                 }
             });
 
-            document.getElementById('searchInput').addEventListener('input', function() { currentPage = 1; renderTable(); saveFilters(); });
-            document.getElementById('statusFilter').addEventListener('change', function() { currentPage = 1; renderTable(); saveFilters(); });
+            document.getElementById('searchInput').addEventListener('input', function() {
+                currentPage = 1;
+                window.scrollTo(0, 0);
+                showSummarySkeleton();
+                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                saveFilters();
+            });
+            document.getElementById('statusFilter').addEventListener('change', function() {
+                currentPage = 1;
+                window.scrollTo(0, 0);
+                showSummarySkeleton();
+                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                saveFilters();
+            });
             document.getElementById('clearFilters').addEventListener('click', resetFilters);
 
             document.getElementById('modalOverlay').addEventListener('click', function(e) {

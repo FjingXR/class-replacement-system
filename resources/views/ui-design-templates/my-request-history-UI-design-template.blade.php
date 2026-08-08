@@ -976,24 +976,31 @@
 
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
 
-            renderTable();
+            showSummarySkeleton();
+            withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
             updateWeekArrowState();
             initWeekKeyboardShortcuts();
 
             document.getElementById('searchInput').addEventListener('input', function() {
                 pageState.currentPage = 1;
                 saveFilters();
-                renderTable();
+                window.scrollTo(0, 0);
+                showSummarySkeleton();
+                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
             });
             document.getElementById('statusFilter').addEventListener('change', function() {
                 pageState.currentPage = 1;
                 saveFilters();
-                renderTable();
+                window.scrollTo(0, 0);
+                showSummarySkeleton();
+                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
             });
             document.getElementById('hideCompleted').addEventListener('change', function() {
                 pageState.currentPage = 1;
                 saveFilters();
-                renderTable();
+                window.scrollTo(0, 0);
+                showSummarySkeleton();
+                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
             });
             document.getElementById('clearFilters').addEventListener('click', function() {
                 document.getElementById('searchInput').value = '';
@@ -1002,7 +1009,9 @@
                 document.getElementById('hideCompleted').checked = true;
                 localStorage.removeItem('mrh-filters');
                 pageState.currentPage = 1;
-                renderTable();
+                window.scrollTo(0, 0);
+                showSummarySkeleton();
+                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
                 updateWeekArrowState();
             });
 
@@ -1015,7 +1024,9 @@
                 onChange: function(size) {
                     rowsPerPage = size;
                     pageState.currentPage = 1;
-                    renderTable();
+                    window.scrollTo(0, 0);
+                    showSummarySkeleton();
+                    withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
                 }
             });
 

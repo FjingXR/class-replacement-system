@@ -587,7 +587,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             populateWeekDropdown();
-            buildTable();
+            showSummarySkeleton();
+            withSkeleton(function() { buildTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
             updateWeekArrowState();
             initWeekKeyboardShortcuts();
             initRpp({
@@ -597,13 +598,22 @@
                 onChange: function(size) {
                     state.rpp = size;
                     pageState.currentPage = 1;
-                    buildTable();
+                    window.scrollTo(0, 0);
+                    showSummarySkeleton();
+                    withSkeleton(function() { buildTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
                 }
             });
             document.getElementById('searchInput').addEventListener('input', function() {
                 pageState.currentPage = 1;
-                buildTable();
+                window.scrollTo(0, 0);
+                showSummarySkeleton();
+                withSkeleton(function() { buildTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
             });
-            document.getElementById('weekFilter').addEventListener('change', weekFilterChanged);
+            document.getElementById('weekFilter').addEventListener('change', function() {
+                pageState.currentPage = 1;
+                window.scrollTo(0, 0);
+                showSummarySkeleton();
+                withSkeleton(function() { buildTable(); hideSummarySkeleton(); updateWeekArrowState(); }, document.getElementById('tableBody'), 10, 400);
+            });
         });
 @endsection
