@@ -26,12 +26,21 @@
 - [ ] Build dropdown from `MockData.venues` (23 Block B rooms)
 - [ ] Default: first venue in list
 - [ ] On change: rebuild timetable for selected venue
+- [ ] **Recent venues section:** Show last 5 used venues at top of dropdown
+- [ ] **Favourite star icon:** Toggle favourite per venue, save to localStorage
 
 ## Task 5: Week Picker
 - [ ] Reuse `.semester-bar` pattern from MyTimetable/CohortTimetable
 - [ ] Prev/next arrows + dropdown (14 weeks)
 - [ ] Week persistence: `venueTimetableWeek` localStorage key
 - [ ] Read week data from `MockData.semester`
+
+## Task 6: Filters (Time Range + Venue Type)
+- [ ] **Time range filter:** 3-segment toggle (Morning 08-12 | Afternoon 13-18 | All)
+- [ ] **Venue type filter:** Dropdown with checkboxes (Tutorial, Lecture Hall, Lab)
+- [ ] **Placement:** Below week picker, above timetable grid
+- [ ] **AND logic:** Both filters combined
+- [ ] **Default:** All venues, all time ranges
 
 ## Task 6: Timetable Grid
 - [ ] Build Time × Day grid (Mon–Sun, 08:00–18:00)
@@ -78,7 +87,28 @@
 - [ ] Reduce grid density
 - [ ] Smaller font for event blocks
 
-## Task 13: Changelog
+## Task 13: Booking History (A2)
+- [ ] Add tab/toggle: "Current Week" | "Past 4 Weeks"
+- [ ] Past 4 weeks: show collapsed rows with date + course + status
+- [ ] Scrollable container for history data
+
+## Task 14: Quick Book Shortcut (B3)
+- [ ] Press `B` on focused available cell → tooltip confirmation
+- [ ] Visual hint: show "(B)" label on focused available cells
+- [ ] Accessibility: announce to screen reader "Press B to book this slot"
+
+## Task 15: Venue Favourites localStorage (A1)
+- [ ] localStorage key: `venueFavourites` (JSON array of venue codes)
+- [ ] Toggle star icon per venue in dropdown
+- [ ] Favourited venues shown at top of dropdown with star icon
+- [ ] **Backend ready:** Prepared `users.favourites` JSONB column schema
+
+## Task 16: Recent Venues localStorage (B4)
+- [ ] localStorage key: `venueRecent` (JSON array of last 5 venue codes)
+- [ ] Update on venue selection: push to front, dedupe, keep last 5
+- [ ] Dropdown sections: "Recent" (top) + "All Venues" (below)
+
+## Task 17: Changelog
 - [ ] Create `page-changelogs/venue-timetable-ui-changelog.md`
 - [ ] Log all file changes with timestamps
 

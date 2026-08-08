@@ -57,6 +57,37 @@ A dedicated **Venue Timetable** page gives staff a quick, view-only overview of 
 
 8. **Route** `GET /venue-timetable-ui` in `routes/web.php`
 
+9. **Venue Favourites (A1)**
+   - Star icon per venue in dropdown
+   - Save to localStorage (`venueFavourites` key)
+   - **Backend ready:** Prepared `users.favourites` JSONB column
+   - Favourited venues shown at top of dropdown
+
+10. **Booking History (A2)**
+    - Tab/toggle: "Current Week" | "Past 4 Weeks"
+    - Past 4 weeks: collapsed rows with date + course + status
+    - Scrollable container
+
+11. **Time Range Filter (A3)**
+    - 3-segment toggle: Morning (08-12) | Afternoon (13-18) | All
+    - Default: All
+    - AND logic with venue type filter
+
+12. **Venue Type Filter (A4)**
+    - Dropdown with checkboxes: Tutorial, Lecture Hall, Lab
+    - Default: All checked
+    - AND logic with time range filter
+
+13. **Quick Book Shortcut (B3)**
+    - Press `B` on focused available cell → tooltip confirmation
+    - Visual hint: "(B)" label on focused cells
+    - Accessibility: screen reader announcement
+
+14. **Recent Venues Dropdown (B4)**
+    - Show last 5 used venues at top of dropdown
+    - Storage: `localStorage` (`venueRecent` key)
+    - Dropdown sections: "Recent" + "All Venues"
+
 ### Out of Scope
 
 - No booking functionality on this page (booking happens on `/replacement-arrangement`)
@@ -85,3 +116,7 @@ A dedicated **Venue Timetable** page gives staff a quick, view-only overview of 
 | FR 4.3 | Book venue for replacement | "Book This Venue" button in modal |
 | NFR 3.1 | Responsive design | Mobile card layout |
 | NFR 3.3 | Simple English | Clear labels and descriptions |
+| FR 5.1 | Filter by time | Time range filter (Morning/Afternoon/All) |
+| FR 5.2 | Filter by venue type | Venue type filter (Tutorial/Lecture Hall/Lab) |
+| NFR 2.1 | User preferences | Venue favourites + recent venues (localStorage) |
+| NFR 4.1 | Keyboard accessibility | Quick book shortcut (press B) |

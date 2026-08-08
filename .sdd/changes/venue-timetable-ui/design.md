@@ -152,6 +152,81 @@ $items = $navItems ?? [
 ];
 ```
 
+### 12. Venue Favourites (A1)
+
+**Decision:** Star icon per venue, save to localStorage + prepared `users.favourites` JSONB column.
+
+- **Desktop:** Star icon next to venue name in dropdown
+- **Mobile:** Star icon on venue card header
+- **Storage:** `localStorage.setItem('venueFavourites', JSON.stringify(['B014', 'B025']))`
+- **Backend ready:** `users.favourites` JSONB column for future migration
+- **UI:** Favourited venues shown at top of dropdown with star icon
+
+```javascript
+// localStorage structure
+{
+    "venueFavourites": ["B014", "B025"],
+    "venueRecent": ["B014", "B025", "B033", "B041", "B052"]
+}
+```
+
+### 13. Booking History (A2)
+
+**Decision:** Show past 4 weeks of bookings for selected venue.
+
+- **Data source:** `MockData.cohortTimetable` (all cohorts), filtered by venue
+- **Time range:** Current week - 4 weeks to current week
+- **UI:** Tab/toggle above timetable: "Current Week" | "Past 4 Weeks"
+- **Past weeks:** Show as collapsed rows with date + course + status
+- **No pagination:** All 4 weeks visible in scrollable container
+
+### 14. Time Range Filter (A3)
+
+**Decision:** Filter by Morning (08-12) / Afternoon (13-18) / All.
+
+- **Placement:** Below week picker, above timetable grid
+- **UI:** 3-segment toggle button (Morning | Afternoon | All)
+- **Default:** All
+- **Behavior:** Filters visible rows in timetable (hide 12-13 lunch break)
+- **AND logic:** Combined with venue type filter
+
+### 15. Venue Type Filter (A4)
+
+**Decision:** Filter by Tutorial / Lecture Hall / Lab.
+
+- **Placement:** Next to time range filter (horizontal filter bar)
+- **UI:** Dropdown with checkboxes: [x] Tutorial [x] Lecture Hall [x] Lab
+- **Default:** All checked
+- **Data:** `MockData.venues[].type` field
+- **AND logic:** Combined with time range filter
+
+### 16. Quick Book Shortcut (B3)
+
+**Decision:** Press `B` on focused available cell → tooltip confirmation → redirect.
+
+- **Trigger:** `keydown` event when cell is focused
+- **Key:** `B` (case-insensitive)
+- **Behavior:** Same as click — show tooltip with "Book" button
+- **Accessibility:** Announce to screen reader "Press B to book this slot"
+- **Visual hint:** Show "(B)" label on focused available cells
+
+### 17. Recent Venues Dropdown (B4)
+
+**Decision:** Show last 5 used venues at top of dropdown.
+
+- **Storage:** `localStorage.setItem('venueRecent', JSON.stringify(['B014', 'B025', 'B033', 'B041', 'B052']))`
+- **Update:** On venue selection, push to front, dedupe, keep last 5
+- **UI:** Dropdown sections:
+  ```
+  ── Recent ──────────
+  B014 — Tutorial (35 seats)
+  B025 — Lecture Hall (120 seats)
+  ── All Venues ──────
+  B001 — Tutorial (35 seats)
+  ...
+  ```
+- **Limit:** 5 recent venues max
+
 ## Reusable Components
 
 | Component | Source | Notes |
