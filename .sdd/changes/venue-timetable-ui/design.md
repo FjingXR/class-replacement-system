@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Create a new Blade template extending `layouts/ui-template`. The page is a **view-only weekly timetable** for any venue, showing all booked classes across all cohorts. It reuses the timetable grid pattern from `CohortTimetable` and `MyTimetable`, with a venue dropdown replacing the cohort selector. Empty slots are green (available) and clickable on desktop, opening a modal with a "Book This Venue" shortcut.
+Create a new Blade template extending `layouts.ui-template`. The page is a **view-only weekly timetable** for any venue, showing all booked classes across all cohorts. It reuses the timetable grid pattern from `CohortTimetable` and `MyTimetable`, with a venue dropdown replacing the cohort selector. Empty slots are green (available) and clickable, showing a tooltip confirmation before redirecting to the booking page.
 
 ## Architecture Decisions
 
@@ -82,18 +82,18 @@ function buildVenueTimetable(venueCode, weekIndex) {
 
 ### 4. Available Slot Interaction
 
-**Decision:** Available (green) slots are clickable on **desktop only**, opening the same modal as booked slots.
+**Decision:** Available (green) slots are clickable on **all viewports**, showing a tooltip confirmation before redirecting.
 
-- **Desktop:** Click available slot → modal shows "This slot is available." + "Book This Venue" button
-- **Mobile:** Available slots are **non-interactive** (card layout is view-only)
+- **Desktop:** Click available slot → tooltip: "Book B014 on Mon, 01 Sep 2026 at 09:00?" with "Book" button → redirect to `/replacement-arrangement?venue=XXX&date=YYY&time=ZZZ`
+- **Mobile:** Tap available slot → modal with "Book This Venue" button → redirect to booking page
 
 ### 5. "Book This Venue" Button
 
-**Decision:** Button in modal opens `/replacement-arrangement` with venue and date pre-filled via URL params.
+**Decision:** Button opens `/replacement-arrangement` with venue, date, and time pre-filled via URL params.
 
 ```javascript
-function bookVenue(venueCode, date) {
-    window.location.href = `/replacement-arrangement?venue=${venueCode}&date=${date}`;
+function bookVenue(venueCode, date, time) {
+    window.location.href = `/replacement-arrangement?venue=${venueCode}&date=${date}&time=${time}`;
 }
 ```
 
@@ -109,16 +109,33 @@ function bookVenue(venueCode, date) {
 | Pending | `card-pending` | Count of pending status |
 | Conflict | `card-conflict` | Count of conflict status |
 
-### 7. Mobile View
+### 7. Keyboard Navigation
+
+**Decision:** Full keyboard navigation for accessibility:
+
+- **Arrow keys (↑↓←→):** Move between timetable cells
+- **Enter:** Open modal for booked cells, or trigger tooltip for available cells
+- **Escape:** Close modal/tooltip
+- Focus indicator visible on focused cell
+
+### 8. Venue Display Format
+
+**Decision:** Show venue with type and capacity: `"B014 — Tutorial (35 seats)"` (same format as buildingSelector in replacement-arrangement).
+
+### 9. Booked Class Modal
+
+**Decision:** Modal shows class details only (no "Book This Venue" button). Useful for checking who booked the venue.
+
+### 10. Mobile View
 
 **Decision:** Card layout on mobile (≤768px), same pattern as `student-my-timetable`.
 
 - Each booked class = a card with: Course Code, Cohort, Day, Time, Status badge
-- Available slots = green cards with "Available" label (non-interactive)
-- No "Book This Venue" button on mobile
+- Available slots = green cards with "Available" label, **tappable** → open modal with "Book This Venue" button
+- Modal shows venue details + booking button
 - Legend bar wraps to 2 rows if needed
 
-### 8. Nav Bar Update
+### 11. Nav Bar Update
 
 **Decision:** Add 6th nav item to `partials/ui-nav-bar.blade.php`:
 
@@ -179,7 +196,16 @@ $items = $navItems ?? [
       </div>
   </div>
   ```
-- Available slots = green cards with "Available" label (non-interactive)
+- Available slots = green cards with "Available" label, **tappable** → open modal with "Book This Venue" button
+
+**Mobile available slot modal:**
+```html
+<div class="venue-available-modal">
+    <h3>Book B014 — Tutorial (35 seats)</h3>
+    <p>Mon, 01 Sep 2026 at 09:00</p>
+    <button class="btn btn-primary" onclick="bookVenue('B014','2026-09-01','09:00')">Book This Venue</button>
+</div>
+```
 
 **Legend bar:**
 - Wrap to 2 rows if needed

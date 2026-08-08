@@ -4,7 +4,7 @@
 
 Lecturers and Programme Leaders currently have no way to view a venue's schedule before booking a replacement class. When submitting a replacement request on the `/replacement-arrangement` page, they must manually check if a venue is free by cross-referencing multiple timetable pages (My Timetable, Cohort Timetables). This wastes time and increases the risk of booking conflicts.
 
-A dedicated **Venue Timetable** page gives staff a quick, view-only overview of any venue's weekly schedule, showing all booked classes across all cohorts. Empty slots are visually distinct (green = available), and clicking any cell opens a modal with a "Book This Venue" shortcut that pre-fills the venue and date in the replacement arrangement flow.
+A dedicated **Venue Timetable** page gives staff a quick, view-only overview of any venue's weekly schedule, showing all booked classes across all cohorts. Empty slots are visually distinct (green = available), and clicking any cell shows a tooltip confirmation before redirecting to the booking page with venue, date, and time pre-filled.
 
 ## Scope
 
@@ -25,22 +25,29 @@ A dedicated **Venue Timetable** page gives staff a quick, view-only overview of 
    - Conflict — `--color-error` (red) — holiday/clash
    - **No "Normal Class"** — if a class is booked, the slot is occupied (not available)
 
+3. **Venue display format**
+   - Show venue with type and capacity: `"B014 — Tutorial (35 seats)"`
+   - Same format as buildingSelector in replacement-arrangement
+
 3. **Timetable grid** (Time × Day, Mon–Sun)
    - Cells show: Course code + Cohort + Status badge
-   - Empty cells = Available (green, clickable on desktop only)
-   - Click any cell (booked or available) → opens modal
+   - Empty cells = Available (green, clickable)
+   - Available cells: show tooltip confirmation "Book B014 on Mon, 01 Sep 2026 at 09:00?" with "Book" button
+   - Booked cells: click → open modal with class details (no booking button)
+   - Keyboard navigation: Arrow keys move between cells, Enter opens modal/tooltip, Escape closes
 
 4. **Summary cards (5 cards)** via `@include('partials.ui-summary-bar')`
    - Total Classes | Available | Replacement | Pending | Conflict
 
-5. **Modal (view-only + Book button)**
+5. **Modal (view-only)**
    - For booked classes: Course Code, Name, Cohort(s), Time, Day, Date, Status badge, Remarks
-   - "Book This Venue" button → opens `/replacement-arrangement?venue=XXX&date=YYY`
    - For available slots: "This slot is available." + "Book This Venue" button
+   - "Book This Venue" button → opens `/replacement-arrangement?venue=XXX&date=YYY&time=ZZZ`
    - Close button
 
 6. **Mobile view (≤768px)**
-   - Card layout (view-only, no "Book This Venue" button)
+   - Card layout
+   - Available slots: tappable → open modal with "Book This Venue" button
    - Same pattern as student-my-timetable mobile design
 
 7. **Nav bar update**
@@ -56,6 +63,7 @@ A dedicated **Venue Timetable** page gives staff a quick, view-only overview of 
 - No real-time availability updates
 - No filter by status (just venue + week selection)
 - No search (venue dropdown is sufficient)
+- No print functionality (deferred to another session with OOP approach)
 
 ## Impact Scope
 

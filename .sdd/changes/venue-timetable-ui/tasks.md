@@ -32,8 +32,10 @@
 - [ ] Build Time × Day grid (Mon–Sun, 08:00–18:00)
 - [ ] For each cell, check if any class is booked at that venue/time
 - [ ] Booked cells: show Course code + Cohort + Status badge
-- [ ] Empty cells: green background (Available), clickable on desktop only
-- [ ] Click cell → open modal
+- [ ] Empty cells: green background (Available), clickable
+- [ ] Available cells: show tooltip confirmation "Book B014 on Mon, 01 Sep 2026 at 09:00?" with "Book" button
+- [ ] Booked cells: click → open modal with class details (no booking button)
+- [ ] Keyboard navigation: Arrow keys move between cells, Enter opens modal/tooltip, Escape closes
 
 ## Task 7: Legend Bar
 - [ ] 4 items: Available, Replacement, Pending, Conflict
@@ -51,8 +53,8 @@
 ## Task 9: Modal
 - [ ] View-only modal with field list
 - [ ] For booked classes: Course Code, Name, Cohort(s), Time, Day, Date, Status badge, Remarks
-- [ ] For available slots: "This slot is available." message
-- [ ] "Book This Venue" button → `window.location.href = '/replacement-arrangement?venue=' + venueCode + '&date=' + date`
+- [ ] For available slots: "This slot is available." message + "Book This Venue" button
+- [ ] "Book This Venue" button → `window.location.href = '/replacement-arrangement?venue=' + venueCode + '&date=' + date + '&time=' + time`
 - [ ] Close button
 - [ ] Close on overlay click + ESC key
 
@@ -62,8 +64,7 @@
 
 ## Task 11: Mobile View (≤768px)
 - [ ] Card layout for booked classes
-- [ ] Green cards for available slots (non-interactive)
-- [ ] No "Book This Venue" button on mobile
+- [ ] Green cards for available slots, **tappable** → open modal with "Book This Venue" button
 - [ ] Stack summary cards vertically
 - [ ] Full-width venue dropdown
 - [ ] Hide week arrows, full-width dropdown
