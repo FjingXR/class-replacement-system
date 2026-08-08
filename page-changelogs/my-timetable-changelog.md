@@ -28,6 +28,7 @@
 | 2026-08-03 08:10 | Lines 151–158 | Today button | Added `today-btn` button in semester-bar with clock icon — jumps to current week and scrolls to grid. CSS already in `theme.css`. |
 | 2026-08-03 08:10 | Lines 161–162 | Week subtitle | Added `week-subtitle` div below semester-bar — shows "Week N of 14 · DD Mon YYYY ~ DD Mon YYYY". CSS already in `theme.css`. |
 | 2026-08-03 08:10 | Lines 233–234 | Copy toast | Added `copy-toast` div for clipboard feedback. CSS already in `theme.css`. |
+| 2026-08-08 | Line 169 | Replace Now button | Updated `goToReplacement()` call to pass `currentModalEvent?.code` and `currentModalEvent?.cohort` as parameters — enables pre-filling subject in replacement-arrangement page. Added `currentModalEvent` state variable (line 251) and set it in `openModal()` (line 265). |
 | 2026-08-03 08:10 | Lines 241–273 | Holiday data | `weekData` now reads `MockData.holidays` to populate `holiday` and `holidayLabel` fields — enables off-day highlighting for non-Sunday public holidays. |
 | 2026-08-03 08:10 | Lines 305–318 | Progress/subtitle functions | Added `updateProgress()` (updates progress bar fill and label) and `updateWeekSubtitle()` (updates week subtitle text). Both called on week change. |
 | 2026-08-03 08:10 | Lines 428–443 | Today + offday highlighting | `buildTimetable()` now adds `.today` class to current day column and `.offday` class to non-Sunday public holidays. Sunday shows "OFF" label without offday class (no dashed borders/opacity). |

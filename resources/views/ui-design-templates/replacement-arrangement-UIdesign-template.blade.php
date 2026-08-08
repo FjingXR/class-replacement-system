@@ -144,6 +144,13 @@
             margin-top: 2px;
             opacity: 0.8;
         }
+        .toolbar-center .selector-dropdown {
+            margin-bottom: 4px;
+        }
+        .toolbar-center .selector-dropdown:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
 
         .toolbar-right {
             display: flex;
@@ -838,14 +845,19 @@
                 @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'onWeekChange()', 'selectClass' => 'selector-dropdown', 'showTodayBtn' => false])
             </div>
             <div class="toolbar-center">
-                <div class="toolbar-subtitle">BMIT6767 Kylian Mbappe Dembele (L)</div>
-                <div class="toolbar-meta">Mon, 31-Aug-2026, 10:00 AM - 12:00 PM (2 hours)</div>
+                <select class="selector-dropdown" id="subjectSelector" onchange="onSubjectChange()">
+                    <option value="">Select a subject</option>
+                </select>
+                <div class="toolbar-subtitle" id="subjectInfo"></div>
+                <div class="toolbar-meta" id="subjectMeta"></div>
             </div>
             <div class="toolbar-right">
                 <select class="selector-dropdown" id="buildingSelector" onchange="onVenueChange()">
                 </select>
             </div>
         </div>
+
+        <div class="venue-count-note" id="venueCountNote" style="display:none; font-size:12px; color:var(--color-on-surface-variant); padding:4px 16px;"></div>
 
         <div class="hint-text">Select an available (green) time slot</div>
 
@@ -1514,23 +1526,6 @@
             if (text) text.textContent = 'Selected ' + count + ' of ' + max + ' slots';
         }
 
-        function buildVenueDropdown() {
-            const sel = document.getElementById('buildingSelector');
-            const venues = MockData.venues || [];
-            const cohortStudents = 35; // DFT2(S1) + DSF2(S1) combined
-            sel.innerHTML = '';
-            venues.forEach(v => {
-                const opt = document.createElement('option');
-                opt.value = v.code;
-                const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
-                opt.textContent = v.code + ' — ' + typeLabel + ' (' + v.capacity + ' seats)';
-                if (v.capacity < cohortStudents) {
-                    opt.textContent += ' ⚠';
-                }
-                sel.appendChild(opt);
-            });
-        }
-
         function checkConflict(dayIndex, hourIndex) {
             const weekLabel = weekData[currentWeek].label;
             const semesterWeek = parseInt(weekLabel.replace('Week ', ''));
@@ -1691,7 +1686,111 @@
             }
         }
 
+        // ───── Subject Dropdown + URL Param Reading ─────
+
+        let currentCourse = null;
+        let urlParams = {};
+
+        function buildSubjectDropdown() {
+            const sel = document.getElementById('subjectSelector');
+            const courses = MockData.courses || [];
+            sel.innerHTML = '<option value="">Select a subject</option>';
+            courses.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.code;
+                opt.textContent = c.code + ' — ' + c.name;
+                sel.appendChild(opt);
+            });
+        }
+
+        function onSubjectChange() {
+            const code = document.getElementById('subjectSelector').value;
+            const infoEl = document.getElementById('subjectInfo');
+            const metaEl = document.getElementById('subjectMeta');
+            const noteEl = document.getElementById('venueCountNote');
+
+            if (!code) {
+                currentCourse = null;
+                infoEl.textContent = '';
+                metaEl.textContent = '';
+                noteEl.style.display = 'none';
+                buildVenueDropdown(false);
+                return;
+            }
+
+            currentCourse = (MockData.courses || []).find(c => c.code === code);
+            if (!currentCourse) return;
+
+            infoEl.textContent = currentCourse.code + ' — ' + currentCourse.name + ' (' + currentCourse.type + ')';
+            metaEl.textContent = 'Cohort: ' + currentCourse.cohorts.join(', ') + ' | Students: ' + currentCourse.studentCount;
+
+            buildVenueDropdown(true);
+        }
+
+        function buildVenueDropdown(filterByCourse) {
+            const sel = document.getElementById('buildingSelector');
+            const venues = MockData.venues || [];
+            const noteEl = document.getElementById('venueCountNote');
+            sel.innerHTML = '';
+
+            let filtered = venues;
+            if (filterByCourse && currentCourse) {
+                const allowedType = currentCourse.type === 'L' ? ['LectureHall', 'Tutorial'] : ['Tutorial'];
+                filtered = venues.filter(v => {
+                    const typeOk = v.type === 'Tutorial' || (currentCourse.type === 'L' && v.type === 'LectureHall');
+                    const capOk = v.capacity >= currentCourse.studentCount;
+                    return typeOk && capOk;
+                });
+            }
+
+            filtered.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.code;
+                const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
+                opt.textContent = v.code + ' — ' + typeLabel + ' (' + v.capacity + ' seats)';
+                sel.appendChild(opt);
+            });
+
+            if (filterByCourse && currentCourse) {
+                noteEl.textContent = 'Showing ' + filtered.length + ' venues that fit ' + currentCourse.studentCount + ' students';
+                noteEl.style.display = '';
+            } else {
+                noteEl.style.display = 'none';
+            }
+        }
+
+        function readUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            urlParams = {
+                code: params.get('code'),
+                cohort: params.get('cohort'),
+                venue: params.get('venue'),
+                date: params.get('date'),
+                time: params.get('time')
+            };
+            return urlParams;
+        }
+
+        function applyUrlParams() {
+            const sel = document.getElementById('subjectSelector');
+            if (urlParams.code) {
+                sel.value = urlParams.code;
+                sel.disabled = true;
+                onSubjectChange();
+            }
+            if (urlParams.venue) {
+                const venueSel = document.getElementById('buildingSelector');
+                const venueOpt = Array.from(venueSel.options).find(o => o.value === urlParams.venue);
+                if (venueOpt) {
+                    venueSel.value = urlParams.venue;
+                    onVenueChange();
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            readUrlParams();
+            buildSubjectDropdown();
             buildVenueDropdown();
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             const sel = document.getElementById('weekSelector');
@@ -1708,6 +1807,7 @@
             }).join('');
             sel.value = currentWeek;
             buildTimetable();
+            applyUrlParams();
 
             document.addEventListener('keydown', handleKeyDown);
             initWeekKeyboardShortcuts();

@@ -86,18 +86,40 @@ function buildVenueTimetable(venueCode, weekIndex) {
 
 **Decision:** Available (green) slots are clickable on **all viewports**, showing a tooltip confirmation before redirecting.
 
-- **Desktop:** Click available slot → tooltip: "Book B014 on Mon, 01 Sep 2026 at 09:00?" with "Book" button → redirect to `/replacement-arrangement?venue=XXX&date=YYY&time=ZZZ`
+- **Desktop:** Click available slot → tooltip: "Book B014 on Mon, 01 Sep 2026 at 09:00?" with "Book" button → redirect to `/replacement-arrangement?venue=XXX&date=YYY&time=ZZZ&code=XXX&cohort=XXX`
 - **Mobile:** Tap available slot → modal with "Book This Venue" button → redirect to booking page
 
 ### 5. "Book This Venue" Button
 
-**Decision:** Button opens `/replacement-arrangement` with venue, date, and time pre-filled via URL params.
+**Decision:** Button opens `/replacement-arrangement` with venue, date, time, code, and cohort pre-filled via URL params.
 
 ```javascript
 function bookVenue(venueCode, date, time) {
-    window.location.href = `/replacement-arrangement?venue=${venueCode}&date=${date}&time=${time}`;
+    let url = `/replacement-arrangement?venue=${venueCode}&date=${date}&time=${time}`;
+    if (currentCourseCode) url += `&code=${currentCourseCode}`;
+    if (currentCohort) url += `&cohort=${currentCohort}`;
+    window.location.href = url;
 }
 ```
+
+### 5a. URL Params Support (code/cohort passthrough)
+
+**Decision:** Read `code` and `cohort` from URL when coming from My Timetable flow.
+
+```javascript
+// Read URL params on page load
+const params = new URLSearchParams(window.location.search);
+const courseCode = params.get('code');
+const cohort = params.get('cohort');
+
+// Show banner if code+cohort present
+if (courseCode && cohort) {
+    document.getElementById('bookingBanner').textContent = `Booking for: ${courseCode} — ${cohort}`;
+    document.getElementById('bookingBanner').style.display = '';
+}
+```
+
+**Banner location:** Below page header, above venue dropdown.
 
 ### 6. Summary Cards
 

@@ -43,8 +43,13 @@ A dedicated **Venue Timetable** page gives staff a quick, view-only overview of 
 5. **Modal (view-only)**
    - For booked classes: Course Code, Name, Cohort(s), Time, Day, Date, Status badge, Remarks
    - For available slots: "This slot is available." + "Book This Venue" button
-   - "Book This Venue" button → opens `/replacement-arrangement?venue=XXX&date=YYY&time=ZZZ`
+   - "Book This Venue" button → opens `/replacement-arrangement?venue=XXX&date=YYY&time=ZZZ&code=XXX&cohort=XXX`
    - Close button
+
+6. **URL params support**
+   - Read `code` and `cohort` from URL (when coming from My Timetable flow)
+   - Show banner: "Booking for: BMIT5555 — RSD3G2" when `code`+`cohort` present
+   - Pass `code`+`cohort` through when "Book Now" is clicked
 
 6. **Mobile view (≤768px)**
    - Card layout

@@ -14,6 +14,17 @@
 | clearAll | Extended to clear all venues' selections |
 | Time column center | Added `text-align: center` to `.time-col` |
 
+### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php` — Subject dropdown + URL params (2026-08-08)
+
+| Change | Detail |
+|--------|--------|
+| Subject dropdown | Added `<select id="subjectSelector">` in toolbar-center — shows all courses from `MockData.courses` |
+| URL param reading | Added `readUrlParams()` function — reads `code`, `cohort`, `venue`, `date`, `time` from URL |
+| Pre-select subject | When `code` param present, pre-selects and disables dropdown |
+| Venue capacity filtering | `buildVenueDropdown(filterByCourse)` — filters venues by `capacity >= studentCount` and `allowedSessions` |
+| Venue count note | Shows "Showing N venues that fit X students" when course selected |
+| Course info display | Shows course name, type, cohort(s), student count when selected |
+
 ### `routes/web.php`
 
 | Change | Detail |

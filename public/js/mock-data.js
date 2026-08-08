@@ -139,6 +139,25 @@ window.MockData = {
     ],
 
     // ─────────────────────────────────────────────────────────────────────
+    // §2.5a  courses — global registry of all unique courses across all
+    // cohorts. Used by replacement-arrangement Subject dropdown.
+    // `type`: L (Lecture) or T (Tutorial) — determines allowed venue types.
+    // `cohorts`: all cohorts taking this course.
+    // `studentCount`: total students across all cohorts.
+    // ─────────────────────────────────────────────────────────────────────
+    courses: [
+        { code: 'BMIT6767', name: 'Object-Oriented Programming',   type: 'L', cohorts: ['DFT2 (S1)'],                  studentCount: 24 },
+        { code: 'BMIT1234', name: 'Data Structures',               type: 'T', cohorts: ['DFT2 (S1)'],                  studentCount: 22 },
+        { code: 'BMIT5678', name: 'Database Systems',              type: 'L', cohorts: ['DSF2 (S1)'],                  studentCount: 28 },
+        { code: 'BMIT9012', name: 'Computer Networks',             type: 'L', cohorts: ['RSD3(S1)G1', 'RSD3(S1)G2'],  studentCount: 25 },
+        { code: 'BMIT5555', name: 'Software Engineering',          type: 'L', cohorts: ['CSF2 (S1)'],                  studentCount: 30 },
+        { code: 'BMIT6666', name: 'Mobile App Development',        type: 'T', cohorts: ['CSF2 (S1)'],                  studentCount: 30 },
+        { code: 'BMIT3456', name: 'Artificial Intelligence',       type: 'L', cohorts: ['RAF2 (S1)'],                  studentCount: 26 },
+        { code: 'BMIT7890', name: 'Project Management',            type: 'L', cohorts: ['RBU2 (S1)'],                  studentCount: 20 },
+        { code: 'BMIT9999', name: 'Machine Learning',              type: 'T', cohorts: ['DMF2 (S1)'],                  studentCount: 18 },
+    ],
+
+    // ─────────────────────────────────────────────────────────────────────
     // §2.6  myTimetable — was MyTimetable inline `eventsData`.
     // `seedWeek` defines the one fully-populated week (11); every other week
     // copies its status==='normal' events (weekly-repeat). The page MUST derive

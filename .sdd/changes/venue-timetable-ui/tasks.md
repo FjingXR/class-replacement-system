@@ -42,7 +42,13 @@
 - [ ] **AND logic:** Both filters combined
 - [ ] **Default:** All venues, all time ranges
 
-## Task 6: Timetable Grid
+## Task 6a: URL Params Support (code/cohort passthrough)
+- [ ] Read `code` and `cohort` from URL on page load
+- [ ] Show banner: "Booking for: BMIT5555 — RSD3G2" when `code`+`cohort` present
+- [ ] Store `currentCourseCode` and `currentCohort` in JS variables
+- [ ] Pass `code`+`cohort` through when "Book Now" is clicked
+
+## Task 6b: Timetable Grid
 - [ ] Build Time × Day grid (Mon–Sun, 08:00–18:00)
 - [ ] For each cell, check if any class is booked at that venue/time
 - [ ] Booked cells: show Course code + Cohort + Status badge

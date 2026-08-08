@@ -131,8 +131,13 @@ function add30min(t) {
 
 // ───── Navigation ─────
 
-function goToReplacement() {
-    window.location.href = '/replacement-arrangement';
+function goToReplacement(code, cohort) {
+    let url = '/replacement-arrangement';
+    const params = [];
+    if (code) params.push('code=' + encodeURIComponent(code));
+    if (cohort) params.push('cohort=' + encodeURIComponent(cohort));
+    if (params.length) url += '?' + params.join('&');
+    window.location.href = url;
 }
 
 // ───── Table sorting ─────

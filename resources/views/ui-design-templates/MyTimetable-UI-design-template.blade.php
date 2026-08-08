@@ -166,7 +166,7 @@
     <!-- ═══ Class Detail Modal ═══ -->
     @section('modal-footer')
         <div class="modal-footer-left">
-            <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement()">Replace Now</button>
+            <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement(currentModalEvent?.code, currentModalEvent?.cohort)">Replace Now</button>
             <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()"></button>
         </div>
         <div class="modal-footer-right">
@@ -248,6 +248,7 @@
         const eventsData = eventsByWeek;
 
         let currentWeek = currentWeekIndex();
+        let currentModalEvent = null;
 
         /* ───── Week persistence: keep the user's chosen week across refresh ───── */
         const WEEK_KEY = 'myTimetableWeek';
@@ -262,6 +263,7 @@
         }
 
         function openModal(event) {
+            currentModalEvent = event;
             document.getElementById('modalTitle').textContent = event.code || 'Class Details';
 
             const days = weekData[currentWeek].days;
