@@ -71,19 +71,8 @@
         }
 
         /* ───── Column Widths ───── */
-        .col-no { width: 50px; }
-        .timetable td.col-requested-at { width: 145px; white-space: normal; }
-        .col-code { width: 200px; }
-        .col-original { width: 170px; }
-        .col-replacement { width: 170px; }
+        .col-no { width: 40px; text-align: center; }
         .col-original, .col-replacement { white-space: normal; }
-        .col-students { width: 70px; }
-        .col-lecturer { width: 130px; }
-        .col-urgency { width: 90px; }
-        .col-status { width: 130px; }
-        .col-actions { width: 140px; text-align: center; }
-
-        .grid-scroll .timetable { min-width: 1335px; }
 
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;

@@ -421,7 +421,7 @@ body {
 .timetable {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
+    table-layout: auto;
 }
 .timetable th, .timetable td {
     border: 1px solid var(--color-outline);
