@@ -93,6 +93,17 @@
         .col-replacement .cell-class-block .class-time.status-completed {
             color: #3b82f6;
         }
+        .col-replacement .cell-class-block .class-venue {
+            font-size: 11px;
+            color: var(--color-on-surface-variant);
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .col-replacement .cell-class-block .class-venue::before {
+            content: '📍';
+            font-size: 10px;
+        }
 
         /* ───── Status Badges (page-specific overrides) ───── */
         .badge {
@@ -253,14 +264,16 @@
 
         /* ───── Lecturer Cell ───── */
         .lecturer-cell-name { font-weight: 600; font-size: 13px; color: var(--color-on-surface); }
-        .lecturer-cell-id { font-size: 11px; color: var(--color-on-surface-variant); opacity: 0.7; }
+        .lecturer-cell-id { font-size: 11px; color: var(--color-on-surface-variant); opacity: 0.7; font-weight: 400; }
         .lecturer-cell-email {
-            font-size: 11px; color: var(--color-primary); cursor: pointer;
-            display: inline-flex; align-items: center; gap: 3px;
+            font-size: 12px; color: var(--color-primary); cursor: pointer;
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 2px 8px; border-radius: 10px;
+            background: var(--color-primary-container); color: var(--color-on-primary-container);
             transition: opacity 0.15s;
         }
-        .lecturer-cell-email:hover { opacity: 0.7; text-decoration: underline; }
-        .lecturer-cell-email .copy-icon { font-size: 10px; opacity: 0.5; }
+        .lecturer-cell-email:hover { opacity: 0.8; }
+        .lecturer-cell-email .copy-icon { font-size: 10px; opacity: 0.6; }
 
         /* ───── Mini Request Timeline ───── */
         .request-timeline { display: flex; align-items: center; gap: 0; padding: 12px 0 16px; border-bottom: 1px solid var(--color-outline-variant); margin-bottom: 16px; }
@@ -426,8 +439,8 @@
             <div class="modal-footer-left">
                 <button class="btn-danger" id="rejectRequestBtn" onclick="openRejectModal(currentModalId)" style="display:none">✕ Reject</button>
             </div>
-            <div class="modal-footer-right">
-                <button class="btn-outline" id="approveRequestBtn" onclick="approveRequest(currentModalId)" style="display:none">✓ Approve</button>
+            <div class="modal-footer-right" style="gap: 8px">
+                <button class="btn-approve" id="approveRequestBtn" onclick="approveRequest(currentModalId)" style="display:none">✓ Approve</button>
                 <button class="btn-outline" id="closeModalBtn" onclick="closeModal()">Close</button>
             </div>
         </div>
@@ -713,7 +726,7 @@
             if (level === 'urgent') rowClass += ' row-urgent';
             else if (urgencyDays(r.classDate) <= 7) rowClass += ' row-soon';
 
-            let html = '<tr data-id="' + r.id + '"' + (rowClass ? ' class="' + rowClass.trim() + '"' : '') + '>';
+            let html = '<tr data-id="' + r.id + '"' + (rowClass ? ' class="' + rowClass.trim() + '"' : '') + ' onclick="openModalById(' + r.id + ')" style="cursor:pointer">';
 
             // Checkbox column
             if (r.status === 'Pending') {
@@ -726,8 +739,7 @@
             html += '<td>' + formatDateTime(r.requestedAt) + requestAgeHtml(r.requestedAt) + '</td>';
             var lec = lookupLecturer(r.lecturer);
             if (lec) {
-                html += '<td><div class="lecturer-cell-name">' + lec.name + '</div>';
-                html += '<div class="lecturer-cell-id">' + lec.staffId + '</div>';
+                html += '<td><div class="lecturer-cell-name">' + lec.name + ' <span class="lecturer-cell-id">(' + lec.staffId + ')</span></div>';
                 html += '<div class="lecturer-cell-email" onclick="copyEmail(\'' + lec.email + '\', event)" title="Click to copy email">' + lec.email + ' <span class="copy-icon">📋</span></div></td>';
             } else {
                 html += '<td>' + r.lecturer + '</td>';
@@ -746,7 +758,7 @@
             html += '<td><span class="badge ' + statusClass(r.status) + '" onclick="openModalById(' + r.id + ')" style="cursor:pointer">' + r.status + '</span></td>';
 
             const actions = r.status === 'Pending'
-                ? '<button class="btn-approve" onclick="approveRequest(' + r.id + ')">✓ Approve</button> <button class="btn-reject" onclick="openRejectModal(' + r.id + ')">✕ Reject</button>'
+                ? '<div style="display:flex;gap:6px;align-items:center"><button class="btn-approve" onclick="approveRequest(' + r.id + ')">✓ Approve</button><button class="btn-reject" onclick="openRejectModal(' + r.id + ')">✕ Reject</button></div>'
                 : '<button class="btn-view" onclick="openModalById(' + r.id + ')">👁 View</button>';
             html += '<td>' + actions + '</td>';
             html += '</tr>';

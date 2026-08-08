@@ -595,7 +595,12 @@ function formatReplacementBlock(r) {
     var wn = getWeekNumber(r.replacementDate);
     var weekTag = wn ? ' (Week ' + wn + ')' : '';
     var statusCls = statusClass(r.status);
-    return '<div class="cell-class-block"><span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br><span class="class-time ' + statusCls + '">' + r.replacementTime + '</span></div>';
+    var venue = r.replacementVenue || r.venue || '—';
+    return '<div class="cell-class-block">'
+        + '<span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br>'
+        + '<span class="class-time ' + statusCls + '">' + r.replacementTime + '</span><br>'
+        + '<span class="class-venue">' + venue + '</span>'
+        + '</div>';
 }
 
 function getWeekRange(weekVal) {
