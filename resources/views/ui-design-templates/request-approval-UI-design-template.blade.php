@@ -223,6 +223,44 @@
         @keyframes flashGreen { 0% { background: var(--color-secondary-container); } 100% { background: transparent; } }
         @keyframes flashRed { 0% { background: var(--color-error-container); } 100% { background: transparent; } }
 
+        /* ───── Row Urgency Indicators ───── */
+        .row-urgent { border-left: 3px solid var(--color-error); }
+        .row-soon { border-left: 3px solid var(--color-tertiary); }
+
+        /* ───── Active Filter Chips ───── */
+        .filter-chips {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+            padding: 6px 12px; margin-bottom: 8px;
+            background: var(--color-surface-variant); border: 1px solid var(--color-outline-variant);
+            border-radius: var(--radius-sm); font-size: 12px;
+        }
+        .filter-chips:empty { display: none; }
+        .filter-chips-label { font-weight: 600; color: var(--color-on-surface-variant); margin-right: 2px; }
+        .filter-chip {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 12px;
+            background: var(--color-primary-container); color: var(--color-on-primary-container);
+            font-size: 12px; font-weight: 500;
+        }
+        .filter-chip-remove {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 16px; height: 16px; border-radius: 50%; border: none;
+            background: transparent; color: var(--color-on-primary-container);
+            font-size: 14px; font-weight: 700; cursor: pointer; line-height: 1;
+            transition: background 0.15s;
+        }
+        .filter-chip-remove:hover { background: var(--color-primary); color: #fff; }
+
+        /* ───── Lecturer Cell ───── */
+        .lecturer-cell-name { font-weight: 600; font-size: 13px; color: var(--color-on-surface); }
+        .lecturer-cell-id { font-size: 11px; color: var(--color-on-surface-variant); opacity: 0.7; }
+        .lecturer-cell-email {
+            font-size: 11px; color: var(--color-primary); cursor: pointer;
+            display: inline-flex; align-items: center; gap: 3px;
+            transition: opacity 0.15s;
+        }
+        .lecturer-cell-email:hover { opacity: 0.7; text-decoration: underline; }
+        .lecturer-cell-email .copy-icon { font-size: 10px; opacity: 0.5; }
 
         /* ───── Mini Request Timeline ───── */
         .request-timeline { display: flex; align-items: center; gap: 0; padding: 12px 0 16px; border-bottom: 1px solid var(--color-outline-variant); margin-bottom: 16px; }
@@ -333,6 +371,8 @@
 </div>
 
 <div class="sort-hint">Click column headers to sort (Requested Timestamp, Original Class, Proposed Replacement, Urgency, Status)</div>
+
+<div class="filter-chips" id="filterChips"></div>
 
 <div class="grid-wrapper" id="gridWrapper">
     <div class="grid-scroll">
@@ -465,6 +505,18 @@
         function urgencyDays(classDate) {
             const target = new Date(classDate + 'T00:00:00');
             return Math.ceil((target - MockData.urgencyReferenceDate) / (1000 * 60 * 60 * 24));
+        }
+
+        // ── Lecturer lookup + copy email ──
+        function lookupLecturer(name) {
+            return MockData.lecturers.find(function(l) { return l.name === name; }) || null;
+        }
+
+        function copyEmail(email, event) {
+            event.stopPropagation();
+            navigator.clipboard.writeText(email).then(function() {
+                showToast('Email copied: ' + email, null, 2000);
+            });
         }
 
         // ── Slot validity helper ──
@@ -658,6 +710,8 @@
             let rowClass = '';
             if (isViewed) rowClass += ' row-viewed';
             if (isSelected) rowClass += ' row-selected';
+            if (level === 'urgent') rowClass += ' row-urgent';
+            else if (urgencyDays(r.classDate) <= 7) rowClass += ' row-soon';
 
             let html = '<tr data-id="' + r.id + '"' + (rowClass ? ' class="' + rowClass.trim() + '"' : '') + '>';
 
@@ -670,7 +724,14 @@
 
             html += '<td>' + (offset + i + 1) + '</td>';
             html += '<td>' + formatDateTime(r.requestedAt) + requestAgeHtml(r.requestedAt) + '</td>';
-            html += '<td>' + r.lecturer + '</td>';
+            var lec = lookupLecturer(r.lecturer);
+            if (lec) {
+                html += '<td><div class="lecturer-cell-name">' + lec.name + '</div>';
+                html += '<div class="lecturer-cell-id">' + lec.staffId + '</div>';
+                html += '<div class="lecturer-cell-email" onclick="copyEmail(\'' + lec.email + '\', event)" title="Click to copy email">' + lec.email + ' <span class="copy-icon">📋</span></div></td>';
+            } else {
+                html += '<td>' + r.lecturer + '</td>';
+            }
             html += '<td><div class="cell-code">' + r.courseCode + '</div><div class="cell-name">' + r.courseName + '</div></td>';
             html += '<td>' + formatClassBlock(r) + '</td>';
 
@@ -780,6 +841,31 @@
             document.getElementById('resultCount').textContent = currentFiltered.length + ' result' + (currentFiltered.length !== 1 ? 's' : '');
         }
 
+        // ── Active filter chips ──
+        function renderFilterChips() {
+            const container = document.getElementById('filterChips');
+            const chips = [];
+            const status = document.getElementById('statusFilter').value;
+            const urgency = urgencyFilter;
+            const search = document.getElementById('searchInput').value.trim();
+            const week = document.getElementById('weekFilter').value;
+
+            if (status !== 'all') {
+                chips.push('<span class="filter-chip">Status: ' + status + '<button class="filter-chip-remove" onclick="document.getElementById(\'statusFilter\').value=\'all\';renderTable()" title="Remove">&times;</button></span>');
+            }
+            if (urgency !== 'all') {
+                chips.push('<span class="filter-chip">Urgency: ' + (urgency === 'urgent' ? 'Urgent' : 'Normal') + '<button class="filter-chip-remove" onclick="setUrgencyFilter(\'all\');renderTable()" title="Remove">&times;</button></span>');
+            }
+            if (week !== 'all') {
+                const weekLabel = document.getElementById('weekFilter').selectedOptions[0]?.textContent || week;
+                chips.push('<span class="filter-chip">Week: ' + weekLabel + '<button class="filter-chip-remove" onclick="document.getElementById(\'weekFilter\').value=\'all\';weekFilterChanged()" title="Remove">&times;</button></span>');
+            }
+            if (search) {
+                chips.push('<span class="filter-chip">Search: "' + search + '"<button class="filter-chip-remove" onclick="document.getElementById(\'searchInput\').value=\'\';renderTable()" title="Remove">&times;</button></span>');
+            }
+            container.innerHTML = '<span class="filter-chips-label">Filters:</span>' + chips.join('');
+        }
+
         // ── Main render ──
         function renderTable() {
             currentFiltered = filterData();
@@ -789,6 +875,7 @@
             updatePagination();
             updateResultCount();
             renderCards();
+            renderFilterChips();
         }
 
         // ── Render cards (mobile responsive view) ──
@@ -808,7 +895,7 @@
                     '<div class="card-body">' +
                         '<div><strong>Course:</strong> ' + r.courseCode + ' - ' + r.courseName + '</div>' +
                         '<div><strong>Date:</strong> ' + formatShortDate(r.classDate) + ' ' + to12h(r.timeStart) + '</div>' +
-                        '<div><strong>Lecturer:</strong> ' + r.lecturerName + '</div>' +
+                        '<div><strong>Lecturer:</strong> ' + (function() { var l = lookupLecturer(r.lecturer); return l ? l.name + ' (' + l.staffId + ')' : r.lecturer; })() + '</div>' +
                         '<div><strong>Urgency:</strong> <span class="urgency-badge ' + urgencyClass(urgencyLevel(r.classDate)) + '">' + urgencyLabel(urgencyLevel(r.classDate)) + '</span></div>' +
                         '<div>' + requestAgeHtml(r.requestedAt) + '</div>' +
                     '</div>';
@@ -933,7 +1020,14 @@
 
             // Section 1: Request Information
             html += '<div class="modal-section"><div class="modal-section-title">Request Information</div>';
-            html += '<p><strong>Lecturer:</strong> ' + r.lecturer + '</p>';
+            var modalLec = lookupLecturer(r.lecturer);
+            if (modalLec) {
+                html += '<p><strong>Lecturer:</strong> ' + modalLec.name + '</p>';
+                html += '<p><strong>Staff ID:</strong> ' + modalLec.staffId + '</p>';
+                html += '<p><strong>Email:</strong> <span class="lecturer-cell-email" onclick="copyEmail(\'' + modalLec.email + '\', event)" title="Click to copy">' + modalLec.email + ' 📋</span></p>';
+            } else {
+                html += '<p><strong>Lecturer:</strong> ' + r.lecturer + '</p>';
+            }
             html += '<p><strong>Course:</strong> ' + r.courseCode + ' — ' + r.courseName + '</p>';
             html += '<p><strong>Requested:</strong> ' + formatDateTime(r.requestedAt) + '</p>';
             html += '<p><strong>Status:</strong> <span class="badge ' + statusClass(r.status) + '">' + r.status + '</span></p>';

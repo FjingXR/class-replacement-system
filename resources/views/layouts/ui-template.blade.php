@@ -31,7 +31,7 @@
     </div>
 
     <script src="/js/ui-common.js"></script>
-    <script src="/js/mock-data.js?v=2"></script>
+    <script src="/js/mock-data.js?v=3"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             updateIcon(document.documentElement.classList.contains('dark')); initMobileNav();

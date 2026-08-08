@@ -86,20 +86,20 @@ window.MockData = {
     // 'Dr. Christopher Lazarus', 'Dr. Tan Ah Meng') are NOT joined.
     // ─────────────────────────────────────────────────────────────────────
     lecturers: [
-        { staffId: '5425', name: 'Pn. Surayaini Binti Basri',         role: 'Programme Leader',    department: 'DCIT', isPl: true  },
-        { staffId: '5516', name: 'En. Mohd Nur Rahmat Bin Mohd Taat', role: 'Programme Leader',    department: 'DCIT', isPl: true  },
-        { staffId: '4288', name: 'Dr. Christopher Lazarus',           role: 'Assistant Professor', department: 'DCIT', isPl: false },
-        { staffId: '3221', name: 'Pn. Lee Yee Fong',                  role: 'Senior Lecturer',     department: 'DCIT', isPl: false },
-        { staffId: '3825', name: 'Pn. Teng Nga Sing',                 role: 'Senior Lecturer',     department: 'DCIT', isPl: false },
-        { staffId: '4127', name: 'Pn. Patricia G Kissol',             role: 'Senior Lecturer',     department: 'DCIT', isPl: false },
-        { staffId: '2873', name: 'Cik Ellis Chieng',                  role: 'Lecturer',            department: 'DCIT', isPl: false },
-        { staffId: '5514', name: 'Ts. Norshikin Binti Zainal Abidin', role: 'Lecturer',            department: 'DCIT', isPl: false },
-        { staffId: '5599', name: 'En. Jefther Edward',                role: 'Lecturer',            department: 'DCIT', isPl: false },
-        { staffId: '5652', name: 'En. Daniel Royd Michael',           role: 'Lecturer',            department: 'DCIT', isPl: false },
-        { staffId: '5770', name: 'En. Lim Jia Zheng',                 role: 'Lecturer',            department: 'DCIT', isPl: false },
-        { staffId: '3799', name: 'En. Muada Bin Ojih',                role: 'Lecturer',            department: 'DSSH', isPl: false },
-        { staffId: '4363', name: 'Pn. Tan Sharon',                    role: 'Senior Lecturer',     department: 'DACB', isPl: false },
-        { staffId: '5254', name: 'Dr. Chang Foo Chung',               role: 'Assistant Professor', department: 'DACB', isPl: false },
+        { staffId: '5425', name: 'Pn. Surayaini Binti Basri',         role: 'Programme Leader',    department: 'DCIT', isPl: true,  email: 'surayaini@tarumt.edu.my' },
+        { staffId: '5516', name: 'En. Mohd Nur Rahmat Bin Mohd Taat', role: 'Programme Leader',    department: 'DCIT', isPl: true,  email: 'rahmat@tarumt.edu.my' },
+        { staffId: '4288', name: 'Dr. Christopher Lazarus',           role: 'Assistant Professor', department: 'DCIT', isPl: false, email: 'christopher@tarumt.edu.my' },
+        { staffId: '3221', name: 'Pn. Lee Yee Fong',                  role: 'Senior Lecturer',     department: 'DCIT', isPl: false, email: 'leeyf@tarumt.edu.my' },
+        { staffId: '3825', name: 'Pn. Teng Nga Sing',                 role: 'Senior Lecturer',     department: 'DCIT', isPl: false, email: 'tengns@tarumt.edu.my' },
+        { staffId: '4127', name: 'Pn. Patricia G Kissol',             role: 'Senior Lecturer',     department: 'DCIT', isPl: false, email: 'patricia@tarumt.edu.my' },
+        { staffId: '2873', name: 'Cik Ellis Chieng',                  role: 'Lecturer',            department: 'DCIT', isPl: false, email: 'ellis@tarumt.edu.my' },
+        { staffId: '5514', name: 'Ts. Norshikin Binti Zainal Abidin', role: 'Lecturer',            department: 'DCIT', isPl: false, email: 'norshikin@tarumt.edu.my' },
+        { staffId: '5599', name: 'En. Jefther Edward',                role: 'Lecturer',            department: 'DCIT', isPl: false, email: 'jefther@tarumt.edu.my' },
+        { staffId: '5652', name: 'En. Daniel Royd Michael',           role: 'Lecturer',            department: 'DCIT', isPl: false, email: 'daniel@tarumt.edu.my' },
+        { staffId: '5770', name: 'En. Lim Jia Zheng',                 role: 'Lecturer',            department: 'DCIT', isPl: false, email: 'limjz@tarumt.edu.my' },
+        { staffId: '3799', name: 'En. Muada Bin Ojih',                role: 'Lecturer',            department: 'DSSH', isPl: false, email: 'muada@tarumt.edu.my' },
+        { staffId: '4363', name: 'Pn. Tan Sharon',                    role: 'Senior Lecturer',     department: 'DACB', isPl: false, email: 'sharon@tarumt.edu.my' },
+        { staffId: '5254', name: 'Dr. Chang Foo Chung',               role: 'Assistant Professor', department: 'DACB', isPl: false, email: 'changfc@tarumt.edu.my' },
     ],
 
     // ─────────────────────────────────────────────────────────────────────
@@ -554,7 +554,7 @@ function _dayName(daysOffset) {
 const approvalRequests = [
     {
         id: 1,
-        lecturer: 'Kylian Mbappe',
+        lecturer: 'Dr. Christopher Lazarus',
         requestedAt: _relDateTime(-1, 9, 15),
         courseCode: 'BMIT2201',
         courseName: 'Data Structures & Algorithms',
@@ -582,7 +582,7 @@ const approvalRequests = [
     },
     {
         id: 2,
-        lecturer: 'Dembele',
+        lecturer: 'En. Lim Jia Zheng',
         requestedAt: _relDateTime(-2, 14, 20),
         courseCode: 'BMIT3302',
         courseName: 'Operating Systems',
@@ -609,7 +609,7 @@ const approvalRequests = [
     },
     {
         id: 3,
-        lecturer: 'Hakimi',
+        lecturer: 'En. Jefther Edward',
         requestedAt: _relDateTime(-3, 10, 0),
         courseCode: 'BMIT4403',
         courseName: 'Software Architecture',
@@ -637,7 +637,7 @@ const approvalRequests = [
     },
     {
         id: 4,
-        lecturer: 'Hakimi',
+        lecturer: 'En. Jefther Edward',
         requestedAt: _relDateTime(-3, 11, 30),
         courseCode: 'BMIT4403',
         courseName: 'Software Architecture',
@@ -665,7 +665,7 @@ const approvalRequests = [
     },
     {
         id: 5,
-        lecturer: 'Neymar',
+        lecturer: 'Dr. Chang Foo Chung',
         requestedAt: _relDateTime(0, 8, 5),
         courseCode: 'BMIT5504',
         courseName: 'Machine Learning Fundamentals',
@@ -692,7 +692,7 @@ const approvalRequests = [
     },
     {
         id: 6,
-        lecturer: 'Vinicius',
+        lecturer: 'Pn. Surayaini Binti Basri',
         requestedAt: _relDateTime(1, 10, 40),
         courseCode: 'BMIT6605',
         courseName: 'Database Administration',
@@ -720,7 +720,7 @@ const approvalRequests = [
     },
     {
         id: 7,
-        lecturer: 'Kylian Mbappe',
+        lecturer: 'Dr. Christopher Lazarus',
         requestedAt: _relDateTime(2, 9, 0),
         courseCode: 'BMIT7706',
         courseName: 'Information Security',
@@ -747,7 +747,7 @@ const approvalRequests = [
     },
     {
         id: 8,
-        lecturer: 'Dembele',
+        lecturer: 'En. Lim Jia Zheng',
         requestedAt: _relDateTime(4, 15, 30),
         courseCode: 'BMIT8807',
         courseName: 'Distributed Systems',
@@ -775,7 +775,7 @@ const approvalRequests = [
     },
     {
         id: 9,
-        lecturer: 'Hakimi',
+        lecturer: 'En. Jefther Edward',
         requestedAt: _relDateTime(7, 12, 10),
         courseCode: 'BMIT9908',
         courseName: 'Artificial Intelligence',
@@ -802,7 +802,7 @@ const approvalRequests = [
     },
     {
         id: 10,
-        lecturer: 'Neymar',
+        lecturer: 'Dr. Chang Foo Chung',
         requestedAt: _relDateTime(2, 9, 15),
         courseCode: 'BMIT2201',
         courseName: 'Data Structures & Algorithms',
@@ -829,7 +829,7 @@ const approvalRequests = [
     },
     {
         id: 11,
-        lecturer: 'Vinicius',
+        lecturer: 'Pn. Surayaini Binti Basri',
         requestedAt: _relDateTime(2, 14, 45),
         courseCode: 'BMIT3302',
         courseName: 'Operating Systems',
@@ -857,7 +857,7 @@ const approvalRequests = [
     },
     {
         id: 12,
-        lecturer: 'Kylian Mbappe',
+        lecturer: 'Dr. Christopher Lazarus',
         requestedAt: _relDateTime(3, 8, 30),
         courseCode: 'BMIT5504',
         courseName: 'Machine Learning Fundamentals',
@@ -884,7 +884,7 @@ const approvalRequests = [
     },
     {
         id: 13,
-        lecturer: 'Dembele',
+        lecturer: 'En. Lim Jia Zheng',
         requestedAt: _relDateTime(4, 11, 20),
         courseCode: 'BMIT6605',
         courseName: 'Database Administration',
@@ -912,7 +912,7 @@ const approvalRequests = [
     },
     {
         id: 14,
-        lecturer: 'Hakimi',
+        lecturer: 'En. Jefther Edward',
         requestedAt: _relDateTime(5, 9, 35),
         courseCode: 'BMIT7706',
         courseName: 'Information Security',
@@ -939,7 +939,7 @@ const approvalRequests = [
     },
     {
         id: 15,
-        lecturer: 'Neymar',
+        lecturer: 'Dr. Chang Foo Chung',
         requestedAt: _relDateTime(6, 10, 5),
         courseCode: 'BMIT8807',
         courseName: 'Distributed Systems',
@@ -967,7 +967,7 @@ const approvalRequests = [
     },
     {
         id: 16,
-        lecturer: 'Vinicius',
+        lecturer: 'Pn. Surayaini Binti Basri',
         requestedAt: _relDateTime(7, 13, 50),
         courseCode: 'BMIT9908',
         courseName: 'Artificial Intelligence',
@@ -994,7 +994,7 @@ const approvalRequests = [
     },
     {
         id: 17,
-        lecturer: 'Kylian Mbappe',
+        lecturer: 'Dr. Christopher Lazarus',
         requestedAt: _relDateTime(8, 16, 15),
         courseCode: 'BMIT2201',
         courseName: 'Data Structures & Algorithms',
@@ -1022,7 +1022,7 @@ const approvalRequests = [
     },
     {
         id: 18,
-        lecturer: 'Dembele',
+        lecturer: 'En. Lim Jia Zheng',
         requestedAt: _relDateTime(1, 9, 20),
         courseCode: 'BMIT3302',
         courseName: 'Operating Systems',
@@ -1049,7 +1049,7 @@ const approvalRequests = [
     },
     {
         id: 19,
-        lecturer: 'Hakimi',
+        lecturer: 'En. Jefther Edward',
         requestedAt: _relDateTime(2, 11, 55),
         courseCode: 'BMIT4403',
         courseName: 'Software Architecture',
@@ -1077,7 +1077,7 @@ const approvalRequests = [
     },
     {
         id: 20,
-        lecturer: 'Neymar',
+        lecturer: 'Dr. Chang Foo Chung',
         requestedAt: _relDateTime(3, 14, 30),
         courseCode: 'BMIT5504',
         courseName: 'Machine Learning Fundamentals',
