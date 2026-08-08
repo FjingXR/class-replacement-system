@@ -12,6 +12,11 @@
 - [ ] `@section('content')` — HTML structure
 - [ ] `@section('page-scripts')` — render logic
 
+## Task 3: Skeleton Loading
+- [ ] Call `showSkeleton()` on page load and venue/week change
+- [ ] Call `hideSkeleton()` after data renders
+- [ ] Use project standard skeleton pattern from `skeleton-loading-scroll-restore` SDD
+
 ## Task 3: Page Header + Semester Chip
 - [ ] Page header: "Venue Timetable"
 - [ ] Description: "View weekly class schedule for any venue across all cohorts."

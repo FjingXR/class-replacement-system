@@ -4,6 +4,8 @@
 
 Create a new Blade template extending `layouts.ui-template`. The page is a **view-only weekly timetable** for any venue, showing all booked classes across all cohorts. It reuses the timetable grid pattern from `CohortTimetable` and `MyTimetable`, with a venue dropdown replacing the cohort selector. Empty slots are green (available) and clickable, showing a tooltip confirmation before redirecting to the booking page.
 
+**Skeleton loading:** Use the project standard skeleton loading pattern from `skeleton-loading-scroll-restore` SDD change (now applied). Call `showSkeleton()` on page load and venue/week change, then `hideSkeleton()` after data renders.
+
 ## Architecture Decisions
 
 ### 1. Template Structure

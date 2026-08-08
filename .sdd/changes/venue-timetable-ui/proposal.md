@@ -17,6 +17,7 @@ A dedicated **Venue Timetable** page gives staff a quick, view-only overview of 
    - Semester chip: "202605 Semester · 15-Jun-2026 ~ 20-Sep-2026" (from `MockData.semester`)
    - Venue dropdown: 23 Block B rooms (from `MockData.venues`)
    - Week picker: prev/next arrows + dropdown (14 weeks, from `MockData.semester`)
+   - **Skeleton loading:** Use project standard pattern from `skeleton-loading-scroll-restore` SDD change
 
 2. **Legend bar (4 items)**
    - Available — `--color-secondary` (green) — no class booked
