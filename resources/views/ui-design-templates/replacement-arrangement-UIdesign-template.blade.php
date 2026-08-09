@@ -1374,9 +1374,9 @@
             for (const venue in selectedSlotsByVenue) {
                 for (const week in selectedSlotsByVenue[venue]) {
                     for (const slot of selectedSlotsByVenue[venue][week]) {
-                        const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                        const shortDayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                         const dayData = weekData[week].days[slot.day];
-                        const dayName = dayNames[slot.day];
+                        const dayName = shortDayNames[slot.day];
                         const dateStr = dayData.date.replace(/ \d{4}$/, '');
                         const startStr = hours[slot.hour];
                         const endStr = add30min(startStr);
@@ -1774,7 +1774,7 @@
         // ───── Slot Picker (conflict/cancelled slots for selected subject) ─────
 
         let selectedOriginalSlot = null;
-        const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const slotDayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
         function extractSlotsForSubject(courseCode) {
             const slots = [];
@@ -1789,7 +1789,7 @@
                         slots.push({
                             week: parseInt(weekKey),
                             day: event.di,
-                            dayName: dayNames[event.di] || 'Unknown',
+                            dayName: slotDayNames[event.di] || 'Unknown',
                             start: event.start,
                             end: event.end,
                             venue: event.venue,
