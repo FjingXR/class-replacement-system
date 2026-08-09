@@ -885,6 +885,24 @@
             }
             document.getElementById('noMatchBanner').classList.remove('show');
 
+            /* Favourites section */
+            if (favourites.length > 0) {
+                const favGroup = document.createElement('optgroup');
+                favGroup.label = '★ Favourites';
+                favourites.forEach(code => {
+                    const v = filteredVenues.find(x => x.code === code);
+                    if (v) {
+                        const opt = document.createElement('option');
+                        opt.value = v.code;
+                        opt.textContent = `${v.code} — ${v.type} (${v.capacity} seats)`;
+                        favGroup.appendChild(opt);
+                    }
+                });
+                if (favGroup.children.length > 0) {
+                    select.appendChild(favGroup);
+                }
+            }
+
             /* Recent section */
             if (recent.length > 0) {
                 const recentGroup = document.createElement('optgroup');
