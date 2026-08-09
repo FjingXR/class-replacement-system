@@ -1,5 +1,12 @@
 # Tasks: Login Pages OOP Refactor
 
+## Grill Session Completed
+
+**Decisions:**
+- Button disabled style normalized to student style (`background: var(--color-outline); opacity: 0.4`) for both pages
+- Form action `/login` kept as-is for mock phase, ready for future backend wiring
+- `togglePassword()`, `ripple()`, `updateIcon()` confirmed as shared functions in `ui-common.js` — no changes needed
+
 ## Task 1: Create shared login layout
 
 - [ ] Create `resources/views/layouts/login-template.blade.php`
@@ -77,6 +84,6 @@
 
 ## Task 8: Update changelog
 
-- [ ] Create `page-changelogs/login-oop-refactor-changelog.md`
-- [ ] Document files changed: layout created, staff refactored, student refactored
-- [ ] Document key design decisions: 12 Blade parameters, CSS custom properties, single validateLogin()
+- [x] Create `page-changelogs/login-oop-refactor-changelog.md`
+- [x] Document files changed: layout created, staff refactored, student refactored
+- [x] Document key design decisions: 12 Blade parameters, CSS custom properties, single validateLogin()

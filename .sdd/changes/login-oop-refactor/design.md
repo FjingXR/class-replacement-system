@@ -113,6 +113,14 @@ Create a shared login layout (`layouts/login-template.blade.php`) that both logi
     background: var(--login-btn-hover-light);
 }
 
+.login-btn:disabled {
+    background: var(--color-outline);
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 .spinner {
     border-top-color: var(--login-spinner-color);
 }
@@ -221,3 +229,6 @@ function validateLogin() {
 
 - Button hover hex colors (`#88dbb3`, `#154d94`, etc.) are hardcoded — these are brand colors specific to staff/student themes and don't have CSS token equivalents. This is intentional.
 - Background images (`staff-login-bg.jpg`, `student-login-bg.jpg`) are referenced by path — if images are renamed, both layout params must be updated.
+- Button disabled style normalized to student style (`background: var(--color-outline); opacity: 0.4`) for both pages — staff previously used `opacity: 0.3` without background. Minor visual change, acceptable for consistency.
+- Form action `/login` has no POST route — kept as-is for mock phase, ready for future backend wiring.
+- `togglePassword()`, `ripple()`, `updateIcon()` confirmed as shared functions in `ui-common.js` — no changes needed.
