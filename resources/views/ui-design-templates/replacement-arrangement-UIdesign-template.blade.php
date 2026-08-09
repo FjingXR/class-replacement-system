@@ -187,7 +187,7 @@
         .timetable {
             width: 100%;
             border-collapse: collapse;
-            table-layout: auto;
+            table-layout: fixed;
         }
 
         .timetable th, .timetable td {
