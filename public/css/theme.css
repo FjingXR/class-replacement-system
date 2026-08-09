@@ -1106,6 +1106,7 @@ html.dark .semester-bar select:not(.week-select) {
     height: 80px;
     min-width: 80px;
     cursor: default;
+    position: relative;
 }
 
 .timetable td.hour-cell.offday-slot {
@@ -1121,14 +1122,16 @@ html.dark .semester-bar select:not(.week-select) {
 }
 
 .event-block {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     transition: filter 0.15s, box-shadow var(--transition);
-    position: relative;
     cursor: pointer;
     padding: 6px 6px;
     box-sizing: border-box;
@@ -1190,9 +1193,12 @@ html.dark .semester-bar select:not(.week-select) {
 }
 
 .cell-empty {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: var(--color-surface);
-    height: 100%;
-    min-height: 80px;
 }
 
 .timetable tr:last-child td { border-bottom: none; }
@@ -1488,6 +1494,7 @@ html.dark .semester-bar select:not(.week-select) {
     .today-cell { background: transparent; }
 
     .event-block {
+        position: static;
         width: 100%;
         height: auto;
         min-height: 60px;

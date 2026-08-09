@@ -281,16 +281,19 @@
             height: 80px;
             min-width: 80px;
             cursor: default;
+            position: relative;
         }
 
         .cell-content {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: background var(--transition), box-shadow var(--transition), transform 0.1s;
-            position: relative;
         }
 
         .cell-available {
@@ -308,7 +311,6 @@
         .cell-occupied {
             background: var(--color-error-container);
             cursor: not-allowed;
-            height: 100%;
         }
 
         .cell-selected {
@@ -340,13 +342,11 @@
         .cell-pending {
             background: var(--color-tertiary-container);
             cursor: not-allowed;
-            height: 100%;
         }
 
         .cell-reserved {
             background: var(--color-surface-variant);
             cursor: not-allowed;
-            height: 100%;
         }
 
         .timetable tr:last-child td { border-bottom: none; }
@@ -712,6 +712,7 @@
                 gap: 8px;
             }
             .cell-content {
+                position: static;
                 width: 48px;
                 height: 48px;
                 min-height: 48px;
