@@ -765,7 +765,18 @@
         let currentCohort = null;
         let focusedCell = null;
 
-        const STATE_KEY = 'venueTimetableState';
+        /* ════════════════════════════════════════════
+           STATE PERSISTENCE (using ui-common.js helper)
+           ════════════════════════════════════════════ */
+
+        const venueState = createStatePersistence('venueTimetableState', {
+            fields: [
+                { id: 'venueSelect', type: 'select', key: 'venue' },
+                { id: 'weekSelect', type: 'select', key: 'week', transform: v => parseInt(v) },
+                { id: 'timeFilter', type: 'checkbox-group', key: 'timeFilter', selector: '#timeFilter button', transform: () => currentTimeFilter },
+                { id: 'venueTypeDropdown', type: 'checkbox-group', key: 'venueTypes' },
+            ]
+        });
 
         /* ════════════════════════════════════════════
            MOCK DATA — Weeks
@@ -1499,25 +1510,15 @@
         }
 
         /* ════════════════════════════════════════════
-           STATE PERSISTENCE
+           STATE PERSISTENCE (using ui-common.js helper)
            ════════════════════════════════════════════ */
 
         function saveState() {
-            try {
-                localStorage.setItem(STATE_KEY, JSON.stringify({
-                    venue: document.getElementById('venueSelect').value,
-                    week: currentWeek,
-                    timeFilter: currentTimeFilter,
-                    venueTypes: venueTypeFilters,
-                }));
-            } catch (e) { /* ignore */ }
+            venueState.save({ timeFilter: currentTimeFilter, venueTypes: venueTypeFilters });
         }
 
         function restoreState() {
-            let state = null;
-            try { state = JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { state = null; }
-            if (!state) return;
-
+            const state = venueState.restore();
             if (state.venue && MockData.venues.some(v => v.code === state.venue)) {
                 document.getElementById('venueSelect').value = state.venue;
             }

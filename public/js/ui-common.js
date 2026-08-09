@@ -570,7 +570,65 @@ function dismissToast() {
     clearTimeout(_toastTimer);
 }
 
-// ───── Day Helpers ─────
+// ───── State Persistence (localStorage) ─────
+
+/**
+ * Generic state persistence helper.
+ * @param {string} storageKey - localStorage key
+ * @param {object} config - { fields: [{id, type, key, transform?}] }
+ *   type: 'select' | 'checkbox-group' | 'variable'
+ *   id: DOM element id (for select/checkbox-group)
+ *   key: property name in saved state
+ *   transform: optional fn(val) => savedValue
+ */
+function createStatePersistence(storageKey, config) {
+    return {
+        save(extraFields) {
+            try {
+                const state = {};
+                config.fields.forEach(f => {
+                    if (f.type === 'select') {
+                        const el = document.getElementById(f.id);
+                        state[f.key] = f.transform ? f.transform(el.value) : el.value;
+                    } else if (f.type === 'checkbox-group') {
+                        const checkboxes = document.querySelectorAll(f.selector || '#' + f.id + ' input[type="checkbox"]');
+                        const vals = {};
+                        checkboxes.forEach(cb => { vals[cb.value] = cb.checked; });
+                        state[f.key] = vals;
+                    } else if (f.type === 'variable') {
+                        state[f.key] = window[f.varName];
+                    }
+                });
+                if (extraFields) Object.assign(state, extraFields);
+                localStorage.setItem(storageKey, JSON.stringify(state));
+            } catch (e) { /* ignore */ }
+        },
+        restore(defaults) {
+            let state = null;
+            try { state = JSON.parse(localStorage.getItem(storageKey) || 'null'); } catch (e) { state = null; }
+            if (!state) return defaults || {};
+
+            config.fields.forEach(f => {
+                if (state[f.key] === undefined) return;
+                if (f.type === 'select') {
+                    const el = document.getElementById(f.id);
+                    if (el) el.value = state[f.key];
+                } else if (f.type === 'checkbox-group') {
+                    const checkboxes = document.querySelectorAll(f.selector || '#' + f.id + ' input[type="checkbox"]');
+                    checkboxes.forEach(cb => {
+                        cb.checked = state[f.key][cb.value] !== false;
+                    });
+                } else if (f.type === 'variable') {
+                    window[f.varName] = state[f.key];
+                }
+            });
+
+            return state;
+        }
+    };
+}
+
+
 
 const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
