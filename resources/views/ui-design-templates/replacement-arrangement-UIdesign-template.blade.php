@@ -859,6 +859,12 @@
 
         <div class="venue-count-note" id="venueCountNote" style="display:none; font-size:12px; color:var(--color-on-surface-variant); padding:4px 16px;"></div>
 
+        <!-- Slot Picker: shows conflict/cancelled slots when subject selected -->
+        <div class="slot-picker" id="slotPicker" style="display:none; margin: 12px 16px; padding: 12px 16px; background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+            <div style="font-size: 13px; font-weight: 600; color: var(--color-on-surface); margin-bottom: 8px;">Select slot to replace:</div>
+            <div id="slotPickerList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
+
         <div class="hint-text">Select an available (green) time slot</div>
 
         <div class="progress-wrapper" id="progressWrapper">
@@ -1714,6 +1720,8 @@
                 infoEl.textContent = '';
                 metaEl.textContent = '';
                 noteEl.style.display = 'none';
+                selectedOriginalSlot = null;
+                renderSlotPicker([]);
                 buildVenueDropdown(false);
                 return;
             }
@@ -1724,6 +1732,10 @@
             infoEl.textContent = currentCourse.code + ' — ' + currentCourse.name + ' (' + currentCourse.type + ')';
             metaEl.textContent = 'Cohort: ' + currentCourse.cohorts.join(', ') + ' | Students: ' + currentCourse.studentCount;
 
+            // Extract and render conflict/cancelled slots for this subject
+            const slots = extractSlotsForSubject(code);
+            renderSlotPicker(slots);
+            
             buildVenueDropdown(true);
         }
 
@@ -1759,6 +1771,101 @@
             }
         }
 
+        // ───── Slot Picker (conflict/cancelled slots for selected subject) ─────
+
+        let selectedOriginalSlot = null;
+        const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        function extractSlotsForSubject(courseCode) {
+            const slots = [];
+            const cohortTimetable = MockData.cohortTimetable || {};
+            
+            Object.keys(cohortTimetable).forEach(weekKey => {
+                const weekData = cohortTimetable[weekKey];
+                if (!weekData || !Array.isArray(weekData)) return;
+                
+                weekData.forEach(event => {
+                    if (event.code === courseCode && (event.status === 'conflict' || event.status === 'cancelled')) {
+                        slots.push({
+                            week: parseInt(weekKey),
+                            day: event.di,
+                            dayName: dayNames[event.di] || 'Unknown',
+                            start: event.start,
+                            end: event.end,
+                            venue: event.venue,
+                            status: event.status,
+                            name: event.name,
+                            type: event.type
+                        });
+                    }
+                });
+            });
+            
+            return slots.sort((a, b) => a.week - b.week || a.day - b.day || a.start - b.start);
+        }
+
+        function renderSlotPicker(slots) {
+            const picker = document.getElementById('slotPicker');
+            const list = document.getElementById('slotPickerList');
+            
+            if (!slots || slots.length === 0) {
+                picker.style.display = 'none';
+                return;
+            }
+            
+            list.innerHTML = '';
+            slots.forEach((slot, index) => {
+                const startStr = to12h(hours[slot.start]);
+                const endStr = to12h(hours[slot.end + 1] || add30min(hours[slot.end]));
+                const statusClass = slot.status === 'conflict' ? 'status-conflict' : 'status-cancelled';
+                const statusLabel = slot.status === 'conflict' ? 'Conflict' : 'Cancelled';
+                
+                const div = document.createElement('div');
+                div.className = 'slot-picker-item';
+                div.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--color-outline); border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s;';
+                div.innerHTML = `
+                    <input type="radio" name="originalSlot" id="slot_${index}" value="${index}" style="cursor: pointer;">
+                    <label for="slot_${index}" style="flex: 1; cursor: pointer; font-size: 13px;">
+                        Week ${slot.week} · ${slot.dayName} ${startStr} – ${endStr} @ ${slot.venue}
+                    </label>
+                    <span class="badge ${statusClass}" style="font-size: 11px; padding: 2px 8px; border-radius: 12px; background: ${slot.status === 'conflict' ? 'var(--color-error-container)' : 'var(--color-surface-variant)'}; color: ${slot.status === 'conflict' ? 'var(--color-on-error-container)' : 'var(--color-on-surface-variant)'};">
+                        ${statusLabel}
+                    </span>
+                `;
+                
+                div.addEventListener('click', () => {
+                    document.getElementById(`slot_${index}`).checked = true;
+                    selectedOriginalSlot = slot;
+                    updateHintText();
+                });
+                
+                div.addEventListener('mouseenter', () => {
+                    if (selectedOriginalSlot !== slot) {
+                        div.style.background = 'var(--color-surface-variant)';
+                    }
+                });
+                
+                div.addEventListener('mouseleave', () => {
+                    if (selectedOriginalSlot !== slot) {
+                        div.style.background = '';
+                    }
+                });
+                
+                list.appendChild(div);
+            });
+            
+            picker.style.display = '';
+        }
+
+        function updateHintText() {
+            const hintEl = document.getElementById('hintText');
+            if (selectedOriginalSlot) {
+                hintEl.textContent = 'Now select a new venue + time slot on the grid below';
+            } else {
+                hintEl.textContent = 'Select an available (green) time slot';
+            }
+        }
+
         function readUrlParams() {
             const params = new URLSearchParams(window.location.search);
             urlParams = {
@@ -1766,7 +1873,10 @@
                 cohort: params.get('cohort'),
                 venue: params.get('venue'),
                 date: params.get('date'),
-                time: params.get('time')
+                time: params.get('time'),
+                week: params.get('week'),
+                day: params.get('day'),
+                originalVenue: params.get('originalVenue')
             };
             return urlParams;
         }
@@ -1784,6 +1894,26 @@
                 if (venueOpt) {
                     venueSel.value = urlParams.venue;
                     onVenueChange();
+                }
+            }
+            
+            // Auto-select original slot if week/day/venue params provided
+            if (urlParams.code && urlParams.week && urlParams.day && urlParams.originalVenue) {
+                const slots = extractSlotsForSubject(urlParams.code);
+                const matchingSlot = slots.find(s => 
+                    s.week === parseInt(urlParams.week) && 
+                    s.day === parseInt(urlParams.day) && 
+                    s.venue === urlParams.originalVenue
+                );
+                if (matchingSlot) {
+                    selectedOriginalSlot = matchingSlot;
+                    // Find and select the radio button
+                    const slotIndex = slots.indexOf(matchingSlot);
+                    const radio = document.getElementById(`slot_${slotIndex}`);
+                    if (radio) {
+                        radio.checked = true;
+                        updateHintText();
+                    }
                 }
             }
         }
