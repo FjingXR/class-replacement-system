@@ -136,24 +136,10 @@ test.describe('Venue Timetable UI', () => {
   // 6. FILTERS
   // ════════════════════════════════════════════
 
-  test('TC18 — time filter has 3 segments: All, Morning, Afternoon', async ({ page }) => {
-    const buttons = page.locator('#timeFilter button');
-    await expect(buttons).toHaveCount(3);
-    await expect(buttons.nth(0)).toHaveText('All');
-    await expect(buttons.nth(1)).toContainText('Morning');
-    await expect(buttons.nth(2)).toContainText('Afternoon');
-  });
-
-  test('TC19 — "All" is the default time filter', async ({ page }) => {
-    const allBtn = page.locator('#timeFilter button[data-value="all"]');
-    await expect(allBtn).toHaveClass(/active/);
-  });
-
-  test('TC20 — clicking Morning filter activates it', async ({ page }) => {
-    await page.locator('#timeFilter button[data-value="morning"]').click();
-    const morningBtn = page.locator('#timeFilter button[data-value="morning"]');
-    await expect(morningBtn).toHaveClass(/active/);
-  });
+  // TC18, TC19, TC20 — time filter removed
+  // test('TC18 — time filter has 3 segments: All, Morning, Afternoon', ...)
+  // test('TC19 — "All" is the default time filter', ...)
+  // test('TC20 — clicking Morning filter activates it', ...)
 
   test('TC21 — venue type filter button is visible', async ({ page }) => {
     await expect(page.locator('#venueTypeBtn')).toBeVisible();
@@ -519,10 +505,8 @@ test.describe('Venue Timetable UI', () => {
   // 22. RESPONSIVE FILTERS
   // ════════════════════════════════════════════
 
-  test('TC64 — mobile: time filter buttons are visible', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
-    await expect(page.locator('#timeFilter')).toBeVisible();
-  });
+  // TC64 — time filter removed
+  // test('TC64 — mobile: time filter buttons are visible', ...)
 
   test('TC65 — mobile: venue type filter button is visible', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
@@ -563,13 +547,8 @@ test.describe('Venue Timetable UI', () => {
   // 25. COMBINED FILTERS
   // ════════════════════════════════════════════
 
-  test('TC68 — time and venue type filters work together', async ({ page }) => {
-    await page.locator('#timeFilter button[data-value="morning"]').click();
-    await page.locator('#venueTypeBtn').click();
-    await page.locator('#venueTypeDropdown input[value="Lab"]').uncheck();
-    await page.waitForTimeout(300);
-    await expect(page.locator('#timetable')).toBeVisible();
-  });
+  // TC68 — time filter removed
+  // test('TC68 — time and venue type filters work together', ...)
 
   // ════════════════════════════════════════════
   // 26. SKELETON LOADING

@@ -616,14 +616,6 @@
         <!-- ─── Filter Bar ─── -->
         <div class="filter-bar">
             <div class="filter-group">
-                <label>Time:</label>
-                <div class="segment-toggle" id="timeFilter">
-                    <button class="active" data-value="all" onclick="setTimeFilter('all', this)">All</button>
-                    <button data-value="morning" onclick="setTimeFilter('morning', this)">Morning (8AM–12PM)</button>
-                    <button data-value="afternoon" onclick="setTimeFilter('afternoon', this)">Afternoon (1PM–6PM)</button>
-                </div>
-            </div>
-            <div class="filter-group">
                 <label>Venue Type:</label>
                 <div class="venue-type-filter">
                     <button class="venue-type-btn" id="venueTypeBtn" onclick="toggleVenueTypeDropdown()">
@@ -758,7 +750,6 @@
 
         let currentVenue = null;
         let currentWeek = 0;
-        let currentTimeFilter = 'all';
         let venueTypeFilters = { Tutorial: true, LectureHall: true, Lab: true };
         let currentTab = 'current';
         let currentCourseCode = null;
@@ -773,7 +764,6 @@
             fields: [
                 { id: 'venueSelect', type: 'select', key: 'venue' },
                 { id: 'weekSelect', type: 'select', key: 'week', transform: v => parseInt(v) },
-                { id: 'timeFilter', type: 'checkbox-group', key: 'timeFilter', selector: '#timeFilter button', transform: () => currentTimeFilter },
                 { id: 'venueTypeDropdown', type: 'checkbox-group', key: 'venueTypes' },
             ]
         });
@@ -1049,13 +1039,6 @@
            FILTERS
            ════════════════════════════════════════════ */
 
-        function setTimeFilter(value, btn) {
-            currentTimeFilter = value;
-            document.querySelectorAll('#timeFilter button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            buildTimetable();
-        }
-
         function toggleVenueTypeDropdown() {
             document.getElementById('venueTypeDropdown').classList.toggle('open');
         }
@@ -1073,10 +1056,7 @@
         }
 
         function resetFilters() {
-            currentTimeFilter = 'all';
             venueTypeFilters = { Tutorial: true, LectureHall: true, Lab: true };
-            document.querySelectorAll('#timeFilter button').forEach(b => b.classList.remove('active'));
-            document.querySelector('#timeFilter button[data-value="all"]').classList.add('active');
             document.querySelectorAll('#venueTypeDropdown input[type="checkbox"]').forEach(cb => cb.checked = true);
             document.getElementById('venueTypeBtn').innerHTML = 'All Types &#9662;';
             document.getElementById('noMatchBanner').classList.remove('show');
@@ -1197,14 +1177,6 @@
                     td.className = cellClass;
                     td.dataset.day = di;
                     td.dataset.hour = hi;
-
-                    /* apply time filter — hide cells outside selected range */
-                    if (currentTimeFilter === 'morning' && hi >= 10) {
-                        td.style.display = 'none';
-                    }
-                    if (currentTimeFilter === 'afternoon' && hi < 10) {
-                        td.style.display = 'none';
-                    }
 
                     const info = slotMap[hi];
 
@@ -1369,10 +1341,6 @@
            ════════════════════════════════════════════ */
 
         function showAvailableTooltip(ev, di, hi) {
-            /* check if cell matches current time filter */
-            if (currentTimeFilter === 'morning' && hi >= 10) return;
-            if (currentTimeFilter === 'afternoon' && hi < 10) return;
-
             const tooltip = document.getElementById('availableTooltip');
             const dayName = weekData[currentWeek].days[di]?.abbr || '';
             const dateStr = weekData[currentWeek].days[di]?.date || '';
@@ -1514,7 +1482,7 @@
            ════════════════════════════════════════════ */
 
         function saveState() {
-            venueState.save({ timeFilter: currentTimeFilter, venueTypes: venueTypeFilters });
+            venueState.save({ venueTypes: venueTypeFilters });
         }
 
         function restoreState() {
@@ -1525,12 +1493,6 @@
             if (state.week !== undefined && state.week >= 0 && state.week < weekData.length) {
                 currentWeek = state.week;
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
-            }
-            if (state.timeFilter) {
-                currentTimeFilter = state.timeFilter;
-                document.querySelectorAll('#timeFilter button').forEach(b => {
-                    b.classList.toggle('active', b.dataset.value === state.timeFilter);
-                });
             }
             if (state.venueTypes) {
                 venueTypeFilters = state.venueTypes;
