@@ -525,34 +525,9 @@
         /* ───── Unavailable Cell (Holiday/Sunday) ───── */
         .cell-unavailable {
             background: var(--color-surface-variant);
-            text-align: center;
-            font-size: 11px;
-            color: var(--color-on-surface-variant);
             min-height: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
             cursor: not-allowed;
             opacity: 0.7;
-        }
-        .cell-unavailable .lock-icon {
-            font-size: 14px;
-        }
-
-        /* ───── Keyboard Hint ───── */
-        .kbd-hint {
-            display: none;
-            font-size: 10px;
-            background: rgba(255,255,255,0.3);
-            padding: 1px 4px;
-            border-radius: 3px;
-            margin-left: 4px;
-        }
-        .cell-available:focus .kbd-hint,
-        .cell-available:hover .kbd-hint {
-            display: inline;
         }
 
         /* ───── No venues match ───── */
@@ -1263,7 +1238,6 @@
                         /* Unavailable slot (holiday/Sunday) */
                         const div = document.createElement('div');
                         div.className = 'cell-unavailable';
-                        div.innerHTML = `<span class="lock-icon">&#128274;</span><span>${day.holiday ? 'Holiday' : 'OFF'}</span>`;
                         td.appendChild(div);
                     } else {
                         /* Available slot */
@@ -1274,7 +1248,6 @@
                         div.dataset.hour = hi;
                         div.setAttribute('role', 'button');
                         div.setAttribute('aria-label', `Available slot: ${days[di].abbr} ${hours[hi]}`);
-                        div.innerHTML = `Available<span class="kbd-hint">(B)</span>`;
 
                         div.addEventListener('click', function(ev) {
                             showAvailableTooltip(ev, di, hi);

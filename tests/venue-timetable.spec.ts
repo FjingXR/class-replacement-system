@@ -243,12 +243,12 @@ test.describe('Venue Timetable UI', () => {
     }
   });
 
-  test('TC33 — available cells show "Available" text', async ({ page }) => {
+  test('TC33 — available cells are visible (empty, no text)', async ({ page }) => {
     const availableCells = page.locator('#tableBody .cell-available');
     const count = await availableCells.count();
     if (count > 0) {
       await expect(availableCells.first()).toBeVisible();
-      await expect(availableCells.first()).toContainText('Available');
+      await expect(availableCells.first()).toHaveText('');
     }
   });
 
