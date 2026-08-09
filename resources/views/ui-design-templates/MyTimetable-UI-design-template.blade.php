@@ -166,7 +166,7 @@
     <!-- ═══ Class Detail Modal ═══ -->
     @section('modal-footer')
         <div class="modal-footer-left">
-            <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement(currentModalEvent?.code, currentModalEvent?.cohort)">Replace Now</button>
+            <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement(currentModalEvent?.code, currentModalEvent?.cohort, { day: currentModalEvent?.di, start: currentModalEvent?.start, end: currentModalEvent?.end, venue: currentModalEvent?.venue })">Replace Now</button>
             <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()"></button>
         </div>
         <div class="modal-footer-right">

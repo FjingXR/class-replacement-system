@@ -1874,8 +1874,9 @@
                 venue: params.get('venue'),
                 date: params.get('date'),
                 time: params.get('time'),
-                week: params.get('week'),
                 day: params.get('day'),
+                start: params.get('start'),
+                end: params.get('end'),
                 originalVenue: params.get('originalVenue')
             };
             return urlParams;
@@ -1897,17 +1898,16 @@
                 }
             }
             
-            // Auto-select original slot if week/day/venue params provided
-            if (urlParams.code && urlParams.week && urlParams.day && urlParams.originalVenue) {
+            // Auto-select original slot if day/start/end/originalVenue params provided
+            if (urlParams.code && urlParams.day !== null && urlParams.start !== null && urlParams.originalVenue) {
                 const slots = extractSlotsForSubject(urlParams.code);
                 const matchingSlot = slots.find(s => 
-                    s.week === parseInt(urlParams.week) && 
                     s.day === parseInt(urlParams.day) && 
+                    s.start === parseInt(urlParams.start) && 
                     s.venue === urlParams.originalVenue
                 );
                 if (matchingSlot) {
                     selectedOriginalSlot = matchingSlot;
-                    // Find and select the radio button
                     const slotIndex = slots.indexOf(matchingSlot);
                     const radio = document.getElementById(`slot_${slotIndex}`);
                     if (radio) {

@@ -131,11 +131,17 @@ function add30min(t) {
 
 // ───── Navigation ─────
 
-function goToReplacement(code, cohort) {
+function goToReplacement(code, cohort, opts) {
     let url = '/replacement-arrangement';
     const params = [];
     if (code) params.push('code=' + encodeURIComponent(code));
     if (cohort) params.push('cohort=' + encodeURIComponent(cohort));
+    if (opts) {
+        if (opts.day !== undefined) params.push('day=' + opts.day);
+        if (opts.start !== undefined) params.push('start=' + opts.start);
+        if (opts.end !== undefined) params.push('end=' + opts.end);
+        if (opts.venue) params.push('originalVenue=' + encodeURIComponent(opts.venue));
+    }
     if (params.length) url += '?' + params.join('&');
     window.location.href = url;
 }
