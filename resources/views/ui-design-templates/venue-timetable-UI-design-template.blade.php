@@ -603,7 +603,7 @@
             </button>
         </div>
 
-        <!-- ─── Past 4 Weeks (Collapsible) ─── -->
+        <!-- ─── Past 4 Weeks Booking History (disabled — not useful for now) ───
         <details class="history-details" id="historyDetails">
             <summary class="history-summary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -611,6 +611,7 @@
             </summary>
             <div class="history-panel" id="historyPanel"></div>
         </details>
+        ─── END Past 4 Weeks ─── -->
 
         <!-- ─── Filter Bar ─── -->
         <div class="filter-bar">
@@ -637,8 +638,9 @@
             </div>
         </div>
 
-        <!-- ─── History Panel (Past 4 Weeks) ─── -->
+        <!-- ─── History Panel (Past 4 Weeks) — disabled ───
         <div class="history-panel" id="historyPanel"></div>
+        ─── END History Panel ─── -->
 
         <!-- ─── Booking Hint ─── -->
         <div class="booking-hint" id="bookingHint" style="display:none">
