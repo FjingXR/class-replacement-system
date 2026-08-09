@@ -253,6 +253,8 @@
             letter-spacing: 0.5px;
             margin-top: 2px;
             text-align: center;
+            white-space: normal;
+            word-break: break-word;
         }
 
         .timetable thead th.hour-header {

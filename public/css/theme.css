@@ -1025,6 +1025,8 @@ html.dark .semester-bar select:not(.week-select) {
     letter-spacing: 0.5px;
     margin-top: 2px;
     text-align: center;
+    white-space: normal;
+    word-break: break-word;
 }
 .time-col .off-label {
     display: block;
