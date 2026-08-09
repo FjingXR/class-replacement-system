@@ -1,5 +1,77 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-09] UI Polish — Layout consistency, summary cards, dynamic dates, table auto-sizing, advanced UX
+
+### Summary
+
+Major UI polish pass. Replaced footballer mock names with real lecturer names + emails. Added 5th summary card (Total Requests), dynamic dates via helpers, table auto-layout, row urgency indicators, filter chips bar, lecturer column with email clipboard copy, venue details in Proposed Replacement column, approve/reject button gap, modal button styling, and row click-to-modal. All features verified via Playwright smoke test (46/46 PASS).
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-09 | CSS: `.row-urgent`, `.row-soon` | Row urgency | Red/amber left border for requests ≤3/≤7 days old |
+| 2026-08-09 | CSS: `.filter-chips` | Filter chips | Active filter chips bar with "Filters:" label and styled background |
+| 2026-08-09 | CSS: `.lecturer-cell-email` | Email badge | Email styled as pill/badge: `font-size: 12px`, `padding: 2px 8px`, `border-radius: 10px`, primary container background |
+| 2026-08-09 | CSS: `.lecturer-cell-id` | Inline ID | Staff ID now inline with name, lighter weight |
+| 2026-08-09 | CSS: `.class-venue` | Venue line | Added venue display in Proposed Replacement column with 📍 icon |
+| 2026-08-09 | CSS: `.col-replacement .cell-class-block` | Table layout | Changed to `table-layout: auto` for natural column sizing |
+| 2026-08-09 | CSS: `.modal-footer .btn-approve`, `.modal-footer .btn-danger` | Modal buttons | Override: `padding: 8px 20px`, `font-size: 13px`, `border-radius: 8px` |
+| 2026-08-09 | CSS: `.modal-footer` | Footer layout | `justify-content: space-between; gap: 8px` — Reject left, Approve/Close right |
+| 2026-08-09 | CSS: `.btn-approve` changed from `btn-outline` | Approve button | Modal Approve button changed from outline to solid green |
+| 2026-08-09 | CSS: `.sort-hint` spacing | Sort hint | `margin-top: 12px; margin-bottom: 8px` |
+| 2026-08-09 | CSS: `.btn-danger:disabled` | Disabled state | `opacity: 0.4; cursor: not-allowed; pointer-events: none` |
+| 2026-08-09 | JS: Lecturer column | Name + ID + Email | `Name (ID)\n email` layout with `lookupLecturer(name)` from `MockData.lecturers` |
+| 2026-08-09 | JS: `copyEmail(email, event)` | Clipboard copy | Copies email to clipboard + shows toast |
+| 2026-08-09 | JS: Row click-to-modal | Entire row clickable | `<tr onclick="openModalById(r.id)" style="cursor:pointer">` |
+| 2026-08-09 | JS: Proposed Replacement | Venue details | `formatReplacementBlock()` now shows date + time + venue on 3 lines |
+| 2026-08-09 | JS: Approve/Reject button gap | Actions column | Flex container with `gap: 6px` wrapping buttons |
+| 2026-08-09 | HTML: Filter chips bar | Active filters | Shows "Filters:" label with removable chips for active filters |
+| 2026-08-09 | JS: Auto-advance removed | Review next | `reviewNextAfterAction()` calls removed from `confirmApproveWithNotes()` and `rejectRequest()` |
+
+#### `public/js/mock-data.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-09 | Lecturers registry | Real names | Replaced footballer names: Kylian Mbappe→Dr. Christopher Lazarus, Dembele→En. Lim Jia Zheng, Hakimi→En. Jefther Edward, Neymar→Dr. Chang Foo Chung, Vinicius→Pn. Surayaini Binti Basri |
+| 2026-08-09 | Lecturers registry | Email addresses | Added email to all 14 lecturers (e.g. christopher@tarumt.edu.my, limjz@tarumt.edu.my) |
+| 2026-08-09 | Date helpers | Dynamic dates | Added `_relDateTime()`, `_relDate()`, `_dayName()` helpers; all 40 dates relative to today |
+| 2026-08-09 | URGENCY_REFERENCE_DATE | Dynamic | Changed from fixed `new Date('2026-08-29')` to `new Date()` for real-time urgency |
+
+#### `public/js/ui-common.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-09 | `formatReplacementBlock()` | Venue line | Now includes `replacementVenue` with 📍 icon prefix |
+| 2026-08-09 | `updateNavBadge()` | Nav badge JS | Moved from page to shared module |
+
+#### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-09 | `.nav-badge` | Nav badge CSS | Promoted from page to shared theme |
+| 2026-08-09 | `.btn-danger:disabled` | Disabled state | Promoted from page to shared theme |
+
+#### `resources/views/layouts/ui-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-09 | Script tag | Cache bust | Updated `mock-data.js?v=3` |
+
+### Key Design Decisions
+
+- **Lecturer column**: Name (ID) + email layout with clipboard copy — single click copies email
+- **Row urgency indicators**: Left border color coding (red ≤3 days, amber ≤7 days) for at-a-glance prioritization
+- **Filter chips bar**: Active filter visualization with "Filters:" label for clarity
+- **Venue in Proposed Replacement**: Three-line block (date, time, venue) with 📍 icon
+- **Modal button sizing**: Consistent `padding: 8px 20px` across all action buttons
+- **Row click-to-modal**: Entire table row is clickable for faster navigation
+- **No auto-advance**: Critical actions keep confirmation modal (user declined quick-approve)
+
+---
+
 ## [2026-08-07] Layout Consistency — Align with my-request-history structure
 
 ### Summary

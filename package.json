@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "test": "npx playwright test",
+        "test:ui": "npx playwright test --ui"
     },
     "dependencies": {
         "@laravel/passkeys": "^0.2.0",
@@ -18,5 +20,8 @@
         "@rollup/rollup-linux-x64-gnu": "4.9.5",
         "@tailwindcss/oxide-linux-x64-gnu": "^4.0.1",
         "lightningcss-linux-x64-gnu": "^1.29.1"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.62.1"
     }
 }

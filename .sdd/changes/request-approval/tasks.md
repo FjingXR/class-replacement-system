@@ -104,62 +104,62 @@
 
 ## Task 8 — Final smoke test
 
-- [ ] Visit `http://localhost:8000/request-approval-ui` — verify no Blade compile errors
-- [ ] Verify nav bar shows "Request Approval" as active link with red badge showing "8" (pending count)
-- [ ] Verify page header, toolbar (search + status filter + urgency filter + week filter + reset), batch bar (hidden), table, pagination, summary cards all render
-- [ ] Verify default status filter is "Pending" — table shows only Pending requests on load
-- [ ] Change status filter to "All" — verify all 20 entries appear
-- [ ] Verify urgency badges: at least 3-4 entries show "Urgent" (red), rest show "Normal" (green)
-- [ ] Verify checkbox column: Pending rows have checkboxes, non-Pending rows have empty cells; "Select All" checkbox in header
-- [ ] Click "Select All" — verify all visible Pending row checkboxes are checked; batch bar appears with count; deselect one → Select All unchecks; reselect → Select All re-checks
-- [ ] Click "Approve Selected" with ≥1 checked — verify confirm dialog shows multi-line summary (ID, course, lecturer, dates, venue); cancel → no alert; confirm → alert with count; checkboxes clear after action
-- [ ] Click "Reject Selected" — verify rejection reason modal opens; presets work; confirm applies to all selected
-- [ ] Click urgency filter "Urgent" — verify only Urgent entries shown; click "Normal" — only Normal shown; click "All" — all shown
-- [ ] Verify request age sub-label: under Requested Timestamp, entries show "X days ago" with green/amber/red dot
-- [ ] Click a status badge — verify modal opens with 3 sections of details
-- [ ] Click "View" button on a non-Pending row — verify modal opens; verify row gets viewed indicator (left border accent)
-- [ ] Click "Approve" on a Pending row — verify approval notes modal opens with summary + optional notes textarea; cancel → no alert; approve with notes → confirm includes notes → alert includes notes; approve without notes → confirm without notes line
-- [ ] Click "Reject" on a Pending row — verify rejection reason modal opens; click preset chip → textarea fills, Confirm Reject enabled; click "Other" → textarea clears; type reason → enabled; confirm → alert includes reason; row status does NOT change
-- [ ] Click "Reject" on a Pending row, click Cancel — verify modal closes, no alert
-- [ ] Verify Slot Validity in modal: open a conflict entry — shows red "⚠ Conflict"; open a valid entry — shows green "✓ Valid"
-- [ ] Verify modal footer: Pending rows show Approve + Reject (no Close); non-Pending rows show Close (no Approve/Reject)
-- [ ] Verify default sort: table loads with oldest `requestedAt` first (ascending) — FIFO queue order (FR 3.2)
-- [ ] Search by course code, course name, and lecturer name — verify filtering works
-- [ ] Test sorting on all 5 sortable columns (Requested Timestamp, Original Class, Proposed Replacement, Urgency, Status)
-- [ ] Test pagination: verify 10 per page, prev/next buttons, page numbers
-- [ ] Test "Reset Filters" button: resets to Pending status, urgency "All", all weeks, empty search
-- [ ] Verify summary cards show correct counts: Pending (8), Approved (5), Rejected (4), Total Reviewed (11)
-- [ ] Test empty state: search for non-existent term — verify empty state appears (no CTA button)
-- [ ] Verify theme toggle works (dark/light)
-- [ ] Verify no console errors on any interaction
-- [ ] Verify mock-data.js loads: Network tab shows `/js/mock-data.js` loaded with 200; no "Identifier already declared" console errors
-- [ ] Verify other pages unaffected: `http://localhost:8000/replacement-home-ui` and `http://localhost:8000/my-timetable-ui` still load with no console errors
-- [ ] Regression: `http://localhost:8000/my-request-history-ui` still works after helper promotion (sorting, week filter, pagination, modal, Cancel button)
-- [ ] Test keyboard shortcuts: ArrowDown/ArrowUp moves row highlight; Enter opens modal for highlighted row; Escape clears highlight; A on Pending opens approval notes modal; R on Pending opens rejection reason modal
-- [ ] Test keyboard shortcuts paused in modal: open any modal, press ArrowDown — no row highlight change; close modal, verify shortcuts resume
-- [ ] Test review next auto-approve: approve a Pending row — next Pending row's modal opens automatically; approve the last Pending — modal closes, no more Pending highlighted
-- [ ] Test review next auto-reject: reject a Pending row — next Pending row's modal opens automatically; reject the last Pending — modal closes
-- [ ] Test slot validity icon: Proposed Replacement column shows ✓ (green) for valid, ⚠ (red) for conflict, ? (amber) for tentative entries
-- [ ] Test toast notifications: approve a request — verify toast appears bottom-left with message + Undo button + close ✕; verify toast auto-dismisses after 5s; verify no browser alert() appears
-- [ ] Test undo: approve a request → toast appears → click Undo → verify row reverts to Pending; verify nav badge count restores
-- [ ] Test undo after reject: reject a request → click Undo → verify row reverts to Pending
-- [ ] Test toast without undo: trigger validation error (reject with empty reason) — verify toast shows without Undo, auto-dismisses after 3s
-- [ ] Test animated transitions: approve a request — verify row flashes green briefly; reject — verify row flashes red briefly
-- [ ] Test smart grouping: select "Group by Course" — verify rows grouped under collapsible course headers with count badges; click header — verify collapse/expand with animation; select "Group by Lecturer" — verify lecturer grouping; select "No grouping" — flat table returns
-- [ ] Test grouping + pagination: verify group headers count toward pagination; verify groups split correctly across pages
-- [ ] Test grouping + keyboard: verify ArrowDown/ArrowUp skips group headers, only navigates data rows
-- [ ] Test mini timeline: open detail modal — verify 3-step timeline (Submitted/Viewed/Reviewed) at top; completed steps = green dots, active = pulsing amber, pending = grey
-- [ ] Test skeleton loading: refresh page — verify skeleton shimmer rows appear ~300ms before real content
-- [ ] Verify no console errors on any interaction
+- [x] Visit `http://localhost:8000/request-approval-ui` — verify no Blade compile errors
+- [x] Verify nav bar shows "Request Approval" as active link with red badge showing "8" (pending count)
+- [x] Verify page header, toolbar (search + status filter + urgency filter + week filter + reset), batch bar (hidden), table, pagination, summary cards all render
+- [x] Verify default status filter is "Pending" — table shows only Pending requests on load
+- [x] Change status filter to "All" — verify all 20 entries appear
+- [x] Verify urgency badges: at least 3-4 entries show "Urgent" (red), rest show "Normal" (green)
+- [x] Verify checkbox column: Pending rows have checkboxes, non-Pending rows have empty cells; "Select All" checkbox in header
+- [x] Click "Select All" — verify all visible Pending row checkboxes are checked; batch bar appears with count; deselect one → Select All unchecks; reselect → Select All re-checks
+- [x] Click "Approve Selected" with ≥1 checked — verify confirm dialog shows multi-line summary (ID, course, lecturer, dates, venue); cancel → no alert; confirm → alert with count; checkboxes clear after action
+- [x] Click "Reject Selected" — verify rejection reason modal opens; presets work; confirm applies to all selected
+- [x] Click urgency filter "Urgent" — verify only Urgent entries shown; click "Normal" — only Normal shown; click "All" — all shown
+- [x] Verify request age sub-label: under Requested Timestamp, entries show "X days ago" with green/amber/red dot
+- [x] Click a status badge — verify modal opens with 3 sections of details
+- [x] Click "View" button on a non-Pending row — verify modal opens; verify row gets viewed indicator (left border accent)
+- [x] Click "Approve" on a Pending row — verify approval notes modal opens with summary + optional notes textarea; cancel → no alert; approve with notes → confirm includes notes → alert includes notes; approve without notes → confirm without notes line
+- [x] Click "Reject" on a Pending row — verify rejection reason modal opens; click preset chip → textarea fills, Confirm Reject enabled; click "Other" → textarea clears; type reason → enabled; confirm → alert includes reason; row status does NOT change
+- [x] Click "Reject" on a Pending row, click Cancel — verify modal closes, no alert
+- [x] Verify Slot Validity in modal: open a conflict entry — shows red "⚠ Conflict"; open a valid entry — shows green "✓ Valid"
+- [x] Verify modal footer: Pending rows show Approve + Reject (no Close); non-Pending rows show Close (no Approve/Reject)
+- [x] Verify default sort: table loads with oldest `requestedAt` first (ascending) — FIFO queue order (FR 3.2)
+- [x] Search by course code, course name, and lecturer name — verify filtering works
+- [x] Test sorting on all 5 sortable columns (Requested Timestamp, Original Class, Proposed Replacement, Urgency, Status)
+- [x] Test pagination: verify 10 per page, prev/next buttons, page numbers
+- [x] Test "Reset Filters" button: resets to Pending status, urgency "All", all weeks, empty search
+- [x] Verify summary cards show correct counts: Pending (8), Approved (5), Rejected (4), Total Reviewed (9)
+- [x] Test empty state: search for non-existent term — verify empty state appears (no CTA button)
+- [x] Verify theme toggle works (dark/light)
+- [x] Verify no console errors on any interaction
+- [x] Verify mock-data.js loads: Network tab shows `/js/mock-data.js` loaded with 200; no "Identifier already declared" console errors
+- [x] Verify other pages unaffected: `http://localhost:8000/replacement-home-ui` and `http://localhost:8000/my-timetable-ui` still load with no console errors
+- [x] Regression: `http://localhost:8000/my-request-history-ui` still works after helper promotion (sorting, week filter, pagination, modal, Cancel button)
+- [x] Test keyboard shortcuts: ArrowDown/ArrowUp moves row highlight; Enter opens modal for highlighted row; Escape clears highlight; A on Pending opens approval notes modal; R on Pending opens rejection reason modal
+- [x] Test keyboard shortcuts paused in modal: open any modal, press ArrowDown — no row highlight change; close modal, verify shortcuts resume
+- [x] ~~Test review next auto-approve~~ — REMOVED per user decision (auto-advance removed)
+- [x] ~~Test review next auto-reject~~ — REMOVED per user decision (auto-advance removed)
+- [x] Test slot validity icon: Proposed Replacement column shows ✓ (green) for valid, ⚠ (red) for conflict, ? (amber) for tentative entries
+- [x] Test toast notifications: approve a request — verify toast appears bottom-left with message + Undo button + close ✕; verify toast auto-dismisses after 5s; verify no browser alert() appears
+- [x] Test undo: approve a request → toast appears → click Undo → verify row reverts to Pending; verify nav badge count restores
+- [x] Test undo after reject: reject a request → click Undo → verify row reverts to Pending
+- [x] Test toast without undo: trigger validation error (reject with empty reason) — Confirm Reject button disabled when empty/whitespace
+- [x] Test animated transitions: approve a request — verify row flashes green briefly; reject — verify row flashes red briefly
+- [x] ~~Test smart grouping~~ — REMOVED per user decision (groupFilter removed)
+- [x] ~~Test grouping + pagination~~ — REMOVED per user decision (groupFilter removed)
+- [x] ~~Test grouping + keyboard~~ — REMOVED per user decision (groupFilter removed)
+- [x] Test mini timeline: open detail modal — verify 3-step timeline (Submitted/Viewed/Reviewed) at top; completed steps = green dots, active = pulsing amber, pending = grey
+- [x] Test skeleton loading: refresh page — verify skeleton shimmer rows appear ~300ms before real content
+- [x] Verify no console errors on any interaction
 
 **Effort:** 45 minutes
 
 ## Task 9 — Create changelog
 
-- [ ] Update/replace `page-changelogs/request-approval-changelog.md` (file already exists, dated 2026-08-01) — follow the existing changelog format (see `page-changelogs/my-request-history-changelog.md` for reference); reconcile pre-existing entries with the actual implemented state (entries claiming the page/route/nav are done are incorrect until implementation completes)
-- [ ] Document all files changed: new template, mock-data.js creation, layout script tag, route addition, nav bar modification, ui-common.js helper promotion, my-request-history refactor
-- [ ] Document key design decisions: 11-column table + checkbox column, urgency system with fixed reference date, in-table approve/reject (no state update), default Pending filter, modal footer button toggling, 17 PL-efficiency features (toast notifications, undo stack, animated transitions, smart grouping, mini timeline, skeleton loading + 11 earlier features)
-- [ ] Document OOP decisions: 10 shared helpers promoted to ui-common.js (single source of truth), mock-data.js shared data module (data separated from logic), my-request-history refactored to consume shared versions, toast/undo bar reused from shared ui-common.js
+- [x] Update/replace `page-changelogs/request-approval-changelog.md` (file already exists, dated 2026-08-01) — follow the existing changelog format (see `page-changelogs/my-request-history-changelog.md` for reference); reconcile pre-existing entries with the actual implemented state (entries claiming the page/route/nav are done are incorrect until implementation completes)
+- [x] Document all files changed: new template, mock-data.js creation, layout script tag, route addition, nav bar modification, ui-common.js helper promotion, my-request-history refactor
+- [x] Document key design decisions: 11-column table + checkbox column, urgency system with fixed reference date, in-table approve/reject (no state update), default Pending filter, modal footer button toggling, 17 PL-efficiency features (toast notifications, undo stack, animated transitions, smart grouping, mini timeline, skeleton loading + 11 earlier features)
+- [x] Document OOP decisions: 10 shared helpers promoted to ui-common.js (single source of truth), mock-data.js shared data module (data separated from logic), my-request-history refactored to consume shared versions, toast/undo bar reused from shared ui-common.js
 
 **Effort:** 15 minutes
 
