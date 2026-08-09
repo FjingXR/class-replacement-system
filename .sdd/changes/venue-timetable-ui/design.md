@@ -249,6 +249,79 @@ $items = $navItems ?? [
   ```
 - **Limit:** 5 recent venues max
 
+### 18. Empty States
+
+**Decision:** Handle three empty state scenarios:
+
+**A) No venues match filter:**
+- Show message: "No venues match criteria"
+- Show "Show all venues" button to reset filters
+- Trigger: venue type + time range filters exclude all venues
+
+**B) No classes booked for venue:**
+- Keep grid empty (all slots green/available)
+- Show hint text: "All slots available — this venue is free all week"
+- No modal needed — entire grid is clickable
+
+**C) No conflict/cancelled slots in slot picker:**
+- Show message: "No slots need replacement"
+- Hide slot picker section entirely
+- User can still manually select venue + time on grid
+
+### 19. Error Handling
+
+**Decision:** Handle three error scenarios:
+
+**A) MockData fails to load:**
+- Show error banner: "Unable to load data. Please refresh."
+- Include refresh button
+- Hide timetable grid until data loads
+
+**B) Venue has no data in cohortTimetable:**
+- Show message: "No schedule data for this venue"
+- Keep venue dropdown enabled (user can try another)
+- Grid remains empty (all green)
+
+**C) Slot already taken when clicking "Book":**
+- Show toast notification: "This slot was just booked by someone else"
+- Auto-refresh grid after 2 seconds
+- Show updated availability
+
+### 20. Print Button (Future Enhancement)
+
+**Decision:** Add print button to page header (no functionality yet).
+
+- **Location:** Next to semester chip or in toolbar
+- **Icon:** Printer icon from `resources/views/flux/icon/`
+- **Behavior:** Button visible but disabled (tooltip: "Coming soon")
+- **OOP approach:** When implemented, use shared print function in `ui-common.js`
+- **Scope:** Deferred to separate session (not in this SDD's implementation)
+
+### 21. Backend Integration Notes
+
+**Decision:** Document API endpoints and real-time features for future backend phase.
+
+**API Endpoints Needed:**
+```
+GET  /api/venues                    — list all venues
+GET  /api/venues/:code/schedule     — get venue schedule (week range)
+GET  /api/courses                   — list all courses
+GET  /api/courses/:code/slots       — get conflict/cancelled slots for course
+POST /api/replacements              — create replacement request
+GET  /api/replacements/:id/status   — check replacement status
+```
+
+**Real-time Features (WebSocket):**
+- Live venue availability updates (when someone books a slot)
+- Toast notification when selected slot is taken by another user
+- Auto-refresh grid on slot status change
+
+**Database Tables:**
+- `users.favourites` — JSONB column for venue favourites
+- `users.recent_venues` — JSONB column for recent venues
+- `replacements` — replacement request records
+- `venues` — venue registry (code, type, capacity)
+
 ## Reusable Components
 
 | Component | Source | Notes |
@@ -337,3 +410,45 @@ $items = $navItems ?? [
 | `resources/views/partials/ui-nav-bar.blade.php` | **Edit** — add 6th nav item |
 | `resources/views/partials/ui-legend-bar.blade.php` | **Edit** — add "Available" item (or create page-specific legend) |
 | `page-changelogs/venue-timetable-ui-changelog.md` | **Create** — new changelog |
+
+## Testing Scenarios
+
+### Core Functionality
+1. **Venue selection:** Select different venues → grid updates correctly
+2. **Week navigation:** Prev/next arrows + dropdown → correct week loads
+3. **Slot rendering:** Booked slots show correct course, cohort, status
+4. **Available slots:** Green slots are clickable → tooltip shows
+5. **Modal:** Click booked slot → modal shows correct details
+
+### Filters
+6. **Time range filter:** Morning/Afternoon/All → correct rows shown
+7. **Venue type filter:** Tutorial/Lecture Hall/Lab → correct venues shown
+8. **Combined filters:** AND logic works correctly
+9. **No matches:** "No venues match criteria" + reset button
+
+### Keyboard Navigation
+10. **Arrow keys:** Move between cells correctly
+11. **Enter:** Opens modal for booked, tooltip for available
+12. **Escape:** Closes modal/tooltip
+13. **B shortcut:** Triggers book action on available cell
+
+### URL Params
+14. **Code + cohort:** Subject pre-selected, dropdown disabled
+15. **Venue + date + time:** Venue selected, slot highlighted
+16. **Invalid params:** Graceful fallback (no crash)
+
+### Empty States
+17. **No classes:** Grid all green, hint text shown
+18. **No conflict slots:** Slot picker hidden, message shown
+19. **No venues match:** Error message + reset button
+
+### Error Handling
+20. **Load failure:** Error banner with refresh button
+21. **No venue data:** "No schedule data" message
+22. **Slot taken:** Toast + auto-refresh
+
+### Mobile
+23. **Card layout:** All booked classes show as cards
+24. **Available slots:** Tappable → modal with booking button
+25. **Filters:** Full-width on mobile
+26. **Summary cards:** Stack to 1 column

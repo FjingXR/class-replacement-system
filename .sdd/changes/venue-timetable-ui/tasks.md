@@ -118,7 +118,37 @@
 - [ ] Create `page-changelogs/venue-timetable-ui-changelog.md`
 - [ ] Log all file changes with timestamps
 
-## Task 14: Lint Check
+## Task 18: Empty States
+- [ ] No venues match filter → Show "No venues match criteria" + "Show all venues" button
+- [ ] No classes booked for venue → Grid all green, hint text "All slots available — this venue is free all week"
+- [ ] No conflict/cancelled slots → Slot picker hidden, "No slots need replacement" message
+
+## Task 19: Error Handling
+- [ ] MockData load failure → Error banner with refresh button: "Unable to load data. Please refresh."
+- [ ] No venue schedule data → "No schedule data for this venue" message
+- [ ] Slot already taken → Toast notification: "This slot was just booked by someone else" + auto-refresh grid
+
+## Task 20: Print Button (UI only)
+- [ ] Add printer icon to page header (next to semester chip)
+- [ ] Disabled state with tooltip "Coming soon"
+- [ ] OOP: Shared print function in `ui-common.js` (deferred)
+
+## Task 21: Backend Integration Notes
+- [ ] Document API endpoints (venues, courses, replacements)
+- [ ] Document WebSocket requirements (real-time availability)
+- [ ] Document database schema changes (users.favourites, replacements)
+
+## Task 22: Testing Scenarios
+- [ ] Verify all 26 test cases documented in design.md
+- [ ] Test venue selection + week navigation
+- [ ] Test filters (time range, venue type, combined)
+- [ ] Test keyboard navigation (arrows, Enter, Escape, B shortcut)
+- [ ] Test URL params (code, cohort, venue, date, time)
+- [ ] Test empty states (no venues, no classes, no conflict slots)
+- [ ] Test error handling (load failure, no data, slot taken)
+- [ ] Test mobile layout (cards, tappable slots, filters)
+
+## Task 23: Lint Check
 - [ ] Run `composer run lint:check`
 - [ ] Run `composer run types:check`
 - [ ] Confirm no new failures

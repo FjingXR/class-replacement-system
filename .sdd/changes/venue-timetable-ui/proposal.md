@@ -93,6 +93,28 @@ A dedicated **Venue Timetable** page gives staff a quick, view-only overview of 
     - Storage: `localStorage` (`venueRecent` key)
     - Dropdown sections: "Recent" + "All Venues"
 
+15. **Empty States**
+    - No venues match filter → "No venues match criteria" + "Show all venues" button
+    - No classes booked → Grid all green, hint text "All slots available"
+    - No conflict/cancelled slots → Slot picker hidden, "No slots need replacement" message
+
+16. **Error Handling**
+    - MockData load failure → Error banner with refresh button
+    - No venue schedule data → "No schedule data for this venue" message
+    - Slot already taken → Toast notification + auto-refresh grid
+
+17. **Print Button (UI only)**
+    - Printer icon in page header (disabled, tooltip: "Coming soon")
+    - OOP approach: shared print function in `ui-common.js` (deferred)
+
+18. **Backend Integration Notes**
+    - API endpoints documented (venues, courses, replacements)
+    - WebSocket notes for real-time availability
+    - Database schema notes (users.favourites, replacements)
+
+19. **Testing Scenarios**
+    - 26 test cases covering core functionality, filters, keyboard nav, URL params, empty states, errors, mobile
+
 ### Out of Scope
 
 - No booking functionality on this page (booking happens on `/replacement-arrangement`)
