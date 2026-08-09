@@ -6,6 +6,7 @@
     ['key'=>'replacement-arrangement','label'=>'Replacement Arrangement','href'=>'/replacement-home-ui'],
     ['key'=>'request-approval','label'=>'Request Approval','href'=>'/request-approval-ui','badge'=>true],
     ['key'=>'replacement-history','label'=>'Replacement History','href'=>'/my-request-history-ui'],
+    ['key'=>'venue-timetable','label'=>'Venue Timetable','href'=>'/venue-timetable-ui'],
   ];
 @endphp
 

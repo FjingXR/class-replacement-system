@@ -40,6 +40,10 @@ Route::get('/request-approval-ui', function () {
     return view('ui-design-templates.request-approval-UI-design-template', ['activeNav' => 'request-approval']);
 });
 
+Route::get('/venue-timetable-ui', function () {
+    return view('ui-design-templates.venue-timetable-UI-design-template', ['activeNav' => 'venue-timetable']);
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });

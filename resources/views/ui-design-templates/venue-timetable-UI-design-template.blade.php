@@ -1,0 +1,1523 @@
+@extends('layouts.ui-template', ['activeNav' => 'venue-timetable', 'pageKey' => 'venueTimetable'])
+
+@section('title', 'Venue Timetable — Class Replacement System')
+
+@section('page-styles')
+
+        /* ───── Venue Dropdown ───── */
+        .venue-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .venue-bar select {
+            min-width: 280px;
+        }
+        .venue-dropdown-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .venue-dropdown-wrap .fav-star {
+            position: absolute;
+            right: 32px;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--color-on-surface-variant);
+            z-index: 2;
+        }
+        .venue-dropdown-wrap .fav-star.active {
+            color: var(--color-tertiary);
+        }
+        .venue-dropdown-wrap .fav-star:hover {
+            color: var(--color-tertiary);
+        }
+
+        /* ───── Recent / All sections in dropdown ───── */
+        #venueSelect optgroup {
+            font-weight: 600;
+            color: var(--color-on-surface);
+        }
+        #venueSelect option {
+            font-weight: 400;
+            color: var(--color-on-surface);
+        }
+
+        /* ───── Filter Bar ───── */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-on-surface-variant);
+        }
+        .segment-toggle {
+            display: inline-flex;
+            border: 1px solid var(--color-outline);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .segment-toggle button {
+            background: transparent;
+            border: none;
+            padding: 6px 14px;
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            border-right: 1px solid var(--color-outline);
+            transition: background 0.15s, color 0.15s;
+        }
+        .segment-toggle button:last-child {
+            border-right: none;
+        }
+        .segment-toggle button.active {
+            background: var(--color-primary);
+            color: #fff;
+        }
+        .segment-toggle button:hover:not(.active) {
+            background: var(--color-surface-variant);
+        }
+
+        /* ───── Venue Type Filter ───── */
+        .venue-type-filter {
+            position: relative;
+        }
+        .venue-type-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: 1px solid var(--color-outline);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+        }
+        .venue-type-btn:hover {
+            background: var(--color-surface-variant);
+        }
+        .venue-type-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: 8px;
+            padding: 8px 12px;
+            z-index: 100;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .venue-type-dropdown.open {
+            display: block;
+        }
+        .venue-type-dropdown label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 13px;
+            color: var(--color-on-surface);
+            cursor: pointer;
+        }
+
+        /* ───── Booking Banner ───── */
+        .booking-banner {
+            background: var(--color-primary);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        /* ───── Tab Toggle (Current Week / Past 4 Weeks) ───── */
+        .tab-toggle {
+            display: inline-flex;
+            border: 1px solid var(--color-outline);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        .tab-toggle button {
+            background: transparent;
+            border: none;
+            padding: 8px 18px;
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            border-right: 1px solid var(--color-outline);
+            transition: background 0.15s, color 0.15s;
+        }
+        .tab-toggle button:last-child {
+            border-right: none;
+        }
+        .tab-toggle button.active {
+            background: var(--color-primary);
+            color: #fff;
+        }
+        .tab-toggle button:hover:not(.active) {
+            background: var(--color-surface-variant);
+        }
+
+        /* ───── History Panel ───── */
+        .history-panel {
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--color-outline);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .history-panel.open {
+            display: block;
+        }
+        .history-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--color-outline);
+            font-size: 13px;
+        }
+        .history-row:last-child {
+            border-bottom: none;
+        }
+        .history-date {
+            min-width: 90px;
+            color: var(--color-on-surface-variant);
+        }
+        .history-code {
+            font-weight: 600;
+            min-width: 100px;
+        }
+        .history-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* ───── Hint Text (empty states) ───── */
+        .hint-text {
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+            font-style: italic;
+        }
+
+        /* ───── Error Banner ───── */
+        .error-banner {
+            background: var(--color-error);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+        .error-banner.show {
+            display: flex;
+        }
+        .error-banner span {
+            flex: 1;
+        }
+        .error-banner button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* ───── Toast ───── */
+        .toast-notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-error);
+            color: var(--color-on-surface);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 9999;
+            display: none;
+        }
+        .toast-notification.show {
+            display: block;
+        }
+
+        /* ───── Print Button ───── */
+        .print-btn {
+            background: transparent;
+            border: 1px solid var(--color-outline);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: not-allowed;
+            opacity: 0.5;
+            color: var(--color-on-surface-variant);
+            position: relative;
+        }
+        .print-btn:hover {
+            opacity: 0.7;
+        }
+
+        /* ───── Available Cell Tooltip ───── */
+        .available-tooltip {
+            position: fixed;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 9999;
+            display: none;
+            min-width: 250px;
+        }
+        .available-tooltip.show {
+            display: block;
+        }
+        .available-tooltip p {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: var(--color-on-surface);
+        }
+        .available-tooltip .btn-book {
+            background: var(--color-primary);
+            color: #fff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .available-tooltip .btn-book:hover {
+            opacity: 0.9;
+        }
+
+        /* ───── Booked Cell Modal ───── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: var(--color-surface);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--color-outline);
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .modal-status-badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--color-on-surface-variant);
+        }
+        .modal-body {
+            padding: 16px 20px;
+        }
+        .modal-field {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--color-outline);
+        }
+        .modal-field:last-child {
+            border-bottom: none;
+        }
+        .field-label {
+            font-size: 13px;
+            color: var(--color-on-surface-variant);
+        }
+        .field-value {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .modal-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--color-outline);
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn-close-modal {
+            background: var(--color-surface-variant);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* ───── Disabled Selects ───── */
+        .semester-bar select:disabled,
+        .semester-bar select:disabled:hover {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface-variant);
+        }
+
+        /* ───── Responsive ───── */
+        @media (max-width: 1024px) {
+            .grid-scroll { overflow-x: auto; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar-right { justify-content: flex-start; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+        }
+        @media (max-width: 768px) {
+            .semester-bar select:not(.week-select) {
+                min-width: 0;
+                flex: 1 1 120px;
+            }
+            .week-nav {
+                width: 100%;
+            }
+            .venue-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .venue-bar select {
+                min-width: 0;
+                width: 100%;
+            }
+            .venue-type-filter {
+                width: 100%;
+            }
+            .venue-type-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .segment-toggle {
+                width: 100%;
+            }
+            .segment-toggle button {
+                flex: 1;
+            }
+            .card-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 8px 0;
+            }
+            .venue-event-card {
+                background: var(--color-surface);
+                border: 1px solid var(--color-outline);
+                border-radius: 8px;
+                padding: 12px;
+            }
+            .venue-event-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .venue-event-code {
+                font-weight: 600;
+                font-size: 14px;
+            }
+            .venue-event-status {
+                font-size: 12px;
+                padding: 2px 8px;
+                border-radius: 4px;
+            }
+            .venue-event-body {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .venue-event-row {
+                display: flex;
+                justify-content: space-between;
+                font-size: 13px;
+            }
+            .venue-event-label {
+                color: var(--color-on-surface-variant);
+            }
+            .venue-available-card {
+                background: var(--color-secondary);
+                color: #fff;
+                border-radius: 8px;
+                padding: 12px;
+                cursor: pointer;
+                text-align: center;
+                font-weight: 600;
+            }
+            .summary-bar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+        }
+
+        /* ───── Available Slot Styling ───── */
+        .cell-available {
+            background: var(--color-secondary);
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            color: #fff;
+            font-weight: 600;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cell-available:hover {
+            opacity: 0.85;
+        }
+
+        /* ───── Keyboard Hint ───── */
+        .kbd-hint {
+            display: none;
+            font-size: 10px;
+            background: rgba(255,255,255,0.3);
+            padding: 1px 4px;
+            border-radius: 3px;
+            margin-left: 4px;
+        }
+        .cell-available:focus .kbd-hint,
+        .cell-available:hover .kbd-hint {
+            display: inline;
+        }
+
+        /* ───── No venues match ───── */
+        .no-match-banner {
+            text-align: center;
+            padding: 16px;
+            display: none;
+        }
+        .no-match-banner.show {
+            display: block;
+        }
+        .no-match-banner p {
+            margin: 0 0 8px 0;
+            color: var(--color-on-surface-variant);
+        }
+        .no-match-banner button {
+            background: var(--color-primary);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* ───── Slot Picker (hidden for venue timetable) ───── */
+        .slot-picker-section {
+            display: none;
+        }
+
+@endsection
+
+@section('content')
+
+        <!-- ─── Page Header ─── -->
+        <div class="page-header">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <h1 class="page-title">Venue Timetable</h1>
+                <button class="print-btn" title="Coming soon" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"/>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                        <rect x="6" y="14" width="12" height="8"/>
+                    </svg>
+                </button>
+            </div>
+            <span class="semester-chip" id="semesterChip"></span>
+            <p class="page-desc">View weekly class schedule for any venue across all cohorts.</p>
+        </div>
+
+        <!-- ─── Booking Banner ─── -->
+        <div class="booking-banner" id="bookingBanner"></div>
+
+        <!-- ─── Error Banner ─── -->
+        <div class="error-banner" id="errorBanner">
+            <span>Unable to load data. Please refresh.</span>
+            <button onclick="window.location.reload()">Refresh</button>
+        </div>
+
+        <!-- ─── No Venues Match Banner ─── -->
+        <div class="no-match-banner" id="noMatchBanner">
+            <p>No venues match criteria</p>
+            <button onclick="resetFilters()">Show all venues</button>
+        </div>
+
+        <!-- ─── Venue + Week Picker ─── -->
+        <div class="semester-bar">
+            <div class="venue-dropdown-wrap">
+                <select id="venueSelect" onchange="onVenueChange()"></select>
+                <span class="fav-star" id="favStar" onclick="toggleFavourite()" title="Toggle favourite">&#9734;</span>
+            </div>
+            @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelect', 'selectOnclick' => 'selectWeek(this.value)', 'disabled' => false])
+        </div>
+
+        <!-- ─── Tab Toggle (Current Week / Past 4 Weeks) ─── -->
+        <div class="tab-toggle">
+            <button class="active" id="tabCurrent" onclick="switchTab('current')">Current Week</button>
+            <button id="tabPast" onclick="switchTab('past')">Past 4 Weeks</button>
+        </div>
+
+        <!-- ─── Filter Bar ─── -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label>Time:</label>
+                <div class="segment-toggle" id="timeFilter">
+                    <button class="active" data-value="all" onclick="setTimeFilter('all', this)">All</button>
+                    <button data-value="morning" onclick="setTimeFilter('morning', this)">Morning</button>
+                    <button data-value="afternoon" onclick="setTimeFilter('afternoon', this)">Afternoon</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <label>Venue Type:</label>
+                <div class="venue-type-filter">
+                    <button class="venue-type-btn" id="venueTypeBtn" onclick="toggleVenueTypeDropdown()">
+                        All Types &#9662;
+                    </button>
+                    <div class="venue-type-dropdown" id="venueTypeDropdown">
+                        <label><input type="checkbox" value="Tutorial" checked onchange="applyVenueTypeFilter()"> Tutorial</label>
+                        <label><input type="checkbox" value="LectureHall" checked onchange="applyVenueTypeFilter()"> Lecture Hall</label>
+                        <label><input type="checkbox" value="Lab" checked onchange="applyVenueTypeFilter()"> Lab</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── History Panel (Past 4 Weeks) ─── -->
+        <div class="history-panel" id="historyPanel"></div>
+
+        <!-- ─── Grid Wrapper ─── -->
+        @include('partials.ui-grid-table')
+
+        <!-- ─── Hint Text (empty grid) ─── -->
+        <div class="hint-text" id="hintText" style="display:none">All slots available — this venue is free all week</div>
+
+        <!-- ─── Legend Bar ─── -->
+        <div class="legend-bar">
+            <div class="legend-item">
+                <span class="legend-swatch" style="background: var(--color-secondary);"></span>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-swatch" style="background: var(--color-primary);"></span>
+                <span>Replacement</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-swatch" style="background: var(--color-tertiary);"></span>
+                <span>Pending</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-swatch" style="background: var(--color-error);"></span>
+                <span>Conflict</span>
+            </div>
+        </div>
+
+        <!-- ─── Summary Bar ─── -->
+        @include('partials.ui-summary-bar', [
+            'cards' => [
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
+                ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available'],
+                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacement'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
+                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflict'],
+            ]
+        ])
+
+        <!-- ─── Empty State ─── -->
+        @include('partials.ui-empty-state', ['title' => 'Select a venue', 'text' => 'Choose a venue from the dropdown to view its weekly schedule.'])
+
+        <!-- ─── Mobile Card List ─── -->
+        <div class="card-list" id="mobileCardList" style="display:none"></div>
+
+        <!-- ─── Detail Modal (Booked Class) ─── -->
+        <div class="modal-overlay" id="eventModal" style="display:none" onclick="if(event.target===this)closeModal()">
+            <div class="modal">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalTitle">Class Details</span>
+                    <span class="modal-status-badge" id="modalStatusBadge">Normal</span>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <div class="modal-field">
+                        <span class="field-label">Course</span>
+                        <span class="field-value" id="mdlCourse">—</span>
+                    </div>
+                    <div class="modal-field">
+                        <span class="field-label">Name</span>
+                        <span class="field-value" id="mdlName">—</span>
+                    </div>
+                    <div class="modal-field">
+                        <span class="field-label">Lecturer</span>
+                        <span class="field-value" id="mdlLecturer">—</span>
+                    </div>
+                    <div class="modal-field">
+                        <span class="field-label">Venue</span>
+                        <span class="field-value" id="mdlVenue">—</span>
+                    </div>
+                    <div class="modal-field">
+                        <span class="field-label">Cohort</span>
+                        <span class="field-value" id="mdlCohort">—</span>
+                    </div>
+                    <div class="modal-field">
+                        <span class="field-label">Time</span>
+                        <span class="field-value" id="mdlTime">—</span>
+                    </div>
+                    <div class="modal-field">
+                        <span class="field-label">Status</span>
+                        <span class="field-value"><span class="badge" id="mdlStatusBadge">—</span></span>
+                    </div>
+                    <div class="modal-field">
+                        <span class="field-label">Remarks</span>
+                        <span class="field-value" id="mdlRemarks">—</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-close-modal" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── Available Slot Tooltip ─── -->
+        <div class="available-tooltip" id="availableTooltip">
+            <p id="tooltipText">Book B014 on Mon, 01 Sep 2026 at 09:00?</p>
+            <button class="btn-book" id="tooltipBookBtn">Book</button>
+        </div>
+
+        <!-- ─── Toast Notification ─── -->
+        <div class="toast-notification" id="toastNotification"></div>
+
+@endsection
+
+@section('page-scripts')
+
+        /* ════════════════════════════════════════════
+           STATE
+           ════════════════════════════════════════════ */
+
+        let currentVenue = null;
+        let currentWeek = 0;
+        let currentTimeFilter = 'all';
+        let venueTypeFilters = { Tutorial: true, LectureHall: true, Lab: true };
+        let currentTab = 'current';
+        let currentCourseCode = null;
+        let currentCohort = null;
+        let focusedCell = null;
+
+        const STATE_KEY = 'venueTimetableState';
+
+        /* ════════════════════════════════════════════
+           MOCK DATA — Weeks
+           ════════════════════════════════════════════ */
+
+        const weekData = (function() {
+            const start = new Date(MockData.semester.startDate);
+            start.setHours(0, 0, 0, 0);
+            const arr = [];
+            const todayMs = getTodayMs();
+            for (let w = 1; w <= 14; w++) {
+                const ms = start.getTime() + (w - 1) * 7 * 86400000;
+                const mon = new Date(ms);
+                const sun = new Date(ms + 6 * 86400000);
+                const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
+                const days = [];
+                for (let d = 0; d < 7; d++) {
+                    const dt = new Date(ms + d * 86400000);
+                    days.push({
+                        abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
+                        date: fmt(dt),
+                        sunday: d === 6,
+                        today: dt.getTime() === todayMs,
+                        holiday: MockData.holidays.some(function(h) { return h.week === w && h.dayIndex === d; }),
+                    });
+                }
+                arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, days });
+            }
+            return arr;
+        })();
+
+        function getTodayMs() {
+            const d = new Date();
+            d.setHours(0, 0, 0, 0);
+            return d.getTime();
+        }
+
+        /* ════════════════════════════════════════════
+           URL PARAMS
+           ════════════════════════════════════════════ */
+
+        (function readUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            currentCourseCode = params.get('code');
+            currentCohort = params.get('cohort');
+            const venueParam = params.get('venue');
+            if (currentCourseCode && currentCohort) {
+                document.getElementById('bookingBanner').textContent = `Booking for: ${currentCourseCode} — ${currentCohort}`;
+                document.getElementById('bookingBanner').style.display = '';
+            }
+            if (venueParam) {
+                /* pre-select venue after dropdown is built */
+                window._preselectVenue = venueParam;
+            }
+        })();
+
+        /* ════════════════════════════════════════════
+           INIT
+           ════════════════════════════════════════════ */
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof MockData === 'undefined' || !MockData.semester) {
+                document.getElementById('errorBanner').classList.add('show');
+                document.querySelector('.grid-wrapper').style.display = 'none';
+                return;
+            }
+
+            /* semester chip */
+            document.getElementById('semesterChip').textContent = MockData.semester.chipText;
+
+            /* week dropdown */
+            const weekSelect = document.getElementById('weekSelect');
+            weekSelect.innerHTML = '';
+            weekData.forEach((w, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = w.label + ' — ' + w.range;
+                weekSelect.appendChild(opt);
+            });
+
+            /* venue dropdown */
+            buildVenueDropdown();
+
+            /* restore state */
+            restoreState();
+
+            /* week nav */
+            updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
+            weekSelect.selectedIndex = currentWeek;
+
+            /* keyboard nav */
+            document.addEventListener('keydown', onKeydown);
+        });
+
+        function buildVenueDropdown() {
+            const select = document.getElementById('venueSelect');
+            select.innerHTML = '';
+
+            const favourites = getFavourites();
+            const recent = getRecent();
+
+            /* Recent section */
+            if (recent.length > 0) {
+                const recentGroup = document.createElement('optgroup');
+                recentGroup.label = 'Recent';
+                recent.forEach(code => {
+                    const v = MockData.venues.find(x => x.code === code);
+                    if (v) {
+                        const opt = document.createElement('option');
+                        opt.value = v.code;
+                        opt.textContent = `${v.code} — ${v.type} (${v.capacity} seats)`;
+                        recentGroup.appendChild(opt);
+                    }
+                });
+                select.appendChild(recentGroup);
+            }
+
+            /* All Venues section */
+            const allGroup = document.createElement('optgroup');
+            allGroup.label = 'All Venues';
+            MockData.venues.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.code;
+                opt.textContent = `${v.code} — ${v.type} (${v.capacity} seats)`;
+                allGroup.appendChild(opt);
+            });
+            select.appendChild(allGroup);
+
+            /* preselect */
+            if (window._preselectVenue) {
+                select.value = window._preselectVenue;
+                delete window._preselectVenue;
+            }
+
+            onVenueChange();
+        }
+
+        /* ════════════════════════════════════════════
+           VENUE CHANGE
+           ════════════════════════════════════════════ */
+
+        function onVenueChange() {
+            const code = document.getElementById('venueSelect').value;
+            if (!code) return;
+
+            currentVenue = MockData.venues.find(v => v.code === code);
+            if (!currentVenue) return;
+
+            /* update favourite star */
+            updateFavStar();
+
+            /* update recent */
+            updateRecent(code);
+
+            /* show skeleton */
+            withSkeleton(function() {
+                buildTimetable();
+            }, document.getElementById('tableBody'), 10, 300);
+
+            saveState();
+        }
+
+        /* ════════════════════════════════════════════
+           WEEK NAV
+           ════════════════════════════════════════════ */
+
+        function prevWeek() {
+            if (currentWeek > 0) {
+                currentWeek--;
+                document.getElementById('weekSelect').selectedIndex = currentWeek;
+                buildTimetable();
+                updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
+                saveState();
+            }
+        }
+
+        function nextWeek() {
+            if (currentWeek < weekData.length - 1) {
+                currentWeek++;
+                document.getElementById('weekSelect').selectedIndex = currentWeek;
+                buildTimetable();
+                updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
+                saveState();
+            }
+        }
+
+        function selectWeek(index) {
+            currentWeek = parseInt(index);
+            buildTimetable();
+            updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
+            saveState();
+        }
+
+        /* ════════════════════════════════════════════
+           TAB TOGGLE
+           ════════════════════════════════════════════ */
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tabCurrent').classList.toggle('active', tab === 'current');
+            document.getElementById('tabPast').classList.toggle('active', tab === 'past');
+            document.getElementById('historyPanel').classList.toggle('open', tab === 'past');
+            if (tab === 'past') {
+                buildHistoryPanel();
+            }
+            buildTimetable();
+        }
+
+        function buildHistoryPanel() {
+            const panel = document.getElementById('historyPanel');
+            panel.innerHTML = '';
+            if (!currentVenue) return;
+
+            const pastWeeks = [];
+            for (let w = Math.max(0, currentWeek - 4); w < currentWeek; w++) {
+                pastWeeks.push(w);
+            }
+
+            let hasEvents = false;
+            pastWeeks.reverse().forEach(w => {
+                const events = getVenueEvents(currentVenue.code, w);
+                events.forEach(e => {
+                    hasEvents = true;
+                    const row = document.createElement('div');
+                    row.className = 'history-row';
+                    const dayName = weekData[w].days[e.di]?.abbr || '';
+                    const dateStr = weekData[w].days[e.di]?.date || '';
+                    const start = hours[e.start] || '';
+                    const end = hours[e.end + 1] || add30min(hours[e.end]);
+                    row.innerHTML = `
+                        <span class="history-date">${dayName} ${dateStr}</span>
+                        <span class="history-code">${e.code}</span>
+                        <span>${e.cohort || ''}</span>
+                        <span>${start} – ${end}</span>
+                        <span class="history-status badge badge-${e.status}">${e.status}</span>
+                    `;
+                    panel.appendChild(row);
+                });
+            });
+
+            if (!hasEvents) {
+                panel.innerHTML = '<div class="hint-text">No bookings in the past 4 weeks</div>';
+            }
+        }
+
+        /* ════════════════════════════════════════════
+           FILTERS
+           ════════════════════════════════════════════ */
+
+        function setTimeFilter(value, btn) {
+            currentTimeFilter = value;
+            document.querySelectorAll('#timeFilter button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            buildTimetable();
+        }
+
+        function toggleVenueTypeDropdown() {
+            document.getElementById('venueTypeDropdown').classList.toggle('open');
+        }
+
+        function applyVenueTypeFilter() {
+            const checks = document.querySelectorAll('#venueTypeDropdown input[type="checkbox"]');
+            venueTypeFilters = {};
+            let allChecked = true;
+            checks.forEach(cb => {
+                venueTypeFilters[cb.value] = cb.checked;
+                if (!cb.checked) allChecked = false;
+            });
+            document.getElementById('venueTypeBtn').innerHTML = (allChecked ? 'All Types' : 'Filtered') + ' &#9662;';
+            buildTimetable();
+        }
+
+        function resetFilters() {
+            currentTimeFilter = 'all';
+            venueTypeFilters = { Tutorial: true, LectureHall: true, Lab: true };
+            document.querySelectorAll('#timeFilter button').forEach(b => b.classList.remove('active'));
+            document.querySelector('#timeFilter button[data-value="all"]').classList.add('active');
+            document.querySelectorAll('#venueTypeDropdown input[type="checkbox"]').forEach(cb => cb.checked = true);
+            document.getElementById('venueTypeBtn').innerHTML = 'All Types &#9662;';
+            document.getElementById('noMatchBanner').classList.remove('show');
+            buildTimetable();
+        }
+
+        /* close venue type dropdown on outside click */
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.venue-type-filter')) {
+                document.getElementById('venueTypeDropdown').classList.remove('open');
+            }
+        });
+
+        /* ════════════════════════════════════════════
+           GET VENUE EVENTS (from all cohorts)
+           ════════════════════════════════════════════ */
+
+        function getVenueEvents(venueCode, weekIndex) {
+            const events = [];
+            if (!MockData.cohortTimetable || !MockData.cohortTimetable.events) return events;
+
+            MockData.cohortTimetable.events.forEach(function(item) {
+                if (item.week !== weekIndex) return;
+                const e = item.event;
+                if (e.venue === venueCode) {
+                    events.push({
+                        ...e,
+                        cohort: item.cohortId,
+                    });
+                }
+            });
+
+            return events;
+        }
+
+        /* ════════════════════════════════════════════
+           TIMETABLE GRID BUILDER
+           ════════════════════════════════════════════ */
+
+        function buildTimetable() {
+            const head = document.getElementById('tableHead');
+            const body = document.getElementById('tableBody');
+            head.innerHTML = '';
+            body.innerHTML = '';
+
+            document.getElementById('hintText').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('mobileCardList').style.display = 'none';
+            document.getElementById('mobileCardList').innerHTML = '';
+
+            if (!currentVenue) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyTitle').textContent = 'Select a venue';
+                document.getElementById('emptyText').textContent = 'Choose a venue from the dropdown to view its weekly schedule.';
+                updateSummaries([]);
+                return;
+            }
+
+            const weekEvents = getVenueEvents(currentVenue.code, currentWeek);
+
+            if (weekEvents.length === 0) {
+                /* No classes booked — show hint */
+                document.getElementById('hintText').style.display = 'block';
+            }
+
+            const data = weekData[currentWeek];
+            const days = data.days;
+
+            /* ── Time header row ── */
+            const timeHeaderRow = document.createElement('tr');
+            const cornerTh = document.createElement('th');
+            cornerTh.className = 'time-header-col';
+            cornerTh.style.cssText = 'position: sticky; left: 0; z-index: 40;';
+            cornerTh.innerHTML = '<span style="font-size:13px;font-weight:600;">Day / Time</span>';
+            timeHeaderRow.appendChild(cornerTh);
+
+            for (let i = 0; i < hours.length; i += 2) {
+                const th = document.createElement('th');
+                th.className = 'hour-header';
+                th.colSpan = 2;
+                th.innerHTML = `<span class="hour-top">${hours[i]}</span><span class="hour-bottom">${hours[i + 2] || add30min(hours[i + 1])}</span>`;
+                timeHeaderRow.appendChild(th);
+            }
+            head.appendChild(timeHeaderRow);
+
+            /* ── Day rows ── */
+            days.forEach((day, di) => {
+                const tr = document.createElement('tr');
+
+                const dayTd = document.createElement('td');
+                let dayColClass = 'time-col';
+                if (day.today) dayColClass += ' today';
+                if (day.holiday || day.sunday) dayColClass += ' offday';
+                dayTd.className = dayColClass;
+                dayTd.innerHTML = buildDayHtml(day);
+                tr.appendChild(dayTd);
+
+                const dayEvents = weekEvents.filter(e => e.di === di);
+
+                const slotMap = {};
+                hours.forEach((_, hi) => { slotMap[hi] = null; });
+
+                dayEvents.forEach(e => {
+                    for (let hi = e.start; hi <= e.end; hi++) {
+                        if (hi === e.start) {
+                            slotMap[hi] = { event: e, span: e.end - e.start + 1 };
+                        } else {
+                            slotMap[hi] = { event: null, span: 0, occupied: true };
+                        }
+                    }
+                });
+
+                hours.forEach((h, hi) => {
+                    const td = document.createElement('td');
+                    let cellClass = 'hour-cell';
+                    if (day.today) cellClass += ' today-cell';
+                    if (day.sunday || day.holiday) cellClass += ' offday-slot';
+                    td.className = cellClass;
+                    td.dataset.day = di;
+                    td.dataset.hour = hi;
+
+                    /* apply time filter */
+                    if (currentTimeFilter === 'morning' && hi >= 10) {
+                        /* morning = slots 0-9 (08:00-12:30) */
+                        if (!day.sunday && !day.holiday) td.style.display = 'none';
+                    }
+                    if (currentTimeFilter === 'afternoon' && hi < 10) {
+                        /* afternoon = slots 10+ (13:00+) */
+                        if (!day.sunday && !day.holiday) td.style.display = 'none';
+                    }
+
+                    const info = slotMap[hi];
+
+                    if (info && info.event) {
+                        const e = info.event;
+                        const isConflict = day.holiday;
+                        const div = document.createElement('div');
+                        div.className = 'event-block span-' + info.span;
+                        if (isConflict) {
+                            div.classList.add('event-public-holiday');
+                        } else if (e.status === 'replacement') {
+                            div.classList.add('event-replacement');
+                        } else if (e.status === 'pending') {
+                            div.classList.add('event-pending');
+                        } else {
+                            div.classList.add('event-normal');
+                        }
+
+                        const startTime = (typeof to12h === 'function' ? to12h(hours[e.start]) : hours[e.start]);
+                        const endTime = (typeof to12h === 'function' ? to12h(hours[e.end + 1] || add30min(hours[e.end])) : hours[e.end + 1] || add30min(hours[e.end]));
+
+                        let extraHtml = '';
+                        if (e.status === 'replacement' && e.remarks) {
+                            extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
+                        }
+
+                        div.innerHTML = `
+                            <span class="ev-code">${e.code}(${e.type})</span>
+                            <span class="ev-venue">${e.cohort}</span>
+                            <span class="ev-time">${startTime} - ${endTime}</span>
+                            ${extraHtml}
+                        `;
+
+                        div.addEventListener('click', function() { openModal(e, di); });
+                        td.appendChild(div);
+
+                        /* mobile card */
+                        const card = createEventCard(e, di);
+                        document.getElementById('mobileCardList').appendChild(card);
+
+                        if (info.span > 1) {
+                            td.colSpan = info.span;
+                        }
+                    } else if (info && info.occupied) {
+                        td.style.display = 'none';
+                    } else {
+                        /* Available slot */
+                        const div = document.createElement('div');
+                        div.className = 'cell-available';
+                        div.tabIndex = 0;
+                        div.dataset.day = di;
+                        div.dataset.hour = hi;
+                        div.setAttribute('role', 'button');
+                        div.setAttribute('aria-label', `Available slot: ${days[di].abbr} ${hours[hi]}`);
+                        div.innerHTML = `Available<span class="kbd-hint">(B)</span>`;
+
+                        div.addEventListener('click', function(ev) {
+                            showAvailableTooltip(ev, di, hi);
+                        });
+                        td.appendChild(div);
+
+                        /* mobile available card */
+                        const mobileCard = document.createElement('div');
+                        mobileCard.className = 'venue-available-card';
+                        mobileCard.textContent = `${days[di].abbr} ${hours[hi]}`;
+                        mobileCard.addEventListener('click', function() {
+                            showAvailableTooltip(null, di, hi);
+                        });
+                        document.getElementById('mobileCardList').appendChild(mobileCard);
+                    }
+
+                    tr.appendChild(td);
+                });
+
+                body.appendChild(tr);
+            });
+
+            updateSummaries(weekEvents);
+        }
+
+        /* ════════════════════════════════════════════
+           MOBILE CARD BUILDER
+           ════════════════════════════════════════════ */
+
+        function createEventCard(e, di) {
+            const card = document.createElement('div');
+            card.className = 'venue-event-card';
+            const startTime = typeof to12h === 'function' ? to12h(hours[e.start]) : hours[e.start];
+            const endTime = typeof to12h === 'function' ? to12h(hours[e.end + 1] || add30min(hours[e.end])) : hours[e.end + 1] || add30min(hours[e.end]);
+            const statusClass = `badge-${e.status}`;
+            card.innerHTML = `
+                <div class="venue-event-header">
+                    <span class="venue-event-code">${e.code}</span>
+                    <span class="venue-event-status ${statusClass}">${e.status}</span>
+                </div>
+                <div class="venue-event-body">
+                    <div class="venue-event-row"><span class="venue-event-label">Cohort</span><span class="venue-event-value">${e.cohort}</span></div>
+                    <div class="venue-event-row"><span class="venue-event-label">Day</span><span class="venue-event-value">${weekData[currentWeek].days[di]?.abbr}</span></div>
+                    <div class="venue-event-row"><span class="venue-event-label">Time</span><span class="venue-event-value">${startTime} – ${endTime}</span></div>
+                </div>
+            `;
+            card.addEventListener('click', function() { openModal(e, di); });
+            return card;
+        }
+
+        /* ════════════════════════════════════════════
+           SUMMARY UPDATES
+           ════════════════════════════════════════════ */
+
+        function updateSummaries(events) {
+            let total = events.length;
+            let available = 0;
+            let replacement = 0;
+            let pending = 0;
+            let conflict = 0;
+
+            events.forEach(e => {
+                if (e.status === 'replacement') replacement++;
+                else if (e.status === 'pending') pending++;
+                else if (e.status === 'conflict') conflict++;
+            });
+
+            /* count available slots (Mon-Fri, 08:00-18:00) */
+            const data = weekData[currentWeek];
+            for (let di = 0; di < 5; di++) {
+                if (data.days[di].holiday || data.days[di].sunday) continue;
+                for (let hi = 0; hi < hours.length; hi++) {
+                    const hasEvent = events.some(e => e.di === di && hi >= e.start && hi <= e.end);
+                    if (!hasEvent) available++;
+                }
+            }
+
+            document.getElementById('sumTotal').textContent = total;
+            document.getElementById('sumAvailable').textContent = available;
+            document.getElementById('sumReplacement').textContent = replacement;
+            document.getElementById('sumPending').textContent = pending;
+            document.getElementById('sumConflict').textContent = conflict;
+        }
+
+        /* ════════════════════════════════════════════
+           MODAL (BOOKED CLASS)
+           ════════════════════════════════════════════ */
+
+        function openModal(e, di) {
+            const modal = document.getElementById('eventModal');
+            document.getElementById('modalTitle').textContent = 'Class Details';
+            document.getElementById('mdlCourse').textContent = e.code;
+            document.getElementById('mdlName').textContent = e.name || '—';
+            document.getElementById('mdlLecturer').textContent = e.lecturer || '—';
+            document.getElementById('mdlVenue').textContent = currentVenue ? `${currentVenue.code} — ${currentVenue.type} (${currentVenue.capacity} seats)` : e.venue;
+            document.getElementById('mdlCohort').textContent = e.cohort || '—';
+
+            const startTime = typeof to12h === 'function' ? to12h(hours[e.start]) : hours[e.start];
+            const endTime = typeof to12h === 'function' ? to12h(hours[e.end + 1] || add30min(hours[e.end])) : hours[e.end + 1] || add30min(hours[e.end]);
+            document.getElementById('mdlTime').textContent = `${startTime} – ${endTime}`;
+
+            const statusBadge = document.getElementById('mdlStatusBadge');
+            statusBadge.textContent = e.status;
+            statusBadge.className = `badge badge-${e.status}`;
+            document.getElementById('modalStatusBadge').textContent = e.status;
+            document.getElementById('modalStatusBadge').className = `modal-status-badge badge-${e.status}`;
+
+            document.getElementById('mdlRemarks').textContent = e.remarks || '—';
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').style.display = 'none';
+        }
+
+        /* ════════════════════════════════════════════
+           AVAILABLE SLOT TOOLTIP
+           ════════════════════════════════════════════ */
+
+        function showAvailableTooltip(ev, di, hi) {
+            const tooltip = document.getElementById('availableTooltip');
+            const dayName = weekData[currentWeek].days[di]?.abbr || '';
+            const dateStr = weekData[currentWeek].days[di]?.date || '';
+            const time = hours[hi] || '';
+
+            document.getElementById('tooltipText').textContent =
+                `Book ${currentVenue.code} on ${dayName}, ${dateStr} at ${time}?`;
+
+            document.getElementById('tooltipBookBtn').onclick = function() {
+                bookVenue(currentVenue.code, dateStr, time);
+            };
+
+            if (ev && ev.target) {
+                const rect = ev.target.getBoundingClientRect();
+                tooltip.style.left = rect.left + 'px';
+                tooltip.style.top = (rect.bottom + 4) + 'px';
+            } else {
+                tooltip.style.left = '50%';
+                tooltip.style.top = '50%';
+                tooltip.style.transform = 'translate(-50%, -50%)';
+            }
+
+            tooltip.classList.add('show');
+        }
+
+        function hideAvailableTooltip() {
+            document.getElementById('availableTooltip').classList.remove('show');
+            document.getElementById('availableTooltip').style.transform = '';
+        }
+
+        function bookVenue(venueCode, date, time) {
+            hideAvailableTooltip();
+            let url = `/replacement-arrangement?venue=${encodeURIComponent(venueCode)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`;
+            if (currentCourseCode) url += `&code=${encodeURIComponent(currentCourseCode)}`;
+            if (currentCohort) url += `&cohort=${encodeURIComponent(currentCohort)}`;
+            window.location.href = url;
+        }
+
+        /* ════════════════════════════════════════════
+           KEYBOARD NAVIGATION
+           ════════════════════════════════════════════ */
+
+        function onKeydown(e) {
+            /* Escape closes tooltip/modal */
+            if (e.key === 'Escape') {
+                hideAvailableTooltip();
+                closeModal();
+                return;
+            }
+
+            /* B shortcut on available cell */
+            if ((e.key === 'b' || e.key === 'B') && focusedCell && focusedCell.classList.contains('cell-available')) {
+                const di = parseInt(focusedCell.dataset.day);
+                const hi = parseInt(focusedCell.dataset.hour);
+                showAvailableTooltip(null, di, hi);
+                return;
+            }
+
+            /* Arrow navigation on grid */
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
+                const active = document.activeElement;
+                if (!active || !active.classList.contains('cell-available') && !active.classList.contains('event-block')) return;
+
+                e.preventDefault();
+                const cells = Array.from(document.querySelectorAll('.cell-available, .event-block'));
+                const idx = cells.indexOf(active);
+                if (idx === -1) return;
+
+                let next = idx;
+                if (e.key === 'ArrowRight') next = Math.min(idx + 1, cells.length - 1);
+                else if (e.key === 'ArrowLeft') next = Math.max(idx - 1, 0);
+                else if (e.key === 'ArrowDown') next = Math.min(idx + 7, cells.length - 1);
+                else if (e.key === 'ArrowUp') next = Math.max(idx - 7, 0);
+                else if (e.key === 'Enter') {
+                    if (active.classList.contains('cell-available')) {
+                        showAvailableTooltip(null, parseInt(active.dataset.day), parseInt(active.dataset.hour));
+                    } else {
+                        active.click();
+                    }
+                    return;
+                }
+
+                cells[next].focus();
+                focusedCell = cells[next];
+            }
+        }
+
+        /* ════════════════════════════════════════════
+           FAVOURITES (localStorage)
+           ════════════════════════════════════════════ */
+
+        function getFavourites() {
+            try { return JSON.parse(localStorage.getItem('venueFavourites') || '[]'); }
+            catch (e) { return []; }
+        }
+
+        function toggleFavourite() {
+            if (!currentVenue) return;
+            const favs = getFavourites();
+            const idx = favs.indexOf(currentVenue.code);
+            if (idx === -1) {
+                favs.push(currentVenue.code);
+            } else {
+                favs.splice(idx, 1);
+            }
+            localStorage.setItem('venueFavourites', JSON.stringify(favs));
+            updateFavStar();
+            buildVenueDropdown();
+        }
+
+        function updateFavStar() {
+            const star = document.getElementById('favStar');
+            if (!currentVenue) return;
+            const favs = getFavourites();
+            const isFav = favs.includes(currentVenue.code);
+            star.textContent = isFav ? '\u2605' : '\u2606';
+            star.classList.toggle('active', isFav);
+        }
+
+        /* ════════════════════════════════════════════
+           RECENT VENUES (localStorage)
+           ════════════════════════════════════════════ */
+
+        function getRecent() {
+            try { return JSON.parse(localStorage.getItem('venueRecent') || '[]'); }
+            catch (e) { return []; }
+        }
+
+        function updateRecent(code) {
+            let recent = getRecent();
+            recent = recent.filter(c => c !== code);
+            recent.unshift(code);
+            if (recent.length > 5) recent = recent.slice(0, 5);
+            localStorage.setItem('venueRecent', JSON.stringify(recent));
+        }
+
+        /* ════════════════════════════════════════════
+           STATE PERSISTENCE
+           ════════════════════════════════════════════ */
+
+        function saveState() {
+            try {
+                localStorage.setItem(STATE_KEY, JSON.stringify({
+                    venue: document.getElementById('venueSelect').value,
+                    week: currentWeek,
+                    timeFilter: currentTimeFilter,
+                    venueTypes: venueTypeFilters,
+                }));
+            } catch (e) { /* ignore */ }
+        }
+
+        function restoreState() {
+            let state = null;
+            try { state = JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { state = null; }
+            if (!state) return;
+
+            if (state.venue && MockData.venues.some(v => v.code === state.venue)) {
+                document.getElementById('venueSelect').value = state.venue;
+            }
+            if (state.week !== undefined && state.week >= 0 && state.week < weekData.length) {
+                currentWeek = state.week;
+                document.getElementById('weekSelect').selectedIndex = currentWeek;
+            }
+            if (state.timeFilter) {
+                currentTimeFilter = state.timeFilter;
+                document.querySelectorAll('#timeFilter button').forEach(b => {
+                    b.classList.toggle('active', b.dataset.value === state.timeFilter);
+                });
+            }
+            if (state.venueTypes) {
+                venueTypeFilters = state.venueTypes;
+                document.querySelectorAll('#venueTypeDropdown input[type="checkbox"]').forEach(cb => {
+                    cb.checked = venueTypeFilters[cb.value] !== false;
+                });
+                const allChecked = Object.values(venueTypeFilters).every(v => v);
+                document.getElementById('venueTypeBtn').innerHTML = (allChecked ? 'All Types' : 'Filtered') + ' &#9662;';
+            }
+        }
+
+        /* ════════════════════════════════════════════
+           TOAST (for slot-taken error)
+           ════════════════════════════════════════════ */
+
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+@endsection
