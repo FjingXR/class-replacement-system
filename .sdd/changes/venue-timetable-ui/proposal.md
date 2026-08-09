@@ -102,6 +102,18 @@ A dedicated **Venue Timetable** page gives staff a quick, view-only overview of 
 - No search (venue dropdown is sufficient)
 - No print functionality (deferred to another session with OOP approach)
 
+### Related Feature: Slot Picker (replacement-arrangement)
+
+When user selects a subject on replacement-arrangement, a **slot picker** shows conflict/cancelled slots only:
+
+- **Trigger:** Subject selected in dropdown
+- **Data source:** `MockData.cohortTimetable` (all weeks), filtered by course code + status
+- **Filter:** Only show `status === 'conflict'` or `status === 'cancelled'` slots
+- **Display:** Week number, day, time, venue, status badge
+- **Selection:** Single slot (radio button)
+- **After selection:** User picks new venue + time on timetable grid
+- **URL params passed:** `code`, `cohort`, `week`, `day`, `time`, `venue` (original slot)
+
 ## Impact Scope
 
 | File | Action |
