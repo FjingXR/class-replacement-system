@@ -1195,27 +1195,21 @@
 
                     const info = slotMap[hi];
 
-                    if (info && info.event) {
+                    if (day.sunday || day.holiday) {
+                        /* Unavailable slot (holiday/Sunday) — always empty */
+                        const div = document.createElement('div');
+                        div.className = 'cell-unavailable';
+                        td.appendChild(div);
+                    } else if (info && info.event) {
                         const e = info.event;
-                        const isConflict = day.holiday;
                         const div = document.createElement('div');
                         div.className = 'event-block span-' + info.span;
-                        if (isConflict) {
-                            div.classList.add('event-public-holiday');
-                        } else if (e.status === 'replacement') {
+                        if (e.status === 'replacement') {
                             div.classList.add('event-replacement');
                         } else if (e.status === 'pending') {
                             div.classList.add('event-pending');
                         } else {
                             div.classList.add('event-normal');
-                        }
-
-                        const startTime = (typeof to12h === 'function' ? to12h(hours[e.start]) : hours[e.start]);
-                        const endTime = (typeof to12h === 'function' ? to12h(hours[e.end + 1] || add30min(hours[e.end])) : hours[e.end + 1] || add30min(hours[e.end]));
-
-                        let extraHtml = '';
-                        if (e.status === 'replacement' && e.remarks) {
-                            extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
                         }
 
                         div.innerHTML = '';
@@ -1232,11 +1226,6 @@
                         }
                     } else if (info && info.occupied) {
                         td.style.display = 'none';
-                    } else if (day.sunday || day.holiday) {
-                        /* Unavailable slot (holiday/Sunday) */
-                        const div = document.createElement('div');
-                        div.className = 'cell-unavailable';
-                        td.appendChild(div);
                     } else {
                         /* Available slot */
                         const div = document.createElement('div');
