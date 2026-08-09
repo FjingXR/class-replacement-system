@@ -1886,7 +1886,7 @@
             if (urlParams.code) {
                 sel.value = urlParams.code;
                 sel.disabled = true;
-                onSubjectChange();
+                sel.dispatchEvent(new Event('change'));
             }
             if (urlParams.venue) {
                 const venueSel = document.getElementById('buildingSelector');
