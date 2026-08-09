@@ -846,11 +846,11 @@
                 weekSelect.appendChild(opt);
             });
 
+            /* restore state (before buildVenueDropdown which triggers buildTimetable) */
+            restoreState();
+
             /* venue dropdown */
             buildVenueDropdown();
-
-            /* restore state */
-            restoreState();
 
             /* week nav */
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);

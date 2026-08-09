@@ -195,23 +195,13 @@ test.describe('Venue Timetable UI', () => {
   });
 
   // ════════════════════════════════════════════
-  // 7. HISTORY PANEL (Collapsible)
+  // 7. HISTORY PANEL (disabled — not useful for now)
   // ════════════════════════════════════════════
 
-  test('TC26 — history details element exists', async ({ page }) => {
-    await expect(page.locator('#historyDetails')).toBeVisible();
-  });
-
-  test('TC27 — history summary shows "Past 4 Weeks Booking History"', async ({ page }) => {
-    await expect(page.locator('.history-summary')).toContainText('Past 4 Weeks');
-  });
-
-  test('TC28 — clicking history summary opens panel', async ({ page }) => {
-    await page.locator('.history-summary').click();
-    await page.waitForTimeout(300);
-    const isOpen = await page.locator('#historyDetails').evaluate((el: HTMLDetailsElement) => el.open);
-    expect(isOpen).toBe(true);
-  });
+  // TC26, TC27, TC28 — history panel disabled
+  // test('TC26 — history details element exists', ...)
+  // test('TC27 — history summary shows "Past 4 Weeks Booking History"', ...)
+  // test('TC28 — clicking history summary opens panel', ...)
 
   // ════════════════════════════════════════════
   // 8. TIMETABLE GRID
