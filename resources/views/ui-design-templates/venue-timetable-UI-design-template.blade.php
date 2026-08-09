@@ -505,7 +505,13 @@
             }
         }
 
-        /* ───── Available Cell Styling ───── */
+        /* ───── Booked Cell (empty, color only) ───── */
+        .event-block {
+            width: 100%;
+            height: 100%;
+            background: var(--color-error-container);
+            cursor: pointer;
+        }
         .cell-available {
             background: var(--color-secondary);
             cursor: pointer;
@@ -1215,12 +1221,7 @@
                             extraHtml = `<span class="ev-note">(Replaced for ${e.remarks})</span>`;
                         }
 
-                        div.innerHTML = `
-                            <span class="ev-code">${e.code}(${e.type})</span>
-                            <span class="ev-venue">${e.cohort}</span>
-                            <span class="ev-time">${startTime} - ${endTime}</span>
-                            ${extraHtml}
-                        `;
+                        div.innerHTML = '';
 
                         div.addEventListener('click', function() { openModal(e, di); });
                         td.appendChild(div);
