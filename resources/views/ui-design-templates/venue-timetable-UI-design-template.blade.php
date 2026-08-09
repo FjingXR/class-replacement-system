@@ -505,24 +505,19 @@
             }
         }
 
-        /* ───── Booked Cell (empty, color only) ───── */
+        /* ───── Booked Cell (empty, color only, disabled) ───── */
         .event-block {
             width: 100%;
             height: 100%;
             background: var(--color-error-container);
-            cursor: pointer;
+            cursor: not-allowed;
+            pointer-events: none;
         }
         .cell-available {
+            width: 100%;
+            height: 100%;
             background: var(--color-secondary);
             cursor: pointer;
-            text-align: center;
-            font-size: 12px;
-            color: #fff;
-            font-weight: 600;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .cell-available:hover {
             opacity: 0.85;
@@ -530,8 +525,9 @@
 
         /* ───── Unavailable Cell (Holiday/Sunday) ───── */
         .cell-unavailable {
+            width: 100%;
+            height: 100%;
             background: var(--color-surface-variant);
-            min-height: 40px;
             cursor: not-allowed;
             opacity: 0.7;
         }
