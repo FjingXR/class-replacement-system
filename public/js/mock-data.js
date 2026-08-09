@@ -314,6 +314,25 @@ window.MockData = {
             { cohortId: 'dsf2s1', week: 0, event: { di: 3, start: 0,  end: 3,  code: 'BMIT2222', type: 'L', venue: 'B205', lecturer: 'Dr. Wong Mei Ling', status: 'normal',      name: 'Mathematics for Computing', remarks: '' } },
             { cohortId: 'dsf2s1', week: 0, event: { di: 4, start: 8,  end: 11, code: 'BMIT3030', type: 'T', venue: 'B203', lecturer: 'Ms. Siti Aminah',   status: 'normal',      name: 'Data Structures',           remarks: '' } },
 
+            // ═══ Additional venues for variety ═══
+            // B014 — morning classes only
+            { cohortId: 'dft2s1', week: 0, event: { di: 0, start: 0,  end: 3,  code: 'BMIT6061', type: 'T', venue: 'B014', lecturer: 'Ms. Chen Hui Xin',  status: 'normal',  name: 'UI/UX Design',              remarks: '' } },
+            { cohortId: 'dft2s1', week: 0, event: { di: 2, start: 0,  end: 3,  code: 'BMIT6062', type: 'L', venue: 'B014', lecturer: 'En. Zulkifli',       status: 'normal',  name: 'Networking Basics',          remarks: '' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 0, start: 0,  end: 3,  code: 'BMIT6061', type: 'T', venue: 'B014', lecturer: 'Ms. Chen Hui Xin',  status: 'replacement', name: 'UI/UX Design',           remarks: '24-Aug-2026' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 2, start: 0,  end: 3,  code: 'BMIT6062', type: 'L', venue: 'B014', lecturer: 'En. Zulkifli',       status: 'normal',  name: 'Networking Basics',          remarks: '' } },
+
+            // B015 — afternoon classes only
+            { cohortId: 'dft2s1', week: 0, event: { di: 1, start: 10, end: 13, code: 'BMIT4040', type: 'L', venue: 'B015', lecturer: 'En. Ahmad Faiz',     status: 'normal',  name: 'Web Development',            remarks: '' } },
+            { cohortId: 'dft2s1', week: 0, event: { di: 3, start: 10, end: 13, code: 'BMIT5050', type: 'L', venue: 'B015', lecturer: 'Pn. Farah Hanum',    status: 'normal',  name: 'Database Design',            remarks: '' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 1, start: 10, end: 13, code: 'BMIT4040', type: 'L', venue: 'B015', lecturer: 'En. Ahmad Faiz',     status: 'pending', name: 'Web Development',            remarks: '', requestedAt: '25 Aug 2026, 02:00 PM', requestedBy: 'En. Ahmad Faiz' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 3, start: 10, end: 13, code: 'BMIT5050', type: 'L', venue: 'B015', lecturer: 'Pn. Farah Hanum',    status: 'normal',  name: 'Database Design',            remarks: '' } },
+
+            // B016 — mixed morning + afternoon
+            { cohortId: 'dft2s1', week: 0, event: { di: 0, start: 4,  end: 7,  code: 'BMIT6060', type: 'L', venue: 'B016', lecturer: 'Dr. Lim Wei Ming',   status: 'normal',  name: 'Cybersecurity Fundamentals', remarks: '' } },
+            { cohortId: 'dft2s1', week: 0, event: { di: 4, start: 10, end: 13, code: 'BMIT6061', type: 'T', venue: 'B016', lecturer: 'Ms. Chen Hui Xin',   status: 'normal',  name: 'UI/UX Design',               remarks: '' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 0, start: 4,  end: 7,  code: 'BMIT6060', type: 'L', venue: 'B016', lecturer: 'Dr. Lim Wei Ming',   status: 'replacement', name: 'Cybersecurity Fundamentals', remarks: '25-Aug-2026' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 4, start: 10, end: 13, code: 'BMIT6061', type: 'T', venue: 'B016', lecturer: 'Ms. Chen Hui Xin',   status: 'normal',  name: 'UI/UX Design',               remarks: '' } },
+
             { cohortId: 'dsf2s1', week: 1, event: { di: 0, start: 0,  end: 3,  code: 'BMIT1010', type: 'L', venue: 'B201', lecturer: 'Ms. Nurul Aini',     status: 'normal',       name: 'Introduction to Computing', remarks: '' } },
             { cohortId: 'dsf2s1', week: 1, event: { di: 1, start: 12, end: 15, code: 'BMIT1111', type: 'L', venue: 'B204', lecturer: 'Mr. Tan Kok Wai',   status: 'normal',       name: 'Operating Systems',         remarks: '' } },
             { cohortId: 'dsf2s1', week: 1, event: { di: 2, start: 4,  end: 7,  code: 'BMIT2020', type: 'L', venue: 'B202', lecturer: 'Mr. Ravi Kumar',     status: 'replacement',  name: 'Programming Fundamentals',   remarks: '26-Aug-2026' } },

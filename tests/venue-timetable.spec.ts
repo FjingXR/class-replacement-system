@@ -140,8 +140,8 @@ test.describe('Venue Timetable UI', () => {
     const buttons = page.locator('#timeFilter button');
     await expect(buttons).toHaveCount(3);
     await expect(buttons.nth(0)).toHaveText('All');
-    await expect(buttons.nth(1)).toHaveText('Morning');
-    await expect(buttons.nth(2)).toHaveText('Afternoon');
+    await expect(buttons.nth(1)).toContainText('Morning');
+    await expect(buttons.nth(2)).toContainText('Afternoon');
   });
 
   test('TC19 — "All" is the default time filter', async ({ page }) => {
@@ -195,21 +195,22 @@ test.describe('Venue Timetable UI', () => {
   });
 
   // ════════════════════════════════════════════
-  // 7. TAB TOGGLE (Current Week / Past 4 Weeks)
+  // 7. HISTORY PANEL (Collapsible)
   // ════════════════════════════════════════════
 
-  test('TC26 — tab toggle has 2 buttons', async ({ page }) => {
-    const tabs = page.locator('.tab-toggle button');
-    await expect(tabs).toHaveCount(2);
+  test('TC26 — history details element exists', async ({ page }) => {
+    await expect(page.locator('#historyDetails')).toBeVisible();
   });
 
-  test('TC27 — "Current Week" is active by default', async ({ page }) => {
-    await expect(page.locator('#tabCurrent')).toHaveClass(/active/);
+  test('TC27 — history summary shows "Past 4 Weeks Booking History"', async ({ page }) => {
+    await expect(page.locator('.history-summary')).toContainText('Past 4 Weeks');
   });
 
-  test('TC28 — clicking "Past 4 Weeks" opens history panel', async ({ page }) => {
-    await page.locator('#tabPast').click();
-    await expect(page.locator('#historyPanel')).toHaveClass(/open/);
+  test('TC28 — clicking history summary opens panel', async ({ page }) => {
+    await page.locator('.history-summary').click();
+    await page.waitForTimeout(300);
+    const isOpen = await page.locator('#historyDetails').evaluate((el: HTMLDetailsElement) => el.open);
+    expect(isOpen).toBe(true);
   });
 
   // ════════════════════════════════════════════

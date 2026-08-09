@@ -40,3 +40,15 @@
 | 2026-08-09 | Keyboard nav | Arrow keys, Enter, Escape navigation on grid |
 | 2026-08-09 | Mobile view | Card layout for booked/available slots on ≤768px |
 | 2026-08-09 | Tablet view | Reduced grid density on 769px–1024px |
+| 2026-08-09 | UI Polish (A1) | Print icon moved to rightmost of semester-bar |
+| 2026-08-09 | UI Polish (A2) | Timetable design matched to replacement-arrangement |
+| 2026-08-09 | UI Polish (A3) | Favourite star changed to separate button (36px) with better touch target |
+| 2026-08-09 | UI Polish (A4) | Morning/Afternoon labels now show time ranges (8AM–12PM / 1PM–6PM) |
+| 2026-08-09 | UI Polish (A5) | Added booking hint banner: "Click any green slot to book this venue" |
+| 2026-08-09 | Bug Fix (B1) | Venue type filter now actually filters venues in dropdown |
+| 2026-08-09 | Bug Fix (B2) | Morning/Afternoon filter now hides all cells outside range (including holiday/Sunday) |
+| 2026-08-09 | Bug Fix (B3) | Holiday/Sunday cells now show lock icon + "Holiday"/"OFF" label |
+| 2026-08-09 | Bug Fix (B4) | Today button now works (initTodayBtn() called in DOMContentLoaded) |
+| 2026-08-09 | Bug Fix (B5) | Tooltip only shows for cells matching current time filter |
+| 2026-08-09 | Bug Fix (B6) | Mock data made more distinct with events in B014, B015, B016 |
+| 2026-08-09 | UX (C1) | Past 4 Weeks changed from tabs to collapsible details element |

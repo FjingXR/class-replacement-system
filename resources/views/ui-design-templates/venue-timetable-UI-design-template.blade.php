@@ -15,23 +15,31 @@
             min-width: 280px;
         }
         .venue-dropdown-wrap {
-            position: relative;
             display: inline-flex;
             align-items: center;
+            gap: 6px;
         }
-        .venue-dropdown-wrap .fav-star {
-            position: absolute;
-            right: 32px;
+        .fav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--color-outline);
+            border-radius: 6px;
+            background: transparent;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             color: var(--color-on-surface-variant);
-            z-index: 2;
+            transition: background 0.15s, color 0.15s;
+            flex-shrink: 0;
         }
-        .venue-dropdown-wrap .fav-star.active {
-            color: var(--color-tertiary);
+        .fav-btn:hover {
+            background: var(--color-surface-variant);
         }
-        .venue-dropdown-wrap .fav-star:hover {
+        .fav-btn.active {
             color: var(--color-tertiary);
+            border-color: var(--color-tertiary);
         }
 
         /* ───── Recent / All sections in dropdown ───── */
@@ -147,46 +155,35 @@
             display: none;
         }
 
-        /* ───── Tab Toggle (Current Week / Past 4 Weeks) ───── */
-        .tab-toggle {
-            display: inline-flex;
-            border: 1px solid var(--color-outline);
-            border-radius: 6px;
-            overflow: hidden;
+        /* ───── History Panel (Collapsible) ───── */
+        .history-details {
             margin-bottom: 12px;
-        }
-        .tab-toggle button {
-            background: transparent;
-            border: none;
-            padding: 8px 18px;
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-            cursor: pointer;
-            border-right: 1px solid var(--color-outline);
-            transition: background 0.15s, color 0.15s;
-        }
-        .tab-toggle button:last-child {
-            border-right: none;
-        }
-        .tab-toggle button.active {
-            background: var(--color-primary);
-            color: #fff;
-        }
-        .tab-toggle button:hover:not(.active) {
-            background: var(--color-surface-variant);
-        }
-
-        /* ───── History Panel ───── */
-        .history-panel {
-            display: none;
-            max-height: 300px;
-            overflow-y: auto;
             border: 1px solid var(--color-outline);
             border-radius: 8px;
-            margin-bottom: 12px;
+            overflow: hidden;
         }
-        .history-panel.open {
-            display: block;
+        .history-summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-on-surface);
+            cursor: pointer;
+            background: var(--color-surface-variant);
+            list-style: none;
+        }
+        .history-summary::-webkit-details-marker {
+            display: none;
+        }
+        .history-summary:hover {
+            background: var(--color-surface);
+        }
+        .history-panel {
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid var(--color-outline);
         }
         .history-row {
             display: flex;
@@ -220,6 +217,22 @@
             font-size: 13px;
             color: var(--color-on-surface-variant);
             font-style: italic;
+        }
+
+        /* ───── Booking Hint ───── */
+        .booking-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--color-secondary-container);
+            color: var(--color-on-secondary-container);
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .booking-hint svg {
+            flex-shrink: 0;
         }
 
         /* ───── Error Banner ───── */
@@ -492,7 +505,7 @@
             }
         }
 
-        /* ───── Available Slot Styling ───── */
+        /* ───── Available Cell Styling ───── */
         .cell-available {
             background: var(--color-secondary);
             cursor: pointer;
@@ -507,6 +520,25 @@
         }
         .cell-available:hover {
             opacity: 0.85;
+        }
+
+        /* ───── Unavailable Cell (Holiday/Sunday) ───── */
+        .cell-unavailable {
+            background: var(--color-surface-variant);
+            text-align: center;
+            font-size: 11px;
+            color: var(--color-on-surface-variant);
+            min-height: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .cell-unavailable .lock-icon {
+            font-size: 14px;
         }
 
         /* ───── Keyboard Hint ───── */
@@ -557,16 +589,7 @@
 
         <!-- ─── Page Header ─── -->
         <div class="page-header">
-            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                <h1 class="page-title">Venue Timetable</h1>
-                <button class="print-btn" title="Coming soon" disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 6 2 18 2 18 9"/>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                        <rect x="6" y="14" width="12" height="8"/>
-                    </svg>
-                </button>
-            </div>
+            <h1 class="page-title">Venue Timetable</h1>
             <span class="semester-chip" id="semesterChip"></span>
             <p class="page-desc">View weekly class schedule for any venue across all cohorts.</p>
         </div>
@@ -590,16 +613,26 @@
         <div class="semester-bar">
             <div class="venue-dropdown-wrap">
                 <select id="venueSelect" onchange="onVenueChange()"></select>
-                <span class="fav-star" id="favStar" onclick="toggleFavourite()" title="Toggle favourite">&#9734;</span>
+                <button class="fav-btn" id="favStar" onclick="toggleFavourite()" title="Toggle favourite">&#9734;</button>
             </div>
             @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelect', 'selectOnclick' => 'selectWeek(this.value)', 'disabled' => false])
+            <button class="print-btn" title="Coming soon" disabled style="margin-left:auto;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"/>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                    <rect x="6" y="14" width="12" height="8"/>
+                </svg>
+            </button>
         </div>
 
-        <!-- ─── Tab Toggle (Current Week / Past 4 Weeks) ─── -->
-        <div class="tab-toggle">
-            <button class="active" id="tabCurrent" onclick="switchTab('current')">Current Week</button>
-            <button id="tabPast" onclick="switchTab('past')">Past 4 Weeks</button>
-        </div>
+        <!-- ─── Past 4 Weeks (Collapsible) ─── -->
+        <details class="history-details" id="historyDetails">
+            <summary class="history-summary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Past 4 Weeks Booking History
+            </summary>
+            <div class="history-panel" id="historyPanel"></div>
+        </details>
 
         <!-- ─── Filter Bar ─── -->
         <div class="filter-bar">
@@ -607,8 +640,8 @@
                 <label>Time:</label>
                 <div class="segment-toggle" id="timeFilter">
                     <button class="active" data-value="all" onclick="setTimeFilter('all', this)">All</button>
-                    <button data-value="morning" onclick="setTimeFilter('morning', this)">Morning</button>
-                    <button data-value="afternoon" onclick="setTimeFilter('afternoon', this)">Afternoon</button>
+                    <button data-value="morning" onclick="setTimeFilter('morning', this)">Morning (8AM–12PM)</button>
+                    <button data-value="afternoon" onclick="setTimeFilter('afternoon', this)">Afternoon (1PM–6PM)</button>
                 </div>
             </div>
             <div class="filter-group">
@@ -628,6 +661,12 @@
 
         <!-- ─── History Panel (Past 4 Weeks) ─── -->
         <div class="history-panel" id="historyPanel"></div>
+
+        <!-- ─── Booking Hint ─── -->
+        <div class="booking-hint" id="bookingHint" style="display:none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>Click any green slot to book this venue</span>
+        </div>
 
         <!-- ─── Grid Wrapper ─── -->
         @include('partials.ui-grid-table')
@@ -837,6 +876,12 @@
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
             weekSelect.selectedIndex = currentWeek;
 
+            /* today button */
+            initTodayBtn();
+
+            /* show booking hint */
+            document.getElementById('bookingHint').style.display = 'flex';
+
             /* keyboard nav */
             document.addEventListener('keydown', onKeydown);
         });
@@ -848,12 +893,23 @@
             const favourites = getFavourites();
             const recent = getRecent();
 
+            /* filter venues by type */
+            const filteredVenues = MockData.venues.filter(v => venueTypeFilters[v.type] !== false);
+
+            /* check if any venues match */
+            if (filteredVenues.length === 0) {
+                document.getElementById('noMatchBanner').classList.add('show');
+                onVenueChange();
+                return;
+            }
+            document.getElementById('noMatchBanner').classList.remove('show');
+
             /* Recent section */
             if (recent.length > 0) {
                 const recentGroup = document.createElement('optgroup');
                 recentGroup.label = 'Recent';
                 recent.forEach(code => {
-                    const v = MockData.venues.find(x => x.code === code);
+                    const v = filteredVenues.find(x => x.code === code);
                     if (v) {
                         const opt = document.createElement('option');
                         opt.value = v.code;
@@ -861,13 +917,15 @@
                         recentGroup.appendChild(opt);
                     }
                 });
-                select.appendChild(recentGroup);
+                if (recentGroup.children.length > 0) {
+                    select.appendChild(recentGroup);
+                }
             }
 
             /* All Venues section */
             const allGroup = document.createElement('optgroup');
             allGroup.label = 'All Venues';
-            MockData.venues.forEach(v => {
+            filteredVenues.forEach(v => {
                 const opt = document.createElement('option');
                 opt.value = v.code;
                 opt.textContent = `${v.code} — ${v.type} (${v.capacity} seats)`;
@@ -879,6 +937,11 @@
             if (window._preselectVenue) {
                 select.value = window._preselectVenue;
                 delete window._preselectVenue;
+            }
+
+            /* if current venue is filtered out, select first available */
+            if (currentVenue && !filteredVenues.some(v => v.code === currentVenue.code)) {
+                currentVenue = filteredVenues[0];
             }
 
             onVenueChange();
@@ -946,12 +1009,6 @@
 
         function switchTab(tab) {
             currentTab = tab;
-            document.getElementById('tabCurrent').classList.toggle('active', tab === 'current');
-            document.getElementById('tabPast').classList.toggle('active', tab === 'past');
-            document.getElementById('historyPanel').classList.toggle('open', tab === 'past');
-            if (tab === 'past') {
-                buildHistoryPanel();
-            }
             buildTimetable();
         }
 
@@ -992,6 +1049,11 @@
             }
         }
 
+        /* build history when details is opened */
+        document.getElementById('historyDetails').addEventListener('toggle', function() {
+            if (this.open) buildHistoryPanel();
+        });
+
         /* ════════════════════════════════════════════
            FILTERS
            ════════════════════════════════════════════ */
@@ -1016,7 +1078,7 @@
                 if (!cb.checked) allChecked = false;
             });
             document.getElementById('venueTypeBtn').innerHTML = (allChecked ? 'All Types' : 'Filtered') + ' &#9662;';
-            buildTimetable();
+            buildVenueDropdown();
         }
 
         function resetFilters() {
@@ -1145,14 +1207,12 @@
                     td.dataset.day = di;
                     td.dataset.hour = hi;
 
-                    /* apply time filter */
+                    /* apply time filter — hide cells outside selected range */
                     if (currentTimeFilter === 'morning' && hi >= 10) {
-                        /* morning = slots 0-9 (08:00-12:30) */
-                        if (!day.sunday && !day.holiday) td.style.display = 'none';
+                        td.style.display = 'none';
                     }
                     if (currentTimeFilter === 'afternoon' && hi < 10) {
-                        /* afternoon = slots 10+ (13:00+) */
-                        if (!day.sunday && !day.holiday) td.style.display = 'none';
+                        td.style.display = 'none';
                     }
 
                     const info = slotMap[hi];
@@ -1199,6 +1259,12 @@
                         }
                     } else if (info && info.occupied) {
                         td.style.display = 'none';
+                    } else if (day.sunday || day.holiday) {
+                        /* Unavailable slot (holiday/Sunday) */
+                        const div = document.createElement('div');
+                        div.className = 'cell-unavailable';
+                        div.innerHTML = `<span class="lock-icon">&#128274;</span><span>${day.holiday ? 'Holiday' : 'OFF'}</span>`;
+                        td.appendChild(div);
                     } else {
                         /* Available slot */
                         const div = document.createElement('div');
@@ -1330,6 +1396,10 @@
            ════════════════════════════════════════════ */
 
         function showAvailableTooltip(ev, di, hi) {
+            /* check if cell matches current time filter */
+            if (currentTimeFilter === 'morning' && hi >= 10) return;
+            if (currentTimeFilter === 'afternoon' && hi < 10) return;
+
             const tooltip = document.getElementById('availableTooltip');
             const dayName = weekData[currentWeek].days[di]?.abbr || '';
             const dateStr = weekData[currentWeek].days[di]?.date || '';
