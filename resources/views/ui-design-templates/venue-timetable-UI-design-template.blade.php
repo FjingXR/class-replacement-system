@@ -525,7 +525,7 @@
         }
 
         /* ───── Unavailable Cell (Holiday/Sunday) ───── */
-        .cell-unavailable {
+        .cell-content.cell-occupied {
             width: 100%;
             height: 100%;
             background: var(--color-surface-variant);
@@ -1198,7 +1198,7 @@
                     if (day.sunday || day.holiday) {
                         /* Unavailable slot (holiday/Sunday) — always empty */
                         const div = document.createElement('div');
-                        div.className = 'cell-unavailable';
+                        div.className = 'cell-content cell-occupied';
                         td.appendChild(div);
                     } else if (info && info.event) {
                         const e = info.event;
