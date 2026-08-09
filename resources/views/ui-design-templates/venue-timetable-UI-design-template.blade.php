@@ -516,11 +516,12 @@
         .cell-available {
             width: 100%;
             height: 100%;
-            background: var(--color-secondary);
+            background: var(--color-secondary-container);
             cursor: pointer;
         }
         .cell-available:hover {
-            opacity: 0.85;
+            filter: brightness(1.2);
+            z-index: 5;
         }
 
         /* ───── Unavailable Cell (Holiday/Sunday) ───── */
