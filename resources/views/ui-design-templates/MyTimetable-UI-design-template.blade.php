@@ -250,17 +250,12 @@
         let currentWeek = currentWeekIndex();
         let currentModalEvent = null;
 
+        const weekNav = new WeekNavigator(MockData.semester, weekData);
+        weekNav._currentWeek = currentWeek;
+
         /* ───── Week persistence: keep the user's chosen week across refresh ───── */
-        const WEEK_KEY = 'myTimetableWeek';
-        function loadSavedWeek() {
-            const saved = parseInt(localStorage.getItem(WEEK_KEY));
-            if (!isNaN(saved) && saved >= 0 && saved < weekData.length) {
-                currentWeek = saved;
-            }
-        }
-        function saveWeek() {
-            try { localStorage.setItem(WEEK_KEY, String(currentWeek)); } catch (e) { /* storage unavailable — ignore */ }
-        }
+        function loadSavedWeek() { weekNav.load(); currentWeek = weekNav.currentWeek; }
+        function saveWeek() { weekNav.save(); }
 
         function openModal(event) {
             currentModalEvent = event;
@@ -514,7 +509,8 @@
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
                 updateWeekSubtitle();
                 updateProgress();
-                saveWeek();
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
             }
         }
 
@@ -525,7 +521,8 @@
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
                 updateWeekSubtitle();
                 updateProgress();
-                saveWeek();
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
             }
         }
 
@@ -534,11 +531,13 @@
             buildTimetable();
             updateWeekSubtitle();
             updateProgress();
-            saveWeek();
+            weekNav._currentWeek = currentWeek;
+            weekNav.save();
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            loadSavedWeek();
+            weekNav.load();
+            currentWeek = weekNav.currentWeek;
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             const sel = document.getElementById('weekSelect');
             const isMobile = window.innerWidth <= 768;
@@ -557,6 +556,13 @@
 
         initTodayBtn();
         initWeekKeyboardShortcuts();
+
+        /* Override TODAY to use weekNav + persist */
+        document.getElementById('todayBtn')?.addEventListener('click', function() {
+            weekNav.jumpToToday();
+            currentWeek = weekNav.currentWeek;
+            weekNav.save();
+        });
 
         document.addEventListener('keydown', function(e) {
             if (e.target.tagName === 'SELECT' || document.getElementById('classModal').style.display === 'flex') return;

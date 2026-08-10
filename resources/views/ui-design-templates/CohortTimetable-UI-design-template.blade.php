@@ -192,6 +192,9 @@
         let currentWeek = currentWeekIndex();
         let selectedCohortId = null;
 
+        const weekNav = new WeekNavigator(MockData.semester, weekData);
+        weekNav._currentWeek = currentWeek;
+
         /* ════════════════════════════════════════════
            DROPDOWN POPULATION
            ════════════════════════════════════════════ */
@@ -279,6 +282,7 @@
             selectedCohortId = cid;
             weekSel.disabled = false;
             currentWeek = currentWeekIndex();
+            weekNav._currentWeek = currentWeek;
             document.getElementById('weekSelect').selectedIndex = currentWeek;
             buildTimetable();
             saveState();
@@ -293,6 +297,8 @@
                 currentWeek--;
                 buildTimetable();
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
                 saveState();
             }
         }
@@ -302,6 +308,8 @@
                 currentWeek++;
                 buildTimetable();
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
                 saveState();
             }
         }
@@ -309,6 +317,8 @@
         function selectWeek(index) {
             currentWeek = parseInt(index);
             buildTimetable();
+            weekNav._currentWeek = currentWeek;
+            weekNav.save();
             saveState();
         }
 
@@ -331,7 +341,11 @@
         function restoreState() {
             let state = null;
             try { state = JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { state = null; }
-            if (!state || !state.faculty) return;
+            if (!state || !state.faculty) {
+                weekNav.load();
+                currentWeek = weekNav.currentWeek;
+                return;
+            }
             const faculty = facultyData.find(f => f.id === state.faculty);
             if (!faculty) return;
             document.getElementById('facultySelect').value = faculty.id;
@@ -342,8 +356,10 @@
                 const w = parseInt(state.week);
                 if (!isNaN(w) && w >= 0 && w < weekData.length) {
                     currentWeek = w;
+                    weekNav._currentWeek = w;
                     document.getElementById('weekSelect').selectedIndex = w;
                     buildTimetable();
+                    weekNav.save();
                     saveState();
                 }
             }
@@ -594,6 +610,13 @@
 
         initTodayBtn();
         initWeekKeyboardShortcuts();
+
+        /* Override TODAY to use weekNav + persist */
+        document.getElementById('todayBtn')?.addEventListener('click', function() {
+            weekNav.jumpToToday();
+            currentWeek = weekNav.currentWeek;
+            weekNav.save();
+        });
 
         // Mobile swipe gestures for week navigation
         if (window.innerWidth <= 768) {

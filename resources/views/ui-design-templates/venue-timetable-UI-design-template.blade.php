@@ -773,18 +773,6 @@
         let focusedCell = null;
 
         /* ════════════════════════════════════════════
-           STATE PERSISTENCE (using ui-common.js helper)
-           ════════════════════════════════════════════ */
-
-        const venueState = createStatePersistence('venueTimetableState', {
-            fields: [
-                { id: 'venueSelect', type: 'select', key: 'venue' },
-                { id: 'weekSelect', type: 'select', key: 'week', transform: v => parseInt(v) },
-                { id: 'venueTypeDropdown', type: 'checkbox-group', key: 'venueTypes' },
-            ]
-        });
-
-        /* ════════════════════════════════════════════
            MOCK DATA — Weeks
            ════════════════════════════════════════════ */
 
@@ -819,6 +807,23 @@
             d.setHours(0, 0, 0, 0);
             return d.getTime();
         }
+
+        /* ════════════════════════════════════════════
+           WEEK NAVIGATION (shared WeekNavigator)
+           ════════════════════════════════════════════ */
+
+        const weekNav = new WeekNavigator(MockData.semester, weekData);
+
+        /* ════════════════════════════════════════════
+           STATE PERSISTENCE (venue + venueType only)
+           ════════════════════════════════════════════ */
+
+        const venueState = createStatePersistence('venueTimetableState', {
+            fields: [
+                { id: 'venueSelect', type: 'select', key: 'venue' },
+                { id: 'venueTypeDropdown', type: 'checkbox-group', key: 'venueTypes' },
+            ]
+        });
 
         /* ════════════════════════════════════════════
            URL PARAMS
@@ -863,7 +868,13 @@
                 weekSelect.appendChild(opt);
             });
 
-            /* restore state (before buildVenueDropdown which triggers buildTimetable) */
+            /* default to today, then weekNav.load overrides if saved */
+            currentWeek = currentWeekIndex();
+            weekNav._currentWeek = currentWeek;
+            weekNav.load();
+            currentWeek = weekNav.currentWeek;
+
+            /* restore venue + venueType (before buildVenueDropdown which triggers buildTimetable) */
             restoreState();
 
             /* venue dropdown */
@@ -873,8 +884,12 @@
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
             weekSelect.selectedIndex = currentWeek;
 
-            /* today button */
+            /* today button — jumpToToday does NOT persist (no weekNav.save) */
             initTodayBtn();
+            document.getElementById('todayBtn')?.addEventListener('click', function() {
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
+            });
 
             /* show booking hint */
             document.getElementById('bookingHint').style.display = 'flex';
@@ -997,7 +1012,8 @@
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
                 buildTimetable();
                 updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
-                saveState();
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
             }
         }
 
@@ -1007,15 +1023,18 @@
                 document.getElementById('weekSelect').selectedIndex = currentWeek;
                 buildTimetable();
                 updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
-                saveState();
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
             }
         }
 
         function selectWeek(index) {
             currentWeek = parseInt(index);
+            document.getElementById('weekSelect').selectedIndex = currentWeek;
             buildTimetable();
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
-            saveState();
+            weekNav._currentWeek = currentWeek;
+            weekNav.save();
         }
 
         /* ════════════════════════════════════════════
@@ -1526,10 +1545,6 @@
             const state = venueState.restore();
             if (state.venue && MockData.venues.some(v => v.code === state.venue)) {
                 document.getElementById('venueSelect').value = state.venue;
-            }
-            if (state.week !== undefined && state.week >= 0 && state.week < weekData.length) {
-                currentWeek = state.week;
-                document.getElementById('weekSelect').selectedIndex = currentWeek;
             }
             if (state.venueTypes) {
                 venueTypeFilters = state.venueTypes;

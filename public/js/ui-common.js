@@ -78,7 +78,6 @@ function jumpToToday() {
     if (typeof updateWeekSubtitle === 'function') updateWeekSubtitle();
     if (typeof updateSummary === 'function') updateSummary();
     if (typeof updateProgress === 'function') updateProgress();
-    if (typeof saveWeek === 'function') saveWeek();
     var grid = document.querySelector('.grid-wrapper');
     if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -113,7 +112,6 @@ class WeekNavigator {
         this._updateSelect();
         this._updateSubtitle();
         this._updateProgress();
-        this.save();
         this._scrollToGrid();
     }
 

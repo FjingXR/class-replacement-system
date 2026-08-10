@@ -137,16 +137,12 @@
 
         let currentWeek = currentWeekIndex();
 
+        const weekNav = new WeekNavigator(MockData.semester, weekData);
+        weekNav._currentWeek = currentWeek;
+
         const WEEK_KEY = 'studentMyTimetableWeek';
-        function loadSavedWeek() {
-            const saved = parseInt(localStorage.getItem(WEEK_KEY));
-            if (!isNaN(saved) && saved >= 0 && saved < weekData.length) {
-                currentWeek = saved;
-            }
-        }
-        function saveWeek() {
-            try { localStorage.setItem(WEEK_KEY, String(currentWeek)); } catch (e) {}
-        }
+        function loadSavedWeek() { weekNav.load(); currentWeek = weekNav.currentWeek; }
+        function saveWeek() { weekNav.save(); }
 
         function buildWeekOptions() {
             const sel = document.getElementById('weekSelect');
@@ -384,7 +380,8 @@
     document.getElementById('weekSelect').selectedIndex = currentWeek;
                 updateWeekSubtitle();
                 updateProgress();
-                saveWeek();
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
             }
         }
 
@@ -396,7 +393,8 @@
     document.getElementById('weekSelect').selectedIndex = currentWeek;
                 updateWeekSubtitle();
                 updateProgress();
-                saveWeek();
+                weekNav._currentWeek = currentWeek;
+                weekNav.save();
             }
         }
 
@@ -406,7 +404,8 @@
 
 updateWeekSubtitle();
             updateProgress();
-            saveWeek();
+            weekNav._currentWeek = currentWeek;
+            weekNav.save();
         }
 
         document.addEventListener('keydown', function(e) {
@@ -432,8 +431,16 @@ updateWeekSubtitle();
 
         initTodayBtn();
 
+        /* Override TODAY to use weekNav + persist */
+        document.getElementById('todayBtn')?.addEventListener('click', function() {
+            weekNav.jumpToToday();
+            currentWeek = weekNav.currentWeek;
+            weekNav.save();
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
-            loadSavedWeek();
+            weekNav.load();
+            currentWeek = weekNav.currentWeek;
 
             const chipEl = document.getElementById('semesterChip');
             if (chipEl) chipEl.textContent = MockData.semester.chipText;
