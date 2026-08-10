@@ -1139,7 +1139,7 @@ html.dark .semester-bar select:not(.week-select) {
 }
 .event-block:hover {
     filter: brightness(1.08);
-    z-index: 5;
+    z-index: 50;
     box-shadow: inset 0 0 0 1.5px var(--color-on-surface-variant);
 }
 .event-block:active {
@@ -1230,7 +1230,7 @@ html.dark .semester-bar select:not(.week-select) {
 .grid-scroll.grid-transitioning { opacity: 0; }
 
 /* ── Event hover tooltip ────────────────────────────────────── */
-.event-block::after { content: attr(data-name) ' · ' attr(data-venue); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--color-inverse-surface); color: var(--color-on-inverse-surface); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 10; }
+.event-block::after { content: attr(data-name) ' · ' attr(data-venue); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--color-inverse-surface); color: var(--color-on-inverse-surface); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 50; }
 .event-block:hover::after { opacity: 1; }
 .ev-code { cursor: pointer; }
 
