@@ -470,6 +470,7 @@ function showSummarySkeleton() {
 function hideSummarySkeleton() {
     document.querySelectorAll('.summary-card .summary-value').forEach(el => {
         if (el.dataset.original !== undefined) {
+            el.innerHTML = el.dataset.original;
             delete el.dataset.original;
         }
     });

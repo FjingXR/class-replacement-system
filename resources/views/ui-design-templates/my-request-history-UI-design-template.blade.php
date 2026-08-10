@@ -648,6 +648,10 @@
             const isFullyEmpty = mockRequests.length === 0;
             const isFilteredEmpty = pageData.length === 0;
 
+            updateResultCount({ elId: 'resultCount', data: currentFiltered, total: mockRequests.length, label: 'results' });
+            updateSummary();
+            updateBulkBar();
+
             if (isFullyEmpty) {
                 document.getElementById('emptyState').style.display = 'block';
                 document.getElementById('emptyTitle').textContent = "You haven't submitted any replacement requests for this semester.";
@@ -736,9 +740,6 @@
                 paginate({ data: currentFiltered, pageSize: effectivePageSize, state: pageState, infoId: 'paginationInfo', controlsId: 'paginationControls', render: renderTable });
             }
 
-            updateResultCount({ elId: 'resultCount', data: currentFiltered, total: mockRequests.length, label: 'results' });
-            updateSummary();
-            updateBulkBar();
             renderCards();
             renderFilterChips();
         }
