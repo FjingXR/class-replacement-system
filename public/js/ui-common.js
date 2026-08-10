@@ -45,7 +45,8 @@ function updateWeekArrows(prevDisabled, nextDisabled) {
 // ───── Week helpers (shared by timetable pages) ─────
 
 function currentWeekIndex() {
-    const semesterStart = new Date(MockData.semester.startDate);
+    const parts = MockData.semester.startDate.split('-');
+    const semesterStart = new Date(parts[0], parts[1] - 1, parts[2]);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const idx = Math.floor((today - semesterStart) / 86400000 / 7);

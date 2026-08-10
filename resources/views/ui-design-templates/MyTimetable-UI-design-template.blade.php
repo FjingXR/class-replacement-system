@@ -201,8 +201,8 @@
 @section('page-scripts')
 
         const weekData = (function() {
-            const start = new Date(MockData.semester.startDate); // semester start, Monday
-            start.setHours(0, 0, 0, 0);
+            const parts = MockData.semester.startDate.split('-');
+            const start = new Date(parts[0], parts[1] - 1, parts[2]);
             const arr = [];
             const todayMs = getTodayMs();
             const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;

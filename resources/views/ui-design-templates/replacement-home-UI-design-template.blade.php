@@ -268,14 +268,17 @@
         }
 
         function computeWeek(isoDate) {
-            const semesterStart = new Date(MockData.semester.startDate);
-            const date = new Date(isoDate + 'T00:00:00');
+            const parts = MockData.semester.startDate.split('-');
+            const semesterStart = new Date(parts[0], parts[1] - 1, parts[2]);
+            const dateParts = isoDate.split('-');
+            const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
             const diff = Math.floor((date - semesterStart) / (1000 * 60 * 60 * 24));
             return Math.floor(diff / 7) + 1;
         }
 
         function weekRangeLabel(weekNum) {
-            const start = new Date(MockData.semester.startDate);
+            const parts = MockData.semester.startDate.split('-');
+            const start = new Date(parts[0], parts[1] - 1, parts[2]);
             start.setDate(start.getDate() + (weekNum - 1) * 7);
             const end = new Date(start);
             end.setDate(end.getDate() + 6);

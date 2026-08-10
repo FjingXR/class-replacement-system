@@ -63,8 +63,8 @@
         }
 
         const weekData = (function() {
-            const start = new Date(MockData.semester.startDate);
-            start.setHours(0, 0, 0, 0);
+            const parts = MockData.semester.startDate.split('-');
+            const start = new Date(parts[0], parts[1] - 1, parts[2]);
             const arr = [];
             for (let w = 0; w < MockData.semester.weeks; w++) {
                 const ms = start.getTime() + w * 7 * 86400000;

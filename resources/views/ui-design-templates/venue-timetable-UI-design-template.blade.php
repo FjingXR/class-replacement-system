@@ -773,8 +773,8 @@
            ════════════════════════════════════════════ */
 
         const weekData = (function() {
-            const start = new Date(MockData.semester.startDate);
-            start.setHours(0, 0, 0, 0);
+            const parts = MockData.semester.startDate.split('-');
+            const start = new Date(parts[0], parts[1] - 1, parts[2]);
             const arr = [];
             const todayMs = getTodayMs();
             for (let w = 1; w <= 14; w++) {
