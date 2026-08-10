@@ -448,6 +448,9 @@
                         const isConflict = day.holiday;
                         const div = document.createElement('div');
                         div.className = 'event-block span-' + info.span;
+                        div.setAttribute('tabindex', '0');
+                        div.dataset.name = e.name || '';
+                        div.dataset.venue = e.venue || '';
                         if (isConflict) {
                             div.classList.add('event-public-holiday');
                         } else if (e.status === 'normal') {
