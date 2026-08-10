@@ -433,7 +433,7 @@
         ])
 
         <!-- ─── Empty State ─── -->
-        @include('partials.ui-empty-state', ['title' => "You haven't submitted any replacement requests for this semester.", 'text' => 'Submit a replacement request for any conflicted class.', 'ctaLabel' => 'Submit a Replacement Request', 'ctaOnclick' => "window.location.href='/replacement-arrangement'"])
+        @include('partials.ui-empty-state', ['title' => "You haven't submitted any replacement requests for this semester.", 'text' => 'Submit a replacement request for any conflicted class.', 'ctaLabel' => 'Submit a Replacement Request', 'ctaOnclick' => "window.location.href='/replacement-arrangement?from=my-request-history'"])
 
     <!-- ═══ View Details Modal ═══ -->
     <div class="modal-overlay" id="modalOverlay">

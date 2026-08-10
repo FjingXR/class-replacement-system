@@ -1496,7 +1496,7 @@
                         });
                         selectedCells = [];
                         updateCounter();
-                        var navTimer = setTimeout(function() { window.location.href = '/replacement-home-ui'; }, 5000);
+                        var navTimer = setTimeout(function() { BackNavigator.navigate(); }, 5000);
                         toast.show('Selections cleared.', function() {
                             clearTimeout(navTimer);
                             Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
@@ -1511,7 +1511,7 @@
                     }
                 );
             } else {
-                window.location.href = '/replacement-home-ui';
+                BackNavigator.navigate();
             }
         }
 

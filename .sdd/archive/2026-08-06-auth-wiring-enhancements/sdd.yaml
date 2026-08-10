@@ -1,0 +1,6 @@
+schema: 1
+change_id: auth-wiring-enhancements
+created: 2026-08-03
+status: active
+type: enhance
+parent: auth-wiring

@@ -1410,7 +1410,7 @@
 
         function bookVenue(venueCode, date, time) {
             hideAvailableTooltip();
-            let url = `/replacement-arrangement?venue=${encodeURIComponent(venueCode)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`;
+            let url = `/replacement-arrangement?venue=${encodeURIComponent(venueCode)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&from=venue-timetable`;
             if (currentCourseCode) url += `&code=${encodeURIComponent(currentCourseCode)}`;
             if (currentCohort) url += `&cohort=${encodeURIComponent(currentCohort)}`;
             window.location.href = url;

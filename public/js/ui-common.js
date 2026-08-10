@@ -275,7 +275,7 @@ const hours = [
 
 // ───── Navigation ─────
 
-function goToReplacement(code, cohort, opts) {
+function goToReplacement(code, cohort, opts, from) {
     let url = '/replacement-arrangement';
     const params = [];
     if (code) params.push('code=' + encodeURIComponent(code));
@@ -286,6 +286,7 @@ function goToReplacement(code, cohort, opts) {
         if (opts.end !== undefined) params.push('end=' + opts.end);
         if (opts.venue) params.push('originalVenue=' + encodeURIComponent(opts.venue));
     }
+    if (from) params.push('from=' + from);
     if (params.length) url += '?' + params.join('&');
     window.location.href = url;
 }
@@ -1188,5 +1189,30 @@ function updateNavBadge() {
     if (badge) {
         badge.textContent = count;
         badge.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+}
+
+// ───── BackNavigator (dynamic back button) ─────
+
+class BackNavigator {
+    static #routes = {
+        'replacement-home': '/replacement-home-ui',
+        'my-request-history': '/my-request-history-ui',
+        'venue-timetable': '/venue-timetable-ui',
+        'my-timetable': '/my-timetable-ui'
+    };
+
+    static getDefault() {
+        return '/replacement-home-ui';
+    }
+
+    static getBackUrl() {
+        var params = new URLSearchParams(window.location.search);
+        var from = params.get('from');
+        return BackNavigator.#routes[from] || BackNavigator.getDefault();
+    }
+
+    static navigate() {
+        window.location.href = BackNavigator.getBackUrl();
     }
 }

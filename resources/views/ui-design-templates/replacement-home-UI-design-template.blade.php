@@ -417,7 +417,7 @@
         }
 
         function goToReplacementWith(code, date) {
-            window.location.href = '/replacement-arrangement?code=' + encodeURIComponent(code) + '&date=' + encodeURIComponent(date);
+            window.location.href = '/replacement-arrangement?code=' + encodeURIComponent(code) + '&date=' + encodeURIComponent(date) + '&from=replacement-home';
         }
 
 
