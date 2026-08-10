@@ -528,7 +528,7 @@
         function copyEmail(email, event) {
             event.stopPropagation();
             navigator.clipboard.writeText(email).then(function() {
-                showToast('Email copied: ' + email, null, 2000);
+                toast.show('Email copied: ' + email, null, 2000);
             });
         }
 
@@ -745,13 +745,13 @@
                 html += '<td>' + r.lecturer + '</td>';
             }
             html += '<td><div class="cell-code">' + r.courseCode + '</div><div class="cell-name">' + r.courseName + '</div></td>';
-            html += '<td>' + formatClassBlock(r) + '</td>';
+            html += '<td>' + HtmlBuilder.classBlock(r) + '</td>';
 
             // Proposed Replacement with slot validity icon
             const slotIcon = r.slotValidity === 'conflict'
                 ? '<span class="slot-icon slot-conflict" title="Conflict">⚠</span>'
                 : '<span class="slot-icon slot-valid" title="Slot available">✓</span>';
-            html += '<td>' + formatReplacementBlock(r) + ' ' + slotIcon + '</td>';
+            html += '<td>' + HtmlBuilder.replacementBlock(r) + ' ' + slotIcon + '</td>';
 
             html += '<td>' + r.totalStudents + '</td>';
             html += '<td><span class="urgency-badge ' + urgencyClass(level) + '">' + urgencyLabel(level) + '</span></td>';
@@ -1108,7 +1108,7 @@
             selectedIds.clear();
             renderTable();
             updateNavBadge();
-            showToast(label + ' approved.' + notesLine, function() {
+            toast.show(label + ' approved.' + notesLine, function() {
                 ids.forEach(id => { const r = MockData.approvalRequests.find(x => x.id === id); r.status = prevStatuses[id]; });
                 renderTable();
                 updateNavBadge();
@@ -1137,7 +1137,7 @@
         function rejectRequest() {
             const reason = document.getElementById('rejectReasonInput').value.trim();
             if (!reason) {
-                showToast('Please provide a rejection reason.', null, 3000);
+                toast.show('Please provide a rejection reason.', null, 3000);
                 return;
             }
             const isBulk = currentRejectId === null;
@@ -1149,7 +1149,7 @@
             selectedIds.clear();
             renderTable();
             updateNavBadge();
-            showToast(label + ' rejected.', function() {
+            toast.show(label + ' rejected.', function() {
                 ids.forEach(id => { const r = MockData.approvalRequests.find(x => x.id === id); r.status = prevStatuses[id]; });
                 renderTable();
                 updateNavBadge();
@@ -1225,7 +1225,7 @@
             if (!id) return;
             const r = MockData.approvalRequests.find(function(x) { return x.id === id; });
             if (!r) {
-                if (typeof showToast === 'function') showToast('Request #' + id + ' not found', 'error');
+                toast.show('Request #' + id + ' not found', 'error');
                 return;
             }
             openModalById(id);
@@ -1237,15 +1237,15 @@
             document.getElementById('statusFilter').value = 'Pending';
 
             // Skeleton loading
-            showSummarySkeleton();
-            withSkeleton(function() {
+            SkeletonLoader.showSummary();
+            SkeletonLoader.with(function() {
                 isInitialLoad = false;
                 restoreFilters();
                 initLocalRpp();
                 renderTable();
                 updateNavBadge();
                 checkDeepLink();
-                hideSummarySkeleton();
+                SkeletonLoader.hideSummary();
             }, document.getElementById('tableBody'), 10, 400);
 
             initRpp({
@@ -1256,8 +1256,8 @@
                     rpp = size;
                     currentPage = 1;
                     window.scrollTo(0, 0);
-                    showSummarySkeleton();
-                    withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                    SkeletonLoader.showSummary();
+                    SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
                     saveFilters();
                 }
             });
@@ -1265,15 +1265,15 @@
             document.getElementById('searchInput').addEventListener('input', function() {
                 currentPage = 1;
                 window.scrollTo(0, 0);
-                showSummarySkeleton();
-                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                SkeletonLoader.showSummary();
+                SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
                 saveFilters();
             });
             document.getElementById('statusFilter').addEventListener('change', function() {
                 currentPage = 1;
                 window.scrollTo(0, 0);
-                showSummarySkeleton();
-                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                SkeletonLoader.showSummary();
+                SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
                 saveFilters();
             });
             document.getElementById('clearFilters').addEventListener('click', resetFilters);

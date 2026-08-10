@@ -708,8 +708,8 @@
                     var cells = [
                         { html: formatDateTime(r.requestedAt) + requestAgeHtml(r.requestedAt), cls: 'col-requested-at' },
                         { html: '<span class="cell-code">' + r.courseCode + ' <span class="cell-type">(' + r.classType + ')</span></span><span class="cell-name">' + r.courseName + '</span>', cls: 'col-code' },
-                        { html: formatClassBlock(r), cls: 'col-original' },
-                        { html: formatReplacementBlock(r), cls: 'col-replacement' },
+                        { html: HtmlBuilder.classBlock(r), cls: 'col-original' },
+                        { html: HtmlBuilder.replacementBlock(r), cls: 'col-replacement' },
                         { html: r.venue, cls: 'col-venue' },
                         { html: String(r.totalStudents), cls: 'col-students' },
                         { html: r.cohorts.join('<br>'), cls: 'col-cohort' },
@@ -822,7 +822,7 @@
                     closeCancelConfirm();
                     closeModal();
                     renderTable();
-                    showToast('Request #' + removed.id + ' cancelled.', function() {
+                    toast.show('Request #' + removed.id + ' cancelled.', function() {
                         mockRequests.splice(idx, 0, removed);
                         renderTable();
                     });
@@ -865,7 +865,7 @@
             selectedIds.clear();
             closeBatchCancelConfirm();
             renderTable();
-            showToast(count + ' request' + (count !== 1 ? 's' : '') + ' cancelled.', function() {
+            toast.show(count + ' request' + (count !== 1 ? 's' : '') + ' cancelled.', function() {
                 mockRequests.push.apply(mockRequests, removed);
                 renderTable();
             });
@@ -1028,8 +1028,8 @@
 
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
 
-            showSummarySkeleton();
-            withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+            SkeletonLoader.showSummary();
+            SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
             updateWeekArrowState();
             initWeekKeyboardShortcuts();
 
@@ -1037,22 +1037,22 @@
                 pageState.currentPage = 1;
                 saveFilters();
                 window.scrollTo(0, 0);
-                showSummarySkeleton();
-                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                SkeletonLoader.showSummary();
+                SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
             });
             document.getElementById('statusFilter').addEventListener('change', function() {
                 pageState.currentPage = 1;
                 saveFilters();
                 window.scrollTo(0, 0);
-                showSummarySkeleton();
-                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                SkeletonLoader.showSummary();
+                SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
             });
             document.getElementById('hideCompleted').addEventListener('change', function() {
                 pageState.currentPage = 1;
                 saveFilters();
                 window.scrollTo(0, 0);
-                showSummarySkeleton();
-                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                SkeletonLoader.showSummary();
+                SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
             });
             document.getElementById('clearFilters').addEventListener('click', function() {
                 document.getElementById('searchInput').value = '';
@@ -1062,8 +1062,8 @@
                 localStorage.removeItem('mrh-filters');
                 pageState.currentPage = 1;
                 window.scrollTo(0, 0);
-                showSummarySkeleton();
-                withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                SkeletonLoader.showSummary();
+                SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
                 updateWeekArrowState();
             });
 
@@ -1077,8 +1077,8 @@
                     rowsPerPage = size;
                     pageState.currentPage = 1;
                     window.scrollTo(0, 0);
-                    showSummarySkeleton();
-                    withSkeleton(function() { renderTable(); hideSummarySkeleton(); }, document.getElementById('tableBody'), 10, 400);
+                    SkeletonLoader.showSummary();
+                    SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
                 }
             });
 

@@ -980,7 +980,7 @@
             updateRecent(code);
 
             /* show skeleton */
-            withSkeleton(function() {
+            SkeletonLoader.with(function() {
                 buildTimetable();
             }, document.getElementById('tableBody'), 10, 300);
 
@@ -1185,7 +1185,7 @@
                 if (day.today) dayColClass += ' today';
                 if (day.holiday || day.sunday) dayColClass += ' offday';
                 dayTd.className = dayColClass;
-                dayTd.innerHTML = buildDayHtml(day);
+                dayTd.innerHTML = HtmlBuilder.dayHeader(day);
                 tr.appendChild(dayTd);
 
                 const dayEvents = weekEvents.filter(e => e.di === di);

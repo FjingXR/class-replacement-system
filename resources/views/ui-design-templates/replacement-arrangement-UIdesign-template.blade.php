@@ -1285,7 +1285,7 @@
                 pushHistory({ action: 'select', day: di, hour: hi, venue: currentVenue, week: currentWeek });
                 const conflict = checkConflict(di, hi);
                 if (conflict) {
-                    showToast('This slot overlaps with your ' + conflict + ' class');
+                    toast.show('This slot overlaps with your ' + conflict + ' class');
                 }
                 saveCurrentWeek();
                 updateCounter();
@@ -1421,7 +1421,7 @@
                     selectedCells = [];
                     Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
                     updateCounter();
-                    showToast(toast.message, null, 5000, 'View \u2192', '/my-request-history-ui', toast.details);
+                    toast.show(toast.message, null, 5000, 'View \u2192', '/my-request-history-ui', toast.details);
                 }
             );
         }
@@ -1442,7 +1442,7 @@
                     });
                     selectedCells = [];
                     updateCounter();
-                    showToast('All selections cleared.', function() {
+                    toast.show('All selections cleared.', function() {
                         Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
                         savedCells.forEach(c => {
                             c.el.classList.remove('cell-available');
@@ -1467,7 +1467,7 @@
                         hideConfirmModal();
                         selectedCells = [];
                         Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
-                        showToast('Selections cleared.', function() {
+                        toast.show('Selections cleared.', function() {
                             Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
                             selectedCells = savedCells;
                         });
@@ -1497,7 +1497,7 @@
                         selectedCells = [];
                         updateCounter();
                         var navTimer = setTimeout(function() { window.location.href = '/replacement-home-ui'; }, 5000);
-                        showToast('Selections cleared.', function() {
+                        toast.show('Selections cleared.', function() {
                             clearTimeout(navTimer);
                             Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
                             savedCells.forEach(c => {
@@ -1582,7 +1582,7 @@
                 }
             }
             updateCounter();
-            showToast('Selection undone');
+            toast.show('Selection undone');
         }
 
         function focusCell(day, hour) {

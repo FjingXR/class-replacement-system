@@ -345,7 +345,7 @@
             document.getElementById('cancelConfirmOverlay').style.display = 'none';
             if (confirmed) {
                 closeModal();
-                showToast('Class cancelled.', null);
+                toast.show('Class cancelled.', null);
             }
         }
 
@@ -401,7 +401,7 @@
                 if (day.today) dayColClass += ' today';
                 if (day.holiday || day.sunday) dayColClass += ' offday';
                 dayTd.className = dayColClass;
-                dayTd.innerHTML = buildDayHtml(day);
+                dayTd.innerHTML = HtmlBuilder.dayHeader(day);
                 tr.appendChild(dayTd);
 
                 const dayEvents = events.filter(e => e.di === di);

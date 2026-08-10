@@ -21,20 +21,6 @@ function navigateHome() {
     window.location.href = '/';
 }
 
-function to12h(t) {
-    const [hStr, m] = t.split(':');
-    const h = parseInt(hStr);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-    return h12 + ':' + m + ' ' + ampm;
-}
-
-function formatDate(iso) {
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const parts = iso.split('-');
-    return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
-}
-
 function updateWeekArrows(prevDisabled, nextDisabled) {
     const prev = document.querySelector('.week-arrow[aria-label="Previous week"]');
     const next = document.querySelector('.week-arrow[aria-label="Next week"]');
@@ -61,14 +47,10 @@ function updateProgress() {
     if (label) label.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks;
 }
 
-function fmt(d) {
-    return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' }) + ' ' + d.getFullYear();
-}
-
 function updateWeekSubtitle() {
     const el = document.getElementById('weekSubtitle');
     if (el) {
-        el.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks + ' \u00B7 ' + fmt(weekData[currentWeek].start) + ' \u00B7 ' + fmt(weekData[currentWeek].end);
+        el.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks + ' \u00B7 ' + DateHelper.fmt(weekData[currentWeek].start) + ' \u00B7 ' + DateHelper.fmt(weekData[currentWeek].end);
     }
 }
 
@@ -99,18 +81,171 @@ function initTodayBtn() {
     if (btn) btn.addEventListener('click', jumpToToday);
 }
 
-// ───── Day header builder (shared by all timetable pages) ─────
-
-function buildDayHtml(day) {
-    let html = '<span class="day-label">' + day.abbr + '</span><span class="date-label">' + day.date + '</span>';
-    if (day.today) {
-        html += '<span class="today-badge">Today</span>';
-    } else if (day.holiday) {
-        html += '<span class="holiday-label">' + (day.holidayLabel || 'Public Holiday') + '</span>';
-    } else if (day.sunday) {
-        html += '<span class="date-label off-label">OFF</span>';
+class WeekNavigator {
+    constructor(semesterData, weekData) {
+        this._semester = semesterData;
+        this._weekData = weekData;
+        this._currentWeek = 0;
     }
-    return html;
+
+    get currentWeek() {
+        return this._currentWeek;
+    }
+
+    get weekData() {
+        return this._weekData;
+    }
+
+    get semester() {
+        return this._semester;
+    }
+
+    jumpToToday() {
+        this._currentWeek = this._currentWeekIndex();
+        this._buildTimetable();
+        this._updateSelect();
+        this._updateSubtitle();
+        this._updateProgress();
+        this.save();
+        this._scrollToGrid();
+    }
+
+    prevWeek() {
+        if (this._currentWeek > 0) {
+            this._currentWeek--;
+            this._buildTimetable();
+            this._updateSelect();
+            this._updateSubtitle();
+            this._updateProgress();
+            this._updateArrows();
+            this.save();
+        }
+    }
+
+    nextWeek() {
+        if (this._currentWeek < this._semester.weeks - 1) {
+            this._currentWeek++;
+            this._buildTimetable();
+            this._updateSelect();
+            this._updateSubtitle();
+            this._updateProgress();
+            this._updateArrows();
+            this.save();
+        }
+    }
+
+    selectWeek(index) {
+        this._currentWeek = index;
+        this._buildTimetable();
+        this._updateSelect();
+        this._updateSubtitle();
+        this._updateProgress();
+        this._updateArrows();
+        this.save();
+    }
+
+    save() {
+        try {
+            localStorage.setItem('currentWeek', this._currentWeek);
+        } catch (e) { /* ignore */ }
+    }
+
+    load() {
+        try {
+            var saved = localStorage.getItem('currentWeek');
+            if (saved !== null) {
+                var idx = parseInt(saved, 10);
+                if (!isNaN(idx)) {
+                    this._currentWeek = Math.max(0, Math.min(this._semester.weeks - 1, idx));
+                }
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    initKeyboard() {
+        if (this._keyboardBound) return;
+        this._keyboardBound = true;
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+            if (e.key === '[') {
+                e.preventDefault();
+                this.prevWeek();
+            } else if (e.key === ']') {
+                e.preventDefault();
+                this.nextWeek();
+            }
+        });
+    }
+
+    initTodayBtn() {
+        var btn = document.getElementById('todayBtn');
+        if (btn) btn.addEventListener('click', () => this.jumpToToday());
+    }
+
+    saveWeek() {
+        this.save();
+    }
+
+    loadSavedWeek() {
+        this.load();
+    }
+
+    initWeekKeyboardShortcuts() {
+        this.initKeyboard();
+    }
+
+    updateWeekSubtitle() {
+        this._updateSubtitle();
+    }
+
+    updateWeekProgress() {
+        this._updateProgress();
+    }
+
+    _currentWeekIndex() {
+        var parts = this._semester.startDate.split('-');
+        var semesterStart = new Date(parts[0], parts[1] - 1, parts[2]);
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var idx = Math.floor((today - semesterStart) / 86400000 / 7);
+        return Math.max(0, Math.min(this._semester.weeks - 1, idx));
+    }
+
+    _buildTimetable() {
+        if (typeof window.buildTimetable === 'function') window.buildTimetable();
+    }
+
+    _updateSelect() {
+        var sel = document.getElementById('weekSelect');
+        if (sel) sel.selectedIndex = this._currentWeek;
+    }
+
+    _updateSubtitle() {
+        var el = document.getElementById('weekSubtitle');
+        if (el) {
+            el.textContent = 'Week ' + (this._currentWeek + 1) + ' of ' + this._semester.weeks + ' \u00B7 ' + DateHelper.fmt(this._weekData[this._currentWeek].start) + ' \u00B7 ' + DateHelper.fmt(this._weekData[this._currentWeek].end);
+        }
+    }
+
+    _updateProgress() {
+        var pct = ((this._currentWeek + 1) / this._semester.weeks) * 100;
+        var fill = document.getElementById('progressFill');
+        var label = document.getElementById('progressLabel');
+        if (fill) fill.style.width = pct + '%';
+        if (label) label.textContent = 'Week ' + (this._currentWeek + 1) + ' of ' + this._semester.weeks;
+    }
+
+    _updateArrows() {
+        var prev = document.querySelector('.week-arrow[aria-label="Previous week"]');
+        var next = document.querySelector('.week-arrow[aria-label="Next week"]');
+        if (prev) prev.disabled = this._currentWeek <= 0;
+        if (next) next.disabled = this._currentWeek >= this._semester.weeks - 1;
+    }
+
+    _scrollToGrid() {
+        var grid = document.querySelector('.grid-wrapper');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 // ───── Time slot helpers (shared by timetable pages) ─────
@@ -123,12 +258,6 @@ const hours = [
     '15:00', '15:30', '16:00', '16:30',
     '17:00', '17:30', '18:00', '18:30'
 ];
-
-function add30min(t) {
-    const [h, m] = t.split(':').map(Number);
-    const total = h * 60 + m + 30;
-    return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
-}
 
 // ───── Navigation ─────
 
@@ -273,6 +402,94 @@ function updateResultCount(cfg) {
     count.textContent = 'Showing ' + cfg.data.length + ' of ' + cfg.total + ' ' + cfg.label;
 }
 
+class TableController {
+    constructor(config) {
+        this._columns = config.columns || [];
+        this._sortState = config.sortState || { field: '', dir: 'asc' };
+        this._render = config.render || function() {};
+    }
+
+    sort(field) {
+        if (this._sortState.field === field) {
+            this._sortState.dir = this._sortState.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+            this._sortState.field = field;
+            this._sortState.dir = 'asc';
+        }
+        this._render();
+    }
+
+    compareBy(va, vb) {
+        if (va < vb) return this._sortState.dir === 'asc' ? -1 : 1;
+        if (va > vb) return this._sortState.dir === 'asc' ? 1 : -1;
+        return 0;
+    }
+
+    makeHeader(col) {
+        const th = document.createElement('th');
+        th.className = col.cls;
+        if (col.sortable) {
+            th.classList.add('sortable');
+            var arrow = '';
+            if (this._sortState.field === col.field) {
+                arrow = '<span class="sort-arrow">' + (this._sortState.dir === 'asc' ? '&#9650;' : '&#9660;') + '</span>';
+            }
+            th.innerHTML = col.label + arrow;
+            th.addEventListener('click', () => {
+                this.sort(col.field);
+            });
+        } else {
+            th.textContent = col.label;
+        }
+        return th;
+    }
+
+    paginate(data, page, pageSize) {
+        const totalPages = Math.ceil(data.length / pageSize);
+        const from = (page - 1) * pageSize + 1;
+        const to = Math.min(page * pageSize, data.length);
+        return {
+            totalPages,
+            from,
+            to,
+            total: data.length
+        };
+    }
+
+    updateResultCount(data, total, label) {
+        return 'Showing ' + data.length + ' of ' + total + ' ' + label;
+    }
+
+    initRpp(cfg) {
+        var sel = document.getElementById(cfg.selectId);
+        if (!sel) return;
+
+        if (cfg.storageKey) {
+            var saved = localStorage.getItem(cfg.storageKey);
+            if (saved !== null) {
+                sel.value = saved;
+            }
+        }
+
+        var initial = sel.value;
+        var parsed = initial === 'all' ? Infinity : parseInt(initial) || cfg.defaultVal;
+        cfg.onChange(parsed);
+
+        sel.addEventListener('change', function () {
+            var val = this.value;
+            var pageSize = val === 'all' ? Infinity : parseInt(val) || cfg.defaultVal;
+            if (cfg.storageKey) {
+                localStorage.setItem(cfg.storageKey, val);
+            }
+            cfg.onChange(pageSize);
+        });
+    }
+
+    get sortState() {
+        return this._sortState;
+    }
+}
+
 // ───── Modal helpers ─────
 
 function closeOnEsc(closeFn) {
@@ -283,6 +500,48 @@ function closeOnEsc(closeFn) {
 
 function closeOnOverlayClick(e, closeFn) {
     if (e.target === e.currentTarget) closeFn();
+}
+
+class ModalController {
+    constructor(modalId, renderFn) {
+        this._modalId = modalId;
+        this._renderFn = renderFn;
+        this._onKeyDown = null;
+        this._onOverlayClick = null;
+    }
+
+    open(data) {
+        this.close();
+        this._renderFn(data);
+        const modal = document.getElementById(this._modalId);
+        if (modal) modal.style.display = 'flex';
+        this._onKeyDown = (e) => {
+            if (e.key === 'Escape') this.close();
+        };
+        this._onOverlayClick = (e) => {
+            if (e.target === modal) this.close();
+        };
+        document.addEventListener('keydown', this._onKeyDown);
+        if (modal) modal.addEventListener('click', this._onOverlayClick);
+    }
+
+    close() {
+        const modal = document.getElementById(this._modalId);
+        if (modal) modal.style.display = 'none';
+        if (this._onKeyDown) {
+            document.removeEventListener('keydown', this._onKeyDown);
+            this._onKeyDown = null;
+        }
+        if (this._onOverlayClick) {
+            if (modal) modal.removeEventListener('click', this._onOverlayClick);
+            this._onOverlayClick = null;
+        }
+    }
+
+    isOpen() {
+        const modal = document.getElementById(this._modalId);
+        return modal ? modal.style.display !== 'none' : false;
+    }
 }
 
 // ───── Login page helpers ─────
@@ -417,64 +676,174 @@ function initCollapsibleCards() {
     });
 }
 
-// ───── Skeleton Loading ─────
+// ───── DateHelper (static utility class) ─────
 
-function showSkeleton(container, type = 'rows', count = 5) {
-    container.innerHTML = '';
-    const isTbody = container.tagName === 'TBODY';
-    for (let i = 0; i < count; i++) {
-        if (isTbody) {
-            const tr = document.createElement('tr');
-            const td = document.createElement('td');
-            td.colSpan = 9;
-            td.innerHTML = '<div class="skeleton skeleton-row"></div>';
-            tr.appendChild(td);
-            container.appendChild(tr);
-        } else {
-            const el = document.createElement('div');
-            el.className = `skeleton skeleton-${type === 'rows' ? 'row' : 'card'}`;
-            container.appendChild(el);
-        }
+class DateHelper {
+    static to12h(t) {
+        const [hStr, m] = t.split(':');
+        const h = parseInt(hStr);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        return h12 + ':' + m + ' ' + ampm;
+    }
+
+    static formatDate(iso) {
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const parts = iso.split('-');
+        return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
+    }
+
+    static formatDateTime(iso) {
+        if (!iso) return '';
+        const [datePart, timePart] = iso.split('T');
+        const [y, mo, d] = datePart.split('-');
+        const [h, mi] = timePart.split(':');
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const day = parseInt(d);
+        const month = months[parseInt(mo) - 1];
+        const year = parseInt(y);
+        let hh = parseInt(h);
+        const mm = mi;
+        const ampm = hh >= 12 ? 'PM' : 'AM';
+        hh = hh === 0 ? 12 : hh > 12 ? hh - 12 : hh;
+        return day + ' ' + month + ' ' + year + ', ' + hh + ':' + mm + ' ' + ampm;
+    }
+
+    static fmt(d) {
+        return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' }) + ' ' + d.getFullYear();
+    }
+
+    static add30min(t) {
+        const [h, m] = t.split(':').map(Number);
+        const total = h * 60 + m + 30;
+        return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+    }
+
+    static dayAbbr(day) {
+        return day.substring(0, 3);
+    }
+
+    static isoDayName(iso) {
+        var p = iso.split('-');
+        var d = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+        return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];
+    }
+
+    static getTodayMs() {
+        var t = new Date();
+        t.setHours(0, 0, 0, 0);
+        return t.getTime();
     }
 }
 
-function hideSkeleton(container) {
-    if (!container) return;
-    container.querySelectorAll('.skeleton, .skeleton-row, .skeleton-card').forEach(el => el.remove());
-    container.querySelectorAll('tr').forEach(tr => {
-        if (tr.querySelector('.skeleton')) tr.remove();
-    });
-}
+// ───── Backward-compatible global aliases (delegate to DateHelper) ─────
 
-function withSkeleton(callback, container, count = 10, delay = 400) {
-    showSkeleton(container, 'rows', count);
-    const hide = () => setTimeout(() => hideSkeleton(container), delay);
-    setTimeout(() => {
-        try {
-            const result = callback();
-            if (result && typeof result.then === 'function') {
-                return result.then(hide, (err) => { hide(); throw err; });
-            }
-            hide();
-        } catch (err) { hide(); throw err; }
-    }, 50);
-}
+function to12h(t) { return DateHelper.to12h(t); }
+function formatDate(iso) { return DateHelper.formatDate(iso); }
+function formatDateTime(iso) { return DateHelper.formatDateTime(iso); }
+function fmt(d) { return DateHelper.fmt(d); }
+function add30min(t) { return DateHelper.add30min(t); }
+function dayAbbr(day) { return DateHelper.dayAbbr(day); }
+function isoDayName(iso) { return DateHelper.isoDayName(iso); }
+function getTodayMs() { return DateHelper.getTodayMs(); }
 
-function showSummarySkeleton() {
-    document.querySelectorAll('.summary-card .summary-value').forEach(el => {
-        el.dataset.original = el.innerHTML;
-        el.innerHTML = '<div class="skeleton" style="height:24px;width:40px;display:inline-block"></div>';
-    });
-}
+// ───── HtmlBuilder (static utility class) ─────
 
-function hideSummarySkeleton() {
-    document.querySelectorAll('.summary-card .summary-value').forEach(el => {
-        if (el.dataset.original !== undefined) {
-            el.innerHTML = el.dataset.original;
-            delete el.dataset.original;
+class HtmlBuilder {
+    static classBlock(r) {
+        var d = DateHelper.dayAbbr(r.classDay);
+        var dateStr = DateHelper.formatDate(r.classDate);
+        var wn = getWeekNumber(r.classDate);
+        var weekTag = wn ? ' (Week ' + wn + ')' : '';
+        var timeStr = DateHelper.to12h(r.timeStart) + ' to ' + DateHelper.to12h(r.timeEnd);
+        var hrs = r.duration + ' hr' + (r.duration > 1 ? 's' : '');
+        return '<div class="cell-class-block"><span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br><span class="class-time">' + timeStr + '</span> <span class="class-duration">(' + hrs + ')</span></div>';
+    }
+
+    static replacementBlock(r) {
+        if (!r.replacementDate) return '<span style="color:var(--color-on-surface-variant);opacity:0.5">&mdash;</span>';
+        var d = DateHelper.dayAbbr(DateHelper.isoDayName(r.replacementDate));
+        var dateStr = DateHelper.formatDate(r.replacementDate);
+        var wn = getWeekNumber(r.replacementDate);
+        var weekTag = wn ? ' (Week ' + wn + ')' : '';
+        var statusCls = statusClass(r.status);
+        var venue = r.replacementVenue || r.venue || '—';
+        return '<div class="cell-class-block">'
+            + '<span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br>'
+            + '<span class="class-time ' + statusCls + '">' + r.replacementTime + '</span><br>'
+            + '<span class="class-venue">' + venue + '</span>'
+            + '</div>';
+    }
+
+    static dayHeader(day) {
+        let html = '<span class="day-label">' + day.abbr + '</span><span class="date-label">' + day.date + '</span>';
+        if (day.today) {
+            html += '<span class="today-badge">Today</span>';
+        } else if (day.holiday) {
+            html += '<span class="holiday-label">' + (day.holidayLabel || 'Public Holiday') + '</span>';
+        } else if (day.sunday) {
+            html += '<span class="date-label off-label">OFF</span>';
         }
-    });
+        return html;
+    }
 }
+
+// ───── Skeleton Loading ─────
+
+const SkeletonLoader = {
+    show(container, type = 'rows', count = 5) {
+        container.innerHTML = '';
+        const isTbody = container.tagName === 'TBODY';
+        for (let i = 0; i < count; i++) {
+            if (isTbody) {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.colSpan = 9;
+                td.innerHTML = '<div class="skeleton skeleton-row"></div>';
+                tr.appendChild(td);
+                container.appendChild(tr);
+            } else {
+                const el = document.createElement('div');
+                el.className = `skeleton skeleton-${type === 'rows' ? 'row' : 'card'}`;
+                container.appendChild(el);
+            }
+        }
+    },
+    hide(container) {
+        if (!container) return;
+        container.querySelectorAll('.skeleton, .skeleton-row, .skeleton-card').forEach(el => el.remove());
+        container.querySelectorAll('tr').forEach(tr => {
+            if (tr.querySelector('.skeleton')) tr.remove();
+        });
+    },
+    with(callback, container, count = 10, delay = 400) {
+        this.show(container, 'rows', count);
+        const hide = () => setTimeout(() => this.hide(container), delay);
+        setTimeout(() => {
+            try {
+                const result = callback();
+                if (result && typeof result.then === 'function') {
+                    return result.then(hide, (err) => { hide(); throw err; });
+                }
+                hide();
+            } catch (err) { hide(); throw err; }
+        }, 50);
+    },
+    showSummary() {
+        document.querySelectorAll('.summary-card .summary-value').forEach(el => {
+            el.dataset.original = el.innerHTML;
+            el.innerHTML = '<div class="skeleton" style="height:24px;width:40px;display:inline-block"></div>';
+        });
+    },
+    hideSummary() {
+        document.querySelectorAll('.summary-card .summary-value').forEach(el => {
+            if (el.dataset.original !== undefined) {
+                el.innerHTML = el.dataset.original;
+                delete el.dataset.original;
+            }
+        });
+    }
+};
 
 // ───── Scroll Restoration ─────
 
@@ -511,66 +880,63 @@ window.addEventListener('scroll', () => {
     }, 200);
 }, { passive: true });
 
-// ───── Toast/Undo Bar ─────
+// ───── ToastManager (singleton class) ─────
 
-let _toastTimer = null;
-
-/**
- * Show a toast/undo bar at bottom-left.
- * @param {string} message - Success message to display
- * @param {function|null} undoCallback - Function to call when Undo is clicked (null = no Undo button)
- * @param {number} duration - Auto-dismiss time in ms (default 5000)
- * @param {string} [linkText] - Optional text for a clickable link in the toast
- * @param {string} [linkUrl] - Optional URL for the clickable link
- * @param {string} [details] - Optional secondary detail text (shown below message)
- */
-function showToast(message, undoCallback, duration = 5000, linkText = '', linkUrl = '', details = '') {
-    const bar = document.getElementById('toastBar');
-    if (!bar) return;
-
-    const msgEl = bar.querySelector('.toast-message');
-    const detailsEl = bar.querySelector('.toast-details');
-    const undoBtn = bar.querySelector('.toast-undo');
-    const linkEl = bar.querySelector('.toast-link');
-
-    msgEl.textContent = message;
-
-    if (details && detailsEl) {
-        detailsEl.textContent = details;
-        detailsEl.style.display = 'block';
-    } else if (detailsEl) {
-        detailsEl.style.display = 'none';
+class ToastManager {
+    constructor() {
+        this._timer = null;
     }
 
-    if (undoCallback) {
-        undoBtn.style.display = 'inline-block';
-        undoBtn.onclick = function () {
-            undoCallback();
-            dismissToast();
-        };
-    } else {
-        undoBtn.style.display = 'none';
+    show(message, undoCallback, duration = 5000, linkText = '', linkUrl = '', details = '') {
+        const bar = document.getElementById('toastBar');
+        if (!bar) return;
+
+        const msgEl = bar.querySelector('.toast-message');
+        const detailsEl = bar.querySelector('.toast-details');
+        const undoBtn = bar.querySelector('.toast-undo');
+        const linkEl = bar.querySelector('.toast-link');
+
+        msgEl.textContent = message;
+
+        if (details && detailsEl) {
+            detailsEl.textContent = details;
+            detailsEl.style.display = 'block';
+        } else if (detailsEl) {
+            detailsEl.style.display = 'none';
+        }
+
+        if (undoCallback) {
+            undoBtn.style.display = 'inline-block';
+            undoBtn.onclick = () => {
+                undoCallback();
+                this.dismiss();
+            };
+        } else {
+            undoBtn.style.display = 'none';
+        }
+
+        if (linkText && linkUrl && linkEl) {
+            linkEl.textContent = linkText;
+            linkEl.href = linkUrl;
+            linkEl.style.display = 'inline-block';
+        } else if (linkEl) {
+            linkEl.style.display = 'none';
+        }
+
+        bar.classList.add('visible');
+
+        clearTimeout(this._timer);
+        this._timer = setTimeout(() => this.dismiss(), duration);
     }
 
-    if (linkText && linkUrl && linkEl) {
-        linkEl.textContent = linkText;
-        linkEl.href = linkUrl;
-        linkEl.style.display = 'inline-block';
-    } else if (linkEl) {
-        linkEl.style.display = 'none';
+    dismiss() {
+        const bar = document.getElementById('toastBar');
+        if (bar) bar.classList.remove('visible');
+        clearTimeout(this._timer);
     }
-
-    bar.classList.add('visible');
-
-    clearTimeout(_toastTimer);
-    _toastTimer = setTimeout(dismissToast, duration);
 }
 
-function dismissToast() {
-    const bar = document.getElementById('toastBar');
-    if (bar) bar.classList.remove('visible');
-    clearTimeout(_toastTimer);
-}
+const toast = new ToastManager();
 
 // ───── State Persistence (localStorage) ─────
 
@@ -634,10 +1000,6 @@ function createStatePersistence(storageKey, config) {
 
 const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
 
-function dayAbbr(day) {
-    return day.substring(0, 3);
-}
-
 // ───── Week Filter Navigation ─────
 
 function weekFilterChanged(opts) {
@@ -672,22 +1034,6 @@ const weekRanges = [
     { value: '4', label: 'Week 4 \u00b7 21 Sep 2026 ~ 27 Sep 2026', labelShort: 'Week 4 \u00b7 21 Sep ~ 27 Sep', start: '2026-09-21', end: '2026-09-27' },
 ];
 
-function formatDateTime(iso) {
-    if (!iso) return '';
-    const [datePart, timePart] = iso.split('T');
-    const [y, mo, d] = datePart.split('-');
-    const [h, mi] = timePart.split(':');
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const day = parseInt(d);
-    const month = months[parseInt(mo) - 1];
-    const year = parseInt(y);
-    let hh = parseInt(h);
-    const mm = mi;
-    const ampm = hh >= 12 ? 'PM' : 'AM';
-    hh = hh === 0 ? 12 : hh > 12 ? hh - 12 : hh;
-    return day + ' ' + month + ' ' + year + ', ' + hh + ':' + mm + ' ' + ampm;
-}
-
 function statusClass(status) {
     const map = {
         'Pending': 'status-pending',
@@ -699,37 +1045,6 @@ function statusClass(status) {
     return map[status] || '';
 }
 
-
-function isoDayName(iso) {
-    var p = iso.split('-');
-    var d = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
-    return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];
-}
-
-function formatClassBlock(r) {
-    var d = dayAbbr(r.classDay);
-    var dateStr = formatDate(r.classDate);
-    var wn = getWeekNumber(r.classDate);
-    var weekTag = wn ? ' (Week ' + wn + ')' : '';
-    var timeStr = to12h(r.timeStart) + ' to ' + to12h(r.timeEnd);
-    var hrs = r.duration + ' hr' + (r.duration > 1 ? 's' : '');
-    return '<div class="cell-class-block"><span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br><span class="class-time">' + timeStr + '</span> <span class="class-duration">(' + hrs + ')</span></div>';
-}
-
-function formatReplacementBlock(r) {
-    if (!r.replacementDate) return '<span style="color:var(--color-on-surface-variant);opacity:0.5">&mdash;</span>';
-    var d = dayAbbr(isoDayName(r.replacementDate));
-    var dateStr = formatDate(r.replacementDate);
-    var wn = getWeekNumber(r.replacementDate);
-    var weekTag = wn ? ' (Week ' + wn + ')' : '';
-    var statusCls = statusClass(r.status);
-    var venue = r.replacementVenue || r.venue || '—';
-    return '<div class="cell-class-block">'
-        + '<span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br>'
-        + '<span class="class-time ' + statusCls + '">' + r.replacementTime + '</span><br>'
-        + '<span class="class-venue">' + venue + '</span>'
-        + '</div>';
-}
 
 function getWeekRange(weekVal) {
     const found = weekRanges.find(function(w) { return w.value === weekVal; });
@@ -748,12 +1063,6 @@ function getWeekNumber(iso) {
         if (iso >= weekRanges[i].start && iso <= weekRanges[i].end) return weekRanges[i].value;
     }
     return '';
-}
-
-function getTodayMs() {
-    var t = new Date();
-    t.setHours(0, 0, 0, 0);
-    return t.getTime();
 }
 
 function updateNavBadge() {

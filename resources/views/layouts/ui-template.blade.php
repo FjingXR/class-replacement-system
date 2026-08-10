@@ -52,7 +52,7 @@
         <div class="toast-actions">
             <a class="toast-link" href="#" style="display:none"></a>
             <button class="toast-undo" style="display:none">Undo</button>
-            <button class="toast-close" onclick="dismissToast()">✕</button>
+            <button class="toast-close" onclick="toast.dismiss()">✕</button>
         </div>
     </div>
 </body>
