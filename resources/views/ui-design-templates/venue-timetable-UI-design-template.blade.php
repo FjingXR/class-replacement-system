@@ -533,6 +533,13 @@
             opacity: 0.7;
         }
 
+        /* ───── Remove td padding for cells with inner divs ───── */
+        .timetable td.hour-cell:has(.cell-available),
+        .timetable td.hour-cell:has(.event-block),
+        .timetable td.hour-cell.offday-slot {
+            padding: 0;
+        }
+
         /* ───── No venues match ───── */
         .no-match-banner {
             text-align: center;
