@@ -507,15 +507,21 @@
 
         /* ───── Booked Cell (empty, color only, disabled) ───── */
         .event-block {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: var(--color-error-container);
             cursor: not-allowed;
             pointer-events: none;
         }
         .cell-available {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: var(--color-secondary-container);
             cursor: pointer;
         }
@@ -526,18 +532,21 @@
 
         /* ───── Unavailable Cell (Holiday/Sunday) ───── */
         .cell-content.cell-occupied {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: var(--color-surface-variant);
             cursor: not-allowed;
             opacity: 0.7;
         }
 
-        /* ───── Remove td padding for cells with inner divs ───── */
+        /* ───── Ensure td has position: relative for absolute children ───── */
         .timetable td.hour-cell:has(.cell-available),
         .timetable td.hour-cell:has(.event-block),
-        .timetable td.hour-cell.offday-slot {
-            padding: 0;
+        .timetable td.hour-cell:has(.cell-content.cell-occupied) {
+            position: relative;
         }
 
         /* ───── No venues match ───── */
