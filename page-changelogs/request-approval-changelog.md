@@ -1,5 +1,30 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-10] Phase 2 Template Migration: Inline helpers → Shared OOP classes
+
+### Summary
+
+Migrated inline `formatShortDate()` to `DateHelper.formatDate()`, refactored `renderCards()` to use `HtmlBuilder.requestCard()`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-10 | Lines 553-558 | Removed | Deleted inline `formatShortDate(iso)` function definition |
+| 2026-08-10 | Lines 593-594 | Replaced | `formatShortDate(r.classDate)` → `DateHelper.formatDate(r.classDate)` |
+| 2026-08-10 | Line 909 | Replaced | `formatShortDate(r.classDate)` → `DateHelper.formatDate(r.classDate)` |
+| 2026-08-10 | Lines 894-909 | Refactored | `renderCards()` now uses `HtmlBuilder.requestCard(r, opts)` |
+
+#### `public/js/ui-common.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-10 | HtmlBuilder class | Added | `HtmlBuilder.requestCard(r, opts)` — constructs request approval card HTML |
+
+---
+
 ## [2026-08-09] UI Polish — Layout consistency, summary cards, dynamic dates, table auto-sizing, advanced UX
 
 ### Summary

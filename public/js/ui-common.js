@@ -727,6 +727,23 @@ class DateHelper {
         return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' }) + ' ' + d.getFullYear();
     }
 
+    static fmtShort(d) {
+        return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' });
+    }
+
+    static weekRangeLabel(weekNum) {
+        var range = weekRanges.find(function(w) { return w.value === String(weekNum); });
+        if (!range) return 'Week ' + weekNum;
+        var startParts = range.start.split('-');
+        var endParts = range.end.split('-');
+        var start = new Date(startParts[0], startParts[1] - 1, startParts[2]);
+        var end = new Date(endParts[0], endParts[1] - 1, endParts[2]);
+        if (window.innerWidth <= 768) {
+            return 'Week ' + weekNum + ' \u00B7 ' + DateHelper.fmtShort(start) + ' ~ ' + DateHelper.fmtShort(end);
+        }
+        return 'Week ' + weekNum + ' \u00B7 ' + DateHelper.fmt(start) + ' ~ ' + DateHelper.fmt(end);
+    }
+
     static add30min(t) {
         const [h, m] = t.split(':').map(Number);
         const total = h * 60 + m + 30;
@@ -799,6 +816,90 @@ class HtmlBuilder {
             html += '<span class="date-label off-label">OFF</span>';
         }
         return html;
+    }
+
+    static requestCard(r, opts) {
+        var lecturerHtml = '';
+        if (opts.lookupLecturer) {
+            var l = opts.lookupLecturer(r.lecturer);
+            lecturerHtml = l ? l.name + ' (' + l.staffId + ')' : r.lecturer;
+        } else {
+            lecturerHtml = r.lecturer;
+        }
+        var urgencyHtml = '';
+        if (opts.urgencyLevel && opts.urgencyClass && opts.urgencyLabel) {
+            var level = opts.urgencyLevel(r.classDate);
+            urgencyHtml = '<span class="urgency-badge ' + opts.urgencyClass(level) + '">' + opts.urgencyLabel(level) + '</span>';
+        }
+        var ageHtml = opts.requestAgeHtml ? opts.requestAgeHtml(r.requestedAt) : '';
+        return '<div class="card-header">' +
+            '<span class="card-code">#' + r.id + '</span>' +
+            '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
+            '</div>' +
+            '<div class="card-body">' +
+            '<div><strong>Course:</strong> ' + r.courseCode + ' - ' + r.courseName + '</div>' +
+            '<div><strong>Date:</strong> ' + DateHelper.formatDate(r.classDate) + ' ' + DateHelper.to12h(r.timeStart) + '</div>' +
+            '<div><strong>Lecturer:</strong> ' + lecturerHtml + '</div>' +
+            (urgencyHtml ? '<div><strong>Urgency:</strong> ' + urgencyHtml + '</div>' : '') +
+            (ageHtml ? '<div>' + ageHtml + '</div>' : '') +
+            '</div>';
+    }
+
+    static myRequestCard(r, opts) {
+        var typeLabel = r.classType === 'L' ? 'Lecture' : 'Tutorial';
+        var dayStr = DateHelper.dayAbbr(r.classDay);
+        var dateStr = DateHelper.formatDate(r.classDate);
+        var timeStr = DateHelper.to12h(r.timeStart) + ' – ' + DateHelper.to12h(r.timeEnd);
+        var ageHtml = opts.requestAgeHtml ? opts.requestAgeHtml(r.requestedAt) : '';
+        return '<div class="card-header">' +
+            '<span class="card-code">' + r.courseCode + ' (' + typeLabel + ')</span>' +
+            '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
+            '</div>' +
+            '<div class="card-body">' +
+            '<strong>' + r.courseName + '</strong><br>' +
+            dayStr + ', ' + dateStr + '<br>' +
+            timeStr + ' · ' + r.venue +
+            '</div>' +
+            '<div class="card-footer">' +
+            ageHtml +
+            '<span>' + r.cohorts.join(', ') + '</span>' +
+            '</div>';
+    }
+
+    static replacementHomeRow(c, opts) {
+        var typeLabel = c.type === 'L' ? 'L' : 'T';
+        var days = opts.daysLeft(c.date);
+        var urgencyCls = opts.urgencyClass(days);
+        return [
+            { html: opts.index, cls: 'col-no' },
+            { html: '<span class="cell-code">' + c.code + '</span><span class="cell-name">' + c.name + ' <span style="font-weight:400;font-size:12px;color:var(--color-on-surface-variant)">(' + typeLabel + ')</span></span>', cls: 'col-code' },
+            { html: opts.formatClassBlock(c), cls: 'col-original' },
+            { html: '<span class="' + urgencyCls + '">' + days + ' days</span>', cls: 'col-urgency' },
+            { html: c.venue, cls: 'col-venue' },
+            { html: String(c.totalStudents), cls: 'col-students' },
+            { html: c.cohorts.join('<br>'), cls: 'col-cohort' },
+            { html: '<span class="badge ' + opts.badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>', cls: 'col-reason' },
+            { html: '<button class="btn-action" onclick="event.stopPropagation(); goToReplacementWith(\'' + c.code + '\',\'' + c.date + '\')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Arrange Replacement</button>', cls: 'col-action' }
+        ];
+    }
+
+    static replacementHomeCard(c, opts) {
+        var typeLabel = c.type === 'L' ? 'Lecture' : 'Tutorial';
+        var days = opts.daysLeft(c.date);
+        var urgencyCls = opts.urgencyClass(days);
+        return '<div class="rc-header">' +
+            '<span class="rc-code">' + c.code + ' <span style="font-weight:400;font-size:12px;color:var(--color-on-surface-variant)">(' + typeLabel + ')</span></span>' +
+            '<span class="badge ' + opts.badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>' +
+            '</div>' +
+            '<div class="rc-body">' +
+            '<strong>' + c.name + '</strong><br>' +
+            c.day + ', ' + DateHelper.formatDate(c.date) + ' · Week ' + getWeekNumber(c.date) + '<br>' +
+            DateHelper.to12h(c.timeStart) + ' – ' + DateHelper.to12h(c.timeEnd) + ' · ' + c.venue +
+            '</div>' +
+            '<div class="rc-footer">' +
+            '<span class="' + urgencyCls + '">' + days + ' days left</span>' +
+            '<span>' + c.cohorts.join(', ') + '</span>' +
+            '</div>';
     }
 }
 

@@ -1,6 +1,31 @@
 # Changelog — Replacement Home Dashboard
 
-## [2026-08-06] Touch Target Upgrade: 44px → 48px (8dp)
+## [2026-08-10] Phase 2 Template Migration: Inline helpers → Shared OOP classes
+
+### Summary
+
+Migrated inline `computeWeek()` to `getWeekNumber()`, `weekRangeLabel()` to `DateHelper.weekRangeLabel()`, refactored `buildTable()` and `renderCards()` to use `HtmlBuilder.replacementHomeRow()` and `HtmlBuilder.replacementHomeCard()`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-10 | Lines 270-292 | Removed | Deleted inline `computeWeek()` and `weekRangeLabel()` function definitions |
+| 2026-08-10 | Lines 250, 309, 415, 446, 483 | Replaced | `computeWeek(c.date)` → `getWeekNumber(c.date)` |
+| 2026-08-10 | Line 452 | Replaced | `weekRangeLabel(w)` → `DateHelper.weekRangeLabel(w)` |
+| 2026-08-10 | Lines 337-361 | Refactored | `buildTable()` now uses `HtmlBuilder.replacementHomeRow(c, opts)` |
+| 2026-08-10 | Lines 370-395 | Refactored | `renderCards()` now uses `HtmlBuilder.replacementHomeCard(c, opts)` |
+
+#### `public/js/ui-common.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-10 | HtmlBuilder class | Added | `HtmlBuilder.replacementHomeRow(c, opts)` — constructs replacement-home table row |
+| 2026-08-10 | HtmlBuilder class | Added | `HtmlBuilder.replacementHomeCard(c, opts)` — constructs replacement-home card HTML |
+
+---
 
 ### Changed
 - **Touch targets**: Upgraded from 44×44px to 48×48px (8dp) in `theme.css` for all mobile buttons/links. Pill-tab padding also increased to 12px.

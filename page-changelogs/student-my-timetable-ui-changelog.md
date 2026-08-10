@@ -74,6 +74,28 @@
 
 ---
 
-## [2026-08-04] Refactored: replaced inline page-header/week-nav/empty-state/grid-table/modal with `@include('partials.…')` (OOP Phase 1)
+## [2026-08-10] Phase 2 Template Migration: Inline helpers → Shared OOP classes
+
+### Summary
+
+Migrated inline `fmtShort()` function to `DateHelper.fmtShort()` from `ui-common.js`. Removed 3-line inline function definition.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/student-my-timetable-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-10 | Lines 61-63 | Removed | Deleted inline `fmtShort(d)` function definition |
+| 2026-08-10 | Line 98 | Replaced | `fmtShort(startDate)` → `DateHelper.fmtShort(startDate)` |
+
+#### `public/js/ui-common.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-10 | DateHelper class | Added | `DateHelper.fmtShort(d)` static method — returns "DD Mon" format |
+| 2026-08-10 | DateHelper class | Added | `DateHelper.weekRangeLabel(weekNum)` static method — returns responsive week range label |
+
+---
 
 Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table`, `ui-empty-state`, `ui-class-detail-modal` partials.

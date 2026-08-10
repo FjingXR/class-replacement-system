@@ -247,7 +247,7 @@
         function formatClassBlock(c) {
             var d = dayAbbr(c.day);
             var dateStr = formatDate(c.date);
-            var wn = computeWeek(c.date);
+            var wn = getWeekNumber(c.date);
             var weekTag = wn ? ' (Week ' + wn + ')' : '';
             var timeStr = to12h(c.timeStart) + ' to ' + to12h(c.timeEnd);
             var hrs = c.duration + ' hr' + (c.duration > 1 ? 's' : '');
@@ -267,30 +267,6 @@
             return 'urgency-low';
         }
 
-        function computeWeek(isoDate) {
-            const parts = MockData.semester.startDate.split('-');
-            const semesterStart = new Date(parts[0], parts[1] - 1, parts[2]);
-            const dateParts = isoDate.split('-');
-            const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-            const diff = Math.floor((date - semesterStart) / (1000 * 60 * 60 * 24));
-            return Math.floor(diff / 7) + 1;
-        }
-
-        function weekRangeLabel(weekNum) {
-            const parts = MockData.semester.startDate.split('-');
-            const start = new Date(parts[0], parts[1] - 1, parts[2]);
-            start.setDate(start.getDate() + (weekNum - 1) * 7);
-            const end = new Date(start);
-            end.setDate(end.getDate() + 6);
-            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            const fmtFull = d => String(d.getDate()).padStart(2, '0') + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-            const fmtShort = d => String(d.getDate()).padStart(2, '0') + ' ' + months[d.getMonth()];
-            if (window.innerWidth <= 768) {
-                return 'Week ' + weekNum + ' \u00B7 ' + fmtShort(start) + ' ~ ' + fmtShort(end);
-            }
-            return 'Week ' + weekNum + ' \u00B7 ' + fmtFull(start) + ' ~ ' + fmtFull(end);
-        }
-
         var state = { rpp: 10 };
         const pageState = { currentPage: 1 };
         let sortState = { field: 'date', dir: 'asc' };
@@ -306,7 +282,7 @@
                     c.code.toLowerCase().includes(query) ||
                     c.name.toLowerCase().includes(query);
                 const matchesReason = reason === 'all' || c.conflictReason === reason;
-                const matchesWeek = weekVal === 'all' || String(computeWeek(c.date)) === weekVal;
+                const matchesWeek = weekVal === 'all' || String(getWeekNumber(c.date)) === weekVal;
                 return matchesSearch && matchesReason && matchesWeek;
             });
 
@@ -360,17 +336,13 @@
                 document.getElementById('emptyState').style.display = 'none';
                 pageData.forEach(function(c, i) {
                     const row = document.createElement('tr');
-                    var cells = [
-                        { html: String(offset + i + 1), cls: 'col-no' },
-                        { html: '<span class="cell-code">' + c.code + '</span><span class="cell-name">' + c.name + ' <span style="font-weight:400;font-size:12px;color:var(--color-on-surface-variant)">(' + (c.type === 'L' ? 'L' : 'T') + ')</span></span>', cls: 'col-code' },
-                        { html: formatClassBlock(c), cls: 'col-original' },
-                        { html: '<span class="' + urgencyClass(daysLeft(c.date)) + '">' + daysLeft(c.date) + ' days</span>', cls: 'col-urgency' },
-                        { html: c.venue, cls: 'col-venue' },
-                        { html: String(c.totalStudents), cls: 'col-students' },
-                        { html: c.cohorts.join('<br>'), cls: 'col-cohort' },
-                        { html: '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>', cls: 'col-reason' },
-                        { html: '<button class="btn-action" onclick="event.stopPropagation(); goToReplacementWith(\'' + c.code + '\',\'' + c.date + '\')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Arrange Replacement</button>', cls: 'col-action' },
-                    ];
+                    var cells = HtmlBuilder.replacementHomeRow(c, {
+                        index: String(offset + i + 1),
+                        daysLeft: daysLeft,
+                        urgencyClass: urgencyClass,
+                        formatClassBlock: formatClassBlock,
+                        badgeClass: badgeClass
+                    });
                     cells.forEach(function(cell) {
                         const td = document.createElement('td');
                         td.className = cell.cls;
@@ -396,7 +368,6 @@
             if (!container) return;
             container.innerHTML = '';
             currentFiltered.forEach(function(c) {
-                var days = daysLeft(c.date);
                 var card = document.createElement('div');
                 card.className = 'replacement-card';
                 card.setAttribute('role', 'button');
@@ -405,20 +376,11 @@
                 card.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToReplacementWith(c.code, c.date); }
                 });
-                card.innerHTML =
-                    '<div class="rc-header">' +
-                        '<span class="rc-code">' + c.code + ' <span style="font-weight:400;font-size:12px;color:var(--color-on-surface-variant)">(' + (c.type === 'L' ? 'Lecture' : 'Tutorial') + ')</span></span>' +
-                        '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>' +
-                    '</div>' +
-                    '<div class="rc-body">' +
-                        '<strong>' + c.name + '</strong><br>' +
-                        c.day + ', ' + formatDate(c.date) + ' · Week ' + computeWeek(c.date) + '<br>' +
-                        to12h(c.timeStart) + ' – ' + to12h(c.timeEnd) + ' · ' + c.venue +
-                    '</div>' +
-                    '<div class="rc-footer">' +
-                        '<span class="' + urgencyClass(days) + '">' + days + ' days left</span>' +
-                        '<span>' + c.cohorts.join(', ') + '</span>' +
-                    '</div>';
+                card.innerHTML = HtmlBuilder.replacementHomeCard(c, {
+                    daysLeft: daysLeft,
+                    urgencyClass: urgencyClass,
+                    badgeClass: badgeClass
+                });
                 container.appendChild(card);
             });
         }
@@ -443,13 +405,13 @@
         }
 
         function populateWeekDropdown() {
-            const weeks = new Set(conflictedClasses.map(function(c) { return computeWeek(c.date); }));
+            const weeks = new Set(conflictedClasses.map(function(c) { return getWeekNumber(c.date); }));
             const sel = document.getElementById('weekFilter');
             sel.innerHTML = '<option value="all">All Weeks</option>';
             Array.from(weeks).sort(function(a, b) { return a - b; }).forEach(function(w) {
                 const opt = document.createElement('option');
                 opt.value = String(w);
-                opt.textContent = weekRangeLabel(w);
+                opt.textContent = DateHelper.weekRangeLabel(w);
                 sel.appendChild(opt);
             });
         }
@@ -480,7 +442,7 @@
 
             var daysLeftVal = daysLeft(c.date);
             var urgencyCls = daysLeftVal <= 3 ? 'urgent' : daysLeftVal <= 7 ? 'warning' : 'safe';
-            var wn = computeWeek(c.date);
+            var wn = getWeekNumber(c.date);
             var weekTag = wn ? ' (Week ' + wn + ')' : '';
 
             var fields = [

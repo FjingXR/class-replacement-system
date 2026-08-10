@@ -1,6 +1,26 @@
 # Changelog — Lecturer My Request History
 
-## [2026-08-06] Tasks 19-24: SDD Change Request — Bug Fixes, CSS Promotion, Feature Alignment
+## [2026-08-10] Phase 2 Template Migration: Inline helpers → Shared OOP classes
+
+### Summary
+
+Refactored `renderCards()` to use `HtmlBuilder.myRequestCard()`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-10 | Lines 760-773 | Refactored | `renderCards()` now uses `HtmlBuilder.myRequestCard(r, opts)` |
+
+#### `public/js/ui-common.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-10 | HtmlBuilder class | Added | `HtmlBuilder.myRequestCard(r, opts)` — constructs my-request-history card HTML |
+
+---
 
 ### Summary
 

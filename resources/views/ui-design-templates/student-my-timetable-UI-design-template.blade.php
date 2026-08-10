@@ -58,10 +58,6 @@
 
 @section('page-scripts')
 
-        function fmtShort(d) {
-            return String(d.getDate()).padStart(2, '0') + ' ' + d.toLocaleString('en', { month: 'short' });
-        }
-
         const weekData = (function() {
             const parts = MockData.semester.startDate.split('-');
             const start = new Date(parts[0], parts[1] - 1, parts[2]);
@@ -95,7 +91,7 @@
                     start: startDate,
                     end: endDate,
                     range: fmt(startDate) + ' ~ ' + fmt(endDate),
-                    rangeShort: fmtShort(startDate) + ' ~ ' + fmtShort(endDate),
+                    rangeShort: DateHelper.fmtShort(startDate) + ' ~ ' + DateHelper.fmtShort(endDate),
                     days: days,
                 });
             }

@@ -757,20 +757,9 @@
                 card.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModalById(r.id); }
                 });
-                card.innerHTML =
-                    '<div class="card-header">' +
-                        '<span class="card-code">' + r.courseCode + ' (' + (r.classType === 'L' ? 'Lecture' : 'Tutorial') + ')</span>' +
-                        '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
-                    '</div>' +
-                    '<div class="card-body">' +
-                        '<strong>' + r.courseName + '</strong><br>' +
-                        dayAbbr(r.classDay) + ', ' + formatDate(r.classDate) + '<br>' +
-                        to12h(r.timeStart) + ' – ' + to12h(r.timeEnd) + ' · ' + r.venue +
-                    '</div>' +
-                    '<div class="card-footer">' +
-                        requestAgeHtml(r.requestedAt) +
-                        '<span>' + r.cohorts.join(', ') + '</span>' +
-                    '</div>';
+                card.innerHTML = HtmlBuilder.myRequestCard(r, {
+                    requestAgeHtml: requestAgeHtml
+                });
                 container.appendChild(card);
             });
         }

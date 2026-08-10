@@ -549,14 +549,6 @@
             return '<div class="request-age ' + cls + '">' + diff + ' day' + (diff !== 1 ? 's' : '') + ' ago</div>';
         }
 
-        // ── Short date helper ──
-        function formatShortDate(iso) {
-            if (!iso) return '—';
-            const d = new Date(iso + 'T00:00:00');
-            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
-        }
-
         // ── Filter persistence (§7) ──
         function saveFilters() {
             const state = {
@@ -590,8 +582,8 @@
         function approveSummary(r) {
             return '#' + r.id + ' ' + r.courseCode + ' — ' + r.courseName +
                 '\nLecturer: ' + r.lecturer +
-                '\nOriginal: ' + dayAbbr(r.classDay) + ' ' + formatShortDate(r.classDate) + ' ' + r.timeStart + '–' + r.timeEnd +
-                '\nReplacement: ' + formatShortDate(r.replacementDate) + ' ' + r.replacementTime +
+                '\nOriginal: ' + dayAbbr(r.classDay) + ' ' + DateHelper.formatDate(r.classDate) + ' ' + r.timeStart + '–' + r.timeEnd +
+                '\nReplacement: ' + DateHelper.formatDate(r.replacementDate) + ' ' + r.replacementTime +
                 '\nVenue: ' + (r.replacementVenue || r.venue);
         }
 
@@ -899,18 +891,13 @@
                 const card = document.createElement('div');
                 card.className = 'request-card';
                 card.setAttribute('data-id', r.id);
-                card.innerHTML =
-                    '<div class="card-header">' +
-                        '<span class="card-code">#' + r.id + '</span>' +
-                        '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
-                    '</div>' +
-                    '<div class="card-body">' +
-                        '<div><strong>Course:</strong> ' + r.courseCode + ' - ' + r.courseName + '</div>' +
-                        '<div><strong>Date:</strong> ' + formatShortDate(r.classDate) + ' ' + to12h(r.timeStart) + '</div>' +
-                        '<div><strong>Lecturer:</strong> ' + (function() { var l = lookupLecturer(r.lecturer); return l ? l.name + ' (' + l.staffId + ')' : r.lecturer; })() + '</div>' +
-                        '<div><strong>Urgency:</strong> <span class="urgency-badge ' + urgencyClass(urgencyLevel(r.classDate)) + '">' + urgencyLabel(urgencyLevel(r.classDate)) + '</span></div>' +
-                        '<div>' + requestAgeHtml(r.requestedAt) + '</div>' +
-                    '</div>';
+                card.innerHTML = HtmlBuilder.requestCard(r, {
+                    lookupLecturer: lookupLecturer,
+                    urgencyLevel: urgencyLevel,
+                    urgencyClass: urgencyClass,
+                    urgencyLabel: urgencyLabel,
+                    requestAgeHtml: requestAgeHtml
+                });
                 card.addEventListener('click', function() { openModalById(r.id); });
                 container.appendChild(card);
             });
