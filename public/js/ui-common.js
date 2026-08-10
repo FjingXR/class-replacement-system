@@ -50,7 +50,14 @@ function updateProgress() {
 function updateWeekSubtitle() {
     const el = document.getElementById('weekSubtitle');
     if (el) {
-        el.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks + ' \u00B7 ' + DateHelper.fmt(weekData[currentWeek].start) + ' \u00B7 ' + DateHelper.fmt(weekData[currentWeek].end);
+        const week = weekData[currentWeek];
+        let subtitle = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks;
+        if (week.start && week.end) {
+            subtitle += ' \u00B7 ' + DateHelper.fmt(week.start) + ' \u00B7 ' + DateHelper.fmt(week.end);
+        } else if (week.range) {
+            subtitle += ' \u00B7 ' + week.range;
+        }
+        el.textContent = subtitle;
     }
 }
 
@@ -223,7 +230,14 @@ class WeekNavigator {
     _updateSubtitle() {
         var el = document.getElementById('weekSubtitle');
         if (el) {
-            el.textContent = 'Week ' + (this._currentWeek + 1) + ' of ' + this._semester.weeks + ' \u00B7 ' + DateHelper.fmt(this._weekData[this._currentWeek].start) + ' \u00B7 ' + DateHelper.fmt(this._weekData[this._currentWeek].end);
+            var week = this._weekData[this._currentWeek];
+            var subtitle = 'Week ' + (this._currentWeek + 1) + ' of ' + this._semester.weeks;
+            if (week.start && week.end) {
+                subtitle += ' \u00B7 ' + DateHelper.fmt(week.start) + ' \u00B7 ' + DateHelper.fmt(week.end);
+            } else if (week.range) {
+                subtitle += ' \u00B7 ' + week.range;
+            }
+            el.textContent = subtitle;
         }
     }
 

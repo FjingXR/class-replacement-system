@@ -1065,9 +1065,12 @@
         }
 
         /* build history when details is opened */
-        document.getElementById('historyDetails').addEventListener('toggle', function() {
-            if (this.open) buildHistoryPanel();
-        });
+        var historyDetailsEl = document.getElementById('historyDetails');
+        if (historyDetailsEl) {
+            historyDetailsEl.addEventListener('toggle', function() {
+                if (this.open) buildHistoryPanel();
+            });
+        }
 
         /* ════════════════════════════════════════════
            FILTERS
