@@ -70,6 +70,30 @@
             color: var(--color-on-surface);
         }
 
+        /* ───── Filter Chips ───── */
+        .filter-chips {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+            padding: 6px 12px; margin-bottom: 8px;
+            background: var(--color-surface-variant); border: 1px solid var(--color-outline-variant);
+            border-radius: var(--radius-sm); font-size: 12px;
+        }
+        .filter-chips:empty { display: none; }
+        .filter-chips-label { font-weight: 600; color: var(--color-on-surface-variant); margin-right: 2px; }
+        .filter-chip {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 12px;
+            background: var(--color-primary-container); color: var(--color-on-primary-container);
+            font-size: 12px; font-weight: 500;
+        }
+        .filter-chip-remove {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 16px; height: 16px; border-radius: 50%; border: none;
+            background: transparent; color: var(--color-on-primary-container);
+            font-size: 14px; font-weight: 700; cursor: pointer; line-height: 1;
+            transition: background 0.15s;
+        }
+        .filter-chip-remove:hover { background: var(--color-primary); color: #fff; }
+
         /* ───── Column Widths ───── */
         .col-checkbox { width: 40px; text-align: center; }
         .col-original, .col-replacement { white-space: normal; }
@@ -331,7 +355,7 @@
         .card-age { font-weight: 600; }
 
         @media (max-width: 768px) {
-            .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
+            .grid-wrapper, .pagination-bar, .sort-hint, .filter-chips { display: none !important; }
             .card-view { display: block; }
         }
 
@@ -374,6 +398,8 @@
         </div>
 
         <div class="sort-hint">Click column headers to sort (Requested At, Course Code, Original Class)</div>
+
+        <div class="filter-chips" id="filterChips"></div>
 
         <!-- ─── Grid Wrapper ─── -->
         @include('partials.ui-grid-table', ['wrapperId' => 'gridWrapper'])
@@ -505,6 +531,30 @@
                 if (filters.search) document.getElementById('searchInput').value = filters.search;
                 if (typeof filters.excludeCompleted === 'boolean') document.getElementById('hideCompleted').checked = filters.excludeCompleted;
             } catch (e) {}
+        }
+
+        function renderFilterChips() {
+            var container = document.getElementById('filterChips');
+            var chips = [];
+            var status = document.getElementById('statusFilter').value;
+            var search = document.getElementById('searchInput').value.trim();
+            var week = document.getElementById('weekFilter').value;
+            var excludeCompleted = document.getElementById('hideCompleted').checked;
+
+            if (status !== 'all') {
+                chips.push('<span class="filter-chip">Status: ' + status + '<button class="filter-chip-remove" onclick="document.getElementById(\'statusFilter\').value=\'all\';pageState.currentPage=1;saveFilters();renderTable()" title="Remove">&times;</button></span>');
+            }
+            if (week !== 'all') {
+                var weekLabel = document.getElementById('weekFilter').selectedOptions[0] ? document.getElementById('weekFilter').selectedOptions[0].textContent : week;
+                chips.push('<span class="filter-chip">Week: ' + weekLabel + '<button class="filter-chip-remove" onclick="document.getElementById(\'weekFilter\').value=\'all\';pageState.currentPage=1;saveFilters();renderTable()" title="Remove">&times;</button></span>');
+            }
+            if (search) {
+                chips.push('<span class="filter-chip">Search: "' + search + '"<button class="filter-chip-remove" onclick="document.getElementById(\'searchInput\').value=\'\';pageState.currentPage=1;saveFilters();renderTable()" title="Remove">&times;</button></span>');
+            }
+            if (excludeCompleted) {
+                chips.push('<span class="filter-chip">Exclude Completed<button class="filter-chip-remove" onclick="document.getElementById(\'hideCompleted\').checked=false;pageState.currentPage=1;saveFilters();renderTable()" title="Remove">&times;</button></span>');
+            }
+            container.innerHTML = chips.length > 0 ? '<span class="filter-chips-label">Active Filters:</span>' + chips.join('') : '';
         }
 
         function renderTable() {
@@ -690,6 +740,7 @@
             updateSummary();
             updateBulkBar();
             renderCards();
+            renderFilterChips();
         }
 
         function renderCards() {
