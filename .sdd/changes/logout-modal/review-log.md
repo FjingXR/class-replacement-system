@@ -43,3 +43,28 @@
 
 ### 🔴 Outstanding
 - (none)
+
+## design.md Round 2 — 2026-08-03
+
+### 🔴 Fixed
+- Replaced `--color-text-secondary` with `--color-on-surface-variant` (existing token)
+
+### 🟡 Addressed
+- Switched from inline `style="display:none"` to class-based `.modal-overlay.show` pattern
+- Moved styles from theme.css to partial `<style>` block (DRY: promote-on-3rd-duplication)
+- Removed theme.css from impact table, updated "Promoted to shared" to "None"
+
+### 🔴 Outstanding
+- (none) — **design.md FROZEN**
+
+## tasks.md Round 1 — 2026-08-03
+
+### 🔴 Fixed
+- Task 5.2: Clarified script placement after `<script src="/js/mock-data.js">` (after line 34), not just "after the include"
+- Task 5.1: Added `@if(!isset($hideNav) || !$hideNav)` block context for include placement
+
+### 🟡 Addressed
+- (none)
+
+### 🔴 Outstanding
+- (none) — **tasks.md FROZEN**

@@ -23,6 +23,7 @@
 
     @if(!isset($hideNav) || !$hideNav)
         @include('partials.ui-nav-bar', ['activeNav' => $activeNav ?? '', 'notifCount' => $notifCount ?? 3])
+        @include('partials.ui-logout-modal')
     @endif
 
 
@@ -32,6 +33,7 @@
 
     <script src="/js/ui-common.js"></script>
     <script src="/js/mock-data.js?v=3"></script>
+    <script src="/js/logout-modal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var pageKey = document.body.dataset.page;

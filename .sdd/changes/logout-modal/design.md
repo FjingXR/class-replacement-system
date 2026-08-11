@@ -7,9 +7,8 @@ No new migrations or models. Changes span 4 existing files + 2 new files:
 | File | Change type |
 |------|------------|
 | `resources/views/partials/ui-nav-bar.blade.php` | Modify — replace onclick + add hidden form |
-| `resources/views/partials/ui-logout-modal.blade.php` | **NEW** — modal markup |
+| `resources/views/partials/ui-logout-modal.blade.php` | **NEW** — modal markup + styles |
 | `public/js/logout-modal.js` | **NEW** — countdown, skip/undo, localStorage |
-| `public/css/theme.css` | Modify — add countdown + checkbox styles |
 | `resources/views/layouts/ui-template.blade.php` | Modify — include JS |
 
 ## Key decisions
@@ -31,7 +30,7 @@ Placed at the end of the partial, after the `</div>` closing `.nav-drawer`. Both
 New partial `ui-logout-modal.blade.php`:
 
 ```blade
-<div class="modal-overlay" id="logoutModal" style="display:none;" role="alertdialog" aria-modal="true" aria-labelledby="logoutModalTitle">
+<div class="modal-overlay" id="logoutModal" role="alertdialog" aria-modal="true" aria-labelledby="logoutModalTitle">
     <div class="modal">
         <h3 id="logoutModalTitle">Confirm Logout</h3>
         <p>Your session will end in <span id="logoutCountdown">5</span> seconds.</p>
@@ -75,7 +74,7 @@ function showLogoutModal() {
 
     // Show modal
     const modal = document.getElementById('logoutModal');
-    modal.style.display = 'flex';
+    modal.classList.add('show');
     let remaining = LOGOUT_COUNTDOWN;
     updateCountdownUI(remaining);
 
@@ -96,7 +95,7 @@ function showLogoutModal() {
     };
     document.getElementById('logoutCancel').onclick = () => {
         clearInterval(logoutTimer);
-        modal.style.display = 'none';
+        modal.classList.remove('show');
     };
 
     // "Don't ask me again" handler
@@ -117,7 +116,9 @@ function updateCountdownUI(seconds) {
 }
 ```
 
-### 4. CSS additions to theme.css
+### 4. CSS (in partial)
+
+Styles are placed in a `<style>` block inside `ui-logout-modal.blade.php` (single-use, not promoted to theme.css — follows DRY "promote-on-3rd-duplication" rule):
 
 ```css
 /* Logout countdown bar */
@@ -143,7 +144,7 @@ function updateCountdownUI(seconds) {
     gap: 0.5rem;
     margin-top: 0.75rem;
     font-size: 0.875rem;
-    color: var(--color-text-secondary);
+    color: var(--color-on-surface-variant);
     cursor: pointer;
 }
 ```
@@ -172,14 +173,14 @@ This prevents layered UI states where the drawer and modal overlap.
 
 ## Frontend approach
 
-All styles reuse existing CSS tokens from `theme.css`:
+All styles reuse existing CSS tokens from `theme.css` (no new custom properties):
 - `var(--color-primary)` — countdown fill bar
 - `var(--color-surface-variant)` — countdown bar background
-- `var(--color-text-secondary)` — checkbox label text
+- `var(--color-on-surface-variant)` — checkbox label text
 - Existing `.modal-overlay` + `.modal` — modal container
 - Existing `.modal-footer` — button layout
 - Existing `.btn-outline` + `.btn-danger` — action buttons
 
 ## Promoted to shared
 
-- `public/css/theme.css` — countdown bar styles (`.logout-countdown-bar`, `.logout-countdown-fill`) + checkbox label (`.logout-dont-ask`)
+None — all styles are single-use, kept in the partial. Promote to `theme.css` only if reused by 3+ pages.

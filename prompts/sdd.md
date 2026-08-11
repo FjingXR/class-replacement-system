@@ -18,6 +18,7 @@
 | `mock-data-centralization` | 2026-08-01 | Mock data centralization (continued) |
 | `request-approval` | 2026-08-01 | Request approval UI mock page — PL side; frozen after 17 review rounds + 6 advanced UX features; 17 PL-efficiency features total; ready for `/sdd-apply` |
 | `student-my-timetable-ui` | 2026-08-02 | Student my timetable UI mock page — frontend-only; SDD artifacts frozen (proposal 2 rounds, design 1 round, tasks 1 round); ready for `/sdd-apply` |
+| `logout-modal` | 2026-08-03 | Logout confirmation modal — 5s countdown, skip/undo, "Don't ask me again" (localStorage). 27 subtasks, 6 review rounds. Committed with nav bar wiring, modal markup, styles, JS, layout inclusion. |
 
 ## In Progress (proposed, not yet applied)
 
