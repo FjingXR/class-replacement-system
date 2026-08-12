@@ -84,33 +84,33 @@
 
     --color-primary: #004D98;
     --color-on-primary: #FFFFFF;
-    --color-primary-container: rgba(0, 77, 152, 0.18);
-    --color-on-primary-container: #6BA3E0;
+    --color-primary-container: rgba(0, 77, 152, 0.12);
+    --color-on-primary-container: #003366;
 
     --color-secondary: #A50044;
     --color-on-secondary: #FFFFFF;
-    --color-secondary-container: rgba(165, 0, 68, 0.18);
-    --color-on-secondary-container: #E8668A;
+    --color-secondary-container: rgba(165, 0, 68, 0.12);
+    --color-on-secondary-container: #7A0033;
 
     --color-tertiary: #DBA800;
     --color-on-tertiary: #1A1000;
-    --color-tertiary-container: rgba(219, 168, 0, 0.18);
-    --color-on-tertiary-container: #DBA800;
+    --color-tertiary-container: rgba(219, 168, 0, 0.12);
+    --color-on-tertiary-container: #8A6D00;
 
     --color-error: #C62828;
     --color-on-error: #FFFFFF;
-    --color-error-container: rgba(198, 40, 40, 0.18);
-    --color-on-error-container: #EF9A9A;
+    --color-error-container: rgba(198, 40, 40, 0.10);
+    --color-on-error-container: #8B1A1A;
 
     --color-success: #2E7D5A;
     --color-on-success: #FFFFFF;
-    --color-success-container: rgba(46, 125, 90, 0.18);
-    --color-on-success-container: #81C78A;
+    --color-success-container: rgba(46, 125, 90, 0.12);
+    --color-on-success-container: #1B5E3A;
 
     --color-warning: #D4880F;
     --color-on-warning: #FFFFFF;
-    --color-warning-container: rgba(212, 136, 15, 0.18);
-    --color-on-warning-container: #FFB74D;
+    --color-warning-container: rgba(212, 136, 15, 0.12);
+    --color-on-warning-container: #8A5800;
 
     --color-outline: rgba(30, 50, 70, 0.12);
     --color-outline-strong: rgba(30, 50, 70, 0.25);
