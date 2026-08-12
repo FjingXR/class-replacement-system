@@ -1176,16 +1176,16 @@ html.dark .semester-bar select:not(.week-select) {
 }
 
 .event-normal {
-    background: var(--color-secondary-container);
-    color: var(--color-on-secondary-container);
+    background: var(--color-success-container);
+    color: var(--color-on-success-container);
 }
 .event-replacement {
     background: var(--color-primary-container);
     color: var(--color-on-primary-container);
 }
 .event-pending {
-    background: var(--color-tertiary-container);
-    color: var(--color-on-tertiary-container);
+    background: var(--color-warning-container);
+    color: var(--color-on-warning-container);
 }
 
 .offday-slot .event-block {
