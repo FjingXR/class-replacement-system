@@ -307,7 +307,7 @@
         }
 
         .cell-available {
-            background: var(--color-primary-container);
+            background: var(--color-success-container);
             cursor: pointer;
         }
         .cell-available:hover {
