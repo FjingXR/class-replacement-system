@@ -15,37 +15,37 @@
 
 /* ---------- Dark (default) ---------- */
 :root {
-    --color-bg: #1c1e1f;
-    --color-on-bg: #e2e4e6;
+    --color-bg: #0D1B2A;
+    --color-on-bg: #E0E6ED;
 
-    --color-surface: #2a2c2e;
-    --color-on-surface: #e2e4e6;
+    --color-surface: #1B2838;
+    --color-on-surface: #E0E6ED;
 
-    --color-surface-variant: #3a3c3e;
-    --color-on-surface-variant: #c4c9ce;
+    --color-surface-variant: #243447;
+    --color-on-surface-variant: #9EAAB8;
 
-    --color-primary: #8DB5E6;
-    --color-on-primary: #0B294C;
-    --color-primary-container: rgba(141, 181, 230, 0.2);
-    --color-on-primary-container: #8DB5E6;
+    --color-primary: #004D98;
+    --color-on-primary: #FFFFFF;
+    --color-primary-container: rgba(0, 77, 152, 0.18);
+    --color-on-primary-container: #6BA3E0;
 
-    --color-secondary: #2EC27E;
+    --color-secondary: #A50044;
     --color-on-secondary: #FFFFFF;
-    --color-secondary-container: rgba(46, 194, 126, 0.2);
-    --color-on-secondary-container: #97E6C2;
+    --color-secondary-container: rgba(165, 0, 68, 0.18);
+    --color-on-secondary-container: #E8668A;
 
-    --color-tertiary: #E3E6AA;
-    --color-on-tertiary: #323315;
-    --color-tertiary-container: rgba(227, 230, 170, 0.2);
-    --color-on-tertiary-container: #E3E6AA;
+    --color-tertiary: #DBA800;
+    --color-on-tertiary: #1A1000;
+    --color-tertiary-container: rgba(219, 168, 0, 0.18);
+    --color-on-tertiary-container: #DBA800;
 
-    --color-error: #E69490;
-    --color-on-error: #601410;
-    --color-error-container: rgba(230, 148, 144, 0.2);
-    --color-on-error-container: #E69490;
+    --color-error: #C62828;
+    --color-on-error: #FFFFFF;
+    --color-error-container: rgba(198, 40, 40, 0.18);
+    --color-on-error-container: #EF9A9A;
 
-    --color-outline: rgba(159, 168, 179, 0.2);
-    --color-outline-strong: rgba(159, 168, 179, 0.35);
+    --color-outline: rgba(155, 170, 190, 0.20);
+    --color-outline-strong: rgba(155, 170, 190, 0.35);
 
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
     --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
@@ -60,37 +60,37 @@
 
 /* ---------- Light ---------- */
 .light {
-    --color-bg: #f2f4f5;
-    --color-on-bg: #1e1f20;
+    --color-bg: #F0F3F7;
+    --color-on-bg: #0D1B2A;
 
-    --color-surface: #ffffff;
-    --color-on-surface: #1e1f20;
+    --color-surface: #FFFFFF;
+    --color-on-surface: #1B2838;
 
-    --color-surface-variant: #e8eaed;
-    --color-on-surface-variant: #5a6068;
+    --color-surface-variant: #E4E8EE;
+    --color-on-surface-variant: #5A6978;
 
-    --color-primary: #1A5FB4;
+    --color-primary: #004D98;
     --color-on-primary: #FFFFFF;
-    --color-primary-container: rgba(26, 95, 180, 0.15);
-    --color-on-primary-container: #1A5FB4;
+    --color-primary-container: rgba(0, 77, 152, 0.18);
+    --color-on-primary-container: #6BA3E0;
 
-    --color-secondary: #2EC27E;
+    --color-secondary: #A50044;
     --color-on-secondary: #FFFFFF;
-    --color-secondary-container: rgba(46, 194, 126, 0.15);
-    --color-on-secondary-container: #1a7a4e;
+    --color-secondary-container: rgba(165, 0, 68, 0.18);
+    --color-on-secondary-container: #E8668A;
 
-    --color-tertiary: #9fa028;
-    --color-on-tertiary: #FFFFFF;
-    --color-tertiary-container: rgba(159, 160, 40, 0.15);
-    --color-on-tertiary-container: #6b6c1a;
+    --color-tertiary: #DBA800;
+    --color-on-tertiary: #1A1000;
+    --color-tertiary-container: rgba(219, 168, 0, 0.18);
+    --color-on-tertiary-container: #DBA800;
 
-    --color-error: #B3261E;
+    --color-error: #C62828;
     --color-on-error: #FFFFFF;
-    --color-error-container: rgba(179, 38, 30, 0.12);
-    --color-on-error-container: #b3261e;
+    --color-error-container: rgba(198, 40, 40, 0.18);
+    --color-on-error-container: #EF9A9A;
 
-    --color-outline: rgba(90, 96, 104, 0.2);
-    --color-outline-strong: rgba(90, 96, 104, 0.35);
+    --color-outline: rgba(30, 50, 70, 0.12);
+    --color-outline-strong: rgba(30, 50, 70, 0.25);
 
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
     --shadow-md: 0 4px 16px rgba(0,0,0,0.09);

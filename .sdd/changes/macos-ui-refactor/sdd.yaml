@@ -1,0 +1,8 @@
+name: macos-ui-refactor
+status: proposed
+created: 2026-08-12
+owner: user
+description: >
+  Refactor entire UI from Material Design 3-inspired design to clean,
+  macOS-inspired aesthetic. macOS becomes default theme with dark/light
+  toggle preserved as secondary options.

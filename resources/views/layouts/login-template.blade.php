@@ -7,9 +7,10 @@
     <script>
         (function() {
             var saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                document.documentElement.className = 'light';
+            if (saved && ['dark', 'light'].includes(saved)) {
+                document.documentElement.className = saved;
             }
+            // Default is 'dark' from HTML
         })();
     </script>
     <script src="/js/ui-common.js"></script>
@@ -109,11 +110,12 @@
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--card-border);
-            border-radius: 24px;
-            box-shadow: var(--shadow-card);
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
             animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
+        .light .login-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
 
         @keyframes fadeSlideUp {
             0% { opacity: 0; transform: translateY(30px) scale(0.98); }
@@ -180,7 +182,7 @@
             align-items: center;
             background: var(--input-bg);
             border: 1px solid var(--input-border);
-            border-radius: 14px;
+            border-radius: 12px;
             transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
         }
         .input-wrapper:hover { background: rgba(84, 92, 102, 0.18); }
@@ -188,9 +190,9 @@
         .input-wrapper:focus-within {
             border-color: var(--color-primary);
             background: var(--input-bg);
-            box-shadow: 0 0 0 3px rgba(141, 181, 230, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 77, 152, 0.1);
         }
-        .light .input-wrapper:focus-within { box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.08); }
+        .light .input-wrapper:focus-within { box-shadow: 0 0 0 3px rgba(0, 77, 152, 0.08); }
 
         .input-icon {
             padding: 0 0 0 14px;
@@ -238,31 +240,30 @@
 
         .login-btn {
             width: 100%;
-            padding: 16px;
+            padding: 10px 24px;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
             background: var(--login-btn-bg);
             color: var(--login-btn-color);
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: transform 0.15s ease, box-shadow 0.3s ease, background 0.25s ease, opacity 0.2s;
-            font-family: inherit;
+            transition: box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
             position: relative;
             overflow: hidden;
             animation: fadeSlideUp 0.6s ease 0.48s both;
         }
         .login-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(151, 230, 194, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             background: var(--login-btn-hover-dark);
         }
-        .light .login-btn:hover:not(:disabled) { box-shadow: 0 8px 25px rgba(46, 194, 126, 0.2); background: var(--login-btn-hover-light); }
-        .login-btn:active:not(:disabled) { transform: translateY(0) scale(0.99); }
+        .light .login-btn:hover:not(:disabled) { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); background: var(--login-btn-hover-light); }
+        .login-btn:active:not(:disabled) { transform: scale(0.98); }
         .login-btn:disabled { background: var(--color-outline); opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .login-btn .spinner {
