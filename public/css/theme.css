@@ -406,19 +406,25 @@ body {
     position: relative;
 }
 .search-input {
-    padding: 8px 12px 8px 36px;
-    border-radius: var(--radius-sm);
-    border: none;
+    padding: 9px 12px 9px 36px;
+    border-radius: 10px;
+    border: 1px solid var(--color-outline);
     background: var(--color-surface-variant);
     color: var(--color-on-surface-variant);
     font-family: inherit;
     font-size: 13px;
     width: 420px;
     outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
 }
 .search-input::placeholder {
     color: var(--color-on-surface-variant);
     opacity: 0.5;
+}
+.search-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-container);
+    background: var(--color-surface);
 }
 .search-icon {
     position: absolute;
@@ -446,7 +452,7 @@ body {
     background: var(--color-surface);
     border: 1px solid var(--color-outline);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.08);
     overflow: hidden;
 }
 .grid-scroll {
@@ -470,6 +476,9 @@ body {
     background: var(--color-surface-variant);
     color: var(--color-on-surface-variant);
     font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
     position: sticky;
     top: 0;
     z-index: 10;
@@ -501,9 +510,9 @@ body {
 
 /* ───── Week Filter ───── */
 .filter-select {
-    padding: 8px 14px;
-    border-radius: var(--radius-sm);
-    border: none;
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--color-outline);
     background: var(--color-surface-variant);
     color: var(--color-on-surface-variant);
     font-family: inherit;
@@ -511,10 +520,14 @@ body {
     font-weight: 500;
     outline: none;
     cursor: pointer;
-    transition: background var(--transition);
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
 }
 .filter-select:hover {
-    filter: brightness(1.1);
+    filter: brightness(1.05);
+}
+.filter-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-container);
 }
 .filter-select option {
     background: var(--color-surface);
@@ -594,7 +607,7 @@ html.dark .filter-select {
 /* ───── Action Button ───── */
 .btn-action {
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 10px;
     border: none;
     background: var(--color-primary);
     color: var(--color-on-primary);
@@ -605,10 +618,11 @@ html.dark .filter-select {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    transition: transform 0.15s, filter 0.15s;
+    transition: transform 0.15s, filter 0.15s, box-shadow var(--transition);
 }
 .btn-action:hover {
     filter: brightness(1.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 .btn-action:active {
     transform: scale(0.97);
@@ -633,7 +647,8 @@ html.dark .filter-select {
 .page-btn {
     min-width: 32px;
     height: 32px;
-    border-radius: 6px;
+    padding: 0 10px;
+    border-radius: 16px;
     border: 1px solid transparent;
     background: transparent;
     color: var(--color-on-surface-variant);
@@ -650,10 +665,10 @@ html.dark .filter-select {
     background: var(--color-surface-variant);
 }
 .page-btn.active {
-    background: var(--color-primary-container);
-    color: var(--color-on-primary-container);
-    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
     font-weight: 600;
+    box-shadow: 0 2px 8px var(--color-primary-container);
 }
 .page-btn:disabled {
     opacity: 0.3;
@@ -673,8 +688,8 @@ html.dark .filter-select {
     white-space: nowrap;
 }
 .rpp-select {
-    padding: 4px 8px;
-    border-radius: 6px;
+    padding: 5px 10px;
+    border-radius: 8px;
     border: 1px solid var(--color-outline);
     background: var(--color-surface);
     color: var(--color-on-surface);
@@ -685,7 +700,7 @@ html.dark .filter-select {
 .rpp-select:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-primary-container);
+    box-shadow: 0 0 0 3px var(--color-primary-container);
 }
 
 /* ───── Empty State ───── */
@@ -700,6 +715,13 @@ html.dark .filter-select {
 .empty-icon {
     opacity: 0.25;
     margin-bottom: 16px;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--color-surface-variant);
 }
 .empty-title {
     font-size: 16px;
@@ -711,6 +733,8 @@ html.dark .filter-select {
     font-size: 14px;
     opacity: 0.7;
     margin: 0;
+    max-width: 360px;
+    line-height: 1.5;
 }
 
 /* ───── Nav Badge ───── */
@@ -1743,8 +1767,8 @@ body {
 .skeleton {
     background: linear-gradient(90deg, var(--color-surface-variant) 25%, var(--color-outline) 50%, var(--color-surface-variant) 75%);
     background-size: 200% 100%;
-    animation: skeleton-shimmer 1.5s infinite;
-    border-radius: var(--radius-sm);
+    animation: skeleton-shimmer 1.8s infinite;
+    border-radius: 8px;
 }
 
 @keyframes skeleton-shimmer {
