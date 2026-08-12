@@ -1312,18 +1312,18 @@
         }
 
         function prevWeek() {
-            if (currentWeek < weekData.length - 1) {
+            if (currentWeek > 0) {
                 saveCurrentWeek();
-                currentWeek++;
+                currentWeek--;
                 document.getElementById('weekSelector').value = currentWeek;
                 buildTimetable();
             }
         }
 
         function nextWeek() {
-            if (currentWeek > 0) {
+            if (currentWeek < weekData.length - 1) {
                 saveCurrentWeek();
-                currentWeek--;
+                currentWeek++;
                 document.getElementById('weekSelector').value = currentWeek;
                 buildTimetable();
             }
