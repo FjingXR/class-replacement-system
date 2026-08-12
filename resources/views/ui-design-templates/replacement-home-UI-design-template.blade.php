@@ -405,13 +405,12 @@
         }
 
         function populateWeekDropdown() {
-            const weeks = new Set(conflictedClasses.map(function(c) { return getWeekNumber(c.date); }));
             const sel = document.getElementById('weekFilter');
             sel.innerHTML = '<option value="all">All Weeks</option>';
-            Array.from(weeks).sort(function(a, b) { return a - b; }).forEach(function(w) {
+            weekRanges.forEach(function(w) {
                 const opt = document.createElement('option');
-                opt.value = String(w);
-                opt.textContent = DateHelper.weekRangeLabel(w);
+                opt.value = w.value;
+                opt.textContent = w.label;
                 sel.appendChild(opt);
             });
         }

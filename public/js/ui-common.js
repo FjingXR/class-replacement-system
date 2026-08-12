@@ -1178,12 +1178,27 @@ function nextWeekFilter() {
 
 // ── Promoted from my-request-history (shared helpers) ──
 
-const weekRanges = [
-    { value: '1', label: 'Week 1 \u00b7 31 Aug 2026 ~ 06 Sep 2026', labelShort: 'Week 1 \u00b7 31 Aug ~ 06 Sep', start: '2026-08-31', end: '2026-09-06' },
-    { value: '2', label: 'Week 2 \u00b7 07 Sep 2026 ~ 13 Sep 2026', labelShort: 'Week 2 \u00b7 07 Sep ~ 13 Sep', start: '2026-09-07', end: '2026-09-13' },
-    { value: '3', label: 'Week 3 \u00b7 14 Sep 2026 ~ 20 Sep 2026', labelShort: 'Week 3 \u00b7 14 Sep ~ 20 Sep', start: '2026-09-14', end: '2026-09-20' },
-    { value: '4', label: 'Week 4 \u00b7 21 Sep 2026 ~ 27 Sep 2026', labelShort: 'Week 4 \u00b7 21 Sep ~ 27 Sep', start: '2026-09-21', end: '2026-09-27' },
-];
+const weekRanges = (function() {
+    const monthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
+    function parseDate(s) {
+        const p = s.trim().split('-');
+        return new Date(parseInt(p[2]), monthMap[p[1]], parseInt(p[0]));
+    }
+    const data = generateWeekData();
+    return data.map(function(w, i) {
+        const parts = w.range.split(' ~ ');
+        const start = parseDate(parts[0]);
+        const end = parseDate(parts[1]);
+        const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        return {
+            value: String(i + 1),
+            label: w.label + ' \u00b7 ' + w.range,
+            labelShort: w.label + ' \u00b7 ' + w.rangeShort,
+            start: iso(start),
+            end: iso(end),
+        };
+    });
+})();
 
 function statusClass(status) {
     const map = {
