@@ -156,6 +156,8 @@ body {
     padding: 0 20px;
     gap: 0;
     overflow: hidden;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 .top-logo {
@@ -180,11 +182,11 @@ body {
     height: 100%;
 }
 .nav-item {
-    height: 100%;
+    height: 32px;
     display: flex;
     align-items: center;
-    padding: 0 16px;
-    font-size: 14px;
+    padding: 0 14px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--color-on-primary-container);
     text-decoration: none;
@@ -193,16 +195,18 @@ body {
     transition: background 0.15s, opacity 0.15s;
     white-space: nowrap;
     opacity: 0.75;
-    border-radius: 0;
+    border-radius: var(--radius-sm);
 }
 .nav-item:hover {
     opacity: 1;
-    background: rgba(7,27,51,0.06);
+    background: rgba(7,27,51,0.08);
 }
 .nav-item.active {
     opacity: 1;
     font-weight: 600;
-    background: var(--color-tertiary-container);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    border-radius: var(--radius-sm);
 }
 
 .top-right {
@@ -729,19 +733,24 @@ html.dark .filter-select {
 .summary-bar {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
+    gap: 12px;
     margin-top: 20px;
 }
 .summary-card {
     background: var(--color-surface);
     border: 1px solid var(--color-outline);
     border-radius: var(--radius-md);
-    padding: 14px 12px;
+    padding: 16px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     box-shadow: var(--shadow-sm);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 .summary-value {
     font-size: 24px;
@@ -749,10 +758,10 @@ html.dark .filter-select {
     line-height: 1.2;
 }
 .summary-label {
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
     color: var(--color-on-surface-variant);
-    margin-top: 4px;
+    margin-top: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -791,7 +800,7 @@ html.dark .filter-select {
 /* ── Summary card colors ───────────────────────────────────── */
 .summary-card.card-total .summary-value { color: var(--color-success); }
 .summary-card.card-replacement .summary-value { color: var(--color-primary); }
-.summary-card.card-pending .summary-value { color: var(--color-tertiary); }
+.summary-card.card-pending .summary-value { color: var(--color-warning); }
 .summary-card.card-conflict .summary-value { color: var(--color-error); }
 .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
 .summary-card.card-hours {
@@ -799,8 +808,8 @@ html.dark .filter-select {
     background: var(--color-surface-variant);
 }
 .summary-card.card-total {
-    border: 2px solid var(--color-primary);
-    background: var(--color-primary-container);
+    border: 2px solid var(--color-success);
+    background: var(--color-success-container);
 }
 
 /* ── Modal shell ───────────────────────────────────────────── */
@@ -937,9 +946,9 @@ html.dark .filter-select {
     transition: background var(--transition), border-color var(--transition);
 }
 .week-arrow {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
     border: none;
     background: transparent;
     color: var(--color-on-surface-variant);
@@ -947,13 +956,14 @@ html.dark .filter-select {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
-    transition: background 0.15s;
+    transition: background 0.15s, color 0.15s;
     flex-shrink: 0;
 }
 .week-arrow:hover {
-    background: var(--color-surface-variant);
+    background: var(--color-primary-container);
+    color: var(--color-primary);
 }
 .week-arrow:disabled {
     opacity: 0.3;
@@ -961,6 +971,7 @@ html.dark .filter-select {
 }
 .week-arrow:disabled:hover {
     background: transparent;
+    color: var(--color-on-surface-variant);
 }
 /* ── Week Nav: arrows + week-select stay together ── */
 .week-nav {
@@ -972,19 +983,28 @@ html.dark .filter-select {
     font-family: inherit;
     font-size: 13px;
     font-weight: 600;
-    padding: 4px 28px 4px 10px;
+    padding: 6px 32px 6px 12px;
     border-radius: var(--radius-sm);
-    border: none;
-    background: var(--color-primary-container);
-    color: var(--color-on-primary-container);
+    border: 1px solid var(--color-outline);
+    background: var(--color-surface);
+    color: var(--color-on-surface);
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 8px center;
-    min-width: 160px;
+    background-position: right 10px center;
+    min-width: 180px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.week-select:hover {
+    border-color: var(--color-primary);
+}
+.week-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 77, 152, 0.15);
 }
 .week-select option {
     background: var(--color-surface);
