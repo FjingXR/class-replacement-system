@@ -22,7 +22,7 @@
             color: var(--color-on-error-container);
             font-family: inherit;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: background var(--transition), transform 0.15s;
             display: flex;
@@ -35,6 +35,10 @@
         .btn-replace-now:active {
             transform: scale(0.97);
         }
+        .btn-replace-now:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
 
         .btn-cancel-class {
             padding: 10px 20px;
@@ -44,7 +48,7 @@
             color: var(--color-error);
             font-family: inherit;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: background var(--transition), transform 0.15s;
         }
@@ -54,12 +58,16 @@
         .btn-cancel-class:active {
             transform: scale(0.97);
         }
+        .btn-cancel-class:focus-visible {
+            outline: 2px solid var(--color-error);
+            outline-offset: 2px;
+        }
 
         /* ───── Cancel Confirmation Modal ───── */
         .cancel-overlay {
             position: fixed; inset: 0; z-index: 1000;
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(8px);
             display: flex; align-items: center; justify-content: center;
             padding: 20px;
         }
@@ -95,7 +103,7 @@
             color: var(--color-on-surface-variant);
             font-family: inherit;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: background var(--transition), transform 0.15s;
         }
@@ -105,6 +113,10 @@
         .btn-cancel-secondary:active {
             transform: scale(0.97);
         }
+        .btn-cancel-secondary:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
         .btn-cancel-danger {
             padding: 10px 20px;
             border-radius: 10px;
@@ -113,7 +125,7 @@
             color: var(--color-on-error);
             font-family: inherit;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: background var(--transition), transform 0.15s;
         }
@@ -122,6 +134,10 @@
         }
         .btn-cancel-danger:active {
             transform: scale(0.97);
+        }
+        .btn-cancel-danger:focus-visible {
+            outline: 2px solid var(--color-error);
+            outline-offset: 2px;
         }
 
 @endsection

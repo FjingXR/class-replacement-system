@@ -26,7 +26,7 @@
             width: 36px;
             height: 36px;
             border: 1px solid var(--color-outline);
-            border-radius: 6px;
+            border-radius: 8px;
             background: transparent;
             cursor: pointer;
             font-size: 18px;
@@ -40,6 +40,10 @@
         .fav-btn.active {
             color: var(--color-tertiary);
             border-color: var(--color-tertiary);
+        }
+        .fav-btn:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
         }
 
         /* ───── Recent / All sections in dropdown ───── */
@@ -73,7 +77,7 @@
         .segment-toggle {
             display: inline-flex;
             border: 1px solid var(--color-outline);
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
         }
         .segment-toggle button {
@@ -91,10 +95,14 @@
         }
         .segment-toggle button.active {
             background: var(--color-primary);
-            color: #fff;
+            color: var(--color-on-primary);
         }
         .segment-toggle button:hover:not(.active) {
             background: var(--color-surface-variant);
+        }
+        .segment-toggle button:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -2px;
         }
 
         /* ───── Venue Type Filter ───── */
@@ -107,7 +115,7 @@
             gap: 6px;
             background: transparent;
             border: 1px solid var(--color-outline);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 6px 12px;
             font-size: 13px;
             color: var(--color-on-surface-variant);
@@ -115,6 +123,10 @@
         }
         .venue-type-btn:hover {
             background: var(--color-surface-variant);
+        }
+        .venue-type-btn:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
         }
         .venue-type-dropdown {
             display: none;
@@ -128,7 +140,7 @@
             padding: 8px 12px;
             z-index: 100;
             min-width: 180px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
         }
         .venue-type-dropdown.open {
             display: block;
@@ -207,7 +219,7 @@
         .history-status {
             font-size: 12px;
             padding: 2px 8px;
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         /* ───── Hint Text (empty states) ───── */
@@ -227,7 +239,7 @@
             padding: 8px 12px;
             background: var(--color-primary-container);
             color: var(--color-on-primary-container);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 13px;
             margin-bottom: 8px;
         }
@@ -257,9 +269,13 @@
             border: none;
             color: #fff;
             padding: 6px 14px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
+        }
+        .error-banner button:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: 2px;
         }
 
         /* ───── Toast ───── */
@@ -273,7 +289,7 @@
             padding: 12px 20px;
             border-radius: 8px;
             font-size: 14px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
             z-index: 9999;
             display: none;
         }
@@ -285,7 +301,7 @@
         .print-btn {
             background: transparent;
             border: 1px solid var(--color-outline);
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 6px 10px;
             cursor: not-allowed;
             opacity: 0.5;
@@ -295,6 +311,10 @@
         .print-btn:hover {
             opacity: 0.7;
         }
+        .print-btn:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
 
         /* ───── Available Cell Tooltip ───── */
         .available-tooltip {
@@ -303,7 +323,7 @@
             border: 1px solid var(--color-outline);
             border-radius: 8px;
             padding: 12px 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
             z-index: 9999;
             display: none;
             min-width: 250px;
@@ -318,94 +338,22 @@
         }
         .available-tooltip .btn-book {
             background: var(--color-primary);
-            color: #fff;
+            color: var(--color-on-primary);
             border: none;
             padding: 6px 16px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
         }
         .available-tooltip .btn-book:hover {
             opacity: 0.9;
         }
+        .available-tooltip .btn-book:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
 
-        /* ───── Booked Cell Modal ───── */
-        #eventModal.modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        #eventModal.modal-overlay.open {
-            display: flex;
-        }
-        .modal {
-            background: var(--color-surface);
-            border-radius: 12px;
-            width: 90%;
-            max-width: 480px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--color-outline);
-        }
-        .modal-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        .modal-status-badge {
-            font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--color-on-surface-variant);
-        }
-        .modal-body {
-            padding: 16px 20px;
-        }
-        .modal-field {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--color-outline);
-        }
-        .modal-field:last-child {
-            border-bottom: none;
-        }
-        .field-label {
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-        }
-        .field-value {
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .modal-footer {
-            padding: 12px 20px;
-            border-top: 1px solid var(--color-outline);
-            display: flex;
-            justify-content: flex-end;
-        }
-        .btn-close-modal {
-            background: var(--color-surface-variant);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-        }
+        /* ───── Booked Cell Modal (styles from theme.css) ───── */
 
         /* ───── Disabled Selects ───── */
         .semester-bar select:disabled,
@@ -477,7 +425,7 @@
             .venue-event-status {
                 font-size: 12px;
                 padding: 2px 8px;
-                border-radius: 4px;
+                border-radius: 6px;
             }
             .venue-event-body {
                 display: flex;
@@ -567,12 +515,16 @@
         }
         .no-match-banner button {
             background: var(--color-primary);
-            color: #fff;
+            color: var(--color-on-primary);
             border: none;
             padding: 8px 16px;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 13px;
+        }
+        .no-match-banner button:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
         }
 
         /* ───── Slot Picker (hidden for venue timetable) ───── */
