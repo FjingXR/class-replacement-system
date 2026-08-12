@@ -1,6 +1,6 @@
 /* ============================================
    Shared Theme — Dark & Light Color Tokens
-   Used by: login-dummy, replacement-arrangement
+   macOS-inspired design + FCB color system
    ============================================ */
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,7 +13,7 @@
 
 ::selection { background: var(--color-primary); color: var(--color-on-primary); }
 
-/* ---------- Dark (default) ---------- */
+/* ---------- Dark (default) — macOS-inspired ---------- */
 :root {
     --color-bg: #0D1B2A;
     --color-on-bg: #E0E6ED;
@@ -44,21 +44,34 @@
     --color-error-container: rgba(198, 40, 40, 0.18);
     --color-on-error-container: #EF9A9A;
 
+    --color-success: #2E7D5A;
+    --color-on-success: #FFFFFF;
+    --color-success-container: rgba(46, 125, 90, 0.18);
+    --color-on-success-container: #81C78A;
+
+    --color-warning: #D4880F;
+    --color-on-warning: #FFFFFF;
+    --color-warning-container: rgba(212, 136, 15, 0.18);
+    --color-on-warning-container: #FFB74D;
+
     --color-outline: rgba(155, 170, 190, 0.20);
     --color-outline-strong: rgba(155, 170, 190, 0.35);
 
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.35);
+    /* macOS-inspired shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.10);
 
+    /* macOS-inspired border radius */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
+    --radius-xl: 20px;
 
     --transition: 0.2s ease;
 }
 
-/* ---------- Light ---------- */
+/* ---------- Light — macOS-inspired ---------- */
 .light {
     --color-bg: #F0F3F7;
     --color-on-bg: #0D1B2A;
@@ -89,12 +102,29 @@
     --color-error-container: rgba(198, 40, 40, 0.18);
     --color-on-error-container: #EF9A9A;
 
+    --color-success: #2E7D5A;
+    --color-on-success: #FFFFFF;
+    --color-success-container: rgba(46, 125, 90, 0.18);
+    --color-on-success-container: #81C78A;
+
+    --color-warning: #D4880F;
+    --color-on-warning: #FFFFFF;
+    --color-warning-container: rgba(212, 136, 15, 0.18);
+    --color-on-warning-container: #FFB74D;
+
     --color-outline: rgba(30, 50, 70, 0.12);
     --color-outline-strong: rgba(30, 50, 70, 0.25);
 
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.09);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+    /* macOS-inspired shadows — lighter for light mode */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.08), 0 6px 6px rgba(0, 0, 0, 0.04);
+
+    /* macOS-inspired border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
 }
 
 /* ============================================
@@ -104,7 +134,7 @@
    ============================================ */
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
     background: var(--color-bg);
     color: var(--color-on-bg);
     min-height: 100vh;
@@ -526,10 +556,9 @@ html.dark .filter-select {
     font-weight: 600;
     vertical-align: middle;
 }
-.badge-normal { background: var(--color-secondary); color: var(--color-on-secondary); }
+.badge-normal { background: var(--color-success); color: var(--color-on-success); }
 .badge-replacement { background: var(--color-primary); color: var(--color-on-primary); }
-html.light .badge-replacement { background: var(--color-primary-dark); color: var(--color-on-primary); }
-.badge-pending { background: var(--color-tertiary); color: var(--color-on-tertiary); }
+.badge-pending { background: var(--color-warning); color: var(--color-on-warning); }
 .badge-conflict { background: var(--color-error); color: var(--color-on-error); }
 
 /* ───── Cell Class Block (multi-line cell) ───── */

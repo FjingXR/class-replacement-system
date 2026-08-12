@@ -9,9 +9,10 @@
     <script>
         (function() {
             var saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                document.documentElement.className = 'light';
+            if (saved && ['dark', 'light'].includes(saved)) {
+                document.documentElement.className = saved;
             }
+            // Default is 'dark' from HTML
         })();
     </script>
     <link rel="stylesheet" href="/css/theme.css">
