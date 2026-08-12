@@ -125,10 +125,11 @@ function initTodayBtn() {
 }
 
 class WeekNavigator {
-    constructor(semesterData, weekData) {
+    constructor(semesterData, weekData, selectId) {
         this._semester = semesterData;
         this._weekData = weekData;
         this._currentWeek = 0;
+        this._selectId = selectId || 'weekSelect';
     }
 
     get currentWeek() {
@@ -154,6 +155,7 @@ class WeekNavigator {
 
     prevWeek() {
         if (this._currentWeek > 0) {
+            this._beforeNavigate();
             this._currentWeek--;
             this._buildTimetable();
             this._updateSelect();
@@ -166,6 +168,7 @@ class WeekNavigator {
 
     nextWeek() {
         if (this._currentWeek < this._semester.weeks - 1) {
+            this._beforeNavigate();
             this._currentWeek++;
             this._buildTimetable();
             this._updateSelect();
@@ -177,6 +180,7 @@ class WeekNavigator {
     }
 
     selectWeek(index) {
+        this._beforeNavigate();
         this._currentWeek = index;
         this._buildTimetable();
         this._updateSelect();
@@ -184,6 +188,15 @@ class WeekNavigator {
         this._updateProgress();
         this._updateArrows();
         this.save();
+    }
+
+    onWeekChange() {
+        var sel = document.getElementById(this._selectId);
+        if (sel) this.selectWeek(parseInt(sel.value, 10));
+    }
+
+    _beforeNavigate() {
+        if (typeof this.onBeforeNavigate === 'function') this.onBeforeNavigate();
     }
 
     save() {
@@ -258,7 +271,7 @@ class WeekNavigator {
     }
 
     _updateSelect() {
-        var sel = document.getElementById('weekSelect');
+        var sel = document.getElementById(this._selectId);
         if (sel) sel.selectedIndex = this._currentWeek;
     }
 

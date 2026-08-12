@@ -851,7 +851,7 @@
 
         <div class="toolbar">
             <div class="toolbar-left">
-                @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'onWeekChange()', 'showTodayBtn' => false])
+                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => false])
             </div>
             <div class="toolbar-center">
                 <select class="selector-dropdown" id="subjectSelector" onchange="onSubjectChange()">
@@ -1014,7 +1014,8 @@
         const venueSlotData = MockData.venueSlots;
 
         let selectedSlotsByVenue = {};
-        let currentWeek = 0;
+        var weekNav = new WeekNavigator(MockData.semester, weekData, 'weekSelector');
+        weekNav.onBeforeNavigate = function() { saveCurrentWeek(); };
         let currentVenue = 'B103';
         let selectedCells = [];
         let selectionHistory = [];
@@ -1022,13 +1023,12 @@
 
         function saveCurrentWeek() {
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
-            selectedSlotsByVenue[currentVenue][currentWeek] = selectedCells.map(c => ({ day: c.day, hour: c.hour }));
+            selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = selectedCells.map(c => ({ day: c.day, hour: c.hour }));
         }
 
         function loadCurrentWeek() {
             selectedCells = [];
-            const venueData = selectedSlotsByVenue[currentVenue] || {};
-            const saved = venueData[currentWeek] || [];
+            const saved = venueData[weekNav.currentWeek] || [];
             const body = document.getElementById('tableBody');
             saved.forEach(s => {
                 const cellDiv = body.querySelector(
@@ -1162,7 +1162,7 @@
                         if (idx !== -1) slots.splice(idx, 1);
                     }
                 }
-                if (venue === currentVenue && weekIdx === currentWeek) {
+                if (venue === currentVenue && weekIdx === weekNav.currentWeek) {
                     const cell = selectedCells.find(c => c.day === di && c.hour === hi);
                     if (cell) {
                         cell.el.classList.remove('cell-selected');
@@ -1258,7 +1258,7 @@
 
             loadCurrentWeek();
             updateCounter();
-            updateWeekArrows(currentWeek >= weekData.length - 1, currentWeek <= 0);
+            weekNav._updateArrows();
         }
 
         function timeLabelHtml(hi) {
@@ -1267,7 +1267,7 @@
 
         function toggleCell(di, hi, el) {
             if (el.classList.contains('cell-selected')) {
-                pushHistory({ action: 'deselect', day: di, hour: hi, venue: currentVenue, week: currentWeek });
+                pushHistory({ action: 'deselect', day: di, hour: hi, venue: currentVenue, week: weekNav.currentWeek });
                 el.classList.remove('cell-selected');
                 el.classList.add('cell-available');
                 el.innerHTML = timeLabelHtml(hi);
@@ -1289,7 +1289,7 @@
                 el.classList.add('cell-selected');
                 el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(hi);
                 selectedCells.push({ day: di, hour: hi, el });
-                pushHistory({ action: 'select', day: di, hour: hi, venue: currentVenue, week: currentWeek });
+                pushHistory({ action: 'select', day: di, hour: hi, venue: currentVenue, week: weekNav.currentWeek });
                 const conflict = checkConflict(di, hi);
                 if (conflict) {
                     toast.show('This slot overlaps with your ' + conflict + ' class');
@@ -1307,35 +1307,11 @@
             });
             selectedCells = [];
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
-            selectedSlotsByVenue[currentVenue][currentWeek] = [];
+            selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = [];
             updateCounter();
         }
 
-        function prevWeek() {
-            if (currentWeek > 0) {
-                saveCurrentWeek();
-                currentWeek--;
-                document.getElementById('weekSelector').value = currentWeek;
-                buildTimetable();
-            }
-        }
-
-        function nextWeek() {
-            if (currentWeek < weekData.length - 1) {
-                saveCurrentWeek();
-                currentWeek++;
-                document.getElementById('weekSelector').value = currentWeek;
-                buildTimetable();
-            }
-        }
-
-        function onWeekChange() {
-            saveCurrentWeek();
-            currentWeek = parseInt(document.getElementById('weekSelector').value);
-            buildTimetable();
-        }
-
-        function onVenueChange() {
+        function timeLabelHtml(hi) {
             saveCurrentWeek();
             currentVenue = document.getElementById('buildingSelector').value;
             buildTimetable();
@@ -1405,8 +1381,8 @@
                 showConfirmModal('No Selection', 'Please select at least one timeslot before proceeding.', null);
                 return;
             }
-            const days = weekData[currentWeek].days;
-            const weekLabel = weekData[currentWeek].label;
+            const days = weekData[weekNav.currentWeek].days;
+            const weekLabel = weekData[weekNav.currentWeek].label;
             const listHtml = selectedCells.map(c => {
                 const day = days[c.day];
                 const startStr = hours[c.hour];
@@ -1542,7 +1518,7 @@
         }
 
         function checkConflict(dayIndex, hourIndex) {
-            const weekLabel = weekData[currentWeek].label;
+            const weekLabel = weekData[weekNav.currentWeek].label;
             const semesterWeek = parseInt(weekLabel.replace('Week ', ''));
             const events = MockData.myTimetable.eventsByWeek[semesterWeek] || [];
             for (let i = 0; i < events.length; i++) {
@@ -1944,7 +1920,7 @@
                     : `${w.label} · ${first} ~ ${last}`;
                 return `<option value="${i}">${label}</option>`;
             }).join('');
-            sel.value = currentWeek;
+            sel.value = weekNav.currentWeek;
             buildTimetable();
             applyUrlParams();
 
