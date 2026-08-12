@@ -125,32 +125,7 @@
            MOCK DATA — Weeks, Faculties, Cohorts, Events
            ════════════════════════════════════════════ */
 
-        const weekData = (function() {
-            const parts = MockData.semester.startDate.split('-');
-            const start = new Date(parts[0], parts[1] - 1, parts[2]);
-            const arr = [];
-            const todayMs = getTodayMs();
-            for (let w = 1; w <= 14; w++) {
-                const ms = start.getTime() + (w - 1) * 7 * 86400000;
-                const mon = new Date(ms);
-                const sun = new Date(ms + 6 * 86400000);
-                const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
-                const fmtShort = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
-                const days = [];
-                for (let d = 0; d < 7; d++) {
-                    const dt = new Date(ms + d * 86400000);
-                    days.push({
-                        abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
-                        date: fmt(dt),
-                        sunday: d === 6,
-                        today: dt.getTime() === todayMs,
-                        holiday: MockData.holidays.some(function(h) { return h.week === w && h.dayIndex === d; }),
-                    });
-                }
-                arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, rangeShort: `${fmtShort(mon)} ~ ${fmtShort(sun)}`, days });
-            }
-            return arr;
-        })();
+        const weekData = generateWeekData();
 
         /* ───── Read from centralized MockData ───── */
         const facultyData = MockData.cohortTimetable.faculties;

@@ -1010,7 +1010,7 @@
 @section('page-scripts')
         const MAX_SELECTION = 4;
 
-        const weekData = MockData.arrangementWeeks;
+        const weekData = generateWeekData();
         const venueSlotData = MockData.venueSlots;
 
         let selectedSlotsByVenue = {};

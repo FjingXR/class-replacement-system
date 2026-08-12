@@ -330,14 +330,17 @@
         }
 
         /* ───── Booked Cell Modal ───── */
-        .modal-overlay {
+        #eventModal.modal-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.5);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+        }
+        #eventModal.modal-overlay.open {
+            display: flex;
         }
         .modal {
             background: var(--color-surface);
@@ -700,7 +703,7 @@
         <div class="card-list" id="mobileCardList" style="display:none"></div>
 
         <!-- ─── Detail Modal (Booked Class) ─── -->
-        <div class="modal-overlay" id="eventModal" style="display:none" onclick="if(event.target===this)closeModal()">
+        <div class="modal-overlay" id="eventModal" onclick="if(event.target===this)closeModal()">
             <div class="modal">
                 <div class="modal-header">
                     <span class="modal-title" id="modalTitle">Class Details</span>
@@ -776,31 +779,7 @@
            MOCK DATA — Weeks
            ════════════════════════════════════════════ */
 
-        const weekData = (function() {
-            const parts = MockData.semester.startDate.split('-');
-            const start = new Date(parts[0], parts[1] - 1, parts[2]);
-            const arr = [];
-            const todayMs = getTodayMs();
-            for (let w = 1; w <= 14; w++) {
-                const ms = start.getTime() + (w - 1) * 7 * 86400000;
-                const mon = new Date(ms);
-                const sun = new Date(ms + 6 * 86400000);
-                const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getFullYear()}`;
-                const days = [];
-                for (let d = 0; d < 7; d++) {
-                    const dt = new Date(ms + d * 86400000);
-                    days.push({
-                        abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
-                        date: fmt(dt),
-                        sunday: d === 6,
-                        today: dt.getTime() === todayMs,
-                        holiday: MockData.holidays.some(function(h) { return h.week === w && h.dayIndex === d; }),
-                    });
-                }
-                arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, days });
-            }
-            return arr;
-        })();
+        const weekData = generateWeekData();
 
         function getTodayMs() {
             const d = new Date();
@@ -1385,11 +1364,11 @@
 
             document.getElementById('mdlRemarks').textContent = e.remarks || '—';
 
-            modal.style.display = 'flex';
+            modal.classList.add('open');
         }
 
         function closeModal() {
-            document.getElementById('eventModal').style.display = 'none';
+            document.getElementById('eventModal').classList.remove('open');
         }
 
         /* ════════════════════════════════════════════

@@ -58,45 +58,7 @@
 
 @section('page-scripts')
 
-        const weekData = (function() {
-            const parts = MockData.semester.startDate.split('-');
-            const start = new Date(parts[0], parts[1] - 1, parts[2]);
-            const arr = [];
-            for (let w = 0; w < MockData.semester.weeks; w++) {
-                const ms = start.getTime() + w * 7 * 86400000;
-                const startDate = new Date(ms);
-                const endDate = new Date(ms + 6 * 86400000);
-                const days = [];
-                for (let d = 0; d < 7; d++) {
-                    const dt = new Date(ms + d * 86400000);
-                    let holiday = false;
-                    let holidayLabel = '';
-                    MockData.holidays.forEach(function(h) {
-                        if (h.week === w + 1 && h.dayIndex === d) {
-                            holiday = true;
-                            holidayLabel = h.label;
-                        }
-                    });
-                    days.push({
-                        abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
-                        date: fmt(dt),
-                        sunday: d === 6,
-                        today: (function() { return dt.getTime() === getTodayMs(); })(),
-                        holiday: holiday,
-                        holidayLabel: holidayLabel,
-                    });
-                }
-                arr.push({
-                    label: 'Week ' + (w + 1),
-                    start: startDate,
-                    end: endDate,
-                    range: fmt(startDate) + ' ~ ' + fmt(endDate),
-                    rangeShort: DateHelper.fmtShort(startDate) + ' ~ ' + DateHelper.fmtShort(endDate),
-                    days: days,
-                });
-            }
-            return arr;
-        })();
+        const weekData = generateWeekData();
 
         const eventsByWeek = {};
         for (let w = 0; w < MockData.semester.weeks; w++) {

@@ -47,6 +47,43 @@ function updateProgress() {
     if (label) label.textContent = 'Week ' + (currentWeek + 1) + ' of ' + MockData.semester.weeks;
 }
 
+function generateWeekData() {
+    const parts = MockData.semester.startDate.split('-');
+    const start = new Date(parts[0], parts[1] - 1, parts[2]);
+    const arr = [];
+    const todayMs = getTodayMs();
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const fmt = d => `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    const fmtShort = d => `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]}`;
+    for (let w = 1; w <= MockData.semester.weeks; w++) {
+        const ms = start.getTime() + (w - 1) * 7 * 86400000;
+        const mon = new Date(ms);
+        const sun = new Date(ms + 6 * 86400000);
+        const days = [];
+        for (let d = 0; d < 7; d++) {
+            const dt = new Date(ms + d * 86400000);
+            let holiday = false;
+            let holidayLabel = '';
+            MockData.holidays.forEach(function(h) {
+                if (h.week === w && h.dayIndex === d) {
+                    holiday = true;
+                    holidayLabel = h.label;
+                }
+            });
+            days.push({
+                abbr: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][d],
+                date: fmt(dt),
+                sunday: d === 6,
+                today: dt.getTime() === todayMs,
+                holiday: holiday,
+                holidayLabel: holidayLabel,
+            });
+        }
+        arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, rangeShort: `${fmtShort(mon)} ~ ${fmtShort(sun)}`, days });
+    }
+    return arr;
+}
+
 function updateWeekSubtitle() {
     const el = document.getElementById('weekSubtitle');
     if (el) {
