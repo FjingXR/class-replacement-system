@@ -32,8 +32,8 @@
         @yield('content')
     </div>
 
-    <script src="/js/ui-common.js"></script>
     <script src="/js/mock-data.js?v=3"></script>
+    <script src="/js/ui-common.js"></script>
     <script src="/js/logout-modal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

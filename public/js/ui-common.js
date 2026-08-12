@@ -1178,7 +1178,8 @@ function nextWeekFilter() {
 
 // ── Promoted from my-request-history (shared helpers) ──
 
-const weekRanges = (function() {
+let _weekRanges = null;
+function buildWeekRanges() {
     const monthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
     function parseDate(s) {
         const p = s.trim().split('-');
@@ -1198,7 +1199,13 @@ const weekRanges = (function() {
             end: iso(end),
         };
     });
-})();
+}
+Object.defineProperty(window, 'weekRanges', {
+    get: function() {
+        if (!_weekRanges) _weekRanges = buildWeekRanges();
+        return _weekRanges;
+    }
+});
 
 function statusClass(status) {
     const map = {
