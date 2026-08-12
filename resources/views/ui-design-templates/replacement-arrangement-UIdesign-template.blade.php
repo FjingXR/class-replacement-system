@@ -23,9 +23,9 @@
             left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            height: 36px;
+            padding: 0 14px;
+            border-radius: 18px;
             border: none;
             background: var(--color-primary);
             color: var(--color-on-primary);
@@ -33,14 +33,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
             transition: transform 0.15s, box-shadow var(--transition);
-            box-shadow: 0 2px 8px rgba(141, 181, 230, 0.25);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
-        .back-btn:hover { transform: translateY(-50%) scale(1.06); box-shadow: 0 4px 16px rgba(141, 181, 230, 0.35); }
-        .back-btn:active { transform: translateY(-50%) scale(0.95); }
-        .light .back-btn { box-shadow: 0 2px 8px rgba(26, 95, 180, 0.2); }
-        .light .back-btn:hover { box-shadow: 0 4px 16px rgba(26, 95, 180, 0.3); }
+        .back-btn:hover { transform: translateY(-50%) scale(1.04); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); }
+        .back-btn:active { transform: translateY(-50%) scale(0.96); }
 
         .top-center {
             display: flex;
@@ -830,10 +833,11 @@
 @section('content')
     <div class="top-bar">
         <button class="back-btn" onclick="goBack()" aria-label="Back">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
             </svg>
+            <span>Back</span>
         </button>
         <div class="top-center">
             <img src="/images/logo_icon.png" alt="Logo" class="top-logo" onclick="navigateHome()">
@@ -1312,7 +1316,7 @@
             updateCounter();
         }
 
-        function timeLabelHtml(hi) {
+        function onVenueChange() {
             saveCurrentWeek();
             currentVenue = document.getElementById('buildingSelector').value;
             buildTimetable();
