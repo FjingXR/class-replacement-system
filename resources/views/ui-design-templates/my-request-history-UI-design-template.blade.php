@@ -141,7 +141,7 @@
 
         /* ───── Summary Card Colors ───── */
         .summary-card.card-total .summary-value { color: var(--color-on-primary-container); }
-        .summary-card.card-approved .summary-value { color: var(--color-secondary); }
+        .summary-card.card-approved .summary-value { color: var(--color-success); }
         .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
         .summary-card.card-rejected .summary-value { color: var(--color-error); }
         .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
@@ -293,7 +293,7 @@
             padding: 10px 24px;
             border-radius: 8px;
             border: none;
-            background: var(--color-secondary);
+            background: var(--color-success);
             color: var(--color-on-secondary);
             font-family: inherit;
             font-size: 13px;
@@ -935,7 +935,7 @@
                 html += '<div class="timeline">';
                 var submittedTime = formatDateTime(r.requestedAt);
                 var reviewTime = r.reviewedAt ? formatDateTime(r.reviewedAt) : null;
-                var statusColor = r.status === 'Pending' ? 'var(--color-tertiary)' : r.status === 'Approved' ? 'var(--color-secondary)' : 'var(--color-error)';
+                var statusColor = r.status === 'Pending' ? 'var(--color-warning)' : r.status === 'Approved' ? 'var(--color-success)' : 'var(--color-error)';
                 html += '<div class="timeline-step"><div class="timeline-connector"><div class="timeline-dot" style="background:var(--color-primary)"></div></div><div class="timeline-text"><div class="timeline-label">Request Submitted</div><div class="timeline-time">' + submittedTime + '</div></div></div>';
                 html += '<div class="timeline-step"><div class="timeline-connector"><div class="timeline-dot" style="background:var(--color-outline)"></div></div><div class="timeline-text"><div class="timeline-label">Under Review</div><div class="timeline-time">' + (reviewTime || '—') + '</div></div></div>';
                 html += '<div class="timeline-step"><div class="timeline-connector"><div class="timeline-dot" style="background:' + statusColor + '"></div></div><div class="timeline-text"><div class="timeline-label">' + r.status + '</div><div class="timeline-time">' + (reviewTime || '—') + '</div></div></div>';

@@ -276,7 +276,7 @@ body {
     display: flex;
     align-items: center;
     gap: 2px;
-    background: var(--color-secondary-container);
+    background: var(--color-primary-container);
     border-radius: 50px;
     padding: 3px 4px 3px 8px;
     border: 1px solid rgba(12,51,33,0.12);
@@ -375,8 +375,8 @@ body {
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
-    background: var(--color-secondary-container);
-    color: var(--color-on-secondary-container);
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
 }
 
 /* ───── Toolbar ───── */
@@ -500,8 +500,8 @@ body {
     padding: 8px 14px;
     border-radius: var(--radius-sm);
     border: none;
-    background: var(--color-secondary-container);
-    color: var(--color-on-secondary-container);
+    background: var(--color-surface-variant);
+    color: var(--color-on-surface-variant);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
@@ -592,8 +592,8 @@ html.dark .filter-select {
     padding: 8px 16px;
     border-radius: 8px;
     border: none;
-    background: var(--color-secondary);
-    color: var(--color-on-secondary);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
     font-family: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -789,7 +789,7 @@ html.dark .filter-select {
 .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
 
 /* ── Summary card colors ───────────────────────────────────── */
-.summary-card.card-total .summary-value { color: var(--color-secondary); }
+.summary-card.card-total .summary-value { color: var(--color-success); }
 .summary-card.card-replacement .summary-value { color: var(--color-primary); }
 .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
 .summary-card.card-conflict .summary-value { color: var(--color-error); }
@@ -842,8 +842,8 @@ html.dark .filter-select {
     border-radius: 20px;
 }
 .modal-status-badge.normal {
-    background: var(--color-secondary-container);
-    color: var(--color-on-secondary-container);
+    background: var(--color-success-container);
+    color: var(--color-on-success-container);
 }
 .modal-status-badge.replacement {
     background: var(--color-primary-container);
@@ -975,8 +975,8 @@ html.dark .filter-select {
     padding: 4px 28px 4px 10px;
     border-radius: var(--radius-sm);
     border: none;
-    background: var(--color-secondary-container);
-    color: var(--color-on-secondary-container);
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
@@ -1000,8 +1000,8 @@ html.dark .week-select {
     padding: 6px 28px 6px 10px;
     border-radius: var(--radius-sm);
     border: none;
-    background: var(--color-secondary-container);
-    color: var(--color-on-secondary-container);
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
@@ -1245,7 +1245,7 @@ html.dark .semester-bar select:not(.week-select) {
 /* ── Status timeline (modal) ────────────────────────────────── */
 .status-timeline { display: flex; gap: 8px; margin-bottom: 16px; }
 .status-timeline .step { flex: 1; text-align: center; padding: 8px 4px; border-radius: 6px; background: var(--color-surface-variant); font-size: 0.8rem; }
-.status-timeline .step.completed { background: var(--color-secondary-container); }
+.status-timeline .step.completed { background: var(--color-success-container); }
 .status-timeline .step.active { background: var(--color-tertiary-container); font-weight: 600; }
 
 /* ── Semester progress bar ──────────────────────────────────── */
@@ -1809,8 +1809,8 @@ body {
     color: var(--color-on-tertiary-container);
 }
 .status-approved {
-    background: var(--color-secondary-container);
-    color: var(--color-on-secondary-container);
+    background: var(--color-success-container);
+    color: var(--color-on-success-container);
 }
 .status-rejected {
     background: var(--color-error-container);

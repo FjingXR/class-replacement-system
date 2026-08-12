@@ -17,7 +17,7 @@
 
         /* ───── Urgency ───── */
         .urgency-high { color: var(--color-error); font-weight: 700; }
-        .urgency-mid { color: var(--color-secondary); font-weight: 600; }
+        .urgency-mid { color: var(--color-warning); font-weight: 600; }
         .urgency-low { color: var(--color-on-surface-variant); font-weight: 500; }
 
         /* ───── Reason Badges ───── */
@@ -34,7 +34,7 @@
             color: var(--color-on-tertiary-container);
         }
         .badge-official-event {
-            background: var(--color-secondary-container);
+            background: var(--color-primary-container);
             color: var(--color-on-secondary-container);
         }
         .badge-emergency-leave {
@@ -46,14 +46,14 @@
         .summary-card.card-conflicted .summary-value { color: var(--color-error); }
         .summary-card.card-venues .summary-value { color: var(--color-primary); }
         .summary-card.card-students .summary-value { color: var(--color-tertiary); }
-        .summary-card.card-duration .summary-value { color: var(--color-secondary); }
+        .summary-card.card-duration .summary-value { color: var(--color-primary); }
         .summary-card.card-courses .summary-value { color: var(--color-on-primary-container); }
 
         .btn-replace-now {
             padding: 8px 20px;
             border-radius: 8px;
             border: none;
-            background: var(--color-secondary);
+            background: var(--color-primary);
             color: var(--color-on-secondary);
             font-family: inherit;
             font-size: 13px;

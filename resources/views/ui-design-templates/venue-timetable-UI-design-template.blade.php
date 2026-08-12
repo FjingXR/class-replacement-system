@@ -225,7 +225,7 @@
             align-items: center;
             gap: 8px;
             padding: 8px 12px;
-            background: var(--color-secondary-container);
+            background: var(--color-primary-container);
             color: var(--color-on-secondary-container);
             border-radius: 6px;
             font-size: 13px;
@@ -490,7 +490,7 @@
                 color: var(--color-on-surface-variant);
             }
             .venue-available-card {
-                background: var(--color-secondary);
+                background: var(--color-primary);
                 color: #fff;
                 border-radius: 8px;
                 padding: 12px;
@@ -522,7 +522,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--color-secondary-container);
+            background: var(--color-primary-container);
             cursor: pointer;
         }
         .cell-available:hover {
@@ -665,7 +665,7 @@
         <!-- ─── Legend Bar ─── -->
         <div class="legend-bar">
             <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-secondary);"></span>
+                <span class="legend-swatch" style="background: var(--color-primary);"></span>
                 <span>Available</span>
             </div>
             <div class="legend-item">

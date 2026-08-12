@@ -129,11 +129,11 @@
         /* ───── Urgency Badges ───── */
         .urgency-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
         .urgency-urgent { background: var(--color-error-container); color: var(--color-on-error-container); }
-        .urgency-normal { background: var(--color-secondary-container); color: var(--color-on-secondary-container); }
+        .urgency-normal { background: var(--color-success-container); color: var(--color-on-success-container); }
 
         /* ───── Action Buttons ───── */
-        .btn-approve { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--color-secondary); background: transparent; color: var(--color-secondary); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
-        .btn-approve:hover { background: var(--color-secondary); color: var(--color-on-secondary); }
+        .btn-approve { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--color-success); background: transparent; color: var(--color-success); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
+        .btn-approve:hover { background: var(--color-success); color: var(--color-on-success); }
         .btn-reject { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--color-error); background: transparent; color: var(--color-error); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
         .btn-reject:hover { background: var(--color-error); color: var(--color-on-error); }
         .btn-view { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--color-outline); background: transparent; color: var(--color-on-surface-variant); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
@@ -141,7 +141,7 @@
 
         /* ───── Summary Card Colors ───── */
         .summary-card.card-total .summary-value { color: var(--color-on-primary-container); }
-        .summary-card.card-approved .summary-value { color: var(--color-secondary); }
+        .summary-card.card-approved .summary-value { color: var(--color-success); }
         .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
         .summary-card.card-rejected .summary-value { color: var(--color-error); }
         .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
@@ -231,7 +231,7 @@
         /* ───── Row Flash Animations ───── */
         .row-flash-approved { animation: flashGreen 0.6s ease; }
         .row-flash-rejected { animation: flashRed 0.6s ease; }
-        @keyframes flashGreen { 0% { background: var(--color-secondary-container); } 100% { background: transparent; } }
+        @keyframes flashGreen { 0% { background: var(--color-success-container); } 100% { background: transparent; } }
         @keyframes flashRed { 0% { background: var(--color-error-container); } 100% { background: transparent; } }
 
         /* ───── Row Urgency Indicators ───── */
@@ -279,13 +279,13 @@
         .request-timeline { display: flex; align-items: center; gap: 0; padding: 12px 0 16px; border-bottom: 1px solid var(--color-outline-variant); margin-bottom: 16px; }
         .timeline-step { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; }
         .timeline-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--color-outline); background: var(--color-surface); transition: all 0.3s; }
-        .timeline-step.completed .timeline-dot { background: var(--color-secondary); border-color: var(--color-secondary); }
+        .timeline-step.completed .timeline-dot { background: var(--color-success); border-color: var(--color-success); }
         .timeline-step.active .timeline-dot { background: var(--color-tertiary); border-color: var(--color-tertiary); animation: pulse 1.5s infinite; }
         .timeline-label { font-size: 11px; font-weight: 500; color: var(--color-on-surface-variant); }
         .timeline-time { font-size: 10px; color: var(--color-on-surface-variant); opacity: 0.7; }
         .timeline-connector { flex: 1; height: 2px; background: var(--color-outline-variant); min-width: 40px; }
-        .timeline-connector.completed { background: var(--color-secondary); }
-        .timeline-connector.active { background: linear-gradient(90deg, var(--color-secondary), var(--color-tertiary)); }
+        .timeline-connector.completed { background: var(--color-success); }
+        .timeline-connector.active { background: linear-gradient(90deg, var(--color-success), var(--color-warning)); }
         @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4); } 50% { box-shadow: 0 0 0 6px rgba(156, 39, 176, 0); } }
 
         /* ───── Responsive Card View ───── */

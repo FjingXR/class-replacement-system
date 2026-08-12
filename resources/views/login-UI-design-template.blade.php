@@ -343,7 +343,7 @@
             padding: 16px;
             border: none;
             border-radius: 14px;
-            background: var(--color-secondary);
+            background: var(--color-primary);
             color: var(--color-on-secondary);
             font-size: 15px;
             font-weight: 600;

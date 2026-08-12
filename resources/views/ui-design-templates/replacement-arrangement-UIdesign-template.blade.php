@@ -116,7 +116,7 @@
             padding: 8px 14px;
             border-radius: var(--radius-sm);
             border: none;
-            background: var(--color-secondary-container);
+            background: var(--color-primary-container);
             color: var(--color-on-secondary-container);
             font-family: inherit;
             font-size: 14px;
@@ -297,7 +297,7 @@
         }
 
         .cell-available {
-            background: var(--color-secondary-container);
+            background: var(--color-primary-container);
             cursor: pointer;
         }
         .cell-available:hover {
@@ -430,7 +430,7 @@
         }
 
         .btn-primary {
-            background: var(--color-secondary);
+            background: var(--color-primary);
             color: var(--color-on-secondary);
             box-shadow: 0 2px 8px rgba(151, 230, 194, 0.2);
         }
@@ -880,7 +880,7 @@
 
         <div class="legend">
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-secondary);"></div>
+                <div class="legend-swatch" style="background: var(--color-primary);"></div>
                 Available
             </div>
             <div class="legend-item">
@@ -1529,7 +1529,7 @@
                 fill.style.width = pct + '%';
                 if (count === 0) fill.style.background = 'var(--color-outline)';
                 else if (count < max) fill.style.background = 'var(--color-tertiary)';
-                else fill.style.background = 'var(--color-secondary)';
+                else fill.style.background = 'var(--color-primary)';
             }
             if (text) text.textContent = 'Selected ' + count + ' of ' + max + ' slots';
         }
