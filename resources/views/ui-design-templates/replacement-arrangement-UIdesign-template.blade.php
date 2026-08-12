@@ -113,19 +113,26 @@
         }
 
         .selector-dropdown {
-            padding: 8px 14px;
+            padding: 6px 32px 6px 12px;
             border-radius: var(--radius-sm);
-            border: none;
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
+            border: 1px solid var(--color-outline);
+            background: var(--color-surface);
+            color: var(--color-on-surface);
             font-family: inherit;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background var(--transition);
+            transition: border-color 0.15s, box-shadow 0.15s;
             outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
         }
-        .selector-dropdown:hover { filter: brightness(1.1); }
+        .selector-dropdown:hover { border-color: var(--color-primary); }
+        .selector-dropdown:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0, 77, 152, 0.15); }
         .selector-dropdown option { background: var(--color-surface); color: var(--color-on-surface); }
 
         .toolbar-center {
@@ -844,7 +851,7 @@
 
         <div class="toolbar">
             <div class="toolbar-left">
-                @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'onWeekChange()', 'selectClass' => 'selector-dropdown', 'showTodayBtn' => false])
+                @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'onWeekChange()', 'showTodayBtn' => false])
             </div>
             <div class="toolbar-center">
                 <select class="selector-dropdown" id="subjectSelector" onchange="onSubjectChange()">
