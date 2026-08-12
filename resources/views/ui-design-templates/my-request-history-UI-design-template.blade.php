@@ -294,7 +294,7 @@
             border-radius: 8px;
             border: none;
             background: var(--color-success);
-            color: var(--color-on-secondary);
+            color: var(--color-on-success);
             font-family: inherit;
             font-size: 13px;
             font-weight: 600;

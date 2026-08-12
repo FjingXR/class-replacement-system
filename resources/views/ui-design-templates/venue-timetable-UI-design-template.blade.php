@@ -226,7 +226,7 @@
             gap: 8px;
             padding: 8px 12px;
             background: var(--color-primary-container);
-            color: var(--color-on-secondary-container);
+            color: var(--color-on-primary-container);
             border-radius: 6px;
             font-size: 13px;
             margin-bottom: 8px;

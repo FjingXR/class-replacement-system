@@ -35,7 +35,7 @@
         }
         .badge-official-event {
             background: var(--color-primary-container);
-            color: var(--color-on-secondary-container);
+            color: var(--color-on-primary-container);
         }
         .badge-emergency-leave {
             background: var(--color-error);
@@ -54,7 +54,7 @@
             border-radius: 8px;
             border: none;
             background: var(--color-primary);
-            color: var(--color-on-secondary);
+            color: var(--color-on-primary);
             font-family: inherit;
             font-size: 13px;
             font-weight: 600;

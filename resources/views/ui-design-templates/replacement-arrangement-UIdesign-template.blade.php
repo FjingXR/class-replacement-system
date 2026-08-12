@@ -117,7 +117,7 @@
             border-radius: var(--radius-sm);
             border: none;
             background: var(--color-primary-container);
-            color: var(--color-on-secondary-container);
+            color: var(--color-on-primary-container);
             font-family: inherit;
             font-size: 14px;
             font-weight: 500;
@@ -431,7 +431,7 @@
 
         .btn-primary {
             background: var(--color-primary);
-            color: var(--color-on-secondary);
+            color: var(--color-on-primary);
             box-shadow: 0 2px 8px rgba(151, 230, 194, 0.2);
         }
         .btn-primary:hover {

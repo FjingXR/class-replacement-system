@@ -286,7 +286,7 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    color: var(--color-on-secondary-container);
+    color: var(--color-on-primary-container);
     user-select: none;
 }
 .user-avatar {
@@ -328,7 +328,7 @@ body {
     border-radius: 50%;
     border: none;
     background: transparent;
-    color: var(--color-on-secondary-container);
+    color: var(--color-on-primary-container);
     cursor: pointer;
     display: flex;
     align-items: center;

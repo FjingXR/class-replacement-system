@@ -1,6 +1,6 @@
 <div class="legend-bar">
     <div class="legend-item">
-        <span class="legend-swatch" style="background: var(--color-secondary);"></span>
+        <span class="legend-swatch" style="background: var(--color-success);"></span>
         <span>Normal Class</span>
     </div>
     <div class="legend-item">
@@ -8,7 +8,7 @@
         <span>Replacement</span>
     </div>
     <div class="legend-item">
-        <span class="legend-swatch" style="background: var(--color-tertiary);"></span>
+        <span class="legend-swatch" style="background: var(--color-warning);"></span>
         <span>Pending</span>
     </div>
     <div class="legend-item">

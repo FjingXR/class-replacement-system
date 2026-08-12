@@ -344,7 +344,7 @@
             border: none;
             border-radius: 14px;
             background: var(--color-primary);
-            color: var(--color-on-secondary);
+            color: var(--color-on-primary);
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
@@ -371,7 +371,7 @@
             width: 18px;
             height: 18px;
             border: 2px solid transparent;
-            border-top-color: var(--color-on-secondary);
+            border-top-color: var(--color-on-primary);
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
             display: none;
