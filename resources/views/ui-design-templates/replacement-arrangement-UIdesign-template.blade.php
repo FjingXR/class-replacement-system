@@ -1028,6 +1028,7 @@
 
         function loadCurrentWeek() {
             selectedCells = [];
+            const venueData = selectedSlotsByVenue[currentVenue] || {};
             const saved = venueData[weekNav.currentWeek] || [];
             const body = document.getElementById('tableBody');
             saved.forEach(s => {
