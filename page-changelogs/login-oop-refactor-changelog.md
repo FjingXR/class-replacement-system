@@ -70,3 +70,18 @@ Refactored login pages (staff and student) to use shared layout via OOP inherita
 1. `resources/views/layouts/login-template.blade.php` — Created
 2. `resources/views/auth/login-staff.blade.php` — Modified (442 → 21 lines)
 3. `resources/views/auth/login-student.blade.php` — Modified (442 → 21 lines)
+
+## Bug Fix: Login button stayed disabled with valid input
+
+**Date:** 2026-08-12
+
+**Cause:** `const idRegex = @json($idRegex);` in the layout produced a JSON **string** (e.g. `"^\\d+$"`), not a RegExp object. Calling `.test()` on a string threw `TypeError: idRegex.test is not a function`, which crashed `validateLogin()` and left the button disabled forever.
+
+**Fix:** Wrap in a RegExp constructor: `const idRegex = new RegExp(@json($idRegex));`
+
+**Verified:**
+- `/login/staff` — entering `6767` + password enables the Log in button
+- `/login/student` — entering `25RSD0001` + password enables the Log in button
+- No console errors on either page
+
+**Note:** Requires clearing view cache (or waiting for OPCache `revalidate_freq`) after editing. Run `rm -rf storage/framework/views/*.php` if changes don't appear.

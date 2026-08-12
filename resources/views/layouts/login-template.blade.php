@@ -421,7 +421,7 @@
     </div>
 
     <script>
-        const idRegex = @json($idRegex);
+        const idRegex = new RegExp(@json($idRegex));
 
         function validateLogin() {
             const loginId = document.getElementById('login_id').value.trim();
