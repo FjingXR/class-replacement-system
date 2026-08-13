@@ -81,12 +81,12 @@
         .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
         .summary-card.card-rejected .summary-value { color: var(--color-error); }
         .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
-        .summary-card.card-hours {
+        .summary-card.card-hours .summary-card-front {
             border: 1px dashed var(--color-outline-strong);
             background: var(--color-surface-variant);
         }
-        .summary-card.card-total {
-            border: 2px solid var(--color-primary);
+        .summary-card.card-total .summary-card-front {
+            border: 1.5px solid var(--color-primary);
             background: var(--color-primary-container);
         }
 
