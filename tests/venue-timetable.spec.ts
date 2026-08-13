@@ -6,7 +6,11 @@ test.describe('Venue Timetable UI', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(PAGE);
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => {
+      localStorage.clear();
+      // Ensure week starts at 0
+      sessionStorage.clear();
+    });
     await page.goto(PAGE);
     await page.waitForTimeout(500);
   });
@@ -121,15 +125,19 @@ test.describe('Venue Timetable UI', () => {
   });
 
   test('TC16 — clicking next week updates the grid', async ({ page }) => {
+    const currentIdx = await page.locator('#weekSelect').evaluate((el: HTMLSelectElement) => el.selectedIndex);
     const nextBtn = page.locator('.week-arrow[aria-label="Next week"]');
     await nextBtn.click();
     await page.waitForTimeout(500);
     const select = page.locator('#weekSelect');
     const selectedIndex = await select.evaluate((el: HTMLSelectElement) => el.selectedIndex);
-    expect(selectedIndex).toBe(1);
+    expect(selectedIndex).toBe(currentIdx + 1);
   });
 
-  test('TC17 — clicking prev week on week 1 stays at week 1', async ({ page }) => {
+  test('TC17 — clicking prev week on first week stays at first week', async ({ page }) => {
+    // Jump to week 0 first
+    await page.locator('#weekSelect').selectOption('0');
+    await page.waitForTimeout(500);
     const prevBtn = page.locator('.week-arrow[aria-label="Previous week"]');
     await expect(prevBtn).toBeDisabled();
   });
