@@ -23,19 +23,9 @@
         }
 
         /* ───── Column Widths ───── */
-        .col-checkbox { width: 40px; text-align: center; }
-        .timetable th.col-requested-at, .timetable td.col-requested-at { width: 125px; white-space: normal; }
-        .col-code { width: 180px; }
-        .col-original { width: 170px; }
-        .col-replacement { width: 170px; }
         .col-original, .col-replacement { white-space: normal; }
-        .col-venue { width: 75px; }
-        .col-students { width: 70px; }
-        .col-cohort { width: 120px; }
-        .col-status { width: 130px; }
-        .col-actions { width: 70px; text-align: center; }
 
-        .grid-scroll .timetable { table-layout: fixed; }
+        .grid-scroll .timetable { min-width: 1120px; }
 
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;

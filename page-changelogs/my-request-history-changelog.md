@@ -1,5 +1,21 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-13] Table layout: fixed → auto (responsive)
+
+### Summary
+
+Changed timetable from `table-layout: fixed` to `auto` (inherited from `theme.css`). Removed all explicit column widths — columns now size by content and adapt to screen width. Added `min-width: 1120px` to prevent table from collapsing too narrow. Horizontal scroll kicks in naturally when screen is too small.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | `@section('page-styles')` | Changed | Removed `table-layout: fixed` override and all explicit column widths (`.col-code`, `.col-original`, `.col-replacement`, `.col-venue`, `.col-students`, `.col-cohort`, `.col-status`, `.col-actions`, `.col-requested-at`). Added `min-width: 1120px` on `.grid-scroll .timetable`. Table now uses `table-layout: auto` from `theme.css`. |
+
+---
+
 ## [2026-08-13] Bug fixes: skeleton loading + emptyCta null reference
 
 ### Summary
