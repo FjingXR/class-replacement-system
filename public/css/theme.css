@@ -1283,13 +1283,32 @@ html.dark .semester-bar select:not(.week-select) {
 .time-col.today .date-label {
     color: var(--color-on-primary-container);
 }
+.time-col.today.offday {
+    background: var(--color-error-container);
+}
+.time-col.today.offday .day-label {
+    color: var(--color-on-error-container);
+}
+.time-col.today.offday .date-label {
+    color: var(--color-on-error-container);
+}
+.time-col.today.offday .holiday-label {
+    color: var(--color-error);
+}
 
 /* ── Today column highlight (hour cells) ──────────────────── */
 .timetable td.today-cell {
-    background: rgba(141, 181, 230, 0.12) !important;
+    background: rgba(141, 181, 230, 0.12);
 }
 .timetable td.today-cell.hour-cell:hover {
-    background: rgba(141, 181, 230, 0.22) !important;
+    background: rgba(141, 181, 230, 0.22);
+}
+.timetable td.today-cell.offday-slot {
+    background: var(--color-error-container);
+}
+.timetable td.today-cell.offday-slot:hover {
+    background: var(--color-error-container);
+    filter: brightness(1.1);
 }
 
 /* ── Today badge (line below date-label) ─────────────────── */
