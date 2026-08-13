@@ -1243,26 +1243,33 @@ html.dark .semester-bar select:not(.week-select) {
     margin-top: 2px;
     text-align: center;
 }
-.time-col .holiday-label {
+/* ── Day badges (Today / Holiday / OFF) ─────────────────── */
+.holiday-badge {
     display: block;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--color-error);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
     margin-top: 2px;
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    background: var(--color-error);
+    color: var(--color-on-error);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
     text-align: center;
     white-space: normal;
     word-break: break-word;
 }
-.time-col .off-label {
+.off-badge {
     display: block;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--color-outline);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
     margin-top: 2px;
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    background: var(--color-outline);
+    color: var(--color-on-surface);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
     text-align: center;
 }
 .time-col.offday {
@@ -1292,8 +1299,9 @@ html.dark .semester-bar select:not(.week-select) {
 .time-col.today.offday .date-label {
     color: var(--color-on-error-container);
 }
-.time-col.today.offday .holiday-label {
-    color: var(--color-error);
+.time-col.today.offday .holiday-badge {
+    background: var(--color-error);
+    color: var(--color-on-error);
 }
 
 /* ── Today column highlight (hour cells) ──────────────────── */

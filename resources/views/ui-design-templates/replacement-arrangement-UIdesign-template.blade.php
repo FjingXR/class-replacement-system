@@ -255,14 +255,17 @@
             margin-top: 2px;
             text-align: center;
         }
-        .time-col .holiday-label {
+        .holiday-badge {
             display: block;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--color-error);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-top: 2px;
+            padding: 1px 6px;
+            border-radius: var(--radius-sm);
+            background: var(--color-error);
+            color: var(--color-on-error);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
             text-align: center;
             white-space: normal;
             word-break: break-word;
@@ -1183,7 +1186,7 @@
                 dayTd.className = 'time-col';
                 let dayHtml = `<span class="day-label">${day.abbr}</span><span class="date-label">${day.date}</span>`;
                 if (day.holiday) {
-                    dayHtml += `<span class="holiday-label">Public Holiday</span>`;
+                    dayHtml += `<span class="holiday-badge">Public Holiday</span>`;
                 }
                 dayTd.innerHTML = dayHtml;
                 tr.appendChild(dayTd);

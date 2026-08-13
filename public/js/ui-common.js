@@ -859,11 +859,12 @@ class HtmlBuilder {
     static dayHeader(day) {
         let html = '<span class="day-label">' + day.abbr + '</span><span class="date-label">' + day.date + '</span>';
         if (day.holiday) {
-            html += '<span class="holiday-label">' + (day.holidayLabel || 'Public Holiday') + '</span>';
-        } else if (day.today) {
+            html += '<span class="holiday-badge">' + (day.holidayLabel || 'Public Holiday') + '</span>';
+        }
+        if (day.today) {
             html += '<span class="today-badge">Today</span>';
-        } else if (day.sunday) {
-            html += '<span class="date-label off-label">OFF</span>';
+        } else if (day.sunday && !day.holiday) {
+            html += '<span class="off-badge">OFF</span>';
         }
         return html;
     }
