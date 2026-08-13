@@ -39,7 +39,7 @@
         }
         .badge-emergency-leave {
             background: var(--color-error);
-            color: white;
+            color: var(--color-on-error);
         }
 
         /* ───── Summary Card Colors ───── */
@@ -57,7 +57,7 @@
             color: var(--color-on-primary);
             font-family: inherit;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;

@@ -247,3 +247,13 @@ New Blade template for Programme Leader replacement request review. 11-column ta
 - **Toast over alert** — Non-blocking notifications via shared `showToast()` from `ui-common.js`; undo restores previous state within 5s window
 - **3-layer Escape handler** — Single keydown handler closes topmost modal: approveNotes → rejectReason → detail
 - **Skeleton on load/filter** — 300ms initial, 150ms on filter change; reuses `.skeleton`/`.skeleton-shimmer` from `theme.css`
+
+## [2026-08-13] Phase 4 — macOS-style Update
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | `@section('page-styles')` | macOS-style update | Removed toggle CSS (promoted to `theme.css`). Removed filter-chip CSS (promoted to `theme.css`). Removed hardcoded status colors `#f59e0b`/`#10b981`/`#ef4444`/`#3b82f6` (now in `theme.css`). Changed `.btn-approve`/`.btn-reject`/`.btn-view` border-radius from `4px` to `6px`. |

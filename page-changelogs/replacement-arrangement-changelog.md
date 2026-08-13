@@ -111,3 +111,4 @@
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
 | 2026-08-04 | — | Refactored: replaced inline page-header/week-nav/grid-table with `@include('partials.…')` (OOP Phase 1) | Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table` partials. |
+| 2026-08-13 | `@section('page-styles')` | macOS-style update (Phase 4) | `.back-btn` shadow standardized to layered `0 2px 8px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06)`; hover shadow `0 4px 16px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08)`. `.selector-dropdown:focus` shadow uses CSS variable. Modal overlay `rgba(0,0,0,0.5)` → `rgba(0,0,0,0.45)`. |

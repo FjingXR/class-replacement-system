@@ -4,54 +4,6 @@
 
 @section('page-styles')
 
-        /* ───── Toggle ───── */
-        .toggle-wrapper {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            user-select: none;
-            white-space: nowrap;
-        }
-        .toggle-wrapper input {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-            pointer-events: none;
-        }
-        .toggle-track {
-            position: relative;
-            width: 36px;
-            height: 20px;
-            border-radius: 10px;
-            background: var(--color-outline);
-            transition: background 0.2s;
-            flex-shrink: 0;
-        }
-        .toggle-thumb {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #fff;
-            transition: transform 0.2s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .toggle-wrapper input:checked + .toggle-track {
-            background: var(--color-primary, #4f46e5);
-        }
-        .toggle-wrapper input:checked + .toggle-track .toggle-thumb {
-            transform: translateX(16px);
-        }
-        .toggle-label {
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-            font-weight: 500;
-        }
-
         /* ───── Clear Button ───── */
         .btn-clear {
             padding: 6px 12px;
@@ -70,52 +22,12 @@
             color: var(--color-on-surface);
         }
 
-        /* ───── Filter Chips ───── */
-        .filter-chips {
-            display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
-            padding: 6px 12px; margin-bottom: 8px;
-            background: var(--color-surface-variant); border: 1px solid var(--color-outline-variant);
-            border-radius: var(--radius-sm); font-size: 12px;
-        }
-        .filter-chips:empty { display: none; }
-        .filter-chips-label { font-weight: 600; color: var(--color-on-surface-variant); margin-right: 2px; }
-        .filter-chip {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 10px; border-radius: 12px;
-            background: var(--color-primary-container); color: var(--color-on-primary-container);
-            font-size: 12px; font-weight: 500;
-        }
-        .filter-chip-remove {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 16px; height: 16px; border-radius: 50%; border: none;
-            background: transparent; color: var(--color-on-primary-container);
-            font-size: 14px; font-weight: 700; cursor: pointer; line-height: 1;
-            transition: background 0.15s;
-        }
-        .filter-chip-remove:hover { background: var(--color-primary); color: #fff; }
-
         /* ───── Column Widths ───── */
         .col-checkbox { width: 40px; text-align: center; }
         .col-original, .col-replacement { white-space: normal; }
 
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;
-        }
-        .col-replacement .cell-class-block .class-time.status-pending {
-            color: #f59e0b;
-        }
-        .col-replacement .cell-class-block .class-time.status-approved {
-            color: #10b981;
-        }
-        .col-replacement .cell-class-block .class-time.status-rejected {
-            color: #ef4444;
-        }
-        .col-replacement .cell-class-block .class-time.status-cancelled {
-            color: var(--color-on-surface-variant);
-            opacity: 0.6;
-        }
-        .col-replacement .cell-class-block .class-time.status-completed {
-            color: #3b82f6;
         }
 
         /* ───── Status Badges (page-specific overrides) ───── */
@@ -191,7 +103,7 @@
         }
         .btn-bulk-cancel:hover {
             background: var(--color-error);
-            color: #fff;
+            color: var(--color-on-error);
         }
         .btn-bulk-clear {
             padding: 6px 14px;
@@ -237,7 +149,7 @@
         tr:hover .btn-inline-cancel { opacity: 1; }
         .btn-inline-cancel:hover {
             background: var(--color-error);
-            color: #fff;
+            color: var(--color-on-error);
         }
 
         /* ───── F6: Status History Timeline ───── */

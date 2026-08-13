@@ -157,9 +157,17 @@ SDD change request applied. Bug fix: `openModal(index)` now delegates to `openMo
 | 2026-08-06 | Line 514 | Cell type style | Added `.cell-type` (opacity 0.5, font-size 12px) for inline type label ` (L)` / ` (T)` in merged Course Code column |
 | 2026-08-06 | Line 834, 74 | Requested At two-line format | Added `<br>` between date/time and relative age — now shows `30 Jun 2026, 8:03 PM` / `(37 days ago)`. Added `white-space: normal` to `.timetable td.col-requested-at` to override global `nowrap`. |
 | 2026-08-06 | Line 419 | Scrollbar always-visible | Changed `.grid-scroll` from `overflow-x: auto` to `overflow-x: scroll` so horizontal scrollbar is always rendered (not just on hover), ensuring users discover scrollable right-side columns |
+| 2026-08-13 | `@section('page-styles')` | macOS-style update (Phase 4) | Removed toggle CSS (promoted to `theme.css`). Removed filter-chip CSS (promoted to `theme.css`). Removed hardcoded status colors `#f59e0b`/`#10b981`/`#ef4444`/`#3b82f6` (now in `theme.css`). Fixed `.btn-bulk-cancel:hover` and `.btn-inline-cancel:hover` color from `#fff` to `var(--color-on-error)`. |
 
 ### `routes/web.php`
 
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
 | 2026-07-20 18:00 | Line 28 (new) | New route | Added `Route::get('/my-request-history-ui', ...)` returning view `ui-design-templates.my-request-history-UI-design-template` |
+
+### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | End of file | Promoted toggle + filter-chip CSS | Moved `.toggle-wrapper`/`.toggle-track`/`.toggle-thumb`/`.toggle-label` and `.filter-chips`/`.filter-chip`/`.filter-chip-remove` from page-specific to shared `theme.css` — used by my-request-history and request-approval. Added `:focus-within` ring on toggle. Fixed `toggle-thumb` background from `#fff` to `var(--color-surface)`. Fixed `filter-chip-remove:hover` color from `#fff` to `var(--color-on-primary)`. |
+| 2026-08-13 | End of file | Status time colors | Added `.class-time.status-pending` → `var(--color-warning)`, `.status-approved` → `var(--color-success)`, `.status-rejected` → `var(--color-error)`, `.status-completed` → `var(--color-primary)` — replaces hardcoded `#f59e0b`, `#10b981`, `#ef4444`, `#3b82f6` in both request pages. |
