@@ -491,7 +491,7 @@ body {
 .timetable th.sortable:hover {
     background: var(--color-outline);
 }
-.timetable tbody tr:hover td {
+.timetable tbody td:hover {
     background: var(--color-surface-variant);
 }
 
