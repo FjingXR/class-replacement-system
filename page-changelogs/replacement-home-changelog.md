@@ -1,5 +1,22 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-13] Phase 3 UX Enhancement: Table Header Tooltips
+
+### Summary
+
+Added hover tooltips to all column headers for better usability.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 315-323 | Added | `tip` property to each column definition with user-friendly descriptions |
+| 2026-08-13 | Lines 325-330 | Modified | `makeSortableHeader()` now uses `col.tip` for `title` attribute |
+
+---
+
 ## [2026-08-10] Phase 2 Template Migration: Inline helpers → Shared OOP classes
 
 ### Summary

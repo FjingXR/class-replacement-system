@@ -1,5 +1,22 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-13] Phase 3 UX Enhancement: Table Header Tooltips
+
+### Summary
+
+Added hover tooltips to all column headers for better usability.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 552-562 | Added | `tip` property to each column definition with user-friendly descriptions |
+| 2026-08-13 | Lines 564-569 | Modified | `makeSortableHeader()` now uses `col.tip` for `title` attribute |
+
+---
+
 ## [2026-08-13] Fix blank right-side gap — gridWrapper flex root cause
 
 ### Summary

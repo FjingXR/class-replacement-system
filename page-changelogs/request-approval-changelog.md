@@ -1,5 +1,22 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-13] Phase 3 UX Enhancement: Table Header Tooltips
+
+### Summary
+
+Added hover tooltips to all column headers for better usability.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 537-548 | Added | `tip` property to each column definition with user-friendly descriptions |
+| 2026-08-13 | Lines 555-567 | Added | `title` attribute injection in `renderHeader()` for each `<th>` element |
+
+---
+
 ## [2026-08-10] Phase 2 Template Migration: Inline helpers → Shared OOP classes
 
 ### Summary
