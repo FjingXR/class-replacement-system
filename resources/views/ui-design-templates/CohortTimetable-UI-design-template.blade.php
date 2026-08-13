@@ -38,6 +38,16 @@
         <!-- ─── Page Header ─── -->
         @include('partials.ui-page-header', ['title' => 'Cohort Timetable', 'description' => 'View the weekly timetable for any cohort across all faculties.'])
 
+        @include('partials.ui-guide-block', [
+            'guideTitle' => 'How to use this page',
+            'guideItems' => [
+                '<strong>Select cohort</strong> — choose a faculty, then a cohort to view its timetable',
+                '<strong>Week navigation</strong> — use arrows or Today button to browse weeks',
+                '<strong>Slot status</strong> — Normal (green), Conflicted (red), Pending (amber), Approved (blue), Rejected (grey)',
+                '<strong>View details</strong> — click any slot to see class details and venue info',
+            ]
+        ])
+
         <!-- ─── Semester Bar ─── -->
         <div class="semester-bar">
             <select id="facultySelect" onchange="onFacultyChange()">

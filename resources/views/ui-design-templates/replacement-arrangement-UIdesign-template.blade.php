@@ -854,6 +854,17 @@
 
     @include('partials.ui-page-header', [])
 
+        @include('partials.ui-guide-block', [
+            'guideTitle' => 'How to use this page',
+            'guideItems' => [
+                '<strong>Select subject</strong> — choose the course to arrange a replacement for',
+                '<strong>Slot status</strong> — Available (green), Conflicted (red), Unavailable (grey)',
+                '<strong>Select slot</strong> — click an available slot to propose it as the replacement',
+                '<strong>Submit</strong> — confirm your selection to send the request for approval',
+                '<strong>Back</strong> — use the back button to return to the conflict list',
+            ]
+        ])
+
         <div class="toolbar">
             <div class="toolbar-left">
                 @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => false])

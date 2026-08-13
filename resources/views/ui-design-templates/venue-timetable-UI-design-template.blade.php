@@ -543,6 +543,17 @@
             <p class="page-desc">View weekly class schedule for any venue across all cohorts.</p>
         </div>
 
+        @include('partials.ui-guide-block', [
+            'guideTitle' => 'How to use this page',
+            'guideItems' => [
+                '<strong>Select venue</strong> — choose a building, then a venue to view its timetable',
+                '<strong>Week navigation</strong> — use arrows or Today button to browse weeks',
+                '<strong>Slot status</strong> — Normal (green), Conflicted (red), Pending (amber), Approved (blue), Rejected (grey)',
+                '<strong>View details</strong> — click any slot to see class details and cohort info',
+                '<strong>Booking check</strong> — the banner shows if the venue is available for booking',
+            ]
+        ])
+
         <!-- ─── Booking Banner ─── -->
         <div class="booking-banner" id="bookingBanner"></div>
 

@@ -147,6 +147,16 @@
         <!-- ─── Page Header ─── -->
         @include('partials.ui-page-header', ['title' => 'My Timetable', 'description' => 'View your weekly class schedule and manage replacement requests across all cohorts.'])
 
+        @include('partials.ui-guide-block', [
+            'guideTitle' => 'How to use this page',
+            'guideItems' => [
+                '<strong>Week navigation</strong> — use arrows or Today button to browse weeks',
+                '<strong>Slot status</strong> — Normal (green), Conflicted (red), Pending (amber), Approved (blue), Rejected (grey)',
+                '<strong>Request replacement</strong> — click any conflicted slot to open the request form',
+                '<strong>View details</strong> — click a normal/approved slot to see class details',
+            ]
+        ])
+
         <!-- ─── Semester Progress ─── -->
         <div class="semester-progress" id="semesterProgress">
             <div class="progress-label" id="progressLabel"></div>
