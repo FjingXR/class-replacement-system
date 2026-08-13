@@ -1,5 +1,27 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-13] Bug fixes: skeleton loading + emptyCta null reference
+
+### Summary
+
+Fixed skeleton loading bug where `hideSummary()` restored stale innerHTML from `dataset.original`, overwriting correct values set by `updateSummary()`. Fixed null reference error on `emptyCta` element (missing ID in shared partial).
+
+### Files Changed
+
+#### `public/js/ui-common.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | `SkeletonLoader.hideSummary()` | Fixed | Removed `el.innerHTML = el.dataset.original` restore — `updateSummary()` already sets correct values via `textContent`. Now only cleans up `dataset.original`. |
+
+#### `resources/views/partials/ui-empty-state.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Line 17 | Fixed | Added `id="emptyCta"` to CTA button — JS references this ID but it was missing, causing null reference in `renderTable()` empty-state branches. |
+
+---
+
 ## [2026-08-10] Phase 2 Template Migration: Inline helpers → Shared OOP classes
 
 ### Summary

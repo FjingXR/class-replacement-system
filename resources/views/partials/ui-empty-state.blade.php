@@ -14,6 +14,6 @@
         <p class="empty-text" id="emptyText">{{ $text }}</p>
     @endif
     @if($ctaLabel)
-        <button class="empty-cta" onclick="{{ $ctaOnclick }}" style="{{ $ctaStyle }}">{{ $ctaLabel }}</button>
+        <button class="empty-cta" id="emptyCta" onclick="{{ $ctaOnclick }}" style="{{ $ctaStyle }}">{{ $ctaLabel }}</button>
     @endif
 </div>
