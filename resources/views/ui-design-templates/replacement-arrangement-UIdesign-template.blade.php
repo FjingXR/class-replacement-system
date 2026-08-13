@@ -86,33 +86,7 @@
         .theme-toggle:active { transform: scale(0.95); }
 
         .app-container {
-            width: 100%;
-            max-width: 100%;
-            padding: 16px 24px;
             padding-top: 68px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 10px 16px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            transition: background var(--transition), border-color var(--transition);
-            flex-wrap: wrap;
-        }
-
-        .toolbar-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
         }
 
         .selector-dropdown {
@@ -162,12 +136,6 @@
             cursor: not-allowed;
         }
 
-        .toolbar-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .hint-text {
             text-align: center;
             font-size: 12px;
@@ -176,150 +144,6 @@
             margin-bottom: -4px;
             opacity: 0.6;
             font-weight: 400;
-        }
-
-        .grid-wrapper {
-            margin-top: 14px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            transition: background var(--transition), border-color var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .grid-scroll {
-            overflow: auto;
-            padding-bottom: 0;
-        }
-
-        .timetable {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 4px;
-            table-layout: fixed;
-        }
-
-        .timetable th, .timetable td {
-            border: none;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 13px;
-            transition: background var(--transition);
-        }
-
-        .timetable th {
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
-            font-weight: 600;
-            position: sticky;
-            z-index: 10;
-        }
-
-        .timetable thead th {
-            top: 0;
-            z-index: 20;
-        }
-
-        .time-header-col {
-            width: 110px;
-            min-width: 110px;
-            max-width: 110px;
-            left: 0;
-            z-index: 30 !important;
-        }
-        thead .time-header-col { z-index: 40 !important; }
-
-        .time-col {
-            width: 110px;
-            min-width: 110px;
-            max-width: 110px;
-            left: 0;
-            position: sticky;
-            z-index: 15;
-            background: var(--color-surface);
-            font-weight: 600;
-            text-align: center;
-        }
-        .time-col .day-label {
-            display: block;
-            font-size: 14px;
-            text-align: center;
-        }
-        .time-col .date-label {
-            display: block;
-            font-size: 11px;
-            font-weight: 400;
-            color: var(--color-on-surface-variant);
-            margin-top: 2px;
-            text-align: center;
-        }
-        .holiday-badge {
-            display: block;
-            margin-top: 2px;
-            padding: 1px 6px;
-            border-radius: var(--radius-sm);
-            background: var(--color-error);
-            color: var(--color-on-error);
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            text-align: center;
-            white-space: normal;
-            word-break: break-word;
-        }
-
-        .timetable thead th.hour-header {
-            padding: 6px 4px;
-            font-size: 12px;
-            min-width: 80px;
-            text-align: center;
-        }
-        .hour-header .hour-top {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .hour-header .hour-bottom {
-            display: block;
-            font-size: 10px;
-            font-weight: 400;
-            opacity: 0.6;
-            margin-top: 1px;
-        }
-
-        .timetable td.hour-cell {
-            padding: 0;
-            height: 80px;
-            min-width: 80px;
-            cursor: default;
-            position: relative;
-        }
-
-        .cell-content {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background var(--transition), box-shadow var(--transition), transform 0.1s;
-        }
-
-        .cell-available {
-            background: var(--color-success-container);
-            cursor: pointer;
-        }
-        .cell-available:hover {
-            filter: brightness(1.2);
-            z-index: 5;
-        }
-        .cell-available:active {
-            transform: scale(0.97);
         }
 
         .cell-occupied {
@@ -364,7 +188,7 @@
             cursor: not-allowed;
         }
 
-        .timetable tr:last-child td { border-bottom: none; }
+        .cell-time-label { display: none; }
 
         .footer-area {
             margin-top: 14px;
@@ -434,15 +258,7 @@
         }
         .btn:active { transform: scale(0.97); }
 
-        .btn-outline {
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline-strong);
-            color: var(--color-on-surface-variant);
-        }
-        .btn-outline:hover {
-            background: var(--color-surface-variant);
-            border-color: var(--color-on-surface-variant);
-        }
+
 
         .btn-primary {
             background: var(--color-primary);
@@ -464,16 +280,6 @@
             transform: none !important;
         }
         .btn-primary:disabled:hover { filter: none !important; box-shadow: none !important; }
-
-        .cell-time-label { display: none; }
-
-        .btn-danger {
-            background: var(--color-error-container);
-            color: var(--color-on-error-container);
-        }
-        .btn-danger:hover {
-            filter: brightness(1.1);
-        }
 
         /* ===== Selection Summary ===== */
         .sel-summary {

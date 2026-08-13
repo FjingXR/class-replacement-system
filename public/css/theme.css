@@ -1463,6 +1463,30 @@ html.dark .semester-bar select:not(.week-select) {
     background: var(--color-surface);
 }
 
+/* ── Selection cell model (shared: replacement-arrangement, venue-timetable) ── */
+.cell-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition), box-shadow var(--transition), transform 0.1s;
+}
+.cell-available {
+    background: var(--color-success-container);
+    cursor: pointer;
+}
+.cell-available:hover {
+    filter: brightness(1.2);
+    z-index: 5;
+}
+.cell-available:active {
+    transform: scale(0.97);
+}
+
 .timetable tr:last-child td { border-bottom: none; }
 
 /* ── Today button ───────────────────────────────────────────── */

@@ -1,5 +1,23 @@
 # Changelog — Venue Timetable UI
 
+## [2026-08-13] OOP Refactor: Align cell-available with shared theme.css
+
+### Summary
+
+Removed duplicate `.cell-available` + hover CSS (now in `theme.css`). Simplified `.cell-content.cell-occupied` to remove redundant positioning (inherited from `.cell-content` in theme.css). Updated JS to wrap available cells in `.cell-content` class for consistency with replacement-arrangement.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/venue-timetable-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 470-482 | Removed | `.cell-available` + hover (now in theme.css via `.cell-content` + `.cell-available`) |
+| 2026-08-13 | Lines 485-495 | Simplified | `.cell-content.cell-occupied` — removed `position: absolute; top/left/right/bottom: 0;` (inherited from `.cell-content`) |
+| 2026-08-13 | Line 1208 | Changed | `div.className = 'cell-available'` → `'cell-content cell-available'` |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Legend Tooltips
 
 ### Summary

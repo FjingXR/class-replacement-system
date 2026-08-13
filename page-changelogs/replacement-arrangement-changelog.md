@@ -1,5 +1,41 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-13] OOP Refactor: Align shared base with theme.css
+
+### Summary
+
+Removed ~140 lines of duplicate inline CSS that re-declared shared classes (`.toolbar`, `.toolbar-left`, `.toolbar-right`, `.grid-wrapper`, `.grid-scroll`, `.timetable`, `.time-col`, `.hour-header`, `.hour-cell`, `.btn-outline`, `.btn-danger`) with different values. Now relies on `theme.css` for the shared grid/toolbar/table geometry. Promoted `.cell-content` and `.cell-available` + hover/active to `theme.css` (shared with venue-timetable). Kept page-specific overrides: floating top bar, `.app-container` padding-top, `.selector-dropdown`, `.toolbar-center`, `.hint-text`, selection cell model (`.cell-occupied`, `.cell-selected`, `.cell-pending`, `.cell-reserved`), footer/submit area, selection summary, progress, help overlay.
+
+### Visual Changes
+
+- Toolbar: `border-radius` md→lg, `gap` 16→12px, lost `flex-wrap` and `transition`
+- Timetable: `table-layout` fixed→auto, `text-align` center→left, time-col 110→120px
+- Buttons: `.btn-outline`/`.btn-danger` now use theme.css outlined style (was filled)
+
+### Files Changed
+
+#### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | After `.cell-empty` | Added | `.cell-content`, `.cell-available`, `.cell-available:hover`, `.cell-available:active` — shared selection cell model |
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 88-116 | Removed | `.app-container` full block, `.toolbar`, `.toolbar-left` (replaced with 1-line override) |
+| 2026-08-13 | Lines 165-169 | Removed | `.toolbar-right` |
+| 2026-08-13 | Lines 181-195 | Removed | `.grid-wrapper`, `.grid-scroll` |
+| 2026-08-13 | Lines 197-299 | Removed | `.timetable`, `.timetable th/td`, `.time-header-col`, `.time-col`, `.holiday-badge`, `.hour-header`, `.hour-cell` |
+| 2026-08-13 | Line 367 | Removed | `.timetable tr:last-child td` |
+| 2026-08-13 | Lines 301-323 | Removed | `.cell-content`, `.cell-available` + hover/active (now in theme.css) |
+| 2026-08-13 | Lines 437-445 | Removed | `.btn-outline` |
+| 2026-08-13 | Lines 470-476 | Removed | `.btn-danger` |
+| 2026-08-13 | Line 284 | Removed | Duplicate `.cell-time-label` |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Legend Tooltips
 
 ### Summary

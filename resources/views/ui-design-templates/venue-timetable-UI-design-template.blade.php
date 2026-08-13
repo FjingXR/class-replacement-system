@@ -467,27 +467,8 @@
             cursor: not-allowed;
             pointer-events: none;
         }
-        .cell-available {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--color-success-container);
-            cursor: pointer;
-        }
-        .cell-available:hover {
-            filter: brightness(1.2);
-            z-index: 5;
-        }
-
         /* ───── Unavailable Cell (Holiday/Sunday) ───── */
         .cell-content.cell-occupied {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
             background: var(--color-surface-variant);
             cursor: not-allowed;
             pointer-events: none;
@@ -632,10 +613,10 @@
         <!-- ─── Legend Bar ─── -->
         @include('partials.ui-legend-bar', [
             'items' => [
-                ['color' => 'var(--color-success)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue'],
-                ['color' => 'var(--color-primary)', 'label' => 'Replacement', 'tip' => 'Approved replacement class booked here'],
-                ['color' => 'var(--color-warning)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
-                ['color' => 'var(--color-error)', 'label' => 'Conflict', 'tip' => 'Scheduling conflict or public holiday'],
+                ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue'],
+                ['color' => 'var(--color-primary-container)', 'label' => 'Replacement', 'tip' => 'Approved replacement class booked here'],
+                ['color' => 'var(--color-warning-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Conflict', 'tip' => 'Scheduling conflict or public holiday'],
             ]
         ])
 
@@ -1205,7 +1186,7 @@
                     } else {
                         /* Available slot */
                         const div = document.createElement('div');
-                        div.className = 'cell-available';
+                        div.className = 'cell-content cell-available';
                         div.tabIndex = 0;
                         div.dataset.day = di;
                         div.dataset.hour = hi;
