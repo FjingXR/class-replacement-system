@@ -16,7 +16,7 @@
         }
         .btn-replace-now {
             padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             border: none;
             background: var(--color-error-container);
             color: var(--color-on-error-container);
@@ -42,7 +42,7 @@
 
         .btn-cancel-class {
             padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--color-error);
             background: transparent;
             color: var(--color-error);
@@ -74,7 +74,7 @@
         .cancel-modal {
             background: var(--color-surface);
             border: 1px solid var(--color-outline);
-            border-radius: 16px;
+            border-radius: var(--radius-xl);
             box-shadow: var(--shadow-lg);
             max-width: 420px; width: 100%;
             animation: modalIn 0.2s ease;
@@ -97,7 +97,7 @@
         }
         .btn-cancel-secondary {
             padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--color-outline-strong);
             background: var(--color-surface);
             color: var(--color-on-surface-variant);
@@ -119,7 +119,7 @@
         }
         .btn-cancel-danger {
             padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             border: none;
             background: var(--color-error);
             color: var(--color-on-error);

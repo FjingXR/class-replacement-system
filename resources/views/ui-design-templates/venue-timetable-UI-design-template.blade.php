@@ -26,7 +26,7 @@
             width: 36px;
             height: 36px;
             border: 1px solid var(--color-outline);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             background: transparent;
             cursor: pointer;
             font-size: 18px;
@@ -77,7 +77,7 @@
         .segment-toggle {
             display: inline-flex;
             border: 1px solid var(--color-outline);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             overflow: hidden;
         }
         .segment-toggle button {
@@ -115,7 +115,7 @@
             gap: 6px;
             background: transparent;
             border: 1px solid var(--color-outline);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             padding: 6px 12px;
             font-size: 13px;
             color: var(--color-on-surface-variant);
@@ -136,7 +136,7 @@
             margin-top: 4px;
             background: var(--color-surface);
             border: 1px solid var(--color-outline);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             padding: 8px 12px;
             z-index: 100;
             min-width: 180px;
@@ -160,7 +160,7 @@
             background: var(--color-primary);
             color: #fff;
             padding: 10px 16px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 12px;
@@ -171,7 +171,7 @@
         .history-details {
             margin-bottom: 12px;
             border: 1px solid var(--color-outline);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             overflow: hidden;
         }
         .history-summary {
@@ -219,7 +219,7 @@
         .history-status {
             font-size: 12px;
             padding: 2px 8px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
         }
 
         /* ───── Hint Text (empty states) ───── */
@@ -239,7 +239,7 @@
             padding: 8px 12px;
             background: var(--color-primary-container);
             color: var(--color-on-primary-container);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             font-size: 13px;
             margin-bottom: 8px;
         }
@@ -252,7 +252,7 @@
             background: var(--color-error);
             color: #fff;
             padding: 12px 16px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             margin-bottom: 12px;
             display: none;
             align-items: center;
@@ -269,7 +269,7 @@
             border: none;
             color: #fff;
             padding: 6px 14px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 13px;
         }
@@ -287,7 +287,7 @@
             border: 1px solid var(--color-error);
             color: var(--color-on-surface);
             padding: 12px 20px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             font-size: 14px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
             z-index: 9999;
@@ -301,7 +301,7 @@
         .print-btn {
             background: transparent;
             border: 1px solid var(--color-outline);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             padding: 6px 10px;
             cursor: not-allowed;
             opacity: 0.5;
@@ -321,7 +321,7 @@
             position: fixed;
             background: var(--color-surface);
             border: 1px solid var(--color-outline);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             padding: 12px 16px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
             z-index: 9999;
@@ -341,7 +341,7 @@
             color: var(--color-on-primary);
             border: none;
             padding: 6px 16px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 13px;
         }
@@ -409,7 +409,7 @@
             .venue-event-card {
                 background: var(--color-surface);
                 border: 1px solid var(--color-outline);
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
                 padding: 12px;
             }
             .venue-event-header {
@@ -425,7 +425,7 @@
             .venue-event-status {
                 font-size: 12px;
                 padding: 2px 8px;
-                border-radius: 6px;
+                border-radius: var(--radius-sm);
             }
             .venue-event-body {
                 display: flex;
@@ -443,7 +443,7 @@
             .venue-available-card {
                 background: var(--color-primary);
                 color: #fff;
-                border-radius: 8px;
+                border-radius: var(--radius-sm);
                 padding: 12px;
                 cursor: pointer;
                 text-align: center;
@@ -518,7 +518,7 @@
             color: var(--color-on-primary);
             border: none;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 13px;
         }

@@ -20,14 +20,14 @@
     width: 100%;
     height: 6px;
     background: var(--color-surface-variant);
-    border-radius: 3px;
+    border-radius: var(--radius-xs);
     overflow: hidden;
     margin: 0 0 1.25rem;
 }
 .logout-countdown-fill {
     height: 100%;
     background: var(--color-primary);
-    border-radius: 3px;
+    border-radius: var(--radius-xs);
     transition: width 1s linear;
 }
 

@@ -21,7 +21,6 @@
             --input-border: var(--color-outline);
             --card-bg: color-mix(in srgb, var(--color-surface) 65%, transparent);
             --card-border: var(--color-outline);
-            --glass-blur: blur(28px);
             --shadow-card: var(--shadow-lg);
             --login-btn-bg: var({{ $btnColorToken }});
             --login-btn-color: var({{ $btnColorOnToken }});
@@ -82,11 +81,9 @@
             z-index: 20;
             width: 40px;
             height: 40px;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             border: 1px solid var(--card-border);
             background: var(--card-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             color: var(--color-on-surface-variant);
             cursor: pointer;
             display: flex;
@@ -107,10 +104,8 @@
             margin: 24px;
             padding: 48px 44px 40px;
             background: var(--card-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
+            border-radius: var(--radius-lg);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
             animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -182,7 +177,7 @@
             align-items: center;
             background: var(--input-bg);
             border: 1px solid var(--input-border);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
         }
         .input-wrapper:hover { background: rgba(84, 92, 102, 0.18); }
@@ -242,7 +237,7 @@
             width: 100%;
             padding: 10px 24px;
             border: none;
-            border-radius: 16px;
+            border-radius: var(--radius-md);
             background: var(--login-btn-bg);
             color: var(--login-btn-color);
             font-size: 14px;
@@ -312,7 +307,7 @@
         .error-msg {
             background: color-mix(in srgb, var(--color-error) 15%, transparent);
             border: 1px solid var(--color-error);
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             padding: 12px 16px;
             margin-bottom: 20px;
             font-size: 14px;
@@ -329,13 +324,13 @@
         }
 
         @media (max-width: 480px) {
-            .login-card { padding: 32px 24px 28px; margin: 12px; border-radius: 20px; max-width: 100%; }
+            .login-card { padding: 32px 24px 28px; margin: 12px; border-radius: var(--radius-lg); max-width: 100%; }
             .logo-img { max-width: 200px; }
             .login-btn { padding: 14px; }
             .theme-toggle { top: 16px; right: 16px; width: 36px; height: 36px; }
         }
         @media (max-width: 380px) {
-            .login-card { padding: 28px 20px 24px; border-radius: 16px; }
+            .login-card { padding: 28px 20px 24px; border-radius: var(--radius-xl); }
         }
     </style>
     @yield('page-styles')

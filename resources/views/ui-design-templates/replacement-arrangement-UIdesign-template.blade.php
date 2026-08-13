@@ -25,7 +25,7 @@
             transform: translateY(-50%);
             height: 36px;
             padding: 0 14px;
-            border-radius: 18px;
+            border-radius: var(--radius-xl);
             border: none;
             background: var(--color-primary);
             color: var(--color-on-primary);
@@ -70,7 +70,7 @@
             z-index: 50;
             width: 36px;
             height: 36px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--color-outline);
             background: var(--color-surface);
             color: var(--color-on-surface-variant);
@@ -417,7 +417,7 @@
 
         .btn {
             padding: 10px 22px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             border: none;
             font-family: inherit;
             font-size: 14px;
@@ -494,7 +494,7 @@
         .legend-swatch {
             width: 18px;
             height: 18px;
-            border-radius: 4px;
+            border-radius: var(--radius-xs);
             flex-shrink: 0;
             border: 1px solid var(--color-outline);
         }
@@ -567,7 +567,7 @@
             background: var(--color-primary-container);
             color: var(--color-on-primary-container);
             border: 1px solid transparent;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             padding: 12px 14px;
             position: relative;
             animation: cardSlideIn 0.2s ease;
@@ -617,7 +617,7 @@
             top: 6px;
             right: 6px;
             width: 24px; height: 24px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: none;
             background: transparent;
             color: var(--color-on-primary-container);
@@ -757,12 +757,12 @@
             flex: 1;
             height: 8px;
             background: var(--color-outline);
-            border-radius: 4px;
+            border-radius: var(--radius-xs);
             overflow: hidden;
         }
         .progress-fill {
             height: 100%;
-            border-radius: 4px;
+            border-radius: var(--radius-xs);
             transition: width 0.3s, background 0.3s;
             background: var(--color-outline);
         }
@@ -799,7 +799,7 @@
         }
         .help-card {
             background: var(--color-surface);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             padding: 24px;
             max-width: 400px;
             width: 90%;
@@ -821,7 +821,7 @@
             font-family: monospace;
             background: var(--color-surface-variant);
             padding: 2px 6px;
-            border-radius: 4px;
+            border-radius: var(--radius-xs);
             font-size: 12px;
         }
         .help-card .help-close {
@@ -1398,7 +1398,7 @@
             showConfirmModal(
                 'Confirm Your Selection',
                 `<div style="margin-bottom:12px;font-weight:500;">You are about to submit a replacement request for the following <strong>${selectedCells.length}</strong> slot(s):</div>
-                 <div style="border:1px solid var(--color-outline);border-radius:8px;padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
+                 <div style="border:1px solid var(--color-outline);border-radius:var(--radius-sm);padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
                 function() {
                     hideConfirmModal();
                     const toast = buildSubmissionToastMessage();
@@ -1819,7 +1819,7 @@
                     <label for="slot_${index}" style="flex: 1; cursor: pointer; font-size: 13px;">
                         Week ${slot.week} · ${slot.dayName} ${startStr} – ${endStr} @ ${slot.venue}
                     </label>
-                    <span class="badge ${statusClass}" style="font-size: 11px; padding: 2px 8px; border-radius: 12px; background: ${slot.status === 'conflict' ? 'var(--color-error-container)' : 'var(--color-surface-variant)'}; color: ${slot.status === 'conflict' ? 'var(--color-on-error-container)' : 'var(--color-on-surface-variant)'};">
+                    <span class="badge ${statusClass}" style="font-size: 11px; padding: 2px 8px; border-radius: var(--radius-lg); background: ${slot.status === 'conflict' ? 'var(--color-error-container)' : 'var(--color-surface-variant)'}; color: ${slot.status === 'conflict' ? 'var(--color-on-error-container)' : 'var(--color-on-surface-variant)'};">
                         ${statusLabel}
                     </span>
                 `;

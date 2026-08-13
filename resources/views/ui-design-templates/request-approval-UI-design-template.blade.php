@@ -7,7 +7,7 @@
         /* ───── Clear Button ───── */
         .btn-clear {
             padding: 6px 12px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--color-outline);
             background: transparent;
             color: var(--color-on-surface-variant);
@@ -45,7 +45,7 @@
         .badge {
             display: inline-block;
             padding: 4px 10px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
@@ -63,16 +63,16 @@
         }
 
         /* ───── Urgency Badges ───── */
-        .urgency-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+        .urgency-badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-md); font-size: 11px; font-weight: 600; }
         .urgency-urgent { background: var(--color-error-container); color: var(--color-on-error-container); }
         .urgency-normal { background: var(--color-success-container); color: var(--color-on-success-container); }
 
         /* ───── Action Buttons ───── */
-        .btn-approve { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-success); background: transparent; color: var(--color-success); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
+        .btn-approve { padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--color-success); background: transparent; color: var(--color-success); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
         .btn-approve:hover { background: var(--color-success); color: var(--color-on-success); }
-        .btn-reject { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-error); background: transparent; color: var(--color-error); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
+        .btn-reject { padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--color-error); background: transparent; color: var(--color-error); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
         .btn-reject:hover { background: var(--color-error); color: var(--color-on-error); }
-        .btn-view { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--color-outline); background: transparent; color: var(--color-on-surface-variant); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+        .btn-view { padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--color-outline); background: transparent; color: var(--color-on-surface-variant); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
         .btn-view:hover { background: var(--color-surface-variant); }
 
         /* ───── Summary Card Colors ───── */
@@ -115,7 +115,7 @@
         .urgency-filter { display: inline-flex; gap: 4px; margin-left: 8px; }
         .urgency-filter-chip {
             padding: 4px 10px;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             border: 1px solid var(--color-outline);
             background: transparent;
             color: var(--color-on-surface-variant);
@@ -142,7 +142,7 @@
         .reject-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
         .reject-preset-chip {
             padding: 4px 10px;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             border: 1px solid var(--color-outline);
             background: transparent;
             color: var(--color-on-surface-variant);
@@ -180,7 +180,7 @@
         .lecturer-cell-email {
             font-size: 12px; color: var(--color-primary); cursor: pointer;
             display: inline-flex; align-items: center; gap: 4px;
-            padding: 2px 8px; border-radius: 10px;
+            padding: 2px 8px; border-radius: var(--radius-md);
             background: var(--color-primary-container); color: var(--color-on-primary-container);
             transition: opacity 0.15s;
         }
@@ -374,7 +374,7 @@
                 <button class="reject-preset-chip" onclick="applyRejectPreset('')">Other</button>
             </div>
             <p style="margin-bottom:8px;font-size:13px;color:var(--color-on-surface-variant)">Please provide a reason for rejection (required):</p>
-            <textarea id="rejectReasonInput" placeholder="Enter rejection reason..." rows="4" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:4px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
+            <textarea id="rejectReasonInput" placeholder="Enter rejection reason..." rows="4" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:var(--radius-xs);font-size:13px;resize:vertical;font-family:inherit"></textarea>
         </div>
         <div class="modal-footer">
             <div class="modal-footer-left">
@@ -396,7 +396,7 @@
         <div class="modal-body">
             <div id="approveNotesSummary" style="margin-bottom:12px;font-size:13px;white-space:pre-line;color:var(--color-on-surface)"></div>
             <p style="margin-bottom:8px;font-size:13px;color:var(--color-on-surface-variant)">Notes (optional):</p>
-            <textarea id="approveNotesInput" placeholder="Optional note for the audit trail..." rows="2" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:4px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
+            <textarea id="approveNotesInput" placeholder="Optional note for the audit trail..." rows="2" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:var(--radius-xs);font-size:13px;resize:vertical;font-family:inherit"></textarea>
         </div>
         <div class="modal-footer">
             <div class="modal-footer-left">

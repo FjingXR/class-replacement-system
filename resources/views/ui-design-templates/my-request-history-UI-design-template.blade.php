@@ -7,7 +7,7 @@
         /* ───── Clear Button ───── */
         .btn-clear {
             padding: 6px 12px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--color-outline);
             background: transparent;
             color: var(--color-on-surface-variant);
@@ -44,7 +44,7 @@
         .badge {
             display: inline-block;
             padding: 4px 10px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
@@ -101,7 +101,7 @@
         }
         .btn-bulk-cancel {
             padding: 6px 14px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--color-error);
             background: transparent;
             color: var(--color-error);
@@ -117,7 +117,7 @@
         }
         .btn-bulk-clear {
             padding: 6px 14px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--color-outline);
             background: transparent;
             color: var(--color-on-surface-variant);
@@ -144,7 +144,7 @@
         /* ───── F4: Quick Actions in Rows ───── */
         .btn-inline-cancel {
             padding: 4px 10px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--color-error);
             background: transparent;
             color: var(--color-error);
@@ -212,7 +212,7 @@
         .empty-cta {
             margin-top: 16px;
             padding: 10px 24px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             border: none;
             background: var(--color-success);
             color: var(--color-on-success);
@@ -715,7 +715,7 @@
             pendingCancelId = id;
             document.getElementById('cancelConfirmBody').innerHTML =
                 '<p style="font-size:14px;color:var(--color-on-surface);line-height:1.5;margin-bottom:12px">Are you sure you want to cancel this replacement request? This action cannot be undone.</p>' +
-                '<div style="background:var(--color-surface-variant);border-radius:8px;padding:12px;font-size:13px;line-height:1.6">' +
+                '<div style="background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:12px;font-size:13px;line-height:1.6">' +
                 '<strong>' + r.courseCode + '</strong> — ' + r.courseName + '<br>' +
                 'Class: ' + r.classDay + ', ' + formatDate(r.classDate) + '<br>' +
                 'Status: <span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
