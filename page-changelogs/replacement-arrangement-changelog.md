@@ -1,10 +1,10 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
-## [2026-08-13] Phase 3 UX Enhancement: Shared Legend Design
+## [2026-08-13] Phase 3 UX Enhancement: Shared Legend Bar
 
 ### Summary
 
-Replaced inline legend CSS with shared `.legend-bar` classes and changed Available to green.
+Replaced inline legend with shared `ui-legend-bar` partial using `$items` parameter.
 
 ### Files Changed
 
@@ -12,9 +12,8 @@ Replaced inline legend CSS with shared `.legend-bar` classes and changed Availab
 
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
-| 2026-08-13 | Lines 904-925 | Replaced | `<div class="legend">` → `<div class="legend-bar">` with shared CSS classes |
+| 2026-08-13 | Lines 876-884 | Replaced | Inline legend → `@include('partials.ui-legend-bar', ['items' => [...]])` |
 | 2026-08-13 | Lines 474-500 | Removed | Inline `.legend`, `.legend-item`, `.legend-swatch` CSS (now uses theme.css) |
-| 2026-08-13 | Line 906 | Changed | Available swatch: `var(--color-primary)` → `var(--color-success)` |
 
 ---
 

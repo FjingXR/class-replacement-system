@@ -1,10 +1,10 @@
 # Changelog — Venue Timetable UI
 
-## [2026-08-13] Phase 3 UX Enhancement: Available Slots Green
+## [2026-08-13] Phase 3 UX Enhancement: Shared Legend Bar
 
 ### Summary
 
-Changed Available legend swatch and slot background from blue to green.
+Replaced inline legend with shared `ui-legend-bar` partial using `$items` parameter.
 
 ### Files Changed
 
@@ -12,6 +12,7 @@ Changed Available legend swatch and slot background from blue to green.
 
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
+| 2026-08-13 | Lines 632-649 | Replaced | Inline legend → `@include('partials.ui-legend-bar', ['items' => [...]])` |
 | 2026-08-13 | Line 634 | Changed | Legend swatch: `var(--color-primary)` → `var(--color-success)` |
 | 2026-08-13 | Line 476 | Changed | `.cell-available` background: `var(--color-primary-container)` → `var(--color-success-container)` |
 
