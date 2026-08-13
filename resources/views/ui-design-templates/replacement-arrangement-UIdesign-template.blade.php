@@ -873,28 +873,15 @@
 
         @include('partials.ui-grid-table')
 
-        <div class="legend-bar">
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-success);"></span>
-                <span>Available</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-primary);"></span>
-                <span>Your Current Selection</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-warning);"></span>
-                <span>Pending (You)</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-surface-variant);"></span>
-                <span>Reserved by Others</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-error);"></span>
-                <span>Occupied / Class on Public Holiday</span>
-            </div>
-        </div>
+        @include('partials.ui-legend-bar', [
+            'items' => [
+                ['color' => 'var(--color-success)', 'label' => 'Available'],
+                ['color' => 'var(--color-primary)', 'label' => 'Your Current Selection'],
+                ['color' => 'var(--color-warning)', 'label' => 'Pending (You)'],
+                ['color' => 'var(--color-surface-variant)', 'label' => 'Reserved by Others'],
+                ['color' => 'var(--color-error)', 'label' => 'Occupied / Class on Public Holiday'],
+            ]
+        ])
 
         <div class="sel-summary" id="selSummary">
             <div class="sel-summary-header">

@@ -1,0 +1,549 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: venue-timetable.spec.ts >> Venue Timetable UI >> TC16 — clicking next week updates the grid
+- Location: tests/venue-timetable.spec.ts:123:3
+
+# Error details
+
+```
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 1
+Received: 3
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - img "TAR UMT" [ref=f1e4] [cursor=pointer]
+    - generic [ref=f1e5]:
+      - link "Dashboard" [ref=f1e6] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Timetable" [ref=f1e7] [cursor=pointer]:
+        - /url: /my-timetable-ui
+      - link "Cohort Timetables" [ref=f1e8] [cursor=pointer]:
+        - /url: /cohort-timetable-ui
+      - link "Replacement Arrangement" [ref=f1e9] [cursor=pointer]:
+        - /url: /replacement-home-ui
+      - link "Request Approval 8" [ref=f1e10] [cursor=pointer]:
+        - /url: /request-approval-ui
+        - text: Request Approval
+        - generic [ref=f1e11]: "8"
+      - link "Replacement History" [ref=f1e12] [cursor=pointer]:
+        - /url: /my-request-history-ui
+      - link "Venue Timetable" [ref=f1e13] [cursor=pointer]:
+        - /url: /venue-timetable-ui
+    - generic [ref=f1e14]:
+      - button "Toggle theme" [ref=f1e15] [cursor=pointer]
+      - button "Notifications" [ref=f1e18] [cursor=pointer]:
+        - generic [ref=f1e22]: "3"
+      - generic [ref=f1e23]:
+        - generic [ref=f1e24]:
+          - generic [ref=f1e25]: KL
+          - generic [ref=f1e26]:
+            - generic [ref=f1e27]: Kylian Mbappe
+            - generic [ref=f1e28]: 25SMR10186
+            - generic [ref=f1e29]: Lecturer
+        - button "Logout" [ref=f1e30] [cursor=pointer]
+  - generic [ref=f1e34]:
+    - generic [ref=f1e35]:
+      - generic [ref=f1e36]: Navigation
+      - button "Close navigation menu" [ref=f1e37] [cursor=pointer]
+    - generic [ref=f1e41]:
+      - link "Dashboard" [ref=f1e42] [cursor=pointer]:
+        - /url: /dashboard
+      - link "My Timetable" [ref=f1e43] [cursor=pointer]:
+        - /url: /my-timetable-ui
+      - link "Cohort Timetables" [ref=f1e44] [cursor=pointer]:
+        - /url: /cohort-timetable-ui
+      - link "Replacement Arrangement" [ref=f1e45] [cursor=pointer]:
+        - /url: /replacement-home-ui
+      - link "Request Approval" [ref=f1e46] [cursor=pointer]:
+        - /url: /request-approval-ui
+      - link "Replacement History" [ref=f1e47] [cursor=pointer]:
+        - /url: /my-request-history-ui
+      - link "Venue Timetable" [ref=f1e48] [cursor=pointer]:
+        - /url: /venue-timetable-ui
+    - generic [ref=f1e49]:
+      - generic [ref=f1e50]:
+        - generic [ref=f1e51]: KL
+        - generic [ref=f1e52]:
+          - generic [ref=f1e53]: Kylian Mbappe
+          - generic [ref=f1e54]: 25SMR10186
+          - generic [ref=f1e55]: Lecturer
+      - button "Logout" [ref=f1e56] [cursor=pointer]
+  - generic [ref=f1e60]:
+    - generic [ref=f1e61]:
+      - heading "Venue Timetable" [level=1] [ref=f1e62]
+      - generic [ref=f1e63]: 202605 Semester · 27-Jul-2026 ~ 26-Oct-2026
+      - paragraph [ref=f1e64]: View weekly class schedule for any venue across all cohorts.
+    - generic [ref=f1e65]:
+      - button "How to use this page ▾" [ref=f1e66] [cursor=pointer]:
+        - text: How to use this page
+        - generic [ref=f1e71]: ▾
+      - text: • • • • •
+    - generic [ref=f1e72]:
+      - generic [ref=f1e73]:
+        - combobox [ref=f1e74] [cursor=pointer]:
+          - option "B002 — Tutorial (35 seats)" [selected]
+          - option "B014 — Tutorial (35 seats)"
+          - option "B015 — Tutorial (35 seats)"
+          - option "B016 — Tutorial (35 seats)"
+          - option "B017 — Tutorial (35 seats)"
+          - option "B018 — Tutorial (35 seats)"
+          - option "B100 — Tutorial (35 seats)"
+          - option "B101 — Tutorial (35 seats)"
+          - option "B102 — Tutorial (35 seats)"
+          - option "B103 — Tutorial (35 seats)"
+          - option "B104 — Tutorial (35 seats)"
+          - option "B105 — Tutorial (35 seats)"
+          - option "B106 — Tutorial (35 seats)"
+          - option "B107 — Tutorial (35 seats)"
+          - option "B108 — Tutorial (35 seats)"
+          - option "B109 — Tutorial (35 seats)"
+          - option "B110 — LectureHall (80 seats)"
+          - option "B111 — LectureHall (80 seats)"
+          - option "B005 — Lab (28 seats)"
+          - option "B009 — Lab (28 seats)"
+          - option "B010 — Lab (28 seats)"
+          - option "B011 — Lab (28 seats)"
+          - option "B006 — CiscoLab (32 seats)"
+        - button "☆" [ref=f1e75] [cursor=pointer]
+      - generic [ref=f1e76]:
+        - button "Previous week" [ref=f1e77] [cursor=pointer]: ‹
+        - combobox [ref=f1e78] [cursor=pointer]:
+          - option "Week 1 — 27 Jul 2026 ~ 02 Aug 2026"
+          - option "Week 2 — 03 Aug 2026 ~ 09 Aug 2026"
+          - option "Week 3 — 10 Aug 2026 ~ 16 Aug 2026"
+          - option "Week 4 — 17 Aug 2026 ~ 23 Aug 2026" [selected]
+          - option "Week 5 — 24 Aug 2026 ~ 30 Aug 2026"
+          - option "Week 6 — 31 Aug 2026 ~ 06 Sep 2026"
+          - option "Week 7 — 07 Sep 2026 ~ 13 Sep 2026"
+          - option "Week 8 — 14 Sep 2026 ~ 20 Sep 2026"
+          - option "Week 9 — 21 Sep 2026 ~ 27 Sep 2026"
+          - option "Week 10 — 28 Sep 2026 ~ 04 Oct 2026"
+          - option "Week 11 — 05 Oct 2026 ~ 11 Oct 2026"
+          - option "Week 12 — 12 Oct 2026 ~ 18 Oct 2026"
+          - option "Week 13 — 19 Oct 2026 ~ 25 Oct 2026"
+          - option "Week 14 — 26 Oct 2026 ~ 01 Nov 2026"
+        - button "Next week" [active] [ref=f1e79] [cursor=pointer]: ›
+      - button "Jump to current week" [ref=f1e80] [cursor=pointer]: Today
+      - button "Coming soon" [disabled] [ref=f1e85]
+    - generic [ref=f1e91]:
+      - generic [ref=f1e92]: "Venue Type:"
+      - button "All Types ▾" [ref=f1e94] [cursor=pointer]
+    - generic [ref=f1e95]: Click any green slot to book this venue
+    - table [ref=f1e101]:
+      - rowgroup [ref=f1e102]:
+        - row [ref=f1e103]:
+          - columnheader "Day / Time" [ref=f1e104]
+          - columnheader "08:00 09:00" [ref=f1e105]:
+            - generic [ref=f1e106]: 08:00
+            - generic [ref=f1e107]: 09:00
+          - columnheader "09:00 10:00" [ref=f1e108]:
+            - generic [ref=f1e109]: 09:00
+            - generic [ref=f1e110]: 10:00
+          - columnheader "10:00 11:00" [ref=f1e111]:
+            - generic [ref=f1e112]: 10:00
+            - generic [ref=f1e113]: 11:00
+          - columnheader "11:00 12:00" [ref=f1e114]:
+            - generic [ref=f1e115]: 11:00
+            - generic [ref=f1e116]: 12:00
+          - columnheader "12:00 13:00" [ref=f1e117]:
+            - generic [ref=f1e118]: 12:00
+            - generic [ref=f1e119]: 13:00
+          - columnheader "13:00 14:00" [ref=f1e120]:
+            - generic [ref=f1e121]: 13:00
+            - generic [ref=f1e122]: 14:00
+          - columnheader "14:00 15:00" [ref=f1e123]:
+            - generic [ref=f1e124]: 14:00
+            - generic [ref=f1e125]: 15:00
+          - columnheader "15:00 16:00" [ref=f1e126]:
+            - generic [ref=f1e127]: 15:00
+            - generic [ref=f1e128]: 16:00
+          - columnheader "16:00 17:00" [ref=f1e129]:
+            - generic [ref=f1e130]: 16:00
+            - generic [ref=f1e131]: 17:00
+          - columnheader "17:00 18:00" [ref=f1e132]:
+            - generic [ref=f1e133]: 17:00
+            - generic [ref=f1e134]: 18:00
+          - columnheader "18:00 19:00" [ref=f1e135]:
+            - generic [ref=f1e136]: 18:00
+            - generic [ref=f1e137]: 19:00
+      - rowgroup [ref=f1e138]:
+        - row [ref=f1e139]:
+          - cell "Mon 17 Aug 2026" [ref=f1e140]:
+            - generic [ref=f1e141]: Mon
+            - generic [ref=f1e142]: 17 Aug 2026
+          - cell [ref=f1e143]:
+            - 'button "Available slot: Mon 08:00" [ref=f1e144] [cursor=pointer]'
+          - cell [ref=f1e145]:
+            - 'button "Available slot: Mon 08:30" [ref=f1e146] [cursor=pointer]'
+          - cell [ref=f1e147]:
+            - 'button "Available slot: Mon 09:00" [ref=f1e148] [cursor=pointer]'
+          - cell [ref=f1e149]:
+            - 'button "Available slot: Mon 09:30" [ref=f1e150] [cursor=pointer]'
+          - cell [ref=f1e151]:
+            - 'button "Available slot: Mon 10:00" [ref=f1e152] [cursor=pointer]'
+          - cell [ref=f1e153]:
+            - 'button "Available slot: Mon 10:30" [ref=f1e154] [cursor=pointer]'
+          - cell [ref=f1e155]:
+            - 'button "Available slot: Mon 11:00" [ref=f1e156] [cursor=pointer]'
+          - cell [ref=f1e157]:
+            - 'button "Available slot: Mon 11:30" [ref=f1e158] [cursor=pointer]'
+          - cell [ref=f1e159]:
+            - 'button "Available slot: Mon 12:00" [ref=f1e160] [cursor=pointer]'
+          - cell [ref=f1e161]:
+            - 'button "Available slot: Mon 12:30" [ref=f1e162] [cursor=pointer]'
+          - cell [ref=f1e163]:
+            - 'button "Available slot: Mon 13:00" [ref=f1e164] [cursor=pointer]'
+          - cell [ref=f1e165]:
+            - 'button "Available slot: Mon 13:30" [ref=f1e166] [cursor=pointer]'
+          - cell [ref=f1e167]:
+            - 'button "Available slot: Mon 14:00" [ref=f1e168] [cursor=pointer]'
+          - cell [ref=f1e169]:
+            - 'button "Available slot: Mon 14:30" [ref=f1e170] [cursor=pointer]'
+          - cell [ref=f1e171]:
+            - 'button "Available slot: Mon 15:00" [ref=f1e172] [cursor=pointer]'
+          - cell [ref=f1e173]:
+            - 'button "Available slot: Mon 15:30" [ref=f1e174] [cursor=pointer]'
+          - cell [ref=f1e175]:
+            - 'button "Available slot: Mon 16:00" [ref=f1e176] [cursor=pointer]'
+          - cell [ref=f1e177]:
+            - 'button "Available slot: Mon 16:30" [ref=f1e178] [cursor=pointer]'
+          - cell [ref=f1e179]:
+            - 'button "Available slot: Mon 17:00" [ref=f1e180] [cursor=pointer]'
+          - cell [ref=f1e181]:
+            - 'button "Available slot: Mon 17:30" [ref=f1e182] [cursor=pointer]'
+          - cell [ref=f1e183]:
+            - 'button "Available slot: Mon 18:00" [ref=f1e184] [cursor=pointer]'
+          - cell [ref=f1e185]:
+            - 'button "Available slot: Mon 18:30" [ref=f1e186] [cursor=pointer]'
+        - row [ref=f1e187]:
+          - cell "Tue 18 Aug 2026" [ref=f1e188]:
+            - generic [ref=f1e189]: Tue
+            - generic [ref=f1e190]: 18 Aug 2026
+          - cell [ref=f1e191]:
+            - 'button "Available slot: Tue 08:00" [ref=f1e192] [cursor=pointer]'
+          - cell [ref=f1e193]:
+            - 'button "Available slot: Tue 08:30" [ref=f1e194] [cursor=pointer]'
+          - cell [ref=f1e195]:
+            - 'button "Available slot: Tue 09:00" [ref=f1e196] [cursor=pointer]'
+          - cell [ref=f1e197]:
+            - 'button "Available slot: Tue 09:30" [ref=f1e198] [cursor=pointer]'
+          - cell [ref=f1e199]:
+            - 'button "Available slot: Tue 10:00" [ref=f1e200] [cursor=pointer]'
+          - cell [ref=f1e201]:
+            - 'button "Available slot: Tue 10:30" [ref=f1e202] [cursor=pointer]'
+          - cell [ref=f1e203]:
+            - 'button "Available slot: Tue 11:00" [ref=f1e204] [cursor=pointer]'
+          - cell [ref=f1e205]:
+            - 'button "Available slot: Tue 11:30" [ref=f1e206] [cursor=pointer]'
+          - cell [ref=f1e207]:
+            - 'button "Available slot: Tue 12:00" [ref=f1e208] [cursor=pointer]'
+          - cell [ref=f1e209]:
+            - 'button "Available slot: Tue 12:30" [ref=f1e210] [cursor=pointer]'
+          - cell [ref=f1e211]:
+            - 'button "Available slot: Tue 13:00" [ref=f1e212] [cursor=pointer]'
+          - cell [ref=f1e213]:
+            - 'button "Available slot: Tue 13:30" [ref=f1e214] [cursor=pointer]'
+          - cell [ref=f1e215]:
+            - 'button "Available slot: Tue 14:00" [ref=f1e216] [cursor=pointer]'
+          - cell [ref=f1e217]:
+            - 'button "Available slot: Tue 14:30" [ref=f1e218] [cursor=pointer]'
+          - cell [ref=f1e219]:
+            - 'button "Available slot: Tue 15:00" [ref=f1e220] [cursor=pointer]'
+          - cell [ref=f1e221]:
+            - 'button "Available slot: Tue 15:30" [ref=f1e222] [cursor=pointer]'
+          - cell [ref=f1e223]:
+            - 'button "Available slot: Tue 16:00" [ref=f1e224] [cursor=pointer]'
+          - cell [ref=f1e225]:
+            - 'button "Available slot: Tue 16:30" [ref=f1e226] [cursor=pointer]'
+          - cell [ref=f1e227]:
+            - 'button "Available slot: Tue 17:00" [ref=f1e228] [cursor=pointer]'
+          - cell [ref=f1e229]:
+            - 'button "Available slot: Tue 17:30" [ref=f1e230] [cursor=pointer]'
+          - cell [ref=f1e231]:
+            - 'button "Available slot: Tue 18:00" [ref=f1e232] [cursor=pointer]'
+          - cell [ref=f1e233]:
+            - 'button "Available slot: Tue 18:30" [ref=f1e234] [cursor=pointer]'
+        - row [ref=f1e235]:
+          - cell "Wed 19 Aug 2026" [ref=f1e236]:
+            - generic [ref=f1e237]: Wed
+            - generic [ref=f1e238]: 19 Aug 2026
+          - cell [ref=f1e239]:
+            - 'button "Available slot: Wed 08:00" [ref=f1e240] [cursor=pointer]'
+          - cell [ref=f1e241]:
+            - 'button "Available slot: Wed 08:30" [ref=f1e242] [cursor=pointer]'
+          - cell [ref=f1e243]:
+            - 'button "Available slot: Wed 09:00" [ref=f1e244] [cursor=pointer]'
+          - cell [ref=f1e245]:
+            - 'button "Available slot: Wed 09:30" [ref=f1e246] [cursor=pointer]'
+          - cell [ref=f1e247]:
+            - 'button "Available slot: Wed 10:00" [ref=f1e248] [cursor=pointer]'
+          - cell [ref=f1e249]:
+            - 'button "Available slot: Wed 10:30" [ref=f1e250] [cursor=pointer]'
+          - cell [ref=f1e251]:
+            - 'button "Available slot: Wed 11:00" [ref=f1e252] [cursor=pointer]'
+          - cell [ref=f1e253]:
+            - 'button "Available slot: Wed 11:30" [ref=f1e254] [cursor=pointer]'
+          - cell [ref=f1e255]:
+            - 'button "Available slot: Wed 12:00" [ref=f1e256] [cursor=pointer]'
+          - cell [ref=f1e257]:
+            - 'button "Available slot: Wed 12:30" [ref=f1e258] [cursor=pointer]'
+          - cell [ref=f1e259]:
+            - 'button "Available slot: Wed 13:00" [ref=f1e260] [cursor=pointer]'
+          - cell [ref=f1e261]:
+            - 'button "Available slot: Wed 13:30" [ref=f1e262] [cursor=pointer]'
+          - cell [ref=f1e263]:
+            - 'button "Available slot: Wed 14:00" [ref=f1e264] [cursor=pointer]'
+          - cell [ref=f1e265]:
+            - 'button "Available slot: Wed 14:30" [ref=f1e266] [cursor=pointer]'
+          - cell [ref=f1e267]:
+            - 'button "Available slot: Wed 15:00" [ref=f1e268] [cursor=pointer]'
+          - cell [ref=f1e269]:
+            - 'button "Available slot: Wed 15:30" [ref=f1e270] [cursor=pointer]'
+          - cell [ref=f1e271]:
+            - 'button "Available slot: Wed 16:00" [ref=f1e272] [cursor=pointer]'
+          - cell [ref=f1e273]:
+            - 'button "Available slot: Wed 16:30" [ref=f1e274] [cursor=pointer]'
+          - cell [ref=f1e275]:
+            - 'button "Available slot: Wed 17:00" [ref=f1e276] [cursor=pointer]'
+          - cell [ref=f1e277]:
+            - 'button "Available slot: Wed 17:30" [ref=f1e278] [cursor=pointer]'
+          - cell [ref=f1e279]:
+            - 'button "Available slot: Wed 18:00" [ref=f1e280] [cursor=pointer]'
+          - cell [ref=f1e281]:
+            - 'button "Available slot: Wed 18:30" [ref=f1e282] [cursor=pointer]'
+        - row [ref=f1e283]:
+          - cell "Thu 20 Aug 2026" [ref=f1e284]:
+            - generic [ref=f1e285]: Thu
+            - generic [ref=f1e286]: 20 Aug 2026
+          - cell [ref=f1e287]:
+            - 'button "Available slot: Thu 08:00" [ref=f1e288] [cursor=pointer]'
+          - cell [ref=f1e289]:
+            - 'button "Available slot: Thu 08:30" [ref=f1e290] [cursor=pointer]'
+          - cell [ref=f1e291]:
+            - 'button "Available slot: Thu 09:00" [ref=f1e292] [cursor=pointer]'
+          - cell [ref=f1e293]:
+            - 'button "Available slot: Thu 09:30" [ref=f1e294] [cursor=pointer]'
+          - cell [ref=f1e295]:
+            - 'button "Available slot: Thu 10:00" [ref=f1e296] [cursor=pointer]'
+          - cell [ref=f1e297]:
+            - 'button "Available slot: Thu 10:30" [ref=f1e298] [cursor=pointer]'
+          - cell [ref=f1e299]:
+            - 'button "Available slot: Thu 11:00" [ref=f1e300] [cursor=pointer]'
+          - cell [ref=f1e301]:
+            - 'button "Available slot: Thu 11:30" [ref=f1e302] [cursor=pointer]'
+          - cell [ref=f1e303]:
+            - 'button "Available slot: Thu 12:00" [ref=f1e304] [cursor=pointer]'
+          - cell [ref=f1e305]:
+            - 'button "Available slot: Thu 12:30" [ref=f1e306] [cursor=pointer]'
+          - cell [ref=f1e307]:
+            - 'button "Available slot: Thu 13:00" [ref=f1e308] [cursor=pointer]'
+          - cell [ref=f1e309]:
+            - 'button "Available slot: Thu 13:30" [ref=f1e310] [cursor=pointer]'
+          - cell [ref=f1e311]:
+            - 'button "Available slot: Thu 14:00" [ref=f1e312] [cursor=pointer]'
+          - cell [ref=f1e313]:
+            - 'button "Available slot: Thu 14:30" [ref=f1e314] [cursor=pointer]'
+          - cell [ref=f1e315]:
+            - 'button "Available slot: Thu 15:00" [ref=f1e316] [cursor=pointer]'
+          - cell [ref=f1e317]:
+            - 'button "Available slot: Thu 15:30" [ref=f1e318] [cursor=pointer]'
+          - cell [ref=f1e319]:
+            - 'button "Available slot: Thu 16:00" [ref=f1e320] [cursor=pointer]'
+          - cell [ref=f1e321]:
+            - 'button "Available slot: Thu 16:30" [ref=f1e322] [cursor=pointer]'
+          - cell [ref=f1e323]:
+            - 'button "Available slot: Thu 17:00" [ref=f1e324] [cursor=pointer]'
+          - cell [ref=f1e325]:
+            - 'button "Available slot: Thu 17:30" [ref=f1e326] [cursor=pointer]'
+          - cell [ref=f1e327]:
+            - 'button "Available slot: Thu 18:00" [ref=f1e328] [cursor=pointer]'
+          - cell [ref=f1e329]:
+            - 'button "Available slot: Thu 18:30" [ref=f1e330] [cursor=pointer]'
+        - row [ref=f1e331]:
+          - cell "Fri 21 Aug 2026" [ref=f1e332]:
+            - generic [ref=f1e333]: Fri
+            - generic [ref=f1e334]: 21 Aug 2026
+          - cell [ref=f1e335]:
+            - 'button "Available slot: Fri 08:00" [ref=f1e336] [cursor=pointer]'
+          - cell [ref=f1e337]:
+            - 'button "Available slot: Fri 08:30" [ref=f1e338] [cursor=pointer]'
+          - cell [ref=f1e339]:
+            - 'button "Available slot: Fri 09:00" [ref=f1e340] [cursor=pointer]'
+          - cell [ref=f1e341]:
+            - 'button "Available slot: Fri 09:30" [ref=f1e342] [cursor=pointer]'
+          - cell [ref=f1e343]:
+            - 'button "Available slot: Fri 10:00" [ref=f1e344] [cursor=pointer]'
+          - cell [ref=f1e345]:
+            - 'button "Available slot: Fri 10:30" [ref=f1e346] [cursor=pointer]'
+          - cell [ref=f1e347]:
+            - 'button "Available slot: Fri 11:00" [ref=f1e348] [cursor=pointer]'
+          - cell [ref=f1e349]:
+            - 'button "Available slot: Fri 11:30" [ref=f1e350] [cursor=pointer]'
+          - cell [ref=f1e351]:
+            - 'button "Available slot: Fri 12:00" [ref=f1e352] [cursor=pointer]'
+          - cell [ref=f1e353]:
+            - 'button "Available slot: Fri 12:30" [ref=f1e354] [cursor=pointer]'
+          - cell [ref=f1e355]:
+            - 'button "Available slot: Fri 13:00" [ref=f1e356] [cursor=pointer]'
+          - cell [ref=f1e357]:
+            - 'button "Available slot: Fri 13:30" [ref=f1e358] [cursor=pointer]'
+          - cell [ref=f1e359]:
+            - 'button "Available slot: Fri 14:00" [ref=f1e360] [cursor=pointer]'
+          - cell [ref=f1e361]:
+            - 'button "Available slot: Fri 14:30" [ref=f1e362] [cursor=pointer]'
+          - cell [ref=f1e363]:
+            - 'button "Available slot: Fri 15:00" [ref=f1e364] [cursor=pointer]'
+          - cell [ref=f1e365]:
+            - 'button "Available slot: Fri 15:30" [ref=f1e366] [cursor=pointer]'
+          - cell [ref=f1e367]:
+            - 'button "Available slot: Fri 16:00" [ref=f1e368] [cursor=pointer]'
+          - cell [ref=f1e369]:
+            - 'button "Available slot: Fri 16:30" [ref=f1e370] [cursor=pointer]'
+          - cell [ref=f1e371]:
+            - 'button "Available slot: Fri 17:00" [ref=f1e372] [cursor=pointer]'
+          - cell [ref=f1e373]:
+            - 'button "Available slot: Fri 17:30" [ref=f1e374] [cursor=pointer]'
+          - cell [ref=f1e375]:
+            - 'button "Available slot: Fri 18:00" [ref=f1e376] [cursor=pointer]'
+          - cell [ref=f1e377]:
+            - 'button "Available slot: Fri 18:30" [ref=f1e378] [cursor=pointer]'
+        - row [ref=f1e379]:
+          - cell "Sat 22 Aug 2026" [ref=f1e380]:
+            - generic [ref=f1e381]: Sat
+            - generic [ref=f1e382]: 22 Aug 2026
+          - cell [ref=f1e383]:
+            - 'button "Available slot: Sat 08:00" [ref=f1e384] [cursor=pointer]'
+          - cell [ref=f1e385]:
+            - 'button "Available slot: Sat 08:30" [ref=f1e386] [cursor=pointer]'
+          - cell [ref=f1e387]:
+            - 'button "Available slot: Sat 09:00" [ref=f1e388] [cursor=pointer]'
+          - cell [ref=f1e389]:
+            - 'button "Available slot: Sat 09:30" [ref=f1e390] [cursor=pointer]'
+          - cell [ref=f1e391]:
+            - 'button "Available slot: Sat 10:00" [ref=f1e392] [cursor=pointer]'
+          - cell [ref=f1e393]:
+            - 'button "Available slot: Sat 10:30" [ref=f1e394] [cursor=pointer]'
+          - cell [ref=f1e395]:
+            - 'button "Available slot: Sat 11:00" [ref=f1e396] [cursor=pointer]'
+          - cell [ref=f1e397]:
+            - 'button "Available slot: Sat 11:30" [ref=f1e398] [cursor=pointer]'
+          - cell [ref=f1e399]:
+            - 'button "Available slot: Sat 12:00" [ref=f1e400] [cursor=pointer]'
+          - cell [ref=f1e401]:
+            - 'button "Available slot: Sat 12:30" [ref=f1e402] [cursor=pointer]'
+          - cell [ref=f1e403]:
+            - 'button "Available slot: Sat 13:00" [ref=f1e404] [cursor=pointer]'
+          - cell [ref=f1e405]:
+            - 'button "Available slot: Sat 13:30" [ref=f1e406] [cursor=pointer]'
+          - cell [ref=f1e407]:
+            - 'button "Available slot: Sat 14:00" [ref=f1e408] [cursor=pointer]'
+          - cell [ref=f1e409]:
+            - 'button "Available slot: Sat 14:30" [ref=f1e410] [cursor=pointer]'
+          - cell [ref=f1e411]:
+            - 'button "Available slot: Sat 15:00" [ref=f1e412] [cursor=pointer]'
+          - cell [ref=f1e413]:
+            - 'button "Available slot: Sat 15:30" [ref=f1e414] [cursor=pointer]'
+          - cell [ref=f1e415]:
+            - 'button "Available slot: Sat 16:00" [ref=f1e416] [cursor=pointer]'
+          - cell [ref=f1e417]:
+            - 'button "Available slot: Sat 16:30" [ref=f1e418] [cursor=pointer]'
+          - cell [ref=f1e419]:
+            - 'button "Available slot: Sat 17:00" [ref=f1e420] [cursor=pointer]'
+          - cell [ref=f1e421]:
+            - 'button "Available slot: Sat 17:30" [ref=f1e422] [cursor=pointer]'
+          - cell [ref=f1e423]:
+            - 'button "Available slot: Sat 18:00" [ref=f1e424] [cursor=pointer]'
+          - cell [ref=f1e425]:
+            - 'button "Available slot: Sat 18:30" [ref=f1e426] [cursor=pointer]'
+        - row [ref=f1e427]:
+          - cell "Sun 23 Aug 2026 OFF" [ref=f1e428]:
+            - generic [ref=f1e429]: Sun
+            - generic [ref=f1e430]: 23 Aug 2026
+            - generic [ref=f1e431]: "OFF"
+          - cell [ref=f1e432]
+          - cell [ref=f1e434]
+          - cell [ref=f1e436]
+          - cell [ref=f1e438]
+          - cell [ref=f1e440]
+          - cell [ref=f1e442]
+          - cell [ref=f1e444]
+          - cell [ref=f1e446]
+          - cell [ref=f1e448]
+          - cell [ref=f1e450]
+          - cell [ref=f1e452]
+          - cell [ref=f1e454]
+          - cell [ref=f1e456]
+          - cell [ref=f1e458]
+          - cell [ref=f1e460]
+          - cell [ref=f1e462]
+          - cell [ref=f1e464]
+          - cell [ref=f1e466]
+          - cell [ref=f1e468]
+          - cell [ref=f1e470]
+          - cell [ref=f1e472]
+          - cell [ref=f1e474]
+    - generic [ref=f1e476]: All slots available — this venue is free all week
+    - generic [ref=f1e477]:
+      - generic [ref=f1e478]: Available
+      - generic [ref=f1e481]: Replacement
+      - generic [ref=f1e484]: Pending
+      - generic [ref=f1e487]: Conflict
+    - generic [ref=f1e490]:
+      - generic [ref=f1e494]:
+        - text: Stats are for
+        - strong [ref=f1e495]: this week only
+        - text: . Hover a card to learn more.
+      - generic [ref=f1e496]:
+        - generic [ref=f1e498]:
+          - generic [ref=f1e499]:
+            - generic [ref=f1e500]: "0"
+            - generic [ref=f1e501]: Total Classes
+          - generic [ref=f1e503]:
+            - text: Total number of
+            - strong [ref=f1e504]: scheduled classes
+            - text: for the selected period.
+        - generic [ref=f1e506]:
+          - generic [ref=f1e507]:
+            - generic [ref=f1e508]: "110"
+            - generic [ref=f1e509]: Available
+          - generic [ref=f1e511]:
+            - strong [ref=f1e512]: Free time slots
+            - text: that can be booked for this venue.
+        - generic [ref=f1e514]:
+          - generic [ref=f1e515]:
+            - generic [ref=f1e516]: "0"
+            - generic [ref=f1e517]: Replacement
+          - generic [ref=f1e519]:
+            - text: Classes with a
+            - strong [ref=f1e520]: replacement lecturer
+            - text: assigned.
+        - generic [ref=f1e522]:
+          - generic [ref=f1e523]:
+            - generic [ref=f1e524]: "0"
+            - generic [ref=f1e525]: Pending
+          - generic [ref=f1e527]:
+            - text: Replacement requests still
+            - strong [ref=f1e528]: waiting for approval
+            - text: or a volunteer.
+        - generic [ref=f1e530]:
+          - generic [ref=f1e531]:
+            - generic [ref=f1e532]: "0"
+            - generic [ref=f1e533]: Conflict
+          - generic [ref=f1e535]:
+            - strong [ref=f1e536]: Scheduling clashes
+            - text: or classes on
+            - strong [ref=f1e537]: public holidays
+            - text: that need attention.
+```

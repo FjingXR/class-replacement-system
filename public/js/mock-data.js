@@ -319,19 +319,25 @@ window.MockData = {
             { cohortId: 'dft2s1', week: 0, event: { di: 0, start: 0,  end: 3,  code: 'BMIT6061', type: 'T', venue: 'B014', lecturer: 'Ms. Chen Hui Xin',  status: 'normal',  name: 'UI/UX Design',              remarks: '' } },
             { cohortId: 'dft2s1', week: 0, event: { di: 2, start: 0,  end: 3,  code: 'BMIT6062', type: 'L', venue: 'B014', lecturer: 'En. Zulkifli',       status: 'normal',  name: 'Networking Basics',          remarks: '' } },
             { cohortId: 'dft2s1', week: 1, event: { di: 0, start: 0,  end: 3,  code: 'BMIT6061', type: 'T', venue: 'B014', lecturer: 'Ms. Chen Hui Xin',  status: 'replacement', name: 'UI/UX Design',           remarks: '24-Aug-2026' } },
-            { cohortId: 'dft2s1', week: 1, event: { di: 2, start: 0,  end: 3,  code: 'BMIT6062', type: 'L', venue: 'B014', lecturer: 'En. Zulkifli',       status: 'normal',  name: 'Networking Basics',          remarks: '' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 2, start: 0,  end: 3,  code: 'BMIT6062', type: 'L', venue: 'B014', lecturer: 'En. Zulkifli',       status: 'pending',  name: 'Networking Basics',          remarks: '', requestedAt: '25 Aug 2026, 10:00 AM', requestedBy: 'En. Zulkifli' } },
+            { cohortId: 'dft2s1', week: 2, event: { di: 0, start: 0,  end: 3,  code: 'BMIT6061', type: 'T', venue: 'B014', lecturer: 'Ms. Chen Hui Xin',  status: 'normal',  name: 'UI/UX Design',              remarks: '' } },
+            { cohortId: 'dft2s1', week: 2, event: { di: 2, start: 0,  end: 3,  code: 'BMIT6062', type: 'L', venue: 'B014', lecturer: 'En. Zulkifli',       status: 'conflict', name: 'Networking Basics',          remarks: 'Conflicts with BMIT6061' } },
 
             // B015 — afternoon classes only
             { cohortId: 'dft2s1', week: 0, event: { di: 1, start: 10, end: 13, code: 'BMIT4040', type: 'L', venue: 'B015', lecturer: 'En. Ahmad Faiz',     status: 'normal',  name: 'Web Development',            remarks: '' } },
             { cohortId: 'dft2s1', week: 0, event: { di: 3, start: 10, end: 13, code: 'BMIT5050', type: 'L', venue: 'B015', lecturer: 'Pn. Farah Hanum',    status: 'normal',  name: 'Database Design',            remarks: '' } },
             { cohortId: 'dft2s1', week: 1, event: { di: 1, start: 10, end: 13, code: 'BMIT4040', type: 'L', venue: 'B015', lecturer: 'En. Ahmad Faiz',     status: 'pending', name: 'Web Development',            remarks: '', requestedAt: '25 Aug 2026, 02:00 PM', requestedBy: 'En. Ahmad Faiz' } },
-            { cohortId: 'dft2s1', week: 1, event: { di: 3, start: 10, end: 13, code: 'BMIT5050', type: 'L', venue: 'B015', lecturer: 'Pn. Farah Hanum',    status: 'normal',  name: 'Database Design',            remarks: '' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 3, start: 10, end: 13, code: 'BMIT5050', type: 'L', venue: 'B015', lecturer: 'Pn. Farah Hanum',    status: 'replacement', name: 'Database Design',         remarks: '27-Aug-2026' } },
+            { cohortId: 'dft2s1', week: 2, event: { di: 1, start: 10, end: 13, code: 'BMIT4040', type: 'L', venue: 'B015', lecturer: 'En. Ahmad Faiz',     status: 'conflict', name: 'Web Development',            remarks: 'Venue double-booked' } },
+            { cohortId: 'dft2s1', week: 2, event: { di: 3, start: 10, end: 13, code: 'BMIT5050', type: 'L', venue: 'B015', lecturer: 'Pn. Farah Hanum',    status: 'normal',  name: 'Database Design',            remarks: '' } },
 
             // B016 — mixed morning + afternoon
             { cohortId: 'dft2s1', week: 0, event: { di: 0, start: 4,  end: 7,  code: 'BMIT6060', type: 'L', venue: 'B016', lecturer: 'Dr. Lim Wei Ming',   status: 'normal',  name: 'Cybersecurity Fundamentals', remarks: '' } },
             { cohortId: 'dft2s1', week: 0, event: { di: 4, start: 10, end: 13, code: 'BMIT6061', type: 'T', venue: 'B016', lecturer: 'Ms. Chen Hui Xin',   status: 'normal',  name: 'UI/UX Design',               remarks: '' } },
             { cohortId: 'dft2s1', week: 1, event: { di: 0, start: 4,  end: 7,  code: 'BMIT6060', type: 'L', venue: 'B016', lecturer: 'Dr. Lim Wei Ming',   status: 'replacement', name: 'Cybersecurity Fundamentals', remarks: '25-Aug-2026' } },
-            { cohortId: 'dft2s1', week: 1, event: { di: 4, start: 10, end: 13, code: 'BMIT6061', type: 'T', venue: 'B016', lecturer: 'Ms. Chen Hui Xin',   status: 'normal',  name: 'UI/UX Design',               remarks: '' } },
+            { cohortId: 'dft2s1', week: 1, event: { di: 4, start: 10, end: 13, code: 'BMIT6061', type: 'T', venue: 'B016', lecturer: 'Ms. Chen Hui Xin',   status: 'pending', name: 'UI/UX Design',               remarks: '', requestedAt: '26 Aug 2026, 11:30 AM', requestedBy: 'Ms. Chen Hui Xin' } },
+            { cohortId: 'dft2s1', week: 2, event: { di: 0, start: 4,  end: 7,  code: 'BMIT6060', type: 'L', venue: 'B016', lecturer: 'Dr. Lim Wei Ming',   status: 'conflict', name: 'Cybersecurity Fundamentals', remarks: 'Lecturer unavailable' } },
+            { cohortId: 'dft2s1', week: 2, event: { di: 4, start: 10, end: 13, code: 'BMIT6061', type: 'T', venue: 'B016', lecturer: 'Ms. Chen Hui Xin',   status: 'replacement', name: 'UI/UX Design',            remarks: '28-Aug-2026' } },
 
             { cohortId: 'dsf2s1', week: 1, event: { di: 0, start: 0,  end: 3,  code: 'BMIT1010', type: 'L', venue: 'B201', lecturer: 'Ms. Nurul Aini',     status: 'normal',       name: 'Introduction to Computing', remarks: '' } },
             { cohortId: 'dsf2s1', week: 1, event: { di: 1, start: 12, end: 15, code: 'BMIT1111', type: 'L', venue: 'B204', lecturer: 'Mr. Tan Kok Wai',   status: 'normal',       name: 'Operating Systems',         remarks: '' } },

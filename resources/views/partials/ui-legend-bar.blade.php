@@ -1,18 +1,17 @@
+@php
+    $items = $items ?? [
+        ['color' => 'var(--color-success)', 'label' => 'Normal Class'],
+        ['color' => 'var(--color-primary)', 'label' => 'Replacement'],
+        ['color' => 'var(--color-warning)', 'label' => 'Pending'],
+        ['color' => 'var(--color-error)', 'label' => 'Conflict / Public Holiday'],
+    ];
+@endphp
+
 <div class="legend-bar">
-    <div class="legend-item">
-        <span class="legend-swatch" style="background: var(--color-success);"></span>
-        <span>Normal Class</span>
-    </div>
-    <div class="legend-item">
-        <span class="legend-swatch" style="background: var(--color-primary);"></span>
-        <span>Replacement</span>
-    </div>
-    <div class="legend-item">
-        <span class="legend-swatch" style="background: var(--color-warning);"></span>
-        <span>Pending</span>
-    </div>
-    <div class="legend-item">
-        <span class="legend-swatch" style="background: var(--color-error);"></span>
-        <span>Conflict / Public Holiday</span>
-    </div>
+    @foreach($items as $item)
+        <div class="legend-item">
+            <span class="legend-swatch" style="background: {{ $item['color'] }};"></span>
+            <span>{{ $item['label'] }}</span>
+        </div>
+    @endforeach
 </div>

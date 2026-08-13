@@ -1385,6 +1385,10 @@ html.dark .semester-bar select:not(.week-select) {
     background: var(--color-warning-container);
     color: var(--color-on-warning-container);
 }
+.event-conflict {
+    background: var(--color-error-container);
+    color: var(--color-on-error-container);
+}
 
 .offday-slot .event-block {
     background: var(--color-error-container);

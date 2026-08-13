@@ -629,24 +629,14 @@
         <div class="hint-text" id="hintText" style="display:none">All slots available — this venue is free all week</div>
 
         <!-- ─── Legend Bar ─── -->
-        <div class="legend-bar">
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-success);"></span>
-                <span>Available</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-primary);"></span>
-                <span>Replacement</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-warning);"></span>
-                <span>Pending</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-error);"></span>
-                <span>Conflict</span>
-            </div>
-        </div>
+        @include('partials.ui-legend-bar', [
+            'items' => [
+                ['color' => 'var(--color-success)', 'label' => 'Available'],
+                ['color' => 'var(--color-primary)', 'label' => 'Replacement'],
+                ['color' => 'var(--color-warning)', 'label' => 'Pending'],
+                ['color' => 'var(--color-error)', 'label' => 'Conflict'],
+            ]
+        ])
 
         <!-- ─── Summary Bar ─── -->
         @include('partials.ui-summary-bar', [
@@ -1191,6 +1181,8 @@
                             div.classList.add('event-replacement');
                         } else if (e.status === 'pending') {
                             div.classList.add('event-pending');
+                        } else if (e.status === 'conflict') {
+                            div.classList.add('event-conflict');
                         } else {
                             div.classList.add('event-normal');
                         }

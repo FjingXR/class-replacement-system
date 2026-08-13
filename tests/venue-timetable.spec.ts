@@ -6,6 +6,8 @@ test.describe('Venue Timetable UI', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(PAGE);
+    await page.evaluate(() => localStorage.clear());
+    await page.goto(PAGE);
     await page.waitForTimeout(500);
   });
 
