@@ -593,7 +593,7 @@
                 document.getElementById('summaryBar').style.display = 'none';
             } else {
                 document.getElementById('emptyState').style.display = 'none';
-                document.getElementById('gridWrapper').style.display = 'flex';
+                document.getElementById('gridWrapper').style.display = '';
                 document.getElementById('paginationBar').style.display = 'flex';
                 document.getElementById('summaryBar').style.display = 'grid';
 

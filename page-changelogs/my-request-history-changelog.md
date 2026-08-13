@@ -1,5 +1,27 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-13] Fix blank right-side gap — gridWrapper flex root cause
+
+### Summary
+
+The large blank space on the right of the timetable was NOT caused by `table-layout` — it was caused by the page JS setting `gridWrapper.style.display = 'flex'` in `renderTable()`. A flex container's child (`.grid-scroll`) shrinks to its content width instead of stretching to fill, so the table only occupied ~1479px of an ~1864px wrapper, leaving ~385px of empty space.
+
+Fix: `renderTable()` now resets `gridWrapper.style.display = ''` (block default), matching the behavior of the `/request-approval-ui` page. The table now fills the wrapper width via the existing `width: 100%` + `table-layout: auto` from `theme.css`, with `th` widths acting as preferred minimums so columns expand proportionally (not equally) on desktop.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | `renderTable()` show branch | Fix | Changed `gridWrapper.style.display = 'flex'` → `''` (block). Flex made `.grid-scroll` a shrink-to-content flex item, leaving blank space on the right. Block makes it stretch to fill the wrapper. |
+
+### Verified (no page-level horizontal overflow)
+
+Tablet/small laptop (1200px, 1024px, 900px): table keeps readable column widths (~1317px natural content width); horizontal scrolling happens inside `.grid-scroll`, not the page. Mobile (≤768px): card layout preserved, table hidden. `body { overflow-x: hidden }` (theme.css:141) is a pre-existing base rule and is NOT relied upon — verified no page overflow even with `body { overflow-x: visible }`. No cell content overflow at any tested width.
+
+---
+
 ## [2026-08-13] Table layout: fixed → auto with th widths (fill container)
 
 ### Summary
