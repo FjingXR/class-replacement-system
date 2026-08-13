@@ -112,7 +112,7 @@
             sel.innerHTML = weekData.map(function(w, i) {
                 var label = isMobile
                     ? 'Week ' + (i + 1) + ' \u00B7 ' + w.rangeShort
-                    : 'Week ' + (i + 1) + ' \u00B7 ' + fmt(w.start) + ' ~ ' + fmt(w.end);
+                    : 'Week ' + (i + 1) + ' \u00B7 ' + w.range;
                 return '<option value="' + i + '">' + label + '</option>';
             }).join('');
             sel.selectedIndex = currentWeek;

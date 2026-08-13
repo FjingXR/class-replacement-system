@@ -152,3 +152,14 @@
 | Surface (Light) | White | `#FFFFFF` |
 | BG (Dark) | Deep Navy | `#0D1B2A` |
 | BG (Light) | Cool Gray | `#F0F3F7` |
+
+---
+
+## Legend Bar Status Mapping
+
+| Status | CSS Variable | Color | HEX | Usage |
+|---|---|---|---|---|
+| Normal Class | `--color-success` | Green | `#2E7D5A` | Scheduled classes |
+| Replacement | `--color-primary` | Blue | `#004D98` | Replacement classes |
+| Pending | `--color-warning` | Amber | `#D4880F` | Pending approval |
+| Conflict / Holiday | `--color-error` | Red | `#C62828` | Conflicts, public holidays |

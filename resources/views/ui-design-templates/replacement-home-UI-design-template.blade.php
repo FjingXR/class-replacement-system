@@ -43,7 +43,7 @@
         }
 
         /* ───── Summary Card Colors ───── */
-        .summary-card.card-conflicted .summary-value { color: var(--color-error); }
+        .summary-card.card-conflict .summary-value { color: var(--color-error); }
         .summary-card.card-venues .summary-value { color: var(--color-primary); }
         .summary-card.card-students .summary-value { color: var(--color-tertiary); }
         .summary-card.card-duration .summary-value { color: var(--color-primary); }
@@ -171,7 +171,7 @@
         <!-- ─── Summary Dashboard ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
-                ['class' => 'card-conflicted', 'valueId' => 'summaryConflicted', 'label' => 'Total Conflicted'],
+                ['class' => 'card-conflict', 'valueId' => 'summaryConflicted', 'label' => 'Total Conflicted'],
                 ['class' => 'card-venues', 'valueId' => 'summaryVenues', 'label' => 'Venues Affected'],
                 ['class' => 'card-students', 'valueId' => 'summaryStudents', 'label' => 'Students Affected'],
                 ['class' => 'card-duration', 'valueId' => 'summaryDuration', 'label' => 'Duration Hours'],
