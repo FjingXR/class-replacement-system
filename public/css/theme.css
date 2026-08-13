@@ -921,8 +921,8 @@ html.dark .filter-select {
 .modal {
     background: var(--color-surface);
     border: 1px solid var(--color-outline);
-    border-radius: var(--radius-xl);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08);
     max-width: 420px; width: 100%;
     max-height: 85vh;
     overflow-y: auto;
@@ -935,17 +935,18 @@ html.dark .filter-select {
 }
 .modal-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 24px 0;
+    padding: 18px 22px 0;
 }
 .modal-title {
     font-size: 17px; font-weight: 600; color: var(--color-on-surface);
     text-align: center; flex: 1;
 }
 .modal-status-badge {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    padding: 3px 12px;
-    border-radius: var(--radius-pill);
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.2px;
 }
 .modal-status-badge.normal {
     background: var(--color-success-container);
@@ -972,12 +973,12 @@ html.dark .filter-select {
 }
 .modal-close:hover { background: #e0443e; color: rgba(0,0,0,0.5); }
 .modal-body {
-    padding: 20px 24px;
+    padding: 16px 22px;
 }
 .modal-field {
     display: flex;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--color-outline);
+    padding: 9px 0;
+    border-bottom: 1px solid var(--color-outline-variant);
 }
 .modal-field:last-child {
     border-bottom: none;
@@ -1001,23 +1002,23 @@ html.dark .filter-select {
 }
 .modal-footer {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 24px 20px; gap: 8px;
+    padding: 14px 22px 18px; gap: 8px;
     border-top: 1px solid var(--color-outline-variant);
 }
 .modal-footer .btn-approve,
 .modal-footer .btn-danger {
-    padding: 8px 20px;
+    padding: 7px 18px;
     font-size: 13px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
 }
 .btn-close-modal {
-    padding: 10px 24px;
-    border-radius: var(--radius-sm);
+    padding: 8px 20px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--color-outline-strong);
     background: var(--color-surface);
     color: var(--color-on-surface-variant);
     font-family: inherit;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: background var(--transition), transform 0.15s;
@@ -1679,7 +1680,7 @@ html.dark .semester-bar select:not(.week-select) {
         max-width: 100%;
         max-height: 80vh;
         max-height: 80dvh;
-        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        border-radius: 14px 14px 0 0;
         margin: 0;
         overflow-y: auto;
         padding-bottom: env(safe-area-inset-bottom);
