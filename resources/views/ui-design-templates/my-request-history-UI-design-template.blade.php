@@ -25,7 +25,16 @@
         /* ───── Column Widths ───── */
         .col-original, .col-replacement { white-space: normal; }
 
-        .grid-scroll .timetable { min-width: 1120px; }
+        /* th widths force columns to fill the container; td inherits from th via table-layout: auto */
+        .timetable th.col-requested-at { width: 150px; }
+        .timetable th.col-code { width: 220px; }
+        .timetable th.col-original { width: 200px; }
+        .timetable th.col-replacement { width: 200px; }
+        .timetable th.col-venue { width: 110px; }
+        .timetable th.col-students { width: 80px; }
+        .timetable th.col-cohort { width: 140px; }
+        .timetable th.col-status { width: 120px; }
+        .timetable th.col-actions { width: 100px; }
 
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;

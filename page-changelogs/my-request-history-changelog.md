@@ -1,5 +1,21 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-13] Table layout: fixed → auto with th widths (fill container)
+
+### Summary
+
+Changed timetable from `table-layout: fixed` to `auto` (inherited from `theme.css`). Added explicit `width` on `th` elements to force columns to expand and fill the container — eliminates dead space on the right at full screen. `table-layout: auto` still allows content to wrap naturally. Horizontal scroll kicks in when screen is too small.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | `@section('page-styles')` | Changed | Removed `table-layout: fixed` override and `min-width: 1120px`. Added explicit `th` widths: `.col-requested-at` 150px, `.col-code` 220px, `.col-original` 200px, `.col-replacement` 200px, `.col-venue` 110px, `.col-students` 80px, `.col-cohort` 140px, `.col-status` 120px, `.col-actions` 100px. Table now fills full container width with no dead space. |
+
+---
+
 ## [2026-08-13] Table layout: fixed → auto (responsive)
 
 ### Summary
