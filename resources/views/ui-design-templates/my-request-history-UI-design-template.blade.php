@@ -557,7 +557,7 @@
                 { label: 'Requested Replacement', cls: 'col-replacement', sortable: false },
                 { label: 'Requested Venue', cls: 'col-venue', sortable: false },
                 { label: 'Students', cls: 'col-students', sortable: false },
-                { label: 'Affected Cohort(s)', cls: 'col-cohort', sortable: false },
+                { label: 'Cohort(s)', cls: 'col-cohort', sortable: false },
                 { label: 'Status', cls: 'col-status', sortable: false },
                 { label: 'Quick Cancel', cls: 'col-actions', sortable: false },
             ];
@@ -839,7 +839,7 @@
             html += field('Class Type', r.classType === 'L' ? 'Lecture' : 'Tutorial');
 
             html += section('Original Class Detail');
-            html += field('Affected Cohort(s)', r.cohorts.join(', '));
+            html += field('Cohort(s)', r.cohorts.join(', '));
             html += field('Total Students', cohortBreakdown(r));
             html += field('Original Date', formatDate(r.classDate));
             html += field('Original Day', r.classDay);

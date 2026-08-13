@@ -318,7 +318,7 @@
                 { label: 'Days Left', cls: 'col-urgency', sortable: false },
                 { label: 'Venue', cls: 'col-venue', sortable: false },
                 { label: 'Students', cls: 'col-students', sortable: false },
-                { label: 'Affected Cohort(s)', cls: 'col-cohort', sortable: false },
+                { label: 'Cohort(s)', cls: 'col-cohort', sortable: false },
                 { label: 'Conflict Reason', cls: 'col-reason', sortable: false },
                 { label: 'Action', cls: 'col-action', sortable: false },
             ];
@@ -454,7 +454,7 @@
                 { label: 'Time', value: to12h(c.timeStart) + ' to ' + to12h(c.timeEnd) + ' (' + c.duration + ' hr' + (c.duration > 1 ? 's' : '') + ')' },
                 { label: 'Venue', value: c.venue },
                 { label: 'Students', value: String(c.totalStudents) },
-                { label: 'Affected Cohort(s)', value: c.cohorts.join(', ') },
+                { label: 'Cohort(s)', value: c.cohorts.join(', ') },
                 { label: 'Days Left', value: daysLeftVal + ' days' },
                 { label: 'Conflict Reason', value: c.conflictReason },
             ];
