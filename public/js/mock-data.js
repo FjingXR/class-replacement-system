@@ -279,7 +279,7 @@ window.MockData = {
 
             { cohortId: 'rsd2s1', week: 2,  event: { di: 0, start: 4, end: 6, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', status: 'normal',      name: 'Object-Oriented Programming',    remarks: '' } },
             { cohortId: 'rsd2s1', week: 2,  event: { di: 2, start: 8, end: 9, code: 'BMIT3456', type: 'T', venue: 'B103', lecturer: 'Dr. Chang Foo Chung',      status: 'pending',     name: 'Artificial Intelligence',         remarks: '', requestedAt: '02 Sep 2026, 02:15 PM', requestedBy: 'Dr. Chang Foo Chung' } },
-            { cohortId: 'rsd2s1', week: 2,  event: { di: 4, start: 5, end: 7, code: 'BMIT7070', type: 'L', venue: 'B103', lecturer: 'Prof. Dr. Khoo Teik Huat', status: 'replacement', name: 'Advanced Software Engineering',   remarks: '26-Aug-2026' } },
+            { cohortId: 'rsd2s1', week: 2,  event: { di: 4, start: 8, end: 9, code: 'BMIT7070', type: 'L', venue: 'B103', lecturer: 'Prof. Dr. Khoo Teik Huat', status: 'pending', name: 'Advanced Software Engineering',   remarks: '', requestedAt: '08 Aug 2026, 09:00 AM', requestedBy: 'Prof. Dr. Khoo Teik Huat' } },
 
             { cohortId: 'rsd2s1', week: 3,  event: { di: 0, start: 4, end: 6, code: 'BMIT6767', type: 'L', venue: 'B103', lecturer: 'Dr. Christopher Lazarus', status: 'conflict',    name: 'Object-Oriented Programming',    remarks: 'Lecturer on leave' } },
             { cohortId: 'rsd2s1', week: 3,  event: { di: 2, start: 8, end: 9, code: 'BMIT3456', type: 'T', venue: 'B103', lecturer: 'Dr. Chang Foo Chung',      status: 'normal',      name: 'Artificial Intelligence',         remarks: '' } },
