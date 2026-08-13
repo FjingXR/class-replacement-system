@@ -349,11 +349,11 @@
         <div class="modal-body" id="modalBody"></div>
         <div class="modal-footer">
             <div class="modal-footer-left">
-                <button class="btn-danger" id="rejectRequestBtn" onclick="openRejectModal(currentModalId)" style="display:none">✕ Reject</button>
+                <button class="btn-outline" id="closeModalBtn" onclick="closeModal()">Close</button>
             </div>
             <div class="modal-footer-right" style="gap: 8px">
+                <button class="btn-danger" id="rejectRequestBtn" onclick="openRejectModal(currentModalId)" style="display:none">✕ Reject</button>
                 <button class="btn-approve" id="approveRequestBtn" onclick="approveRequest(currentModalId)" style="display:none">✓ Approve</button>
-                <button class="btn-outline" id="closeModalBtn" onclick="closeModal()">Close</button>
             </div>
         </div>
     </div>
@@ -399,9 +399,10 @@
             <textarea id="approveNotesInput" placeholder="Optional note for the audit trail..." rows="2" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:4px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
         </div>
         <div class="modal-footer">
-            <div class="modal-footer-left"></div>
-            <div class="modal-footer-right">
+            <div class="modal-footer-left">
                 <button class="btn-outline" onclick="closeApproveNotesModal()">Cancel</button>
+            </div>
+            <div class="modal-footer-right">
                 <button class="btn-approve" id="confirmApproveBtn" onclick="confirmApproveWithNotes()">✓ Approve</button>
             </div>
         </div>

@@ -158,6 +158,7 @@ SDD change request applied. Bug fix: `openModal(index)` now delegates to `openMo
 | 2026-08-06 | Line 834, 74 | Requested At two-line format | Added `<br>` between date/time and relative age — now shows `30 Jun 2026, 8:03 PM` / `(37 days ago)`. Added `white-space: normal` to `.timetable td.col-requested-at` to override global `nowrap`. |
 | 2026-08-06 | Line 419 | Scrollbar always-visible | Changed `.grid-scroll` from `overflow-x: auto` to `overflow-x: scroll` so horizontal scrollbar is always rendered (not just on hover), ensuring users discover scrollable right-side columns |
 | 2026-08-13 | `@section('page-styles')` | macOS-style update (Phase 4) | Removed toggle CSS (promoted to `theme.css`). Removed filter-chip CSS (promoted to `theme.css`). Removed hardcoded status colors `#f59e0b`/`#10b981`/`#ef4444`/`#3b82f6` (now in `theme.css`). Fixed `.btn-bulk-cancel:hover` and `.btn-inline-cancel:hover` color from `#fff` to `var(--color-on-error)`. |
+| 2026-08-13 | Lines 370–395, 390–408 | macOS modal button order | Reordered cancel-confirm and batch-cancel modal footers: dismiss button ("No, Keep It" / "No, Keep Them") moved to `modal-footer-left`, destructive action ("Yes, Cancel Request" / "Yes, Cancel All") stays in `modal-footer-right` — matches macOS Cancel-left / action-right convention. |
 
 ### `routes/web.php`
 

@@ -377,9 +377,10 @@
                 <p style="font-size:14px;color:var(--color-on-surface);line-height:1.5">Are you sure you want to cancel this replacement request? This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
-                <div class="modal-footer-left"></div>
-                <div class="modal-footer-right">
+                <div class="modal-footer-left">
                     <button class="btn-outline" onclick="closeCancelConfirm()">No, Keep It</button>
+                </div>
+                <div class="modal-footer-right">
                     <button class="btn-danger" id="confirmCancelAction">Yes, Cancel Request</button>
                 </div>
             </div>
@@ -395,9 +396,10 @@
             </div>
             <div class="modal-body" id="batchCancelBody"></div>
             <div class="modal-footer">
-                <div class="modal-footer-left"></div>
-                <div class="modal-footer-right">
+                <div class="modal-footer-left">
                     <button class="btn-outline" onclick="closeBatchCancelConfirm()">No, Keep Them</button>
+                </div>
+                <div class="modal-footer-right">
                     <button class="btn-danger" id="confirmBatchCancelAction">Yes, Cancel All</button>
                 </div>
             </div>

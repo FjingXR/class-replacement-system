@@ -113,3 +113,4 @@ Migrated inline `computeWeek()` to `getWeekNumber()`, `weekRangeLabel()` to `Dat
 |-----------|----------|--------|--------|
 | 2026-07-20 10:00 | Line ~25 (new) | New route | Added `Route::get('/replacement-home-ui', ...)` returning the standalone template view |
 | 2026-08-13 | `@section('page-styles')` | macOS-style update (Phase 4) | `.badge-emergency-leave` color from `white` to `var(--color-on-error)`. `.btn-replace-now` font-weight from `600` to `500`. |
+| 2026-08-13 | Lines 214–225 | macOS modal button order | Reordered quick-view modal footer: Close button moved before Arrange Replacement button — matches macOS dismiss-left / action-right convention. |

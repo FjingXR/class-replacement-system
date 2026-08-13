@@ -257,3 +257,4 @@ New Blade template for Programme Leader replacement request review. 11-column ta
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
 | 2026-08-13 | `@section('page-styles')` | macOS-style update | Removed toggle CSS (promoted to `theme.css`). Removed filter-chip CSS (promoted to `theme.css`). Removed hardcoded status colors `#f59e0b`/`#10b981`/`#ef4444`/`#3b82f6` (now in `theme.css`). Changed `.btn-approve`/`.btn-reject`/`.btn-view` border-radius from `4px` to `6px`. |
+| 2026-08-13 | Lines 350–358, 401–407 | macOS modal button order | Reordered detail modal footer: Close button moved to `modal-footer-left`, Reject + Approve buttons stay in `modal-footer-right` — matches macOS dismiss-left / actions-right convention. Approve-notes modal also reordered: Cancel left, Approve right. |
