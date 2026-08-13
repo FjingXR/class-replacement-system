@@ -567,7 +567,7 @@
             updateBulkBar();
 
             if (isFullyEmpty) {
-                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'flex';
                 document.getElementById('emptyTitle').textContent = "You haven't submitted any replacement requests for this semester.";
                 document.getElementById('emptyText').textContent = 'Submit a replacement request for any conflicted class.';
                 document.getElementById('emptyCta').style.display = 'inline-block';
@@ -575,7 +575,7 @@
                 document.getElementById('paginationBar').style.display = 'none';
                 document.getElementById('summaryBar').style.display = 'none';
             } else if (isFilteredEmpty) {
-                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'flex';
                 document.getElementById('emptyTitle').textContent = 'No replacement requests match your search or filter criteria.';
                 document.getElementById('emptyText').textContent = 'Try adjusting your filters.';
                 document.getElementById('emptyCta').style.display = 'none';
@@ -584,7 +584,7 @@
                 document.getElementById('summaryBar').style.display = 'none';
             } else {
                 document.getElementById('emptyState').style.display = 'none';
-                document.getElementById('gridWrapper').style.display = 'block';
+                document.getElementById('gridWrapper').style.display = 'flex';
                 document.getElementById('paginationBar').style.display = 'flex';
                 document.getElementById('summaryBar').style.display = 'grid';
 

@@ -200,7 +200,7 @@
                 cohortSel.innerHTML = '<option value="">Select Cohort</option>';
                 cohortSel.disabled = true;
                 weekSel.disabled = true;
-                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'flex';
                 document.getElementById('emptyTitle').textContent = 'Select a faculty first';
                 document.getElementById('emptyText').textContent = 'Choose a faculty, then pick a cohort to view its weekly timetable.';
                 document.getElementById('timetable').querySelector('thead').innerHTML = '';
@@ -220,7 +220,7 @@
             cohortSel.innerHTML = '<option value="">Select Cohort</option>' +
                 faculty.cohorts.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
             weekSel.disabled = true;
-            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'flex';
             document.getElementById('emptyTitle').textContent = 'Select a cohort';
             document.getElementById('emptyText').textContent = 'Pick a cohort from ' + faculty.name + ' to view its weekly timetable.';
             document.getElementById('timetable').querySelector('thead').innerHTML = '';
@@ -240,7 +240,7 @@
             if (!cid) {
                 selectedCohortId = null;
                 weekSel.disabled = true;
-                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'flex';
                 document.getElementById('emptyTitle').textContent = 'Select a cohort';
                 document.getElementById('emptyText').textContent = 'Choose a faculty, then pick a cohort to view its weekly timetable.';
                 document.getElementById('timetable').querySelector('thead').innerHTML = '';
@@ -352,7 +352,7 @@
 
             if (!selectedCohortId) {
                 document.getElementById('weekSelect').disabled = true;
-                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'flex';
                 document.getElementById('emptyTitle').textContent = 'Select a faculty first';
                 document.getElementById('emptyText').textContent = 'Choose a faculty, then pick a cohort to view its weekly timetable.';
                 updateWeekArrows(true, true);
@@ -365,7 +365,7 @@
 
             // ── Check if week has any events ──
             if (weekEvents.length === 0) {
-                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'flex';
                 document.getElementById('emptyTitle').textContent = 'No classes scheduled';
                 document.getElementById('emptyText').textContent = 'No classes scheduled for this cohort in the selected week.';
                 document.getElementById('sumTotal').textContent = '0';
@@ -572,7 +572,7 @@
             populateFaculties();
 
             // Show initial empty state with guidance
-            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'flex';
             document.getElementById('emptyTitle').textContent = 'Select a faculty first';
             document.getElementById('emptyText').textContent = 'Choose a faculty, then pick a cohort to view its weekly timetable.';
             document.getElementById('cohortSelect').disabled = true;

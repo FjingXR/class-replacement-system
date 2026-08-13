@@ -1095,7 +1095,7 @@
             document.getElementById('mobileCardList').innerHTML = '';
 
             if (!currentVenue) {
-                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'flex';
                 document.getElementById('emptyTitle').textContent = 'Select a venue';
                 document.getElementById('emptyText').textContent = 'Choose a venue from the dropdown to view its weekly schedule.';
                 updateSummaries([]);
@@ -1106,7 +1106,7 @@
 
             if (weekEvents.length === 0) {
                 /* No classes booked — show hint */
-                document.getElementById('hintText').style.display = 'block';
+                document.getElementById('hintText').style.display = 'flex';
             }
 
             const data = weekData[currentWeek];

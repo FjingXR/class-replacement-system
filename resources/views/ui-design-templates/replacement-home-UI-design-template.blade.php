@@ -331,7 +331,7 @@
             head.appendChild(tr);
 
             if (pageData.length === 0) {
-                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'flex';
             } else {
                 document.getElementById('emptyState').style.display = 'none';
                 pageData.forEach(function(c, i) {
