@@ -460,17 +460,18 @@ body {
 }
 .timetable {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 4px;
     table-layout: auto;
 }
 .timetable th, .timetable td {
-    border: 1px solid var(--color-outline);
+    border: none;
     text-align: left;
     vertical-align: middle;
     font-size: 13px;
     padding: 10px 12px;
     white-space: nowrap;
-    transition: background var(--transition), border-color var(--transition);
+    transition: background var(--transition);
 }
 .timetable th {
     background: var(--color-surface-variant);
@@ -488,13 +489,10 @@ body {
     user-select: none;
 }
 .timetable th.sortable:hover {
-    background: rgba(0,0,0,0.05);
+    background: var(--color-outline);
 }
 .timetable tbody tr:hover td {
-    background: rgba(0,0,0,0.03);
-}
-.timetable tbody tr:nth-child(even) td:not(.time-col):not(.offday-slot) {
-    background: rgba(0,0,0,0.015);
+    background: var(--color-surface-variant);
 }
 
 /* ───── Sort Hint ───── */
@@ -568,7 +566,7 @@ html.dark .filter-select {
 .badge {
     display: inline-block;
     padding: 4px 10px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
     vertical-align: middle;

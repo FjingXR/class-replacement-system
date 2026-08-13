@@ -196,16 +196,17 @@
 
         .timetable {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 4px;
             table-layout: fixed;
         }
 
         .timetable th, .timetable td {
-            border: 1px solid var(--color-outline);
+            border: none;
             text-align: center;
             vertical-align: middle;
             font-size: 13px;
-            transition: background var(--transition), border-color var(--transition);
+            transition: background var(--transition);
         }
 
         .timetable th {
