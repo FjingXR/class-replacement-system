@@ -14,4 +14,5 @@
             <span>{{ $item['label'] }}</span>
         </div>
     @endforeach
+    <span class="legend-hint">Hover a colour to learn more</span>
 </div>

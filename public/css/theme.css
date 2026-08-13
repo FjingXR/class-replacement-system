@@ -964,6 +964,7 @@ html.dark .filter-select {
 .legend-bar { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0; padding: 10px 14px; background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--radius-md); }
 .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
 .legend-swatch { width: 14px; height: 14px; border-radius: var(--radius-sm); flex-shrink: 0; }
+.legend-hint { font-size: 11px; color: var(--color-on-surface-variant); opacity: 0.5; font-style: italic; margin-left: auto; white-space: nowrap; }
 
 /* ── Summary card colors (macOS accent style) ────────────── */
 .summary-card.card-total .summary-value    { color: var(--color-success); }
