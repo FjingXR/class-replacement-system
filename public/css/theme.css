@@ -707,6 +707,7 @@ html.dark .filter-select {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    width: 100%;
     padding: 60px 20px;
     color: var(--color-on-surface-variant);
 }
