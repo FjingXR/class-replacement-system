@@ -1,5 +1,21 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
+
+### Summary
+
+Added an expandable guide block with page-specific workflow instructions.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 150-157 | Added | `@include('partials.ui-guide-block')` with 4 workflow tips |
+
+---
+
 ## Files Changed
 
 ### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`

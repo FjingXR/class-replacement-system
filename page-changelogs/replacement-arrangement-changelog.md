@@ -1,5 +1,21 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
+
+### Summary
+
+Added an expandable guide block with page-specific workflow instructions.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 857-865 | Added | `@include('partials.ui-guide-block')` with 5 workflow tips |
+
+---
+
 ## Files Changed
 
 ### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
