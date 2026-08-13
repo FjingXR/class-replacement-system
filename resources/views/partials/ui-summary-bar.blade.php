@@ -15,21 +15,27 @@
     ];
 @endphp
 
-<div class="summary-bar" id="summaryBar">
-    @foreach ($cards as $card)
-        @php
-            $desc = $card['description'] ?? $descriptions[$card['class']] ?? $card['label'];
-        @endphp
-        <div class="summary-card {{ $card['class'] }}">
-            <div class="summary-card-inner">
-                <div class="summary-card-front">
-                    <span class="summary-value" id="{{ $card['valueId'] }}">0</span>
-                    <span class="summary-label">{{ $card['label'] }}</span>
-                </div>
-                <div class="summary-card-back">
-                    <span class="summary-description">{!! $desc !!}</span>
+<div class="summary-section" id="summarySection">
+    <div class="summary-hint">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span>Stats are for <strong>this week only</strong>. Hover a card to learn more.</span>
+    </div>
+    <div class="summary-bar" id="summaryBar">
+        @foreach ($cards as $card)
+            @php
+                $desc = $card['description'] ?? $descriptions[$card['class']] ?? $card['label'];
+            @endphp
+            <div class="summary-card {{ $card['class'] }}">
+                <div class="summary-card-inner">
+                    <div class="summary-card-front">
+                        <span class="summary-value" id="{{ $card['valueId'] }}">0</span>
+                        <span class="summary-label">{{ $card['label'] }}</span>
+                    </div>
+                    <div class="summary-card-back">
+                        <span class="summary-description">{!! $desc !!}</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    @endforeach
+        @endforeach
+    </div>
 </div>
