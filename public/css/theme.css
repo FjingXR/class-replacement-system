@@ -64,12 +64,12 @@
 
     /* macOS-inspired border radius */
     --radius-xs: 4px;       /* progress bars / tiny elements */
-    --radius-sm: 6px;       /* badges / small chips */
-    --radius-md: 8px;       /* small controls / buttons */
-    --radius-lg: 10px;      /* inputs / dropdowns */
-    --radius-xl: 12px;      /* cards / containers */
-    --radius-2xl: 16px;     /* large panels / modals */
-    --radius-pill: 999px;   /* toggles / avatars */
+    --radius-sm: 8px;       /* small controls / buttons */
+    --radius-md: 10px;      /* inputs / dropdowns */
+    --radius-lg: 12px;      /* cards / containers */
+    --radius-xl: 14px;      /* large panels */
+    --radius-2xl: 16px;     /* modals / sheets */
+    --radius-pill: 999px;   /* badges / toggles */
 
     --transition: 0.2s ease;
 }
@@ -125,12 +125,12 @@
 
     /* macOS-inspired border radius */
     --radius-xs: 4px;       /* progress bars / tiny elements */
-    --radius-sm: 6px;       /* badges / small chips */
-    --radius-md: 8px;       /* small controls / buttons */
-    --radius-lg: 10px;      /* inputs / dropdowns */
-    --radius-xl: 12px;      /* cards / containers */
-    --radius-2xl: 16px;     /* large panels / modals */
-    --radius-pill: 999px;   /* toggles / avatars */
+    --radius-sm: 8px;       /* small controls / buttons */
+    --radius-md: 10px;      /* inputs / dropdowns */
+    --radius-lg: 12px;      /* cards / containers */
+    --radius-xl: 14px;      /* large panels */
+    --radius-2xl: 16px;     /* modals / sheets */
+    --radius-pill: 999px;   /* badges / toggles */
 }
 
 /* ============================================
@@ -923,7 +923,7 @@ html.dark .filter-select {
 .modal {
     background: var(--color-surface);
     border: 1px solid var(--color-outline);
-    border-radius: 16px;
+    border-radius: var(--radius-2xl);
     box-shadow: 0 12px 40px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08);
     max-width: 420px; width: 100%;
     max-height: 85vh;
@@ -947,7 +947,7 @@ html.dark .filter-select {
     font-size: 11px;
     font-weight: 600;
     padding: 3px 10px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     letter-spacing: 0.2px;
 }
 .modal-status-badge.normal {
@@ -1682,7 +1682,7 @@ html.dark .semester-bar select:not(.week-select) {
         max-width: 100%;
         max-height: 80vh;
         max-height: 80dvh;
-        border-radius: 14px 14px 0 0;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
         margin: 0;
         overflow-y: auto;
         padding-bottom: env(safe-area-inset-bottom);
