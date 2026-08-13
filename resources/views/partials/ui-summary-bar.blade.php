@@ -4,7 +4,7 @@
         'card-hours'       => 'Total teaching hours for the selected period (each slot = 30 minutes).',
         'card-replacement' => 'Classes with a replacement lecturer assigned.',
         'card-pending'     => 'Replacement requests still waiting for approval or a volunteer.',
-        'card-conflict'    => 'Scheduling clashes that need attention — two classes at the same time.',
+        'card-conflict'    => 'Scheduling clashes or classes on public holidays that need attention.',
         'card-available'   => 'Free time slots that can be booked for this venue.',
         'card-approved'    => 'Requests that have been approved and are ready to proceed.',
         'card-rejected'    => 'Requests that were declined and need alternative arrangements.',
