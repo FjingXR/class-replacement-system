@@ -467,19 +467,18 @@
             cursor: not-allowed;
             pointer-events: none;
         }
-        /* ───── Unavailable Cell (Holiday/Sunday) ───── */
-        .cell-content.cell-occupied {
-            background: var(--color-surface-variant);
-            cursor: not-allowed;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
         /* ───── Ensure td has position: relative for absolute children ───── */
         .timetable td.hour-cell:has(.cell-available),
         .timetable td.hour-cell:has(.event-block),
         .timetable td.hour-cell:has(.cell-content.cell-occupied) {
             position: relative;
+        }
+
+        /* ───── Non-interactive events (pending / replacement) ───── */
+        .event-pending,
+        .event-replacement {
+            cursor: not-allowed;
+            pointer-events: none;
         }
 
         /* ───── No venues match ───── */
@@ -615,7 +614,7 @@
             'items' => [
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue'],
                 ['color' => 'var(--color-primary-container)', 'label' => 'Replacement', 'tip' => 'Approved replacement class booked here'],
-                ['color' => 'var(--color-warning-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
+                ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
                 ['color' => 'var(--color-error-container)', 'label' => 'Conflict', 'tip' => 'Scheduling conflict or public holiday'],
             ]
         ])

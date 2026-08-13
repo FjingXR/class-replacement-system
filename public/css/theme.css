@@ -961,10 +961,11 @@ html.dark .filter-select {
    ============================================ */
 
 /* ── Legend bar ─────────────────────────────────────────────── */
-.legend-bar { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0; padding: 10px 14px; background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--radius-md); }
+.legend-bar { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; padding: 10px 14px; background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--radius-md); }
+.legend-items { display: flex; flex-wrap: wrap; gap: 16px; }
 .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
 .legend-swatch { width: 14px; height: 14px; border-radius: var(--radius-sm); flex-shrink: 0; }
-.legend-hint { font-size: 11px; color: var(--color-on-surface-variant); opacity: 0.5; font-style: italic; margin-left: auto; white-space: nowrap; }
+.legend-hint { font-size: 11px; color: var(--color-on-surface-variant); opacity: 0.5; font-style: italic; }
 
 /* ── Summary card colors (macOS accent style) ────────────── */
 .summary-card.card-total .summary-value    { color: var(--color-success); }
@@ -1414,8 +1415,8 @@ html.dark .semester-bar select:not(.week-select) {
     color: var(--color-on-primary-container);
 }
 .event-pending {
-    background: var(--color-warning-container);
-    color: var(--color-on-warning-container);
+    background: var(--color-tertiary-container);
+    color: var(--color-on-tertiary-container);
 }
 .event-conflict {
     background: var(--color-error-container);
@@ -1487,6 +1488,21 @@ html.dark .semester-bar select:not(.week-select) {
 .cell-available:active {
     transform: scale(0.97);
 }
+.cell-occupied,
+.cell-pending,
+.cell-reserved {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.cell-occupied {
+    background: var(--color-error-container);
+}
+.cell-pending {
+    background: var(--color-tertiary-container);
+}
+.cell-reserved {
+    background: var(--color-surface-variant);
+}
 
 .timetable tr:last-child td { border-bottom: none; }
 
@@ -1520,6 +1536,45 @@ html.dark .semester-bar select:not(.week-select) {
 .event-block::after { content: attr(data-name) ' · ' attr(data-venue); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--color-inverse-surface); color: var(--color-on-inverse-surface); padding: 4px 8px; border-radius: var(--radius-xs); font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 50; }
 .event-block:hover::after { opacity: 1; }
 .ev-code { cursor: pointer; }
+
+/* ── CSS Tooltip (above element) ────────────────────────────── */
+[data-tip] { position: relative; }
+[data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    padding: 5px 10px;
+    background: var(--color-inverse-surface);
+    color: var(--color-on-inverse-surface);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: var(--radius-xs);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+    z-index: 100;
+}
+[data-tip]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 3px);
+    left: 10px;
+    border: 5px solid transparent;
+    border-top-color: var(--color-inverse-surface);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+    z-index: 100;
+}
+[data-tip]:hover::after,
+[data-tip]:hover::before {
+    opacity: 1;
+    visibility: visible;
+}
 
 /* ── Copy toast ─────────────────────────────────────────────── */
 .copy-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--color-inverse-surface); color: var(--color-on-inverse-surface); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; }
