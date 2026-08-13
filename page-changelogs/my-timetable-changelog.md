@@ -1,5 +1,29 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-13] Phase 3 UX Enhancement: Day Badges
+
+### Summary
+
+All three day badges (Today, Holiday, OFF) now use consistent badge styling. When today is a public holiday, both badges appear.
+
+### Files Changed
+
+#### `public/js/ui-common.js`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 859-870 | Changed | `dayHeader()`: holiday and today badges are no longer mutually exclusive |
+| 2026-08-13 | Line 862 | Changed | `.holiday-label` → `.holiday-badge` |
+| 2026-08-13 | Line 866 | Changed | `.off-label` → `.off-badge` |
+
+#### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 1246-1267 | Replaced | `.holiday-label` + `.off-label` → `.holiday-badge` + `.off-badge` (badge styling) |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
 
 ### Summary

@@ -1,5 +1,22 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-13] Phase 3 UX Enhancement: Holiday Badge
+
+### Summary
+
+Updated inline holiday CSS and JS to use `.holiday-badge` class matching the shared badge design.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 258-269 | Replaced | `.holiday-label` CSS → `.holiday-badge` with badge styling |
+| 2026-08-13 | Line 1186 | Changed | `class="holiday-label"` → `class="holiday-badge"` |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Shared Legend Bar
 
 ### Summary
