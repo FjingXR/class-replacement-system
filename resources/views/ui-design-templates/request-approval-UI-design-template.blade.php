@@ -1091,7 +1091,7 @@
             select.innerHTML = '<option value="all">All Weeks</option>';
             weekRanges.forEach((w, i) => {
                 const opt = document.createElement('option');
-                opt.value = i;
+                opt.value = w.value;
                 opt.textContent = w.label;
                 select.appendChild(opt);
             });

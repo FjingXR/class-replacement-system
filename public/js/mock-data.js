@@ -31,12 +31,12 @@ window.MockData = {
             String(d.getDate()).padStart(2, '0') + '-' +
             ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()] + '-' +
             d.getFullYear();
-        const start = new Date(2026, 5, 15);   // Week-1 Monday (local time)
-        const end = new Date(2026, 8, 20);      // Week-14 Sunday (start + 13*7 + 6 days)
+        const start = new Date(2026, 6, 27);   // Week-1 Monday (local time)
+        const end = new Date(2026, 9, 26);      // Week-14 Sunday (start + 13*7 + 6 days)
         return {
             label: '202605 Semester',
-            startDate: '2026-06-15',
-            endDate: '2026-09-20',
+            startDate: '2026-07-27',
+            endDate: '2026-10-26',
             weeks: 14,
             chipText: '202605 Semester · ' + fmtChip(start) + ' ~ ' + fmtChip(end),
         };
