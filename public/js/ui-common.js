@@ -1195,7 +1195,7 @@ let _weekRanges = null;
 function buildWeekRanges() {
     const monthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
     function parseDate(s) {
-        const p = s.trim().split('-');
+        const p = s.trim().split(' ');
         return new Date(parseInt(p[2]), monthMap[p[1]], parseInt(p[0]));
     }
     const data = generateWeekData();
