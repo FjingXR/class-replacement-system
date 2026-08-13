@@ -301,7 +301,7 @@
 
 <div class="grid-wrapper" id="gridWrapper">
     <div class="grid-scroll">
-        <table class="timetable" id="timetable">
+        <table class="timetable data-table" id="timetable">
             <thead id="tableHead"></thead>
             <tbody id="tableBody"></tbody>
         </table>

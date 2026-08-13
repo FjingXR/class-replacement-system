@@ -323,7 +323,7 @@
         <div class="filter-chips" id="filterChips"></div>
 
         <!-- ─── Grid Wrapper ─── -->
-        @include('partials.ui-grid-table', ['wrapperId' => 'gridWrapper'])
+        @include('partials.ui-grid-table', ['wrapperId' => 'gridWrapper', 'tableClass' => 'timetable data-table'])
 
         <!-- ─── Card View (mobile) ─── -->
         <div class="card-view" id="cardView"></div>

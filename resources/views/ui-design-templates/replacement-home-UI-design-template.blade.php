@@ -156,7 +156,7 @@
         <div class="sort-hint">Click <strong>Course Code &amp; Name</strong> or <strong>Original Class</strong> to sort</div>
 
         <!-- ─── Grid Wrapper ─── -->
-        @include('partials.ui-grid-table')
+        @include('partials.ui-grid-table', ['tableClass' => 'timetable data-table'])
 
         <!-- ─── Card View (mobile) ─── -->
         <div class="card-view" id="cardView"></div>
