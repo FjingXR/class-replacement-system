@@ -632,10 +632,10 @@
         <!-- ─── Legend Bar ─── -->
         @include('partials.ui-legend-bar', [
             'items' => [
-                ['color' => 'var(--color-success)', 'label' => 'Available'],
-                ['color' => 'var(--color-primary)', 'label' => 'Replacement'],
-                ['color' => 'var(--color-warning)', 'label' => 'Pending'],
-                ['color' => 'var(--color-error)', 'label' => 'Conflict'],
+                ['color' => 'var(--color-success)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue'],
+                ['color' => 'var(--color-primary)', 'label' => 'Replacement', 'tip' => 'Approved replacement class booked here'],
+                ['color' => 'var(--color-warning)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
+                ['color' => 'var(--color-error)', 'label' => 'Conflict', 'tip' => 'Scheduling conflict or public holiday'],
             ]
         ])
 
