@@ -266,6 +266,18 @@
     <p>Review and manage replacement requests from lecturers in your program.</p>
 </div>
 
+@include('partials.ui-guide-block', [
+    'guideTitle' => 'How to use this page',
+    'guideItems' => [
+        '<strong>Sort</strong> — click any column header to sort ascending/descending',
+        '<strong>Search</strong> — type in the search box to filter by course, lecturer, or keywords',
+        '<strong>Filter</strong> — use the status dropdown or urgency chips to narrow results',
+        '<strong>Hover headers</strong> — hover a column name to see what it means',
+        '<strong>Bulk action</strong> — tick checkboxes then approve/reject multiple requests at once',
+        '<strong>Quick action</strong> — use the approve/reject buttons on individual rows',
+    ]
+])
+
 <div class="toolbar">
     <div class="toolbar-left">
         <input class="search-input" id="searchInput" placeholder="Search course code, name, or lecturer...">

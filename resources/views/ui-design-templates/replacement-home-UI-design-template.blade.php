@@ -133,6 +133,17 @@
         <!-- ─── Page Header ─── -->
         @include('partials.ui-page-header', ['title' => 'Replacement Arrangement', 'description' => 'The following classes require replacement arrangements. Select a class to submit a replacement request.'])
 
+        @include('partials.ui-guide-block', [
+            'guideTitle' => 'How to use this page',
+            'guideItems' => [
+                '<strong>Sort</strong> — click any column header to sort ascending/descending',
+                '<strong>Search</strong> — type in the search box to filter by course code or name',
+                '<strong>Hover headers</strong> — hover a column name to see what it means',
+                '<strong>Start arranging</strong> — click the Action button on a row to begin the replacement process',
+                '<strong>Week filter</strong> — use the week navigator to view conflicts for a specific week',
+            ]
+        ])
+
         <!-- ─── Toolbar ─── -->
         <div class="toolbar">
             <div class="toolbar-left">

@@ -287,6 +287,18 @@
         <!-- ─── Page Header ─── -->
         @include('partials.ui-page-header', ['title' => 'My Request History', 'description' => 'View and monitor all replacement requests submitted during the current semester.'])
 
+        @include('partials.ui-guide-block', [
+            'guideTitle' => 'How to use this page',
+            'guideItems' => [
+                '<strong>Sort</strong> — click any column header to sort ascending/descending',
+                '<strong>Search</strong> — type in the search box to filter by course code, name, or keywords',
+                '<strong>Filter</strong> — use the status dropdown to view requests by approval status',
+                '<strong>Hover headers</strong> — hover a column name to see what it means',
+                '<strong>Cancel request</strong> — tick the checkbox on pending requests then use "Cancel Selected"',
+                '<strong>View details</strong> — click the details icon on any row to see the full request',
+            ]
+        ])
+
         <!-- ─── Toolbar ─── -->
         <div class="toolbar">
             <div class="toolbar-left">
