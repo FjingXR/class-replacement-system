@@ -42,6 +42,10 @@ function showLogoutModal() {
         clearInterval(logoutTimer);
         modal.classList.remove('show');
     };
+    document.getElementById('logoutCloseBtn').onclick = () => {
+        clearInterval(logoutTimer);
+        modal.classList.remove('show');
+    };
 
     // "Don't ask me again" handler
     document.getElementById('logoutDontAsk').onchange = (e) => {

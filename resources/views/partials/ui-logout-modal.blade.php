@@ -46,6 +46,7 @@
     <div class="modal">
         <div class="modal-header">
             <h3 class="modal-title" id="logoutModalTitle">Confirm Logout</h3>
+            <button class="modal-close" id="logoutCloseBtn" aria-label="Close">&times;</button>
         </div>
         <div class="modal-body">
             <p>Your session will end in <span id="logoutCountdown">5</span> seconds.</p>
