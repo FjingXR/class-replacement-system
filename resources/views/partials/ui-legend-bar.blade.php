@@ -1,9 +1,9 @@
 @php
     $items = $items ?? [
-        ['color' => 'var(--color-success)', 'label' => 'Normal Class', 'tip' => 'Scheduled class with no issues'],
-        ['color' => 'var(--color-primary)', 'label' => 'Replacement', 'tip' => 'Approved replacement session'],
-        ['color' => 'var(--color-warning)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
-        ['color' => 'var(--color-error)', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday'],
+        ['color' => 'var(--color-success-container)', 'label' => 'Normal Class', 'tip' => 'Scheduled class with no issues'],
+        ['color' => 'var(--color-primary-container)', 'label' => 'Replacement', 'tip' => 'Approved replacement session'],
+        ['color' => 'var(--color-warning-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
+        ['color' => 'var(--color-error-container)', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday'],
     ];
 @endphp
 
