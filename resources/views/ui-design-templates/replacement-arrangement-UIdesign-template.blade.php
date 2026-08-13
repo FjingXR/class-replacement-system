@@ -471,34 +471,6 @@
             filter: brightness(1.1);
         }
 
-        .legend {
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 18px;
-            padding: 10px 18px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            transition: background var(--transition), border-color var(--transition);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-        }
-        .legend-swatch {
-            width: 18px;
-            height: 18px;
-            border-radius: var(--radius-xs);
-            flex-shrink: 0;
-            border: 1px solid var(--color-outline);
-        }
-
         /* ===== Selection Summary ===== */
         .sel-summary {
             margin-top: 14px;
@@ -901,26 +873,26 @@
 
         @include('partials.ui-grid-table')
 
-        <div class="legend">
+        <div class="legend-bar">
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-primary);"></div>
-                Available
+                <span class="legend-swatch" style="background: var(--color-success);"></span>
+                <span>Available</span>
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-primary);"></div>
-                Your Current Selection
+                <span class="legend-swatch" style="background: var(--color-primary);"></span>
+                <span>Your Current Selection</span>
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-tertiary);"></div>
-                Pending (You)
+                <span class="legend-swatch" style="background: var(--color-warning);"></span>
+                <span>Pending (You)</span>
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-surface-variant);"></div>
-                Reserved by Others
+                <span class="legend-swatch" style="background: var(--color-surface-variant);"></span>
+                <span>Reserved by Others</span>
             </div>
             <div class="legend-item">
-                <div class="legend-swatch" style="background: var(--color-error);"></div>
-                Occupied / Class on Public Holiday
+                <span class="legend-swatch" style="background: var(--color-error);"></span>
+                <span>Occupied / Class on Public Holiday</span>
             </div>
         </div>
 
