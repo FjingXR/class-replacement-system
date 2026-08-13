@@ -1,5 +1,21 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-13] Phase 3 UX Enhancement: Legend Tooltips
+
+### Summary
+
+Added hover tooltips to all 5 legend items describing each status.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 882-886 | Added | `tip` property to each legend item |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Holiday Badge
 
 ### Summary

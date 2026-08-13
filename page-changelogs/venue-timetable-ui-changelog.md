@@ -1,5 +1,21 @@
 # Changelog — Venue Timetable UI
 
+## [2026-08-13] Phase 3 UX Enhancement: Legend Tooltips
+
+### Summary
+
+Added hover tooltips to all legend items describing each status.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/venue-timetable-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 634-639 | Added | `tip` property to each legend item |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Shared Legend Bar
 
 ### Summary

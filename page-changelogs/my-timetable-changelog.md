@@ -1,5 +1,22 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-13] Phase 3 UX Enhancement: Legend Tooltips
+
+### Summary
+
+All legend items now have hover tooltips describing what each status means.
+
+### Files Changed
+
+#### `resources/views/partials/ui-legend-bar.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 2-7 | Added | `tip` property to default items array |
+| 2026-08-13 | Line 13 | Added | `title="{{ $item['tip'] }}"` on `.legend-item` div |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Day Badges
 
 ### Summary
