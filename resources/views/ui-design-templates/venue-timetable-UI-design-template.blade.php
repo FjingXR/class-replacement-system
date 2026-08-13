@@ -473,7 +473,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--color-primary-container);
+            background: var(--color-success-container);
             cursor: pointer;
         }
         .cell-available:hover {
@@ -631,7 +631,7 @@
         <!-- ─── Legend Bar ─── -->
         <div class="legend-bar">
             <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-primary);"></span>
+                <span class="legend-swatch" style="background: var(--color-success);"></span>
                 <span>Available</span>
             </div>
             <div class="legend-item">
@@ -639,7 +639,7 @@
                 <span>Replacement</span>
             </div>
             <div class="legend-item">
-                <span class="legend-swatch" style="background: var(--color-tertiary);"></span>
+                <span class="legend-swatch" style="background: var(--color-warning);"></span>
                 <span>Pending</span>
             </div>
             <div class="legend-item">
