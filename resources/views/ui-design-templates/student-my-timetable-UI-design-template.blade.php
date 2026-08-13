@@ -3,18 +3,18 @@
     'pageKey' => 'studentMyTimetable',
     'navItems' => [
         ['key'=>'dashboard','label'=>'Dashboard','href'=>'/dashboard'],
-        ['key'=>'my-timetable','label'=>'My Timetable','href'=>'/student-my-timetable-ui'],
+        ['key'=>'my-timetable','label'=>'Student My Timetable','href'=>'/student-my-timetable-ui'],
         ['key'=>'replacement-history','label'=>'Replacement History','href'=>'/my-request-history-ui'],
     ],
     'notifCount' => 3,
 ])
 
-@section('title', 'My Timetable')
+@section('title', 'Student My Timetable')
 
 @section('content')
 
         <!-- ─── Page Header ─── -->
-        @include('partials.ui-page-header', ['title' => 'My Timetable', 'description' => 'View your weekly class schedule across all sessions.', 'chips' => [['label' => 'RSD3(S1)G2']]])
+        @include('partials.ui-page-header', ['title' => 'Student My Timetable', 'description' => 'View your weekly class schedule across all sessions.', 'chips' => [['label' => 'RSD3(S1)G2']]])
 
         <!-- ─── Semester Progress ─── -->
         <div class="semester-progress" id="semesterProgress">
@@ -40,11 +40,16 @@
         <!-- ─── Weekly Summary Bar ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
-                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
-                ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Class Hours'],
-                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements'],
-                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
-                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts'],
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes',
+                    'description' => 'Total classes in <strong>your timetable</strong> this week.'],
+                ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Class Hours',
+                    'description' => 'Total <strong>class hours</strong> you have this week (each slot = <strong>30 minutes</strong>).'],
+                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements',
+                    'description' => 'Classes where a <strong>different lecturer</strong> is covering this week.'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
+                    'description' => 'Replacement requests still <strong>being processed</strong> for your classes.'],
+                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts',
+                    'description' => '<strong>Scheduling overlaps</strong> in your timetable that need attention.'],
             ]
         ])
 
