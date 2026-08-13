@@ -490,6 +490,7 @@
             bottom: 0;
             background: var(--color-surface-variant);
             cursor: not-allowed;
+            pointer-events: none;
             opacity: 0.7;
         }
 

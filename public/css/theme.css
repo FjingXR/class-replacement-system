@@ -1366,6 +1366,10 @@ html.dark .semester-bar select:not(.week-select) {
 .timetable td.hour-cell.offday-slot {
     background: var(--color-error-container);
 }
+.timetable td.hour-cell.offday-slot:not(:has(.event-block)) {
+    cursor: not-allowed;
+    pointer-events: none;
+}
 .timetable td.hour-cell.offday-slot .cell-empty {
     background: var(--color-error-container);
 }

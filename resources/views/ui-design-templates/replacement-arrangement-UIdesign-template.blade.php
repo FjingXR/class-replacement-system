@@ -325,6 +325,7 @@
         .cell-occupied {
             background: var(--color-error-container);
             cursor: not-allowed;
+            pointer-events: none;
         }
 
         .cell-selected {
