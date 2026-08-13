@@ -1,5 +1,21 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
+
+### Summary
+
+Added an expandable guide block with page-specific workflow instructions.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 290-299 | Added | `@include('partials.ui-guide-block')` with 6 workflow tips |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Table Header Tooltips
 
 ### Summary

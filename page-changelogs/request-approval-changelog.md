@@ -1,5 +1,33 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
+
+### Summary
+
+Added an expandable guide block with page-specific workflow instructions.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 268-277 | Added | `@include('partials.ui-guide-block')` with 6 workflow tips |
+
+#### `resources/views/partials/ui-guide-block.blade.php` (new)
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Full file | Created | Shared partial with expand/collapse guide panel |
+
+#### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|-----------|----------|--------|--------|
+| 2026-08-13 | Lines 518-585 | Added | `.guide-block`, `.guide-toggle`, `.guide-content`, `.guide-list` styles |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Table Header Tooltips
 
 ### Summary
