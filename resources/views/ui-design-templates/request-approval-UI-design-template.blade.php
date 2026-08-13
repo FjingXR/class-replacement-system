@@ -535,16 +535,16 @@
 
         // ── Table columns ──
         const columns = [
-            { label: '#', sortable: false },
-            { label: 'Requested Timestamp', sortable: true, field: 'requestedAt' },
-            { label: 'Lecturer', sortable: false },
-            { label: 'Course Code & Name', sortable: false },
-            { label: 'Original Class', sortable: true, field: 'classDate' },
-            { label: 'Proposed Replacement', sortable: true, field: 'replacementDate' },
-            { label: 'Students', sortable: false },
-            { label: 'Urgency', sortable: true, field: 'urgencyDays' },
-            { label: 'Status', sortable: true, field: 'status' },
-            { label: 'Actions', sortable: false }
+            { label: '#', sortable: false, tip: 'Row number' },
+            { label: 'Requested Timestamp', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested' },
+            { label: 'Lecturer', sortable: false, tip: 'Lecturer who submitted the request' },
+            { label: 'Course Code & Name', sortable: false, tip: 'Course affected by the conflict' },
+            { label: 'Original Class', sortable: true, field: 'classDate', tip: 'Original class session being replaced' },
+            { label: 'Proposed Replacement', sortable: true, field: 'replacementDate', tip: 'Proposed new date, time, and venue' },
+            { label: 'Students', sortable: false, tip: 'Number of students enrolled' },
+            { label: 'Urgency', sortable: true, field: 'urgencyDays', tip: 'Days remaining until the original class' },
+            { label: 'Status', sortable: true, field: 'status', tip: 'Current approval status' },
+            { label: 'Actions', sortable: false, tip: 'Approve or reject this request' }
         ];
 
         // ── Filter state ──
@@ -555,11 +555,12 @@
             const thead = document.getElementById('tableHead');
             let html = '<tr><th class="col-checkbox"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>';
             columns.forEach((col, i) => {
+                const tip = col.tip ? ' title="' + col.tip + '"' : '';
                 if (col.sortable) {
                     const arrow = sortState.field === col.field ? (sortState.dir === 'asc' ? ' ▲' : ' ▼') : '';
-                    html += '<th class="sortable" onclick="toggleSort(\'' + col.field + '\')">' + col.label + arrow + '</th>';
+                    html += '<th class="sortable"' + tip + ' onclick="toggleSort(\'' + col.field + '\')">' + col.label + arrow + '</th>';
                 } else {
-                    html += '<th>' + col.label + '</th>';
+                    html += '<th' + tip + '>' + col.label + '</th>';
                 }
             });
             html += '</tr>';

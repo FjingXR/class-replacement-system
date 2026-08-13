@@ -312,15 +312,15 @@
 
             const tr = document.createElement('tr');
             const columns = [
-                { label: '#', cls: 'col-no', sortable: false },
-                { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'code' },
-                { label: 'Original Class', cls: 'col-original', sortable: true, field: 'date' },
-                { label: 'Days Left', cls: 'col-urgency', sortable: false },
-                { label: 'Venue', cls: 'col-venue', sortable: false },
-                { label: 'Students', cls: 'col-students', sortable: false },
-                { label: 'Cohort(s)', cls: 'col-cohort', sortable: false },
-                { label: 'Conflict Reason', cls: 'col-reason', sortable: false },
-                { label: 'Action', cls: 'col-action', sortable: false },
+                { label: '#', cls: 'col-no', sortable: false, tip: 'Row number' },
+                { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'code', tip: 'Course affected by the conflict' },
+                { label: 'Original Class', cls: 'col-original', sortable: true, field: 'date', tip: 'Original class session with a conflict' },
+                { label: 'Days Left', cls: 'col-urgency', sortable: false, tip: 'Days remaining before the original class' },
+                { label: 'Venue', cls: 'col-venue', sortable: false, tip: 'Assigned venue for the class' },
+                { label: 'Students', cls: 'col-students', sortable: false, tip: 'Number of enrolled students' },
+                { label: 'Cohort(s)', cls: 'col-cohort', sortable: false, tip: 'Affected student cohorts' },
+                { label: 'Conflict Reason', cls: 'col-reason', sortable: false, tip: 'Why the scheduling conflict exists' },
+                { label: 'Action', cls: 'col-action', sortable: false, tip: 'Start arranging a replacement' },
             ];
             columns.forEach(function(col) {
                 tr.appendChild(makeSortableHeader(col, sortState, function() {

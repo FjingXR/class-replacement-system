@@ -550,15 +550,15 @@
             tr.appendChild(thCheck);
 
             const columns = [
-                { label: 'Requested At', cls: 'col-requested-at', sortable: true, field: 'requestedAt' },
-                { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'courseCode' },
-                { label: 'Original Class', cls: 'col-original', sortable: true, field: 'classDate' },
-                { label: 'Requested Replacement', cls: 'col-replacement', sortable: false },
-                { label: 'Requested Venue', cls: 'col-venue', sortable: false },
-                { label: 'Students', cls: 'col-students', sortable: false },
-                { label: 'Cohort(s)', cls: 'col-cohort', sortable: false },
-                { label: 'Status', cls: 'col-status', sortable: false },
-                { label: 'Quick Cancel', cls: 'col-actions', sortable: false },
+                { label: 'Requested At', cls: 'col-requested-at', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested' },
+                { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'courseCode', tip: 'Course affected by the conflict' },
+                { label: 'Original Class', cls: 'col-original', sortable: true, field: 'classDate', tip: 'Original class session being replaced' },
+                { label: 'Requested Replacement', cls: 'col-replacement', sortable: false, tip: 'Proposed new date, time, and venue' },
+                { label: 'Requested Venue', cls: 'col-venue', sortable: false, tip: 'Venue requested for the replacement' },
+                { label: 'Students', cls: 'col-students', sortable: false, tip: 'Number of enrolled students' },
+                { label: 'Cohort(s)', cls: 'col-cohort', sortable: false, tip: 'Affected student cohorts' },
+                { label: 'Status', cls: 'col-status', sortable: false, tip: 'Current approval status' },
+                { label: 'Quick Cancel', cls: 'col-actions', sortable: false, tip: 'Cancel a pending request' },
             ];
             columns.forEach(function(col) {
                 tr.appendChild(makeSortableHeader(col, sortState, function() {
