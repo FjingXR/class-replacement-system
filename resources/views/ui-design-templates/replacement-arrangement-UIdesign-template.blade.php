@@ -685,11 +685,11 @@
 
         @include('partials.ui-legend-bar', [
             'items' => [
-                ['color' => 'var(--color-success)', 'label' => 'Available', 'tip' => 'Free slot — click to select as replacement'],
-                ['color' => 'var(--color-primary)', 'label' => 'Your Current Selection', 'tip' => 'Slot you have selected for the replacement'],
-                ['color' => 'var(--color-warning)', 'label' => 'Pending (You)', 'tip' => 'Your replacement request awaiting approval'],
+                ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to select as replacement'],
+                ['color' => 'var(--color-primary-container)', 'label' => 'Your Current Selection', 'tip' => 'Slot you have selected for the replacement'],
+                ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending (You)', 'tip' => 'Your replacement request awaiting approval'],
                 ['color' => 'var(--color-surface-variant)', 'label' => 'Reserved by Others', 'tip' => 'Already booked by another lecturer'],
-                ['color' => 'var(--color-error)', 'label' => 'Occupied / Class on Public Holiday', 'tip' => 'Regular class scheduled or public holiday'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Occupied / Class on Public Holiday', 'tip' => 'Regular class scheduled or public holiday'],
             ]
         ])
 

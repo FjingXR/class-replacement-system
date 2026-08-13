@@ -1,5 +1,29 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-13] OOP Refactor: Legend color consistency
+
+### Summary
+
+Fixed legend swatches looking different from cells by:
+1. Legend swatches now use container tokens (`--color-success-container`, etc.) matching cell backgrounds
+2. Legend bar now has `background: var(--color-surface)` so swatches render on the same surface as cells
+
+### Files Changed
+
+#### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|---|---|---|---|
+| 2026-08-13 | `.legend-bar` | Updated | Added `padding`, `background: var(--color-surface)`, `border`, `border-radius` |
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Timestamp | Location | Change | Detail |
+|---|---|---|---|
+| 2026-08-13 | Lines 688-692 | Changed | Legend items now use container tokens (e.g. `--color-success-container` instead of `--color-success`) |
+
+---
+
 ## [2026-08-13] OOP Refactor: Align shared base with theme.css
 
 ### Summary

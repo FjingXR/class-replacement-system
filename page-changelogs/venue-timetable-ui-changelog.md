@@ -1,5 +1,21 @@
 # Changelog — Venue Timetable UI
 
+## [2026-08-13] Legend bar background fix
+
+### Summary
+
+Legend bar now has `background: var(--color-surface)` so swatches render on the same surface as timetable cells, ensuring color consistency.
+
+### Files Changed
+
+#### `public/css/theme.css`
+
+| Timestamp | Location | Change | Detail |
+|---|---|---|---|
+| 2026-08-13 | `.legend-bar` | Updated | Added `padding`, `background: var(--color-surface)`, `border`, `border-radius` |
+
+---
+
 ## [2026-08-13] OOP Refactor: Align cell-available with shared theme.css
 
 ### Summary
