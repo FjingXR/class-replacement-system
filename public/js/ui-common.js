@@ -321,6 +321,300 @@ const hours = [
     '17:00', '17:30', '18:00', '18:30'
 ];
 
+// ───── Shared timetable grid builder ─────
+
+/**
+ * Build a timetable grid. Call from page-level buildTimetable().
+ * @param {object} cfg
+ * @param {Array} cfg.events - Array of event objects for the current week
+ * @param {Array} cfg.days - Array of day objects from weekData
+ * @param {function} cfg.onEventClick - Callback (event, dayIndex) when an event block is clicked
+ * @param {string} [cfg.tableId='timetable'] - ID of the table element
+ * @param {string} [cfg.headId='tableHead'] - ID of the thead element
+ * @param {string} [cfg.bodyId='tableBody'] - ID of the tbody element
+ * @param {string} [cfg.emptyId='emptyState'] - ID of the empty state element
+ */
+function buildTimetableGrid(cfg) {
+    const head = document.getElementById(cfg.headId || 'tableHead');
+    const body = document.getElementById(cfg.bodyId || 'tableBody');
+    const tableEl = document.getElementById(cfg.tableId || 'timetable');
+    const emptyEl = document.getElementById(cfg.emptyId || 'emptyState');
+    head.innerHTML = '';
+    body.innerHTML = '';
+
+    if (cfg.events.length === 0) {
+        tableEl.style.display = 'none';
+        emptyEl.style.display = 'flex';
+        return;
+    }
+
+    tableEl.style.display = '';
+    emptyEl.style.display = 'none';
+
+    const timeHeaderRow = document.createElement('tr');
+    const cornerTh = document.createElement('th');
+    cornerTh.className = 'time-header-col';
+    cornerTh.style.cssText = 'position: sticky; left: 0; z-index: 40;';
+    cornerTh.innerHTML = '<span style="font-size:13px;font-weight:600;">Day / Time</span>';
+    timeHeaderRow.appendChild(cornerTh);
+
+    for (let i = 0; i < hours.length; i += 2) {
+        const th = document.createElement('th');
+        th.className = 'hour-header';
+        th.colSpan = 2;
+        th.innerHTML = '<span class="hour-top">' + hours[i] + '</span><span class="hour-bottom">' + (hours[i + 2] || add30min(hours[i + 1])) + '</span>';
+        timeHeaderRow.appendChild(th);
+    }
+    head.appendChild(timeHeaderRow);
+
+    cfg.days.forEach((day, di) => {
+        const tr = document.createElement('tr');
+
+        const dayTd = document.createElement('td');
+        let dayColClass = 'time-col';
+        if (day.today) dayColClass += ' today';
+        if (day.holiday || day.sunday) dayColClass += ' offday';
+        dayTd.className = dayColClass;
+        dayTd.innerHTML = HtmlBuilder.dayHeader(day);
+        tr.appendChild(dayTd);
+
+        const dayEvents = cfg.events.filter(e => e.di === di);
+
+        const slotMap = {};
+        hours.forEach((_, hi) => { slotMap[hi] = null; });
+
+        dayEvents.forEach(e => {
+            for (let hi = e.start; hi <= e.end; hi++) {
+                if (hi === e.start) {
+                    slotMap[hi] = { event: e, span: e.end - e.start + 1 };
+                } else {
+                    slotMap[hi] = { event: null, span: 0, occupied: true };
+                }
+            }
+        });
+
+        hours.forEach((h, hi) => {
+            const td = document.createElement('td');
+            let cellClass = 'hour-cell';
+            if (day.today) cellClass += ' today-cell';
+            if (day.sunday || day.holiday) cellClass += ' offday-slot';
+            td.className = cellClass;
+            td.dataset.day = di;
+            td.dataset.hour = hi;
+
+            const info = slotMap[hi];
+
+            if (info && info.event) {
+                const e = info.event;
+                const isConflict = day.holiday;
+                const div = document.createElement('div');
+                div.className = 'event-block span-' + info.span;
+                div.setAttribute('tabindex', '0');
+                div.__eventData = e;
+                div.dataset.name = e.name || '';
+                div.dataset.venue = e.venue || '';
+                if (isConflict) {
+                    div.classList.add('event-public-holiday');
+                } else if (e.status === 'normal') {
+                    div.classList.add('event-normal');
+                } else if (e.status === 'replacement') {
+                    div.classList.add('event-replacement');
+                } else if (e.status === 'pending') {
+                    div.classList.add('event-pending');
+                }
+
+                const startTime = to12h(hours[e.start]);
+                const endTime = to12h(hours[e.end + 1] || add30min(hours[e.end]));
+
+                let extraHtml = '';
+                if (e.status === 'replacement' && e.remarks) {
+                    extraHtml = '<span class="ev-note">(Replaced for ' + e.remarks + ')</span>';
+                }
+
+                div.innerHTML =
+                    '<span class="ev-code">' + e.code + '(' + e.type + ')</span>' +
+                    '<span class="ev-venue">' + e.venue + '</span>' +
+                    '<span class="ev-time">' + startTime + ' - ' + endTime + '</span>' +
+                    extraHtml;
+
+                div.addEventListener('click', function() { cfg.onEventClick(e, di); });
+                td.appendChild(div);
+
+                if (info.span > 1) {
+                    td.colSpan = info.span;
+                }
+            } else if (info && info.occupied) {
+                td.style.display = 'none';
+            } else {
+                const div = document.createElement('div');
+                div.className = 'cell-empty';
+                td.appendChild(div);
+            }
+
+            tr.appendChild(td);
+        });
+
+        body.appendChild(tr);
+    });
+}
+
+// ───── Shared summary calculator ─────
+
+/**
+ * Compute summary stats and update DOM elements.
+ * @param {Array} events - Array of event objects for the current week
+ * @param {Array} days - Array of day objects from weekData
+ */
+function computeSummary(events, days) {
+    let total = events.length;
+    let replacement = 0, pending = 0, conflict = 0, hrs = 0;
+
+    events.forEach(e => {
+        if (e.status === 'replacement') replacement++;
+        if (e.status === 'pending') pending++;
+        if (days[e.di] && days[e.di].holiday) conflict++;
+        hrs += (e.end - e.start + 1) * 0.5;
+    });
+
+    document.getElementById('sumTotal').textContent = total;
+    document.getElementById('sumHours').textContent = (hrs % 1 === 0 ? hrs : hrs.toFixed(1));
+    document.getElementById('sumReplacement').textContent = replacement;
+    document.getElementById('sumPending').textContent = pending;
+    document.getElementById('sumConflict').textContent = conflict;
+}
+
+// ───── Shared modal open helper ─────
+
+/**
+ * Open the class detail modal with common fields.
+ * @param {object} cfg
+ * @param {object} cfg.event - The event object
+ * @param {number} cfg.dayIndex - Day index
+ * @param {Array} cfg.days - Day data array
+ * @param {Array} cfg.extraFields - Additional fields to append before Status
+ * @param {string} [cfg.modalId='classModal'] - Modal element ID
+ * @param {string} [cfg.title] - Custom title (default: event.code)
+ */
+function openClassModal(cfg) {
+    const event = cfg.event;
+    const di = cfg.dayIndex;
+    const days = cfg.days;
+
+    document.getElementById('modalTitle').textContent = cfg.title || (event.code + ' — ' + event.name);
+
+    const isConflict = days[di] && days[di].holiday;
+    const displayStatus = isConflict ? 'conflict' : event.status;
+
+    const badge = document.getElementById('modalStatusBadge');
+    badge.textContent = displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1);
+    badge.className = 'modal-status-badge ' + displayStatus;
+
+    const startStr = to12h(hours[event.start]);
+    const endStr = to12h(hours[event.end + 1] || add30min(hours[event.end]));
+
+    let timelineHtml = '';
+    if (event.status === 'pending') {
+        timelineHtml = '<div class="status-timeline">' +
+            '<div class="step completed">Submitted \u2713</div>' +
+            '<div class="step active">Under Review</div>' +
+            '<div class="step">Awaiting Replacement</div>' +
+        '</div>';
+    }
+
+    const fields = [
+        { label: 'Subject Code', value: event.code },
+        { label: 'Subject Name', value: event.name },
+        { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
+        { label: 'Lecturer', value: event.lecturer },
+        { label: 'Venue', value: event.venue || '\u2014' },
+        { label: 'Day', value: dayNames[di] || days[di].abbr },
+        { label: 'Date', value: days[di].date },
+        { label: 'Time', value: startStr + ' \u2013 ' + endStr },
+        { label: 'Status', value: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) },
+        { label: 'Remarks', value: event.remarks || '\u2014' },
+    ];
+
+    if (event.status === 'pending') {
+        fields.splice(fields.length - 1, 0,
+            { label: 'Requested At', value: event.requestedAt || '\u2014' },
+            { label: 'Requested By', value: event.requestedBy || '\u2014' }
+        );
+    }
+
+    if (cfg.extraFields) {
+        const statusIdx = fields.findIndex(f => f.label === 'Status');
+        cfg.extraFields.forEach((f, i) => { fields.splice(statusIdx + i, 0, f); });
+    }
+
+    document.getElementById('modalBody').innerHTML = timelineHtml + fields.map(f =>
+        '<div class="modal-field">' +
+            '<span class="field-label">' + f.label + '</span>' +
+            '<span class="field-value">' + f.value + '</span>' +
+        '</div>'
+    ).join('');
+
+    document.getElementById(cfg.modalId || 'classModal').style.display = 'flex';
+}
+
+// ───── Shared timetable keyboard + copy + swipe helpers ─────
+
+/**
+ * Initialize arrow-key week navigation and Enter-to-open-modal on timetable pages.
+ * @param {object} cfg
+ * @param {function} cfg.prevWeek
+ * @param {function} cfg.nextWeek
+ * @param {function} cfg.openModal - Callback (eventData)
+ * @param {string} [cfg.modalId='classModal']
+ */
+function initTimetableKeyboardHandlers(cfg) {
+    document.addEventListener('keydown', function(e) {
+        if (e.target.tagName === 'SELECT' || document.getElementById(cfg.modalId || 'classModal').style.display === 'flex') return;
+        if (e.key === 'ArrowLeft') { cfg.prevWeek(); }
+        if (e.key === 'ArrowRight') { cfg.nextWeek(); }
+        if (e.key === 'Enter' && e.target.classList.contains('event-block')) {
+            const eventData = e.target.__eventData;
+            if (eventData) cfg.openModal(eventData);
+        }
+    });
+}
+
+/**
+ * Initialize click-to-copy on .ev-code elements with toast feedback.
+ * @param {string} [toastId='copyToast']
+ */
+function initEvCodeCopy(toastId) {
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('ev-code')) {
+            navigator.clipboard.writeText(e.target.textContent).then(function() {
+                const toastEl = document.getElementById(toastId || 'copyToast');
+                if (toastEl) {
+                    toastEl.textContent = 'Copied ' + e.target.textContent;
+                    toastEl.classList.add('show');
+                    setTimeout(function() { toastEl.classList.remove('show'); }, 1500);
+                }
+            });
+        }
+    });
+}
+
+/**
+ * Initialize mobile swipe gestures on the grid-scroll element for week navigation.
+ * @param {function} onPrev - Callback for swipe right
+ * @param {function} onNext - Callback for swipe left
+ */
+function initGridSwipeGestures(onPrev, onNext) {
+    if (window.innerWidth <= 768) {
+        const gridScroll = document.querySelector('.grid-scroll');
+        if (gridScroll) {
+            initSwipeGesture({
+                element: gridScroll,
+                onSwipeLeft: onNext,
+                onSwipeRight: onPrev
+            });
+        }
+    }
+}
+
 // ───── Navigation ─────
 
 function goToReplacement(code, cohort, opts, from) {

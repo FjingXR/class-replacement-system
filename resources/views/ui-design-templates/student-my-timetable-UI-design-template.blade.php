@@ -11,6 +11,14 @@
 
 @section('title', 'Student My Timetable')
 
+@section('page-styles')
+<style>
+    .timetable td.hour-cell.offday-slot {
+        background: transparent;
+    }
+</style>
+@endsection
+
 @section('content')
 
         <!-- ─── Page Header ─── -->
@@ -124,57 +132,12 @@
         }
 
         function openModal(event) {
-            document.getElementById('modalTitle').textContent = event.code || 'Class Details';
-
-            const days = weekData[currentWeek].days;
-            const isConflict = days[event.di] && days[event.di].holiday;
-            const displayStatus = isConflict ? 'conflict' : event.status;
-
-            const badge = document.getElementById('modalStatusBadge');
-            badge.textContent = displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1);
-            badge.className = 'modal-status-badge ' + displayStatus;
-
-            const startStr = to12h(hours[event.start]);
-            const endStr = to12h(hours[event.end + 1] || add30min(hours[event.end]));
-
-            let timelineHtml = '';
-            if (event.status === 'pending') {
-                timelineHtml = '<div class="status-timeline">' +
-                    '<div class="step completed">Submitted \u2713</div>' +
-                    '<div class="step active">Under Review</div>' +
-                    '<div class="step">Awaiting Replacement</div>' +
-                '</div>';
-            }
-
-            const fields = [
-                { label: 'Subject Code', value: event.code },
-                { label: 'Subject Name', value: event.name },
-                { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
-                { label: 'Lecturer', value: event.lecturer },
-                { label: 'Venue', value: event.venue || '\u2014' },
-                { label: 'Day', value: dayNames[event.di] },
-                { label: 'Date', value: weekData[currentWeek].days[event.di].date },
-                { label: 'Time', value: startStr + ' \u2013 ' + endStr },
-                { label: 'Status', value: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) },
-                { label: 'Remarks', value: event.remarks || '\u2014' },
-            ];
-
-            if (event.status === 'pending') {
-                fields.splice(fields.length - 1, 0,
-                    { label: 'Requested At', value: event.requestedAt || '\u2014' },
-                    { label: 'Requested By', value: event.requestedBy || '\u2014' }
-                );
-            }
-
-            const fieldsHtml = fields.map(function(f) {
-                return '<div class="modal-field">' +
-                    '<span class="field-label">' + f.label + '</span>' +
-                    '<span class="field-value">' + f.value + '</span>' +
-                '</div>';
-            }).join('');
-
-            document.getElementById('modalBody').innerHTML = timelineHtml + fieldsHtml;
-            document.getElementById('classModal').style.display = 'flex';
+            openClassModal({
+                event: event,
+                dayIndex: event.di,
+                days: weekData[currentWeek].days,
+                title: event.code || 'Class Details'
+            });
         }
 
         function closeModal() {
@@ -188,166 +151,27 @@
         closeOnEsc(closeModal);
 
         function buildTimetable() {
-            const head = document.getElementById('tableHead');
-            const body = document.getElementById('tableBody');
-            const tableEl = document.getElementById('timetable');
-            const emptyEl = document.getElementById('emptyState');
-            head.innerHTML = '';
-            body.innerHTML = '';
-
-            const data = weekData[currentWeek];
-            const days = data.days;
-            const visibleEvents = getVisibleEvents(currentWeek);
-
-            if (visibleEvents.length === 0) {
-                tableEl.style.display = 'none';
-                emptyEl.style.display = 'flex';
-                updateSummary();
-                return;
-            }
-
-            tableEl.style.display = '';
-            emptyEl.style.display = 'none';
-
-            const timeHeaderRow = document.createElement('tr');
-            const cornerTh = document.createElement('th');
-            cornerTh.className = 'time-header-col';
-            cornerTh.style.cssText = 'position: sticky; left: 0; z-index: 40;';
-            cornerTh.innerHTML = '<span style="font-size:13px;font-weight:600;">Day / Time</span>';
-            timeHeaderRow.appendChild(cornerTh);
-
-            for (let i = 0; i < hours.length; i += 2) {
-                const th = document.createElement('th');
-                th.className = 'hour-header';
-                th.colSpan = 2;
-                th.innerHTML = '<span class="hour-top">' + hours[i] + '</span><span class="hour-bottom">' + (hours[i + 2] || add30min(hours[i + 1])) + '</span>';
-                timeHeaderRow.appendChild(th);
-            }
-            head.appendChild(timeHeaderRow);
-
-            days.forEach(function(day, di) {
-                const tr = document.createElement('tr');
-
-                const dayTd = document.createElement('td');
-                let dayColClass = 'time-col';
-                if (day.today) dayColClass += ' today';
-                if (day.holiday || day.sunday) dayColClass += ' offday';
-                dayTd.className = dayColClass;
-                dayTd.innerHTML = HtmlBuilder.dayHeader(day);
-                tr.appendChild(dayTd);
-
-                const dayEvents = visibleEvents.filter(function(e) { return e.di === di; });
-
-                const slotMap = {};
-                hours.forEach(function(_, hi) { slotMap[hi] = null; });
-
-                dayEvents.forEach(function(e) {
-                    for (let hi = e.start; hi <= e.end; hi++) {
-                        if (hi === e.start) {
-                            slotMap[hi] = { event: e, span: e.end - e.start + 1 };
-                        } else {
-                            slotMap[hi] = { event: null, span: 0, occupied: true };
-                        }
-                    }
-                });
-
-                hours.forEach(function(h, hi) {
-                    const td = document.createElement('td');
-                    let cellClass = 'hour-cell';
-                    if (day.today) cellClass += ' today-cell';
-                    if (day.sunday || day.holiday) cellClass += ' offday-slot';
-                    td.className = cellClass;
-                    td.dataset.day = di;
-                    td.dataset.hour = hi;
-
-                    const info = slotMap[hi];
-
-                    if (info && info.event) {
-                        const e = info.event;
-                        const isConflict = day.holiday;
-                        const div = document.createElement('div');
-                        div.className = 'event-block span-' + info.span;
-                        div.setAttribute('tabindex', '0');
-                        div.__eventData = e;
-                        div.dataset.name = e.name || '';
-                        div.dataset.venue = e.venue || '';
-                        if (isConflict) {
-                            div.classList.add('event-public-holiday');
-                        } else if (e.status === 'normal') {
-                            div.classList.add('event-normal');
-                        } else if (e.status === 'replacement') {
-                            div.classList.add('event-replacement');
-                        } else if (e.status === 'pending') {
-                            div.classList.add('event-pending');
-                        }
-
-                        const startTime = to12h(hours[e.start]);
-                        const endTime = to12h(hours[e.end + 1] || add30min(hours[e.end]));
-
-                        let extraHtml = '';
-                        if (e.status === 'replacement') {
-                            extraHtml = '<span class="ev-note">(Replaced for ' + e.remarks + ')</span>';
-                        }
-
-                        div.innerHTML =
-                            '<span class="ev-code">' + e.code + '(' + e.type + ')</span>' +
-                            '<span class="ev-venue">' + e.venue + '</span>' +
-                            '<span class="ev-time">' + startTime + ' - ' + endTime + '</span>' +
-                            extraHtml;
-
-                        div.addEventListener('click', function() { openModal(e); });
-                        td.appendChild(div);
-
-                        if (info.span > 1) {
-                            td.colSpan = info.span;
-                        }
-                    } else if (info && info.occupied) {
-                        td.style.display = 'none';
-                    } else {
-                        const div = document.createElement('div');
-                        div.className = 'cell-empty';
-                        td.appendChild(div);
-                    }
-
-                    tr.appendChild(td);
-                });
-
-                body.appendChild(tr);
+            buildTimetableGrid({
+                events: getVisibleEvents(currentWeek),
+                days: weekData[currentWeek].days,
+                onEventClick: function(e) { openModal(e); }
             });
-
             updateSummary();
         }
 
         function updateSummary() {
-            const visibleEvents = getVisibleEvents(currentWeek);
-            const days = weekData[currentWeek].days;
-            let total = visibleEvents.length;
-            let replacement = 0, pending = 0, conflict = 0, classHours = 0;
-
-            visibleEvents.forEach(function(e) {
-                if (e.status === 'replacement') replacement++;
-                if (e.status === 'pending') pending++;
-                if (days[e.di] && days[e.di].holiday) conflict++;
-                classHours += (e.end - e.start + 1) * 0.5;
-            });
-
-            document.getElementById('sumTotal').textContent = total;
-            document.getElementById('sumHours').textContent = (classHours % 1 === 0 ? classHours : classHours.toFixed(1));
-            document.getElementById('sumReplacement').textContent = replacement;
-            document.getElementById('sumPending').textContent = pending;
-            document.getElementById('sumConflict').textContent = conflict;
+            computeSummary(getVisibleEvents(currentWeek), weekData[currentWeek].days);
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
         }
 
         function prevWeek() {
             if (currentWeek > 0) {
                 currentWeek--;
+                weekNav._currentWeek = currentWeek;
                 buildTimetable();
-    
-    document.getElementById('weekSelect').selectedIndex = currentWeek;
+                document.getElementById('weekSelect').selectedIndex = currentWeek;
                 updateWeekSubtitle();
                 updateProgress();
-                weekNav._currentWeek = currentWeek;
                 weekNav.save();
             }
         }
@@ -355,23 +179,21 @@
         function nextWeek() {
             if (currentWeek < weekData.length - 1) {
                 currentWeek++;
+                weekNav._currentWeek = currentWeek;
                 buildTimetable();
-    
-    document.getElementById('weekSelect').selectedIndex = currentWeek;
+                document.getElementById('weekSelect').selectedIndex = currentWeek;
                 updateWeekSubtitle();
                 updateProgress();
-                weekNav._currentWeek = currentWeek;
                 weekNav.save();
             }
         }
 
         function selectWeek(index) {
             currentWeek = parseInt(index);
-            buildTimetable();
-
-updateWeekSubtitle();
-            updateProgress();
             weekNav._currentWeek = currentWeek;
+            buildTimetable();
+            updateWeekSubtitle();
+            updateProgress();
             weekNav.save();
         }
 
@@ -396,14 +218,7 @@ updateWeekSubtitle();
             }
         });
 
-        initTodayBtn();
-
-        /* Override TODAY to use weekNav + persist */
-        document.getElementById('todayBtn')?.addEventListener('click', function() {
-            weekNav.jumpToToday();
-            currentWeek = weekNav.currentWeek;
-            weekNav.save();
-        });
+        weekNav.initTodayBtn();
 
         document.addEventListener('DOMContentLoaded', function() {
             weekNav.load();
