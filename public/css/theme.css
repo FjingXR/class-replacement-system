@@ -1275,25 +1275,25 @@ html.dark .semester-bar select:not(.week-select) {
     text-align: center;
 }
 .time-col.offday {
-    background: var(--color-error-container);
+    background: var(--color-error);
 }
 .time-col.offday .day-label {
-    color: var(--color-on-error-container);
+    color: var(--color-on-error);
 }
 .time-col.offday .date-label {
-    color: var(--color-on-error-container);
+    color: var(--color-on-error);
 }
 .time-col.today {
-    background: var(--color-primary-container);
+    background: var(--color-primary);
 }
 .time-col.today .day-label {
-    color: var(--color-on-primary-container);
+    color: var(--color-on-primary);
 }
 .time-col.today .date-label {
-    color: var(--color-on-primary-container);
+    color: var(--color-on-primary);
 }
 .time-col.today.offday {
-    background: var(--color-error-container);
+    background: var(--color-error);
 }
 .time-col.today.offday .day-label {
     color: var(--color-on-error-container);
@@ -1570,7 +1570,7 @@ html.dark .semester-bar select:not(.week-select) {
 
 /* ── Public Holiday hover label ─────────────────────────────── */
 .cell-ph {
-    background: var(--color-error-container);
+    background: transparent;
     --hover-label: 'PH';
 }
 .cell-ph::after {
@@ -1594,7 +1594,7 @@ html.dark .semester-bar select:not(.week-select) {
 
 /* ── Sunday/offday hover label ──────────────────────────────── */
 .cell-sun {
-    background: var(--color-error-container);
+    background: transparent;
     --hover-label: 'Sun';
 }
 .cell-sun::after {
