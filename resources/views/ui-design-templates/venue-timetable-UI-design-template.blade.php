@@ -954,11 +954,6 @@
 
         function buildTimetable() {
             currentWeek = weekNav.currentWeek;
-            const head = document.getElementById('tableHead');
-            const body = document.getElementById('tableBody');
-            head.innerHTML = '';
-            body.innerHTML = '';
-
             document.getElementById('hintText').style.display = 'none';
             document.getElementById('emptyState').style.display = 'none';
             document.getElementById('mobileCardList').style.display = 'none';
@@ -982,61 +977,10 @@
             const data = weekData[currentWeek];
             const days = data.days;
 
-            /* ── Time header row ── */
-            const timeHeaderRow = document.createElement('tr');
-            const cornerTh = document.createElement('th');
-            cornerTh.className = 'time-header-col';
-            cornerTh.style.cssText = 'position: sticky; left: 0; z-index: 40;';
-            cornerTh.innerHTML = '<span style="font-size:13px;font-weight:600;">Day / Time</span>';
-            timeHeaderRow.appendChild(cornerTh);
-
-            for (let i = 0; i < hours.length; i += 2) {
-                const th = document.createElement('th');
-                th.className = 'hour-header';
-                th.colSpan = 2;
-                th.innerHTML = `<span class="hour-top">${hours[i]}</span><span class="hour-bottom">${hours[i + 2] || add30min(hours[i + 1])}</span>`;
-                timeHeaderRow.appendChild(th);
-            }
-            head.appendChild(timeHeaderRow);
-
-            /* ── Day rows ── */
-            days.forEach((day, di) => {
-                const tr = document.createElement('tr');
-
-                const dayTd = document.createElement('td');
-                let dayColClass = 'time-col';
-                if (day.today) dayColClass += ' today';
-                if (day.holiday || day.sunday) dayColClass += ' offday';
-                dayTd.className = dayColClass;
-                dayTd.innerHTML = HtmlBuilder.dayHeader(day);
-                tr.appendChild(dayTd);
-
-                const dayEvents = weekEvents.filter(e => e.di === di);
-
-                const slotMap = {};
-                hours.forEach((_, hi) => { slotMap[hi] = null; });
-
-                dayEvents.forEach(e => {
-                    for (let hi = e.start; hi <= e.end; hi++) {
-                        if (hi === e.start) {
-                            slotMap[hi] = { event: e, span: e.end - e.start + 1 };
-                        } else {
-                            slotMap[hi] = { event: null, span: 0, occupied: true, status: e.status };
-                        }
-                    }
-                });
-
-                hours.forEach((h, hi) => {
-                    const td = document.createElement('td');
-                    let cellClass = 'hour-cell';
-                    if (day.today) cellClass += ' today-cell';
-                    if (day.sunday || day.holiday) cellClass += ' offday-slot';
-                    td.className = cellClass;
-                    td.dataset.day = di;
-                    td.dataset.hour = hi;
-
-                    const info = slotMap[hi];
-
+            buildTimetableGrid({
+                events: weekEvents,
+                days: days,
+                cellRender: function(td, di, hi, day, info) {
                     if (day.sunday || day.holiday) {
                         /* Unavailable slot (holiday/Sunday) — always empty */
                         const div = document.createElement('div');
@@ -1090,11 +1034,7 @@
                         });
                         document.getElementById('mobileCardList').appendChild(mobileCard);
                     }
-
-                    tr.appendChild(td);
-                });
-
-                body.appendChild(tr);
+                }
             });
 
             updateSummaries(weekEvents);

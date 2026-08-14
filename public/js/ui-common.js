@@ -334,6 +334,17 @@ const hours = [
  * @param {string} [cfg.bodyId='tableBody'] - ID of the tbody element
  * @param {string} [cfg.emptyId='emptyState'] - ID of the empty state element
  */
+/**
+ * Build a timetable grid. Call from page-level buildTimetable().
+ * @param {object} cfg
+ * @param {Array} cfg.events - Array of event objects for the current week
+ * @param {Array} cfg.days - Array of day objects from weekData
+ * @param {function} [cfg.onEventClick] - Click handler for event blocks (event, dayIndex)
+ * @param {function} [cfg.cellRender] - Optional custom cell renderer (td, dayIndex, hourIndex, day).
+ *   When provided, the header + day-column scaffolding is still shared but each hour cell is
+ *   delegated to this callback instead of the default event-block layout. Used by
+ *   replacement-arrangement + venue-timetable (selection cell model).
+ */
 function buildTimetableGrid(cfg) {
     const head = document.getElementById(cfg.headId || 'tableHead');
     const body = document.getElementById(cfg.bodyId || 'tableBody');
@@ -342,14 +353,17 @@ function buildTimetableGrid(cfg) {
     head.innerHTML = '';
     body.innerHTML = '';
 
-    if (cfg.events.length === 0) {
-        tableEl.style.display = 'none';
-        emptyEl.style.display = 'flex';
-        return;
+    if (!cfg.cellRender) {
+        if (cfg.events.length === 0) {
+            tableEl.style.display = 'none';
+            emptyEl.style.display = 'flex';
+            return;
+        }
+        tableEl.style.display = '';
+        emptyEl.style.display = 'none';
+    } else {
+        tableEl.style.display = '';
     }
-
-    tableEl.style.display = '';
-    emptyEl.style.display = 'none';
 
     const timeHeaderRow = document.createElement('tr');
     const cornerTh = document.createElement('th');
@@ -369,6 +383,7 @@ function buildTimetableGrid(cfg) {
 
     cfg.days.forEach((day, di) => {
         const tr = document.createElement('tr');
+        tr.dataset.dayIndex = di;
 
         const dayTd = document.createElement('td');
         let dayColClass = 'time-col';
@@ -377,6 +392,35 @@ function buildTimetableGrid(cfg) {
         dayTd.className = dayColClass;
         dayTd.innerHTML = HtmlBuilder.dayHeader(day);
         tr.appendChild(dayTd);
+
+        if (cfg.cellRender) {
+            const dayEvents = cfg.events.filter(e => e.di === di);
+            const slotMap = {};
+            hours.forEach((_, hi) => { slotMap[hi] = null; });
+            dayEvents.forEach(e => {
+                for (let hi = e.start; hi <= e.end; hi++) {
+                    if (hi === e.start) {
+                        slotMap[hi] = { event: e, span: e.end - e.start + 1 };
+                    } else {
+                        slotMap[hi] = { event: null, span: 0, occupied: true, status: e.status };
+                    }
+                }
+            });
+
+            hours.forEach((h, hi) => {
+                const td = document.createElement('td');
+                let cellClass = 'hour-cell';
+                if (day.today) cellClass += ' today-cell';
+                if (day.sunday || day.holiday) cellClass += ' offday-slot';
+                td.className = cellClass;
+                td.dataset.day = di;
+                td.dataset.hour = hi;
+                cfg.cellRender(td, di, hi, day, slotMap[hi]);
+                tr.appendChild(td);
+            });
+            body.appendChild(tr);
+            return;
+        }
 
         const dayEvents = cfg.events.filter(e => e.di === di);
 
