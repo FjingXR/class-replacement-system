@@ -12,7 +12,6 @@
 @section('title', 'Student My Timetable')
 
 @section('page-styles')
-<style>
     .timetable td.hour-cell.offday-slot {
         background: transparent;
     }
@@ -22,7 +21,6 @@
     .timetable td.hour-cell.offday-slot .cell-empty {
         background: transparent;
     }
-</style>
 @endsection
 
 @section('content')
