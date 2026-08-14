@@ -413,67 +413,8 @@
             }
         }
 
-        /* ───── Ensure td has position: relative for absolute children ───── */
-        .timetable td.hour-cell:has(.cell-available),
-        .timetable td.hour-cell:has(.event-block),
-        .timetable td.hour-cell:has(.cell-content.cell-occupied) {
-            position: relative;
-        }
-
         /* ───── Available slot hover label ───── */
         .cell-available { --hover-label: 'Book ?'; }
-
-        /* ───── Occupied slot (disabled, hover shows label) ───── */
-        .event-occupied {
-            background: var(--color-error-container);
-            color: var(--color-on-error-container);
-            cursor: not-allowed;
-        }
-        .event-occupied::after {
-            content: 'Occupied';
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--color-error);
-            color: var(--color-on-error);
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: var(--radius-sm);
-            opacity: 0;
-            transition: opacity 0.15s;
-            pointer-events: none;
-        }
-        .event-occupied:hover::after {
-            opacity: 1;
-        }
-
-        /* ───── Pending slot (disabled, hover shows label) ───── */
-        .event-pending {
-            background: var(--color-tertiary-container);
-            color: var(--color-on-tertiary-container);
-            cursor: not-allowed;
-        }
-        .event-pending::after {
-            content: 'Pending';
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--color-warning);
-            color: var(--color-on-warning);
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: var(--radius-sm);
-            opacity: 0;
-            transition: opacity 0.15s;
-            pointer-events: none;
-        }
-        .event-pending:hover::after {
-            opacity: 1;
-        }
 
 
 
@@ -1124,14 +1065,13 @@
                     } else if (info && info.event) {
                         const e = info.event;
                         const div = document.createElement('div');
-                        div.className = 'event-block span-' + info.span;
+                        div.className = 'cell-content';
                         if (e.status === 'pending') {
-                            div.classList.add('event-pending');
+                            div.classList.add('cell-pending');
                         } else {
-                            div.classList.add('event-occupied');
+                            div.classList.add('cell-occupied');
                         }
 
-                        div.innerHTML = '';
                         td.appendChild(div);
 
                         /* mobile card */
