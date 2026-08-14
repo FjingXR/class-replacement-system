@@ -1411,13 +1411,12 @@ html.dark .semester-bar select:not(.week-select) {
 .timetable td.today-cell.hour-cell:hover {
     background: transparent;
 }
-/* ── Today + offday (empty cell) ──────────────────────────────── */
 .timetable td.today-cell.offday-slot {
-    background: transparent;
+    background: var(--color-error-container);
 }
-.timetable td.today-cell.offday-slot:not(:has(.event-block)) {
-    cursor: not-allowed;
-    pointer-events: none;
+.timetable td.today-cell.offday-slot:hover {
+    background: var(--color-error-container);
+    filter: brightness(1.1);
 }
 
 /* ── Today badge (line below date-label) ─────────────────── */
@@ -1464,13 +1463,15 @@ html.dark .semester-bar select:not(.week-select) {
     position: relative;
 }
 
-/* ── Offday slot: transparent empty cells, red only on events ── */
 .timetable td.hour-cell.offday-slot {
-    background: transparent;
+    background: var(--color-error-container);
 }
 .timetable td.hour-cell.offday-slot:not(:has(.event-block)):not(:has(.cell-ph)):not(:has(.cell-sun)) {
     cursor: not-allowed;
     pointer-events: none;
+}
+.timetable td.hour-cell.offday-slot .cell-empty {
+    background: var(--color-error-container);
 }
 
 .event-public-holiday {

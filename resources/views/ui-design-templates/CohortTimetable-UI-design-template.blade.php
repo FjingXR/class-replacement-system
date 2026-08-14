@@ -31,6 +31,9 @@
         .timetable td.hour-cell.offday-slot {
             background: transparent;
         }
+        .timetable td.today-cell.offday-slot {
+            background: transparent;
+        }
         .timetable td.hour-cell.offday-slot .cell-empty {
             background: transparent;
         }
