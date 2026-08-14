@@ -836,7 +836,7 @@
             const btn = document.querySelector('.btn-primary');
             if (btn) btn.disabled = selectedCells.length === 0;
             updateSelectionSummary();
-            updateProgress();
+            updateSelectionProgress();
         }
 
         function updateSelectionSummary() {
@@ -1276,7 +1276,7 @@
             navigateTo('/');
         }
 
-        function updateProgress() {
+        function updateSelectionProgress() {
             const count = getGlobalTotal();
             const max = MAX_SELECTION;
             const pct = max > 0 ? (count / max) * 100 : 0;
@@ -1682,19 +1682,20 @@
             buildSubjectDropdown();
             buildVenueDropdown();
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
-            const sel = document.getElementById('weekSelector');
-            const isMobile = window.innerWidth <= 768;
-            sel.innerHTML = weekData.map((w, i) => {
-                const first = w.days[0].date;
-                const last = w.days[w.days.length - 1].date;
-                const shortFirst = first.replace(/ \d{4}$/, '');
-                const shortLast = last.replace(/ \d{4}$/, '');
-                const label = isMobile
-                    ? `${w.label} · ${shortFirst} ~ ${shortLast}`
-                    : `${w.label} · ${first} ~ ${last}`;
-                return `<option value="${i}">${label}</option>`;
-            }).join('');
-            sel.value = weekNav.currentWeek;
+            populateWeekSelect('weekSelector', {
+                ranges: false,
+                selected: weekNav.currentWeek,
+                labelFn: function(w, i, isMobile) {
+                    const first = w.days[0].date;
+                    const last = w.days[w.days.length - 1].date;
+                    if (isMobile) {
+                        const shortFirst = first.replace(/ \d{4}$/, '');
+                        const shortLast = last.replace(/ \d{4}$/, '');
+                        return w.label + ' \u00B7 ' + shortFirst + ' ~ ' + shortLast;
+                    }
+                    return w.label + ' \u00B7 ' + first + ' ~ ' + last;
+                }
+            });
             buildTimetable();
             applyUrlParams();
 

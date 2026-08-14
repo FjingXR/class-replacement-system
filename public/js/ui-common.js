@@ -1459,10 +1459,32 @@ const dayNames = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATUR
 
 // ───── Week Filter Navigation ─────
 
+/**
+ * Handle week filter change. Pages may override the rebuild behaviour by
+ * passing an options object with `onRebuild` (e.g. renderTable) and
+ * `onBeforeRebuild` (e.g. saveFilters / reset page state).
+ * Falling back to globals keeps the simple `<select onchange="weekFilterChanged(this.value)">`
+ * working for HOME.
+ * @param {object|*} opts - Options object, or ignored value for simple usage
+ */
 function weekFilterChanged(opts) {
-    pageState.currentPage = 1;
-    if (opts && typeof opts.onBeforeRebuild === 'function') opts.onBeforeRebuild();
-    buildTable();
+    if (opts && typeof opts === 'object') {
+        if (typeof opts.onBeforeRebuild === 'function') opts.onBeforeRebuild();
+        if (typeof opts.onRebuild === 'function') {
+            opts.onRebuild();
+        } else if (typeof buildTable === 'function') {
+            buildTable();
+        } else if (typeof renderTable === 'function') {
+            renderTable();
+        }
+    } else {
+        if (typeof pageState !== 'undefined' && pageState) pageState.currentPage = 1;
+        if (typeof buildTable === 'function') {
+            buildTable();
+        } else if (typeof renderTable === 'function') {
+            renderTable();
+        }
+    }
     updateWeekArrowState();
 }
 
@@ -1524,6 +1546,19 @@ function statusClass(status) {
     return map[status] || '';
 }
 
+/**
+ * Build HTML for a request-age indicator (shared: my-request-history, request-approval).
+ * @param {string} requestedAt - ISO/timestamp string of when the request was made
+ * @returns {string} HTML string
+ */
+function requestAgeHtml(requestedAt) {
+    const REFERENCE_DATE = new Date('2026-08-29T00:00:00');
+    const diff = Math.floor((REFERENCE_DATE - new Date(requestedAt).getTime()) / 86400000);
+    if (diff < 0) return '<div class="request-age request-age--unknown">—</div>';
+    const cls = diff <= 1 ? 'age-fresh' : diff <= 3 ? 'age-waiting' : 'age-stale';
+    return '<div class="request-age ' + cls + '">' + diff + ' day' + (diff !== 1 ? 's' : '') + ' ago</div>';
+}
+
 
 function getWeekRange(weekVal) {
     const found = weekRanges.find(function(w) { return w.value === weekVal; });
@@ -1544,6 +1579,42 @@ function getWeekNumber(iso) {
     return '';
 }
 
+/**
+ * Populate a week <select> with options from weekRanges or weekData.
+ * @param {string} selectId - ID of the <select> element
+ * @param {object} cfg - { includeAll:bool, ranges:bool, selected:value, labelFn }
+ */
+function populateWeekSelect(selectId, cfg) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    cfg = cfg || {};
+    const isMobile = window.innerWidth <= 768;
+    const useRanges = cfg.ranges !== false; // default: weekRanges (string "1".."14")
+    const source = useRanges ? weekRanges : weekData;
+
+    let html = '';
+    if (cfg.includeAll) html += '<option value="all">All Weeks</option>';
+
+    source.forEach(function(w, i) {
+        const value = useRanges ? w.value : i;
+        let label;
+        if (cfg.labelFn) {
+            label = cfg.labelFn(w, i, isMobile, useRanges);
+        } else if (useRanges) {
+            label = isMobile ? (w.labelShort || w.label) : w.label;
+        } else {
+            label = isMobile ? (w.label + ' \u00B7 ' + w.rangeShort) : (w.label + ' \u00B7 ' + w.range);
+        }
+        html += '<option value="' + value + '">' + label + '</option>';
+    });
+
+    sel.innerHTML = html;
+    if (cfg.selected !== undefined) {
+        sel.value = String(cfg.selected);
+    }
+    return sel;
+}
+
 function updateNavBadge() {
     var count = (window.MockData && MockData.approvalRequests)
         ? MockData.approvalRequests.filter(function(r) { return r.status === 'Pending'; }).length
@@ -1553,6 +1624,28 @@ function updateNavBadge() {
         badge.textContent = count;
         badge.style.display = count > 0 ? 'inline-block' : 'none';
     }
+}
+
+/**
+ * Rebuild a table's body with the standard skeleton-loading recipe:
+ * reset page → scroll to top → show skeleton → render → hide skeleton.
+ * @param {object} cfg
+ * @param {function} cfg.render - Function that renders the table body
+ * @param {function} [cfg.after] - Extra logic to run after render (e.g. updateWeekArrowState)
+ * @param {string} [cfg.bodyId='tableBody'] - tbody element ID
+ * @param {number} [cfg.count=10] - Skeleton row count
+ * @param {number} [cfg.delay=400] - Skeleton delay
+ */
+function rebuildTable(cfg) {
+    if (typeof pageState !== 'undefined' && pageState) pageState.currentPage = 1;
+    if (typeof currentPage !== 'undefined') currentPage = 1;
+    window.scrollTo(0, 0);
+    SkeletonLoader.showSummary();
+    SkeletonLoader.with(function() {
+        cfg.render();
+        SkeletonLoader.hideSummary();
+        if (typeof cfg.after === 'function') cfg.after();
+    }, document.getElementById(cfg.bodyId || 'tableBody'), cfg.count || 10, cfg.delay || 400);
 }
 
 // ───── BackNavigator (dynamic back button) ─────

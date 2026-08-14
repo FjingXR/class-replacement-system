@@ -4,24 +4,6 @@
 
 @section('page-styles')
 
-        /* ───── Clear Button ───── */
-        .btn-clear {
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--color-outline);
-            background: transparent;
-            color: var(--color-on-surface-variant);
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.15s, color 0.15s;
-            margin-left: 8px;
-        }
-        .btn-clear:hover {
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface);
-        }
-
         /* ───── Column Widths ───── */
         .col-no { width: 40px; text-align: center; }
         .col-original, .col-replacement { white-space: normal; }
@@ -75,22 +57,7 @@
         .btn-view { padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--color-outline); background: transparent; color: var(--color-on-surface-variant); font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
         .btn-view:hover { background: var(--color-surface-variant); }
 
-        /* ───── Summary Card Colors ───── */
-        .summary-card.card-total .summary-value { color: var(--color-on-primary-container); }
-        .summary-card.card-approved .summary-value { color: var(--color-success); }
-        .summary-card.card-pending .summary-value { color: var(--color-tertiary); }
-        .summary-card.card-rejected .summary-value { color: var(--color-error); }
-        .summary-card.card-hours .summary-value { color: var(--color-on-surface); }
-        .summary-card.card-hours .summary-card-front {
-            border: 1px dashed var(--color-outline-strong);
-            background: var(--color-surface-variant);
-        }
-        .summary-card.card-total .summary-card-front {
-            border: 1.5px solid var(--color-primary);
-            background: var(--color-primary-container);
-        }
-
-
+        /* ───── Summary Card Colors (approved/rejected/total accents in theme.css) ───── */
 
         /* ───── Bulk Selection (page-specific overrides) ───── */
         .col-checkbox input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--color-primary); cursor: pointer; }
@@ -131,12 +98,7 @@
         }
         .urgency-filter-chip:hover:not(.active) { background: var(--color-surface-variant); }
 
-        /* ───── Request Age Indicator ───── */
-        .request-age { font-size: 11px; color: var(--color-on-surface-variant); margin-top: 2px; }
-        .request-age::before { content: '● '; font-size: 8px; }
-        .age-fresh::before { color: var(--color-primary); }
-        .age-waiting::before { color: var(--color-tertiary); }
-        .age-stale::before { color: var(--color-error); }
+        /* ───── Request Age Indicator (base .request-age styles in theme.css) ───── */
 
         /* ───── Reject Preset Chips ───── */
         .reject-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
@@ -200,55 +162,7 @@
         .timeline-connector.active { background: linear-gradient(90deg, var(--color-success), var(--color-warning)); }
         @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4); } 50% { box-shadow: 0 0 0 6px rgba(156, 39, 176, 0); } }
 
-        /* ───── Responsive Card View ───── */
-        .request-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: background 0.15s, box-shadow 0.15s;
-        }
-        .request-card:hover {
-            background: var(--color-surface-variant);
-            box-shadow: var(--shadow-sm);
-        }
-        .request-card:active {
-            transform: scale(0.99);
-        }
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        .card-code {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--color-on-surface);
-        }
-        .card-body {
-            font-size: 12px;
-            color: var(--color-on-surface-variant);
-            line-height: 1.6;
-        }
-        .card-body strong {
-            color: var(--color-on-surface);
-            font-weight: 600;
-        }
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid var(--color-outline);
-            font-size: 11px;
-            color: var(--color-on-surface-variant);
-        }
-        .card-age { font-weight: 600; }
-
+        /* ───── Responsive Card View (base .request-card styles in theme.css) ───── */
         @media (max-width: 768px) {
             .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
             .requests-cards { display: grid !important; gap: 12px; padding: 12px; }
@@ -466,14 +380,6 @@
         }
 
         // ── Request age helper (§7.5) ──
-        function requestAgeHtml(requestedAt) {
-            const REFERENCE_DATE = new Date('2026-08-29T00:00:00');
-            const diff = Math.floor((REFERENCE_DATE - new Date(requestedAt).getTime()) / 86400000);
-            if (diff < 0) return '<div class="request-age request-age--unknown">—</div>';
-            const cls = diff <= 1 ? 'age-fresh' : diff <= 3 ? 'age-waiting' : 'age-stale';
-            return '<div class="request-age ' + cls + '">' + diff + ' day' + (diff !== 1 ? 's' : '') + ' ago</div>';
-        }
-
         // ── Filter persistence (§7) ──
         function saveFilters() {
             const state = {
@@ -883,10 +789,9 @@
         }
 
         // ── Week filter change handler ──
-        function weekFilterChanged() {
-            currentPage = 1;
-            renderTable();
-            saveFilters();
+        const _sharedWeekFilterChanged = window.weekFilterChanged;
+        function weekFilterChanged(value) {
+            _sharedWeekFilterChanged({ onBeforeRebuild: function() { currentPage = 1; saveFilters(); }, onRebuild: renderTable });
         }
 
         // ── Mini timeline (§7p) ──
@@ -1100,13 +1005,9 @@
 
         // ── Populate week filter ──
         function populateWeekFilter() {
-            const select = document.getElementById('weekFilter');
-            select.innerHTML = '<option value="all">All Weeks</option>';
-            weekRanges.forEach((w, i) => {
-                const opt = document.createElement('option');
-                opt.value = w.value;
-                opt.textContent = w.label;
-                select.appendChild(opt);
+            populateWeekSelect('weekFilter', {
+                includeAll: true,
+                labelFn: function(w) { return w.label; }
             });
         }
 
@@ -1167,26 +1068,17 @@
                 defaultVal: 10,
                 onChange: function(size) {
                     rpp = size;
-                    currentPage = 1;
-                    window.scrollTo(0, 0);
-                    SkeletonLoader.showSummary();
-                    SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
+                    rebuildTable({ render: renderTable });
                     saveFilters();
                 }
             });
 
             document.getElementById('searchInput').addEventListener('input', function() {
-                currentPage = 1;
-                window.scrollTo(0, 0);
-                SkeletonLoader.showSummary();
-                SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
+                rebuildTable({ render: renderTable });
                 saveFilters();
             });
             document.getElementById('statusFilter').addEventListener('change', function() {
-                currentPage = 1;
-                window.scrollTo(0, 0);
-                SkeletonLoader.showSummary();
-                SkeletonLoader.with(function() { renderTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
+                rebuildTable({ render: renderTable });
                 saveFilters();
             });
             document.getElementById('clearFilters').addEventListener('click', resetFilters);

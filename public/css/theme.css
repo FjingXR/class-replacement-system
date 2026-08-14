@@ -688,6 +688,83 @@ html.dark .filter-select {
 /* ───── Card View (responsive) ───── */
 .card-view { display: none; }
 
+/* ───── Request Card (shared: my-request-history, request-approval) ───── */
+.request-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-outline);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+.request-card:hover {
+    background: var(--color-surface-variant);
+    box-shadow: var(--shadow-sm);
+}
+.request-card:active {
+    transform: scale(0.99);
+}
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.card-code {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-on-surface);
+}
+.card-body {
+    font-size: 12px;
+    color: var(--color-on-surface-variant);
+    line-height: 1.6;
+}
+.card-body strong {
+    color: var(--color-on-surface);
+    font-weight: 600;
+}
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-outline);
+    font-size: 11px;
+    color: var(--color-on-surface-variant);
+}
+.card-age { font-weight: 600; }
+
+/* ───── Request Age (shared: my-request-history, request-approval) ───── */
+.request-age { font-size: 11px; color: var(--color-on-surface-variant); margin-top: 2px; }
+.request-age::before { content: '● '; font-size: 8px; }
+.age-fresh::before { color: var(--color-primary); }
+.age-waiting::before { color: var(--color-tertiary); }
+.age-stale::before { color: var(--color-error); }
+.age-fresh { color: var(--color-primary); }
+.age-waiting { color: var(--color-tertiary); }
+.age-stale { color: var(--color-error); }
+
+/* ───── Clear Button (shared: my-request-history, request-approval) ───── */
+.btn-clear {
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-outline);
+    background: transparent;
+    color: var(--color-on-surface-variant);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    margin-left: 8px;
+}
+.btn-clear:hover {
+    background: var(--color-surface-variant);
+    color: var(--color-on-surface);
+}
+
 /* ───── Action Button ───── */
 .btn-action {
     padding: 8px 16px;
@@ -971,6 +1048,8 @@ html.dark .filter-select {
 .summary-card.card-total .summary-value    { color: var(--color-success); }
 .summary-card.card-replacement .summary-value { color: var(--color-primary); }
 .summary-card.card-pending .summary-value  { color: var(--color-warning); }
+.summary-card.card-approved .summary-value { color: var(--color-success); }
+.summary-card.card-rejected .summary-value { color: var(--color-error); }
 .summary-card.card-conflict .summary-value { color: var(--color-error); }
 .summary-card.card-hours .summary-value    { color: var(--color-on-surface); }
 .summary-card.card-hours .summary-card-front {

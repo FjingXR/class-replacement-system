@@ -416,14 +416,7 @@
         }
 
         function populateWeekDropdown() {
-            const sel = document.getElementById('weekFilter');
-            sel.innerHTML = '<option value="all">All Weeks</option>';
-            weekRanges.forEach(function(w) {
-                const opt = document.createElement('option');
-                opt.value = w.value;
-                opt.textContent = w.label;
-                sel.appendChild(opt);
-            });
+            populateWeekSelect('weekFilter', { includeAll: true });
         }
 
         function goToReplacementWith(code, date) {
@@ -572,23 +565,14 @@
                 defaultVal: 10,
                 onChange: function(size) {
                     state.rpp = size;
-                    pageState.currentPage = 1;
-                    window.scrollTo(0, 0);
-                    SkeletonLoader.showSummary();
-                    SkeletonLoader.with(function() { buildTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
+                    rebuildTable({ render: buildTable });
                 }
             });
             document.getElementById('searchInput').addEventListener('input', function() {
-                pageState.currentPage = 1;
-                window.scrollTo(0, 0);
-                SkeletonLoader.showSummary();
-                SkeletonLoader.with(function() { buildTable(); SkeletonLoader.hideSummary(); }, document.getElementById('tableBody'), 10, 400);
+                rebuildTable({ render: buildTable });
             });
             document.getElementById('weekFilter').addEventListener('change', function() {
-                pageState.currentPage = 1;
-                window.scrollTo(0, 0);
-                SkeletonLoader.showSummary();
-                SkeletonLoader.with(function() { buildTable(); SkeletonLoader.hideSummary(); updateWeekArrowState(); }, document.getElementById('tableBody'), 10, 400);
+                rebuildTable({ render: buildTable, after: updateWeekArrowState });
             });
         });
 @endsection

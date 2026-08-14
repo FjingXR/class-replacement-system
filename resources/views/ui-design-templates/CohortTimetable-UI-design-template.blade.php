@@ -18,8 +18,6 @@
         /* ───── Responsive ───── */
         @media (max-width: 1024px) {
             .grid-scroll { overflow-x: auto; }
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar-right { justify-content: flex-start; }
         }
         @media (max-width: 768px) {
             .semester-bar select:not(.week-select) {
@@ -146,15 +144,7 @@
            ════════════════════════════════════════════ */
 
         function populateWeeks() {
-            const sel = document.getElementById('weekSelect');
-            const isMobile = window.innerWidth <= 768;
-            sel.innerHTML = weekData.map((w, i) => {
-                const label = isMobile
-                    ? `${w.label} · ${w.rangeShort}`
-                    : `${w.label} · ${w.range}`;
-                return `<option value="${i}">${label}</option>`;
-            }).join('');
-            sel.selectedIndex = currentWeek;
+            populateWeekSelect('weekSelect', { ranges: false, selected: currentWeek });
         }
 
         function populateFaculties() {
@@ -362,7 +352,7 @@
         function openModal(event, di) {
             openClassModal({
                 event: event,
-                dayIndex: di,
+                dayIndex: (di !== undefined ? di : event.di),
                 days: weekData[currentWeek].days,
                 modalId: 'eventModal',
                 extraFields: [
@@ -405,21 +395,12 @@
         weekNav.initTodayBtn();
         initWeekKeyboardShortcuts();
 
-        // Mobile swipe gestures for week navigation
-        if (window.innerWidth <= 768) {
-            const gridScroll = document.querySelector('.grid-scroll');
-            if (gridScroll) {
-                initSwipeGesture({
-                    element: gridScroll,
-                    onSwipeLeft: () => {
-                        const nextBtn = document.querySelector('[onclick*="nextWeek"], [data-action="next"]');
-                        if (nextBtn) nextBtn.click();
-                    },
-                    onSwipeRight: () => {
-                        const prevBtn = document.querySelector('[onclick*="prevWeek"], [data-action="prev"]');
-                        if (prevBtn) prevBtn.click();
-                    }
-                });
-            }
-        }
+        initTimetableKeyboardHandlers({
+            prevWeek: prevWeek,
+            nextWeek: nextWeek,
+            openModal: openModal,
+            modalId: 'eventModal'
+        });
+
+        initGridSwipeGestures(prevWeek, nextWeek);
 @endsection

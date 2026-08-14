@@ -402,15 +402,7 @@
             weekNav.load();
             currentWeek = weekNav.currentWeek;
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
-            const sel = document.getElementById('weekSelect');
-            const isMobile = window.innerWidth <= 768;
-            sel.innerHTML = weekData.map((w, i) => {
-                const label = isMobile
-                    ? `${w.label} · ${w.rangeShort}`
-                    : `${w.label} · ${w.range}`;
-                return `<option value="${i}">${label}</option>`;
-            }).join('');
-            sel.selectedIndex = currentWeek;
+            populateWeekSelect('weekSelect', { ranges: false, selected: currentWeek });
 
             buildTimetable();
             updateWeekSubtitle();
@@ -420,42 +412,14 @@
         weekNav.initTodayBtn();
         initWeekKeyboardShortcuts();
 
-        document.addEventListener('keydown', function(e) {
-            if (e.target.tagName === 'SELECT' || document.getElementById('classModal').style.display === 'flex') return;
-            if (e.key === 'ArrowLeft') { prevWeek(); }
-            if (e.key === 'ArrowRight') { nextWeek(); }
-            if (e.key === 'Enter' && e.target.classList.contains('event-block')) {
-                const eventData = e.target.__eventData;
-                if (eventData) openModal(eventData);
-            }
+        initTimetableKeyboardHandlers({
+            prevWeek: prevWeek,
+            nextWeek: nextWeek,
+            openModal: openModal,
+            modalId: 'classModal'
         });
 
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('ev-code')) {
-                navigator.clipboard.writeText(e.target.textContent).then(function() {
-                    const toast = document.getElementById('copyToast');
-                    toast.textContent = 'Copied ' + e.target.textContent;
-                    toast.classList.add('show');
-                    setTimeout(function() { toast.classList.remove('show'); }, 1500);
-                });
-            }
-        });
+        initEvCodeCopy('copyToast');
 
-        // Mobile swipe gestures for week navigation
-        if (window.innerWidth <= 768) {
-            const gridScroll = document.querySelector('.grid-scroll');
-            if (gridScroll) {
-                initSwipeGesture({
-                    element: gridScroll,
-                    onSwipeLeft: () => {
-                        const nextBtn = document.querySelector('[onclick*="nextWeek"], [data-action="next"]');
-                        if (nextBtn) nextBtn.click();
-                    },
-                    onSwipeRight: () => {
-                        const prevBtn = document.querySelector('[onclick*="prevWeek"], [data-action="prev"]');
-                        if (prevBtn) prevBtn.click();
-                    }
-                });
-            }
-        }
+        initGridSwipeGestures(prevWeek, nextWeek);
 @endsection

@@ -324,8 +324,6 @@
         /* ───── Responsive ───── */
         @media (max-width: 1024px) {
             .grid-scroll { overflow-x: auto; }
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar-right { justify-content: flex-start; }
             .filter-bar { flex-direction: column; align-items: stretch; }
         }
         @media (max-width: 768px) {
@@ -680,12 +678,9 @@
 
             /* week dropdown */
             const weekSelect = document.getElementById('weekSelect');
-            weekSelect.innerHTML = '';
-            weekData.forEach((w, i) => {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = w.label + ' — ' + w.range;
-                weekSelect.appendChild(opt);
+            populateWeekSelect(weekSelect.id || 'weekSelect', {
+                ranges: false,
+                labelFn: function(w) { return w.label + ' — ' + w.range; }
             });
 
             /* default to today, then weekNav.load overrides if saved */
