@@ -699,10 +699,10 @@
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
             weekSelect.selectedIndex = currentWeek;
 
-            /* today button — jumpToToday does NOT persist (no weekNav.save) */
-            initTodayBtn();
+            /* today button — delegate to WeekNavigator (no weekNav.save here; persist below) */
+            weekNav.initTodayBtn();
             document.getElementById('todayBtn')?.addEventListener('click', function() {
-                weekNav._currentWeek = currentWeek;
+                currentWeek = weekNav.currentWeek;
                 weekNav.save();
             });
 
@@ -823,34 +823,18 @@
            ════════════════════════════════════════════ */
 
         function prevWeek() {
-            if (currentWeek > 0) {
-                currentWeek--;
-                document.getElementById('weekSelect').selectedIndex = currentWeek;
-                buildTimetable();
-                updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
-                weekNav._currentWeek = currentWeek;
-                weekNav.save();
-            }
+            weekNav.prevWeek();
+            currentWeek = weekNav.currentWeek;
         }
 
         function nextWeek() {
-            if (currentWeek < weekData.length - 1) {
-                currentWeek++;
-                document.getElementById('weekSelect').selectedIndex = currentWeek;
-                buildTimetable();
-                updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
-                weekNav._currentWeek = currentWeek;
-                weekNav.save();
-            }
+            weekNav.nextWeek();
+            currentWeek = weekNav.currentWeek;
         }
 
         function selectWeek(index) {
-            currentWeek = parseInt(index);
-            document.getElementById('weekSelect').selectedIndex = currentWeek;
-            buildTimetable();
-            updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
-            weekNav._currentWeek = currentWeek;
-            weekNav.save();
+            weekNav.selectWeek(parseInt(index, 10));
+            currentWeek = weekNav.currentWeek;
         }
 
         /* ════════════════════════════════════════════
@@ -969,6 +953,7 @@
            ════════════════════════════════════════════ */
 
         function buildTimetable() {
+            currentWeek = weekNav.currentWeek;
             const head = document.getElementById('tableHead');
             const body = document.getElementById('tableBody');
             head.innerHTML = '';

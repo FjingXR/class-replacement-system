@@ -232,32 +232,20 @@
            ════════════════════════════════════════════ */
 
         function prevWeek() {
-            if (currentWeek > 0) {
-                currentWeek--;
-                weekNav._currentWeek = currentWeek;
-                buildTimetable();
-                document.getElementById('weekSelect').selectedIndex = currentWeek;
-                weekNav.save();
-                saveState();
-            }
+            weekNav.prevWeek();
+            currentWeek = weekNav.currentWeek;
+            saveState();
         }
 
         function nextWeek() {
-            if (currentWeek < weekData.length - 1) {
-                currentWeek++;
-                weekNav._currentWeek = currentWeek;
-                buildTimetable();
-                document.getElementById('weekSelect').selectedIndex = currentWeek;
-                weekNav.save();
-                saveState();
-            }
+            weekNav.nextWeek();
+            currentWeek = weekNav.currentWeek;
+            saveState();
         }
 
         function selectWeek(index) {
-            currentWeek = parseInt(index);
-            weekNav._currentWeek = currentWeek;
-            buildTimetable();
-            weekNav.save();
+            weekNav.selectWeek(parseInt(index, 10));
+            currentWeek = weekNav.currentWeek;
             saveState();
         }
 
@@ -309,6 +297,7 @@
            ════════════════════════════════════════════ */
 
         function buildTimetable() {
+            currentWeek = weekNav.currentWeek;
             if (!selectedCohortId) {
                 document.getElementById('weekSelect').disabled = true;
                 document.getElementById('emptyState').style.display = 'flex';

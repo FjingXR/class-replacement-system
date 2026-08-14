@@ -354,6 +354,7 @@
         closeOnEsc(closeModal);
 
         function buildTimetable() {
+            currentWeek = weekNav.currentWeek;
             buildTimetableGrid({
                 events: eventsData[currentWeek] || [],
                 days: weekData[currentWeek].days,
@@ -369,36 +370,18 @@
         }
 
         function prevWeek() {
-            if (currentWeek > 0) {
-                currentWeek--;
-                weekNav._currentWeek = currentWeek;
-                buildTimetable();
-                document.getElementById('weekSelect').selectedIndex = currentWeek;
-                updateWeekSubtitle();
-                updateProgress();
-                weekNav.save();
-            }
+            weekNav.prevWeek();
+            currentWeek = weekNav.currentWeek;
         }
 
         function nextWeek() {
-            if (currentWeek < weekData.length - 1) {
-                currentWeek++;
-                weekNav._currentWeek = currentWeek;
-                buildTimetable();
-                document.getElementById('weekSelect').selectedIndex = currentWeek;
-                updateWeekSubtitle();
-                updateProgress();
-                weekNav.save();
-            }
+            weekNav.nextWeek();
+            currentWeek = weekNav.currentWeek;
         }
 
         function selectWeek(index) {
-            currentWeek = parseInt(index);
-            weekNav._currentWeek = currentWeek;
-            buildTimetable();
-            updateWeekSubtitle();
-            updateProgress();
-            weekNav.save();
+            weekNav.selectWeek(parseInt(index, 10));
+            currentWeek = weekNav.currentWeek;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
