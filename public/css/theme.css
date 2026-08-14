@@ -2071,6 +2071,99 @@ body {
     .skeleton { animation: none; }
 }
 
+/* ============================================
+   Shared UI Components — Promoted from page-specific
+   Used by: venue-timetable, replacement-arrangement
+   ============================================ */
+
+/* ── Hint text (empty states) ───────────────────────────────── */
+.hint-text {
+    text-align: center;
+    padding: 8px;
+    font-size: 13px;
+    color: var(--color-on-surface-variant);
+    font-style: italic;
+}
+
+/* ── Error banner ────────────────────────────────────────────── */
+.error-banner {
+    background: var(--color-error);
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+}
+.error-banner.show {
+    display: flex;
+}
+.error-banner span {
+    flex: 1;
+}
+.error-banner button {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+}
+.error-banner button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+/* ── No-match banner (empty filter results) ──────────────────── */
+.no-match-banner {
+    text-align: center;
+    padding: 16px;
+    display: none;
+}
+.no-match-banner.show {
+    display: block;
+}
+.no-match-banner p {
+    margin: 0 0 8px 0;
+    color: var(--color-on-surface-variant);
+}
+.no-match-banner button {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+}
+.no-match-banner button:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ── Disabled selects ────────────────────────────────────────── */
+.semester-bar select:disabled,
+.semester-bar select:disabled:hover {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--color-surface-variant);
+    color: var(--color-on-surface-variant);
+}
+
+/* ── Event block readonly modifier ───────────────────────────── */
+.event-block--readonly {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ── Cell focused state (keyboard navigation) ────────────────── */
+.cell-focused {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
 /* ── Mobile: toast position ── */
 @media (max-width: 768px) {
     .copy-toast {

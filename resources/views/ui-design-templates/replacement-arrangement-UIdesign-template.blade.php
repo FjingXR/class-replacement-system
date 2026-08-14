@@ -146,12 +146,6 @@
             font-weight: 400;
         }
 
-        .cell-occupied {
-            background: var(--color-error-container);
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
         .cell-selected {
             background: var(--color-primary-container);
             border: 2px solid var(--color-primary);
@@ -176,16 +170,6 @@
         }
         .cell-selected:hover .sel-text::before {
             content: "REMOVE";
-        }
-
-        .cell-pending {
-            background: var(--color-tertiary-container);
-            cursor: not-allowed;
-        }
-
-        .cell-reserved {
-            background: var(--color-surface-variant);
-            cursor: not-allowed;
         }
 
         .cell-time-label { display: none; }

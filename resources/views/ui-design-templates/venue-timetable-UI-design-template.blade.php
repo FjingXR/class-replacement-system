@@ -222,14 +222,7 @@
             border-radius: var(--radius-sm);
         }
 
-        /* ───── Hint Text (empty states) ───── */
-        .hint-text {
-            text-align: center;
-            padding: 8px;
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-            font-style: italic;
-        }
+
 
         /* ───── Booking Hint ───── */
         .booking-hint {
@@ -247,36 +240,7 @@
             flex-shrink: 0;
         }
 
-        /* ───── Error Banner ───── */
-        .error-banner {
-            background: var(--color-error);
-            color: #fff;
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 12px;
-            display: none;
-            align-items: center;
-            gap: 12px;
-        }
-        .error-banner.show {
-            display: flex;
-        }
-        .error-banner span {
-            flex: 1;
-        }
-        .error-banner button {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: #fff;
-            padding: 6px 14px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .error-banner button:focus-visible {
-            outline: 2px solid #fff;
-            outline-offset: 2px;
-        }
+
 
         /* ───── Toast ───── */
         .toast-notification {
@@ -355,14 +319,7 @@
 
         /* ───── Booked Cell Modal (styles from theme.css) ───── */
 
-        /* ───── Disabled Selects ───── */
-        .semester-bar select:disabled,
-        .semester-bar select:disabled:hover {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
-        }
+
 
         /* ───── Responsive ───── */
         @media (max-width: 1024px) {
@@ -456,17 +413,6 @@
             }
         }
 
-        /* ───── Booked Cell (empty, color only, disabled) ───── */
-        .event-block {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--color-error-container);
-            cursor: not-allowed;
-            pointer-events: none;
-        }
         /* ───── Ensure td has position: relative for absolute children ───── */
         .timetable td.hour-cell:has(.cell-available),
         .timetable td.hour-cell:has(.event-block),
@@ -474,39 +420,52 @@
             position: relative;
         }
 
-        /* ───── Non-interactive events (pending / replacement) ───── */
-        .event-pending,
-        .event-replacement {
+        /* ───── Available slot hover — "Book?" label ───── */
+        .cell-available::after {
+            content: 'Book ?';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-primary);
+            color: var(--color-on-primary);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            opacity: 0;
+            transition: opacity 0.15s;
+            pointer-events: none;
+        }
+        .cell-available:hover::after {
+            opacity: 1;
+        }
+
+        /* ───── Occupied slot (disabled, no hover) ───── */
+        .event-occupied {
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
             cursor: not-allowed;
             pointer-events: none;
         }
+        .event-occupied:hover {
+            filter: none;
+            box-shadow: none;
+        }
 
-        /* ───── No venues match ───── */
-        .no-match-banner {
-            text-align: center;
-            padding: 16px;
-            display: none;
+        /* ───── Pending slot (disabled, no hover) ───── */
+        .event-pending {
+            background: var(--color-tertiary-container);
+            color: var(--color-on-tertiary-container);
+            cursor: not-allowed;
+            pointer-events: none;
         }
-        .no-match-banner.show {
-            display: block;
+        .event-pending:hover {
+            filter: none;
+            box-shadow: none;
         }
-        .no-match-banner p {
-            margin: 0 0 8px 0;
-            color: var(--color-on-surface-variant);
-        }
-        .no-match-banner button {
-            background: var(--color-primary);
-            color: var(--color-on-primary);
-            border: none;
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .no-match-banner button:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
-        }
+
+
 
         /* ───── Slot Picker (hidden for venue timetable) ───── */
         .slot-picker-section {
@@ -518,11 +477,10 @@
 @section('content')
 
         <!-- ─── Page Header ─── -->
-        <div class="page-header">
-            <h1 class="page-title">Venue Timetable</h1>
-            <span class="semester-chip" id="semesterChip"></span>
-            <p class="page-desc">View weekly class schedule for any venue across all cohorts.</p>
-        </div>
+        @include('partials.ui-page-header', [
+            'title' => 'Venue Timetable',
+            'description' => 'View weekly class schedule for any venue across all cohorts.'
+        ])
 
         @include('partials.ui-guide-block', [
             'guideTitle' => 'How to use this page',
@@ -613,20 +571,18 @@
         @include('partials.ui-legend-bar', [
             'items' => [
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue'],
-                ['color' => 'var(--color-primary-container)', 'label' => 'Replacement', 'tip' => 'Approved replacement class booked here'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Occupied', 'tip' => 'Slot is booked — not available'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Conflict', 'tip' => 'Scheduling conflict or public holiday'],
             ]
         ])
 
         <!-- ─── Summary Bar ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
-                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots'],
                 ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available'],
-                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacement'],
+                ['class' => 'card-conflict', 'valueId' => 'sumOccupied', 'label' => 'Occupied'],
                 ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
-                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflict'],
             ]
         ])
 
@@ -809,6 +765,7 @@
 
             /* keyboard nav */
             document.addEventListener('keydown', onKeydown);
+            initWeekKeyboardShortcuts();
         });
 
         function buildVenueDropdown() {
@@ -1158,25 +1115,18 @@
                         const e = info.event;
                         const div = document.createElement('div');
                         div.className = 'event-block span-' + info.span;
-                        if (e.status === 'replacement') {
-                            div.classList.add('event-replacement');
-                        } else if (e.status === 'pending') {
+                        if (e.status === 'pending') {
                             div.classList.add('event-pending');
-                        } else if (e.status === 'conflict') {
-                            div.classList.add('event-conflict');
                         } else {
-                            div.classList.add('event-normal');
+                            div.classList.add('event-occupied');
                         }
 
                         div.innerHTML = '';
-
-                        div.addEventListener('click', function() { openModal(e, di); });
                         td.appendChild(div);
 
                         /* mobile card */
                         const card = createEventCard(e, di);
                         document.getElementById('mobileCardList').appendChild(card);
-
                         if (info.span > 1) {
                             td.colSpan = info.span;
                         }
@@ -1246,19 +1196,16 @@
            ════════════════════════════════════════════ */
 
         function updateSummaries(events) {
-            let total = events.length;
-            let available = 0;
-            let replacement = 0;
+            let occupied = 0;
             let pending = 0;
-            let conflict = 0;
 
             events.forEach(e => {
-                if (e.status === 'replacement') replacement++;
-                else if (e.status === 'pending') pending++;
-                else if (e.status === 'conflict') conflict++;
+                if (e.status === 'pending') pending++;
+                else occupied++;
             });
 
             /* count available slots (Mon-Fri, 08:00-18:00) */
+            let available = 0;
             const data = weekData[currentWeek];
             for (let di = 0; di < 5; di++) {
                 if (data.days[di].holiday || data.days[di].sunday) continue;
@@ -1268,11 +1215,10 @@
                 }
             }
 
-            document.getElementById('sumTotal').textContent = total;
+            document.getElementById('sumTotal').textContent = occupied + pending + available;
             document.getElementById('sumAvailable').textContent = available;
-            document.getElementById('sumReplacement').textContent = replacement;
+            document.getElementById('sumOccupied').textContent = occupied;
             document.getElementById('sumPending').textContent = pending;
-            document.getElementById('sumConflict').textContent = conflict;
         }
 
         /* ════════════════════════════════════════════
@@ -1373,10 +1319,10 @@
             /* Arrow navigation on grid */
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
                 const active = document.activeElement;
-                if (!active || !active.classList.contains('cell-available') && !active.classList.contains('event-block')) return;
+                if (!active || !active.classList.contains('cell-available')) return;
 
                 e.preventDefault();
-                const cells = Array.from(document.querySelectorAll('.cell-available, .event-block'));
+                const cells = Array.from(document.querySelectorAll('.cell-available'));
                 const idx = cells.indexOf(active);
                 if (idx === -1) return;
 
@@ -1386,11 +1332,7 @@
                 else if (e.key === 'ArrowDown') next = Math.min(idx + 7, cells.length - 1);
                 else if (e.key === 'ArrowUp') next = Math.max(idx - 7, 0);
                 else if (e.key === 'Enter') {
-                    if (active.classList.contains('cell-available')) {
-                        showAvailableTooltip(null, parseInt(active.dataset.day), parseInt(active.dataset.hour));
-                    } else {
-                        active.click();
-                    }
+                    showAvailableTooltip(null, parseInt(active.dataset.day), parseInt(active.dataset.hour));
                     return;
                 }
 
