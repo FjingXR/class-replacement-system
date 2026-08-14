@@ -998,7 +998,7 @@
                     const cellData = venueData.find(d => d[0] === di && d[1] === hi);
 
                     if (isSunday || day.holiday) {
-                        div.className += ' cell-occupied';
+                        div.className += day.holiday ? ' cell-ph' : ' cell-sun';
                     } else if (cellData) {
                     if (cellData[2] === 1) {
                         div.className += ' cell-occupied';

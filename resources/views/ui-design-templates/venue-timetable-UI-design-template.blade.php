@@ -1119,7 +1119,7 @@
                     if (day.sunday || day.holiday) {
                         /* Unavailable slot (holiday/Sunday) — always empty */
                         const div = document.createElement('div');
-                        div.className = 'cell-content cell-occupied';
+                        div.className = 'cell-content ' + (day.holiday ? 'cell-ph' : 'cell-sun');
                         td.appendChild(div);
                     } else if (info && info.event) {
                         const e = info.event;
