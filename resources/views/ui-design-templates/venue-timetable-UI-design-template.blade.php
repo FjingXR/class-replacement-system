@@ -420,16 +420,24 @@
             position: relative;
         }
 
-        /* ───── Available slot hover — "Book?" label ───── */
-        .cell-available::after {
-            content: 'Book ?';
+        /* ───── Available slot hover label ───── */
+        .cell-available { --hover-label: 'Book ?'; }
+
+        /* ───── Occupied slot (disabled, hover shows label) ───── */
+        .event-occupied {
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+            cursor: not-allowed;
+        }
+        .event-occupied::after {
+            content: 'Occupied';
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--color-primary);
-            color: var(--color-on-primary);
+            background: var(--color-error);
+            color: var(--color-on-error);
             font-size: 13px;
             font-weight: 600;
             border-radius: var(--radius-sm);
@@ -437,32 +445,34 @@
             transition: opacity 0.15s;
             pointer-events: none;
         }
-        .cell-available:hover::after {
+        .event-occupied:hover::after {
             opacity: 1;
         }
 
-        /* ───── Occupied slot (disabled, no hover) ───── */
-        .event-occupied {
-            background: var(--color-error-container);
-            color: var(--color-on-error-container);
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .event-occupied:hover {
-            filter: none;
-            box-shadow: none;
-        }
-
-        /* ───── Pending slot (disabled, no hover) ───── */
+        /* ───── Pending slot (disabled, hover shows label) ───── */
         .event-pending {
             background: var(--color-tertiary-container);
             color: var(--color-on-tertiary-container);
             cursor: not-allowed;
+        }
+        .event-pending::after {
+            content: 'Pending';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-warning);
+            color: var(--color-on-warning);
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            opacity: 0;
+            transition: opacity 0.15s;
             pointer-events: none;
         }
-        .event-pending:hover {
-            filter: none;
-            box-shadow: none;
+        .event-pending:hover::after {
+            opacity: 1;
         }
 
 

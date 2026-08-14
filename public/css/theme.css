@@ -1466,6 +1466,9 @@ html.dark .semester-bar select:not(.week-select) {
 }
 
 /* ── Selection cell model (shared: replacement-arrangement, venue-timetable) ── */
+.timetable td.hour-cell:has(.cell-content) {
+    position: relative;
+}
 .cell-content {
     position: absolute;
     top: 0;
@@ -1480,6 +1483,26 @@ html.dark .semester-bar select:not(.week-select) {
 .cell-available {
     background: var(--color-success-container);
     cursor: pointer;
+    --hover-label: '';  /* Override per page: 'Book ?', 'Select ?', etc. */
+}
+.cell-available::after {
+    content: var(--hover-label);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+}
+.cell-available:hover::after {
+    opacity: 1;
 }
 .cell-available:hover {
     filter: brightness(1.2);
@@ -1493,6 +1516,40 @@ html.dark .semester-bar select:not(.week-select) {
 .cell-reserved {
     cursor: not-allowed;
     pointer-events: none;
+    --hover-label: '';
+}
+.cell-occupied::after,
+.cell-pending::after,
+.cell-reserved::after {
+    content: var(--hover-label);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+}
+.cell-occupied::after {
+    background: var(--color-error);
+    color: var(--color-on-error);
+}
+.cell-pending::after {
+    background: var(--color-warning);
+    color: var(--color-on-warning);
+}
+.cell-reserved::after {
+    background: var(--color-surface-variant);
+    color: var(--color-on-surface-variant);
+}
+.cell-occupied:hover::after,
+.cell-pending:hover::after,
+.cell-reserved:hover::after {
+    opacity: 1;
 }
 .cell-occupied {
     background: var(--color-error-container);

@@ -4,6 +4,8 @@
 
 @section('page-styles')
 
+        .cell-available { --hover-label: 'Select ?'; }
+
         .top-bar {
             position: fixed;
             top: 0;
