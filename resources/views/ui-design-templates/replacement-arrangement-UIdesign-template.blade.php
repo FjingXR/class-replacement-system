@@ -635,7 +635,7 @@
 
         <div class="toolbar">
             <div class="toolbar-left">
-                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => false])
+                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => true])
             </div>
             <div class="toolbar-center">
                 <select class="selector-dropdown" id="subjectSelector" onchange="onSubjectChange()">
@@ -976,17 +976,19 @@
                 tr.dataset.dayIndex = di;
 
                 const dayTd = document.createElement('td');
-                dayTd.className = 'time-col';
-                let dayHtml = `<span class="day-label">${day.abbr}</span><span class="date-label">${day.date}</span>`;
-                if (day.holiday) {
-                    dayHtml += `<span class="holiday-badge">Public Holiday</span>`;
-                }
-                dayTd.innerHTML = dayHtml;
+                let dayColClass = 'time-col';
+                if (day.today) dayColClass += ' today';
+                if (day.holiday || day.sunday) dayColClass += ' offday';
+                dayTd.className = dayColClass;
+                dayTd.innerHTML = HtmlBuilder.dayHeader(day);
                 tr.appendChild(dayTd);
 
                 hours.forEach((h, hi) => {
                     const td = document.createElement('td');
-                    td.className = 'hour-cell';
+                    let cellClass = 'hour-cell';
+                    if (day.today) cellClass += ' today-cell';
+                    if (day.sunday || day.holiday) cellClass += ' offday-slot';
+                    td.className = cellClass;
                     td.dataset.day = di;
                     td.dataset.hour = hi;
 
@@ -1698,5 +1700,19 @@
 
             document.addEventListener('keydown', handleKeyDown);
             initWeekKeyboardShortcuts();
+
+            document.getElementById('todayBtn')?.addEventListener('click', function() {
+                try {
+                    saveCurrentWeek();
+                    weekNav.jumpToToday();
+                    const sel = document.getElementById('weekSelector');
+                    if (sel) {
+                        sel.value = weekNav.currentWeek;
+                        buildTimetable();
+                    }
+                } catch (err) {
+                    window.__todayBtnError = err.message + ' | ' + (err.stack || '').split('\n').slice(0,3).join(' ');
+                }
+            });
         });
 @endsection

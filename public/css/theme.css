@@ -1231,6 +1231,7 @@ html.dark .semester-bar select:not(.week-select) {
     background: var(--color-surface);
     font-weight: 600;
     text-align: center;
+    transition: background var(--transition), color var(--transition);
 }
 .time-col .day-label {
     display: block;
@@ -1274,36 +1275,54 @@ html.dark .semester-bar select:not(.week-select) {
     letter-spacing: 0.3px;
     text-align: center;
 }
-.time-col.offday {
-    background: var(--color-error);
-}
 .time-col.offday .day-label {
-    color: var(--color-on-error);
+    color: var(--color-on-surface-variant);
 }
 .time-col.offday .date-label {
+    color: var(--color-on-surface-variant);
+}
+.time-col.offday:hover {
+    background: var(--color-error);
+}
+.time-col.offday:hover .day-label {
     color: var(--color-on-error);
 }
-.time-col.today {
-    background: var(--color-primary);
+.time-col.offday:hover .date-label {
+    color: var(--color-on-error);
 }
 .time-col.today .day-label {
-    color: var(--color-on-primary);
+    color: var(--color-on-surface-variant);
 }
 .time-col.today .date-label {
+    color: var(--color-on-surface-variant);
+}
+.time-col.today:hover {
+    background: var(--color-primary);
+}
+.time-col.today:hover .day-label {
     color: var(--color-on-primary);
 }
-.time-col.today.offday {
-    background: var(--color-error);
+.time-col.today:hover .date-label {
+    color: var(--color-on-primary);
 }
 .time-col.today.offday .day-label {
-    color: var(--color-on-error-container);
+    color: var(--color-on-surface-variant);
 }
 .time-col.today.offday .date-label {
-    color: var(--color-on-error-container);
+    color: var(--color-on-surface-variant);
+}
+.time-col.today.offday:hover {
+    background: var(--color-error);
+}
+.time-col.today.offday:hover .day-label {
+    color: var(--color-on-error);
+}
+.time-col.today.offday:hover .date-label {
+    color: var(--color-on-error);
 }
 .time-col.today.offday .holiday-badge {
-    background: var(--color-error);
-    color: var(--color-on-error);
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
 }
 
 /* ── Today column highlight (hour cells) ──────────────────── */
