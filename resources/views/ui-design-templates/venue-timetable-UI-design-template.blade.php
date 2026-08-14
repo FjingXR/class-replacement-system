@@ -421,6 +421,14 @@
             display: none;
         }
 
+        /* VEN: keep red background on empty PH/Sunday cells */
+        .timetable td.hour-cell.offday-slot {
+            background: var(--color-error-container);
+        }
+        .timetable td.hour-cell.offday-slot .cell-empty {
+            background: var(--color-error-container);
+        }
+
 @endsection
 
 @section('content')
