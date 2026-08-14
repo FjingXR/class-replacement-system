@@ -1041,7 +1041,7 @@
                         if (hi === e.start) {
                             slotMap[hi] = { event: e, span: e.end - e.start + 1 };
                         } else {
-                            slotMap[hi] = { event: null, span: 0, occupied: true };
+                            slotMap[hi] = { event: null, span: 0, occupied: true, status: e.status };
                         }
                     }
                 });
@@ -1077,11 +1077,15 @@
                         /* mobile card */
                         const card = createEventCard(e, di);
                         document.getElementById('mobileCardList').appendChild(card);
-                        if (info.span > 1) {
-                            td.colSpan = info.span;
-                        }
                     } else if (info && info.occupied) {
-                        td.style.display = 'none';
+                        const div = document.createElement('div');
+                        div.className = 'cell-content';
+                        if (info.status === 'pending') {
+                            div.classList.add('cell-pending');
+                        } else {
+                            div.classList.add('cell-occupied');
+                        }
+                        td.appendChild(div);
                     } else {
                         /* Available slot */
                         const div = document.createElement('div');

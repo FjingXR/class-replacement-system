@@ -1368,7 +1368,7 @@ html.dark .semester-bar select:not(.week-select) {
 .timetable td.hour-cell.offday-slot {
     background: var(--color-error-container);
 }
-.timetable td.hour-cell.offday-slot:not(:has(.event-block)) {
+.timetable td.hour-cell.offday-slot:not(:has(.event-block)):not(:has(.cell-ph)):not(:has(.cell-sun)) {
     cursor: not-allowed;
     pointer-events: none;
 }
@@ -1604,8 +1604,8 @@ html.dark .semester-bar select:not(.week-select) {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-surface-variant);
-    color: var(--color-on-surface-variant);
+    background: var(--color-error);
+    color: var(--color-on-error);
     font-size: 13px;
     font-weight: 600;
     border-radius: var(--radius-sm);
