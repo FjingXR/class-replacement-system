@@ -337,6 +337,7 @@
 @endsection
 
 @section('page-scripts')
+        initHeaderTooltips();
         // ── Shared data from mock-data.js ──
 
         // ── Page-local urgency helpers ──

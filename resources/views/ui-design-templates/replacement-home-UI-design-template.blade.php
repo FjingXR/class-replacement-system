@@ -242,6 +242,7 @@
 @endsection
 
 @section('page-scripts')
+        initHeaderTooltips();
         const conflictedClasses = MockData.conflictedClasses;
 
         function badgeClass(reason) {

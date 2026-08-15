@@ -344,6 +344,7 @@
 @endsection
 
 @section('page-scripts')
+        initHeaderTooltips();
         let mockRequests = MockData.requests;
 
         const pageState = { currentPage: 1 };

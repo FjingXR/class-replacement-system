@@ -1726,3 +1726,30 @@ class BackNavigator {
         window.location.href = BackNavigator.getBackUrl();
     }
 }
+
+// ───── Header Tooltip (above table headers, avoids grid-wrapper overflow:hidden) ─────
+
+function initHeaderTooltips() {
+    var tip = document.createElement('div');
+    tip.className = 'header-tooltip';
+    tip.style.cssText = 'position:fixed;padding:5px 10px;background:var(--color-inverse-surface);color:var(--color-on-inverse-surface);font-size:11px;font-weight:500;white-space:nowrap;border-radius:var(--radius-xs);pointer-events:none;opacity:0;visibility:hidden;transition:opacity 0.15s,visibility 0.15s;z-index:9999';
+    document.body.appendChild(tip);
+    document.addEventListener('mouseenter', function(e) {
+        var node = e.target.closest ? e.target : e.target.parentElement;
+        var th = node && node.closest ? node.closest('th[data-tip]') : null;
+        if (!th) return;
+        var r = th.getBoundingClientRect();
+        tip.textContent = th.getAttribute('data-tip');
+        tip.style.left = Math.max(4, r.left) + 'px';
+        tip.style.top = (r.top - tip.offsetHeight - 6) + 'px';
+        tip.style.opacity = '1';
+        tip.style.visibility = 'visible';
+    }, true);
+    document.addEventListener('mouseleave', function(e) {
+        var node = e.target.closest ? e.target : e.target.parentElement;
+        if (node && node.closest && node.closest('th[data-tip]')) {
+            tip.style.opacity = '0';
+            tip.style.visibility = 'hidden';
+        }
+    }, true);
+}
