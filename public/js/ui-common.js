@@ -1948,12 +1948,21 @@ function initDataTipTooltips() {
         tip.style.top = '0px';
         var tw = tip.offsetWidth;
         var th = tip.offsetHeight;
-        var left = r.left + (r.width / 2) - (tw / 2);
-        left = Math.max(4, Math.min(left, window.innerWidth - tw - 4));
-        var top = r.top - th - 6;
-        if (top < 4) {
-            // Not enough room above — show below the element instead
-            top = r.bottom + 6;
+        var left, top;
+        if (el.getAttribute('data-tip-pos') === 'left') {
+            // Tooltip to the LEFT, vertically centred (top-bar buttons)
+            left = r.left - tw - 8;
+            top = r.top + (r.height / 2) - (th / 2);
+            left = Math.max(4, left);
+            top = Math.max(4, top);
+        } else {
+            left = r.left + (r.width / 2) - (tw / 2);
+            left = Math.max(4, Math.min(left, window.innerWidth - tw - 4));
+            top = r.top - th - 6;
+            if (top < 4) {
+                // Not enough room above — show below the element instead
+                top = r.bottom + 6;
+            }
         }
         tip.style.left = left + 'px';
         tip.style.top = top + 'px';

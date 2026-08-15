@@ -1,5 +1,55 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Bulk bar gains a "Clear" button (consistent with request history)
+
+### Summary
+
+The bulk action bar only had Approve/Reject; the request-history page already had a "Clear" button. Added the same `.btn-bulk-clear` button + `clearSelection()` so the bar matches the history page.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Page styles | Added | `.btn-bulk-clear` styles (outline button, hover = surface-variant). |
+| Bulk bar markup | Updated | Added `Clear` button between the count and Approve/Reject. |
+| `clearSelection()` | Added | Clears `selectedIds` and re-renders the table (hides the bar). |
+
+---
+
+## [2026-08-15] Fix: duplicate "Click to copy email" tooltip (two tooltip systems)
+
+### Root cause
+
+The `data-tip` attribute was rendered by **two** tooltip implementations at once:
+1. **CSS pseudo-element tooltip** — `[data-tip]::after { content: attr(data-tip) }` + `[data-tip]:hover::after` in `theme.css` (a legacy pure-CSS tooltip).
+2. **JS design-system tooltip** — `initDataTipTooltips()` in `ui-common.js` (a fixed-position `.data-tip-tooltip` div, the app's shared tooltip for headers/legends/data-tip).
+
+Both fired on hover for **any** non-`th` element carrying `data-tip` (e.g. the email `div.lecturer-cell-email`), so the text appeared twice. (Headers were unaffected because `th[data-tip]::after { display:none }` already suppressed the CSS variant there.)
+
+### Fix
+
+- Removed the CSS pseudo-element tooltip block (`[data-tip]::after`/`::before`, `:hover`, `data-tip-pos="left"` overrides) from `theme.css` — the JS tooltip is now the single source of truth.
+- Extended `initDataTipTooltips()` to honour `data-tip-pos="left"` (used by the nav theme-toggle) so no element regresses.
+- Output: `Click to copy email` appears exactly once on hover; email still shown once; copy-to-clipboard intact; all other tooltips (legends, headers) unaffected.
+
+### Files Changed
+
+#### `public/css/theme.css`
+
+| Location | Change | Detail |
+|---|---|---|
+| CSS tooltip block | Removed | Deleted `[data-tip]::after/::before`, `:hover`, `data-tip-pos="left"` rules. |
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `initDataTipTooltips()` | Updated | Added `data-tip-pos="left"` positioning support (top-bar buttons). |
+
+---
+
 ## [2026-08-15] Detail modal: status description as its own row
 
 ### Summary

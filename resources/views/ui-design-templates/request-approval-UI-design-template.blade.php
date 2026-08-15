@@ -97,6 +97,19 @@
         }
         .bulk-action-bar.visible { display: flex; }
         .bulk-action-bar .bulk-count { font-size: 13px; font-weight: 600; color: var(--color-on-surface); }
+        .btn-bulk-clear {
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-outline);
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-bulk-clear:hover { background: var(--color-surface-variant); }
 
         /* ───── Urgency Filter Chips ───── */
         .urgency-filter { display: inline-flex; gap: 4px; margin-left: 8px; }
@@ -246,6 +259,7 @@
 
 <div class="bulk-action-bar" id="bulkActionBar">
     <span class="bulk-count" id="bulkCount"></span>
+    <button class="btn-bulk-clear" onclick="clearSelection()">Clear</button>
     <button class="btn-approve" onclick="bulkApprove()">Approve Selected</button>
     <button class="btn-reject" onclick="bulkReject()">Reject Selected</button>
 </div>
@@ -761,6 +775,11 @@
             if (selectedIds.size === 0) { bar.classList.remove('visible'); return; }
             bar.classList.add('visible');
             count.textContent = selectedIds.size + ' selected';
+        }
+
+        function clearSelection() {
+            selectedIds.clear();
+            renderTable();
         }
 
         function bulkApprove() {
