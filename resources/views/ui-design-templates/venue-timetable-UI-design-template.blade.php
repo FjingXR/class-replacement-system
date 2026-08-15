@@ -1130,6 +1130,10 @@
             document.getElementById('availableTooltip').style.transform = '';
         }
 
+        /* close tooltip on scroll (cell position is no longer relevant) */
+        window.addEventListener('scroll', hideAvailableTooltip, { passive: true });
+        document.querySelector('.grid-scroll')?.addEventListener('scroll', hideAvailableTooltip, { passive: true });
+
         function bookVenue(venueCode, date, time) {
             hideAvailableTooltip();
             let url = `/replacement-arrangement?venue=${encodeURIComponent(venueCode)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&from=venue-timetable`;
@@ -1192,6 +1196,7 @@
             catch (e) { return []; }
         }
 
+        // TODO: persist to DB instead of localStorage
         function toggleFavourite() {
             if (!currentVenue) return;
             const favs = getFavourites();
