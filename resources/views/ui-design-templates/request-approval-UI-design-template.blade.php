@@ -1055,6 +1055,7 @@
         // ── DOMContentLoaded ──
         document.addEventListener('DOMContentLoaded', function() {
             populateWeekFilter();
+            updateWeekArrowState();
             document.getElementById('statusFilter').value = 'Pending';
 
             // Skeleton loading
