@@ -33,7 +33,7 @@
     </div>
 
     <script src="/js/mock-data.js?v=3"></script>
-    <script src="/js/ui-common.js?v=2"></script>
+    <script src="/js/ui-common.js?v=3"></script>
     <script src="/js/logout-modal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
