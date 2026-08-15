@@ -1800,8 +1800,6 @@ html.dark .semester-bar select:not(.week-select) {
     opacity: 1;
     visibility: visible;
 }
-.logout-btn[data-tip]::after { bottom: auto; top: calc(100% + 8px); }
-.logout-btn[data-tip]::before { bottom: auto; top: calc(100% + 3px); border-top-color: transparent; border-bottom-color: var(--color-inverse-surface); }
 th[data-tip]::after,
 th[data-tip]::before { display: none; }
 
