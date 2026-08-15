@@ -1,6 +1,5 @@
 @php
   $items = $navItems ?? [
-    ['key'=>'dashboard','label'=>'Dashboard','href'=>'/dashboard'],
     ['key'=>'my-timetable','label'=>'My Timetable','href'=>'/my-timetable-ui'],
     ['key'=>'cohort-timetables','label'=>'Cohort Timetables','href'=>'/cohort-timetable-ui'],
     ['key'=>'replacement-arrangement','label'=>'Replacement Arrangement','href'=>'/replacement-home-ui'],

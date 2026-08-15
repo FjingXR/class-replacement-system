@@ -2,7 +2,6 @@
     'activeNav' => 'my-timetable',
     'pageKey' => 'studentMyTimetable',
     'navItems' => [
-        ['key'=>'dashboard','label'=>'Dashboard','href'=>'/dashboard'],
         ['key'=>'my-timetable','label'=>'Student My Timetable','href'=>'/student-my-timetable-ui'],
         ['key'=>'replacement-history','label'=>'Replacement History','href'=>'/my-request-history-ui'],
     ],
