@@ -1,5 +1,21 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-15] Class detail modal redesign: unified detail sheet
+
+### Summary
+
+The Class Detail modal now uses the shared `DetailModal` "Detail Sheet": identity header (code title + name subtitle + status badge), optional pending global timeline, single flat group with definition rows (no per-row borders). Same fields preserved.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `openModal()` | Rewritten | Uses `DetailModal.render` (field data unchanged). |
+
+---
+
 ## [2026-08-15] Page-specific summary card descriptions
 
 Added page-specific `description` text to each summary card (Total Classes / Teaching Hours / Replacements / Pending / Conflicts) instead of relying on the shared generic descriptions in `ui-summary-bar`. (`MyTimetable-UI-design-template.blade.php` summary bar.)

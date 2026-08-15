@@ -1,5 +1,28 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-15] Detail modal redesign: category tabs + unified detail sheet
+
+### Summary
+
+The Request Details modal now uses the shared `DetailModal` "Detail Sheet" system:
+- Identity header (left-aligned title + subtitle, status badge top-right).
+- Global horizontal timeline (Request Submitted → Under Review → Status) pinned above the tabs.
+- Category tabs: **General Info / Original Class / Replacement Class**.
+- Groups instead of boxed sections; definition rows without per-row borders; `--strong`/`--muted` emphasis.
+- Removed the old `div.timeline` page CSS; all fields preserved.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | `.modal-title#modalTitle` + `.modal-status-badge`; body emptied. |
+| `openModalById()` | Rewritten | Uses `DetailModal.render` with global timeline + 3 tabs. |
+| Page styles | Removed | Old `.timeline`/`.timeline-*` F6 CSS block. |
+
+---
+
 ## [2026-08-15] Row polish: plain class time, consistent AM/PM, corrected tips, age legend
 
 ### Summary

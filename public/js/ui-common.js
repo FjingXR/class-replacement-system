@@ -544,28 +544,13 @@ function openClassModal(cfg) {
     const di = cfg.dayIndex;
     const days = cfg.days;
 
-    document.getElementById('modalTitle').textContent = cfg.title || (event.code + ' — ' + event.name);
-
     const isConflict = days[di] && days[di].holiday;
     const displayStatus = isConflict ? 'conflict' : event.status;
-
-    const badge = document.getElementById('modalStatusBadge');
-    badge.textContent = displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1);
-    badge.className = 'modal-status-badge ' + displayStatus;
 
     const startStr = to12h(hours[event.start]);
     const endStr = to12h(hours[event.end + 1] || add30min(hours[event.end]));
 
-    let timelineHtml = '';
-    if (event.status === 'pending') {
-        timelineHtml = '<div class="status-timeline">' +
-            '<div class="step completed">Submitted \u2713</div>' +
-            '<div class="step active">Under Review</div>' +
-            '<div class="step">Awaiting Replacement</div>' +
-        '</div>';
-    }
-
-    const fields = [
+    const rows = [
         { label: 'Subject Code', value: event.code },
         { label: 'Subject Name', value: event.name },
         { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
@@ -573,31 +558,185 @@ function openClassModal(cfg) {
         { label: 'Venue', value: event.venue || '\u2014' },
         { label: 'Day', value: dayNames[di] || days[di].abbr },
         { label: 'Date', value: days[di].date },
-        { label: 'Time', value: startStr + ' \u2013 ' + endStr },
+        { label: 'Time', value: startStr + ' \u2013 ' + endStr, strong: true },
         { label: 'Status', value: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) },
         { label: 'Remarks', value: event.remarks || '\u2014' },
     ];
 
     if (event.status === 'pending') {
-        fields.splice(fields.length - 1, 0,
+        rows.splice(rows.length - 1, 0,
             { label: 'Requested At', value: event.requestedAt || '\u2014' },
             { label: 'Requested By', value: event.requestedBy || '\u2014' }
         );
     }
 
     if (cfg.extraFields) {
-        const statusIdx = fields.findIndex(f => f.label === 'Status');
-        cfg.extraFields.forEach((f, i) => { fields.splice(statusIdx + i, 0, f); });
+        const statusIdx = rows.findIndex(f => f.label === 'Status');
+        cfg.extraFields.forEach((f, i) => { rows.splice(statusIdx + i, 0, f); });
     }
 
-    document.getElementById('modalBody').innerHTML = timelineHtml + fields.map(f =>
-        '<div class="modal-field">' +
-            '<span class="field-label">' + f.label + '</span>' +
-            '<span class="field-value">' + f.value + '</span>' +
-        '</div>'
-    ).join('');
+    const bodyHtml = DetailModal.section('Class Information',
+        rows.map(r => DetailModal.row(r.label, r.value, { strong: r.strong })).join('')
+    );
 
-    document.getElementById(cfg.modalId || 'classModal').style.display = 'flex';
+    DetailModal.render({
+        modalId: cfg.modalId || 'classModal',
+        title: cfg.title || (event.code + ' \u2014 ' + event.name),
+        status: { text: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1), cls: displayStatus },
+        timeline: event.status === 'pending'
+            ? [
+                { label: 'Submitted', time: event.requestedAt || 'Done', state: 'completed' },
+                { label: 'Under Review', time: 'In progress', state: 'active' },
+                { label: 'Awaiting Replacement', time: 'Next', state: 'pending' },
+              ]
+            : null,
+        body: bodyHtml
+    });
+}
+
+// ───── Unified Detail Modal (shared inspection UI) ─────
+// Renders into a `.modal.modal--detail` shell:
+//   title strip  ->  optional GLOBAL timeline (never part of a tab)
+//                   ->  tab bar (only when 2+ categories) + active panel
+// Footer/actions are handled by the page (unchanged).
+//
+// Usage (page builder):
+//   DetailModal.render({
+//     modalId: 'modalOverlay',       // overlay element id
+//     title: 'Request Details',
+//     subtitle: '#12 · BMIT2201 — Data Structures',
+//     status: { text: 'Pending', cls: 'status-pending' },  // optional
+//     timeline: [                    // optional global timeline (always visible)
+//       { label: 'Submitted', time: '12 Aug, 3:30 AM', state: 'completed' },
+//       { label: 'Viewed',    time: '12 Aug, 7:00 AM', state: 'completed' },
+//       { label: 'Reviewed',  time: 'Pending',          state: 'active'  }
+//     ],
+//     tabs: [                        // categories; tab bar auto-hidden if length <= 1
+//       { key: 'info', label: 'Request Information', html: '...' },
+//       ...
+//     ]
+//   });
+
+const DetailModal = {
+    _overlay: null,
+    _body: null,
+
+    render(cfg) {
+        if (!this._overlay) {
+            this._overlay = document.getElementById(cfg.modalId || 'modalOverlay');
+            this._body = this._overlay.querySelector('.modal-body');
+        } else if (this._overlay.id !== (cfg.modalId || 'modalOverlay')) {
+            this._overlay = document.getElementById(cfg.modalId || 'modalOverlay');
+            this._body = this._overlay.querySelector('.modal-body');
+        }
+        if (!this._overlay || !this._body) return;
+
+        const modalEl = this._overlay.querySelector('.modal');
+        if (modalEl) modalEl.classList.add('modal--detail');
+
+        const titleEl = this._overlay.querySelector('.modal-title');
+        if (titleEl) {
+            titleEl.innerHTML = escHtml(cfg.title || '') +
+                (cfg.subtitle ? '<span class="modal-subtitle">' + escHtml(cfg.subtitle) + '</span>' : '');
+        }
+        const badgeEl = this._overlay.querySelector('.modal-status-badge');
+        if (badgeEl) {
+            if (cfg.status) {
+                badgeEl.textContent = cfg.status.text || '';
+                badgeEl.className = 'modal-status-badge ' + (cfg.status.cls || '');
+            } else {
+                badgeEl.style.display = 'none';
+            }
+        }
+
+        let html = '';
+        if (cfg.timeline && cfg.timeline.length) html += DetailModal.timeline(cfg.timeline);
+
+        const tabs = cfg.tabs || [];
+        if (tabs.length > 1) {
+            html += '<div class="modal-tabs">' + tabs.map((t, i) =>
+                '<button type="button" class="modal-tab' + (i === 0 ? ' active' : '') + '" data-tab="' + t.key + '">' + escHtml(t.label) + '</button>'
+            ).join('') + '</div>';
+        }
+
+        html += tabs.map((t, i) =>
+            '<div class="modal-tab-panel' + (i === 0 ? ' active' : '') + '" data-panel="' + t.key + '">' + (t.html || '') + '</div>'
+        ).join('') + (tabs.length === 0 && cfg.body ? cfg.body : '');
+
+        this._body.innerHTML = html;
+
+        if (this._body.querySelector('.modal-tab')) {
+            this._body.querySelectorAll('.modal-tab').forEach(btn => {
+                btn.addEventListener('click', () => this.selectTab(btn.dataset.tab));
+            });
+        }
+
+        this.open();
+    },
+
+    selectTab(key) {
+        if (!this._body) return;
+        this._body.querySelectorAll('.modal-tab').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === key);
+        });
+        this._body.querySelectorAll('.modal-tab-panel').forEach(panel => {
+            panel.classList.toggle('active', panel.dataset.panel === key);
+        });
+    },
+
+    // Render a global horizontal timeline rail (always visible, never a tab).
+    timeline(steps) {
+        let html = '<div class="modal-timeline">';
+        steps.forEach((s, i) => {
+            const st = s.state || 'pending';
+            html += '<div class="tl-step ' + st + '">';
+            html += '<div class="tl-dot"></div>';
+            html += '<div class="tl-label">' + escHtml(s.label) + '</div>';
+            if (s.time) html += '<div class="tl-time">' + escHtml(s.time) + '</div>';
+            html += '</div>';
+            if (i < steps.length - 1) {
+                html += '<div class="tl-connector' + (st === 'completed' ? ' completed' : '') + '"></div>';
+            }
+        });
+        return html + '</div>';
+    },
+
+    // Render a definition section (caption + rows) inside a tab.
+    section(title, rowsHtml) {
+        return '<div class="detail-group"><div class="detail-group-title">' + escHtml(title) + '</div>' + (rowsHtml || '') + '</div>';
+    },
+
+    // Render a single definition row (label + value with optional variant).
+    row(label, value, opts) {
+        opts = opts || {};
+        if (value === null || value === '' || value === undefined) return '';
+        const cls = ['detail-value'];
+        if (opts.strong) cls.push('detail-value--strong');
+        if (opts.muted) cls.push('detail-value--muted');
+        return '<div class="detail-row"><span class="detail-label">' + escHtml(label) + '</span><span class="' + cls.join(' ') + '">' + value + '</span></div>';
+    },
+
+    blank() {
+        if (this._body) this._body.innerHTML = '';
+    },
+
+    open() {
+        if (this._overlay) {
+            this._overlay.classList.add('show');
+            this._overlay.style.display = 'flex';
+        }
+    },
+
+    close() {
+        if (this._overlay) {
+            this._overlay.classList.remove('show');
+            this._overlay.style.display = 'none';
+        }
+    }
+};
+
+function escHtml(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // ───── Shared timetable keyboard + copy + swipe helpers ─────

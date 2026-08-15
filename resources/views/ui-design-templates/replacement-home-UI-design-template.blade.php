@@ -227,10 +227,11 @@
                 width: 100% !important;
             }
         </style>
-        <div class="modal-overlay" id="quickViewModal">
+        <div class="modal-overlay" id="quickViewModal" onclick="if(event.target===this)hideQuickView()">
             <div class="modal" style="max-width:500px">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="qvTitle">Replacement Details</h3>
+                    <span class="modal-title" id="qvTitle">Replacement Details</span>
+                    <span class="modal-status-badge" id="qvStatusBadge"></span>
                     <button class="modal-close" onclick="hideQuickView()">✕</button>
                 </div>
                 <div class="modal-body" id="qvBody"></div>
@@ -447,34 +448,32 @@
             if (!c) return;
 
             qvCurrent = c;
-            document.getElementById('qvTitle').textContent = c.name + ' (' + c.type + ')';
 
             var daysLeftVal = daysLeft(c.date);
             var urgencyCls = daysLeftVal <= 3 ? 'urgent' : daysLeftVal <= 7 ? 'warning' : 'safe';
             var wn = getWeekNumber(c.date);
             var weekTag = wn ? ' (Week ' + wn + ')' : '';
 
-            var fields = [
-                { label: 'Course Code', value: c.code },
-                { label: 'Course Name', value: c.name },
-                { label: 'Type', value: c.type === 'L' ? 'Lecture' : 'Tutorial' },
-                { label: 'Week', value: 'Week ' + (wn || '-') },
-                { label: 'Day', value: c.day },
-                { label: 'Date', value: formatDate(c.date) + weekTag },
-                { label: 'Time', value: to12h(c.timeStart) + ' to ' + to12h(c.timeEnd) + ' (' + c.duration + ' hr' + (c.duration > 1 ? 's' : '') + ')' },
-                { label: 'Venue', value: c.venue },
-                { label: 'Students', value: String(c.totalStudents) },
-                { label: 'Cohort(s)', value: c.cohorts.join(', ') },
-                { label: 'Days Left', value: daysLeftVal + ' days' },
-                { label: 'Conflict Reason', value: c.conflictReason },
-            ];
-
-            var html = fields.map(function(f) {
-                return '<div class="modal-field"><span class="modal-field-label">' + f.label + '</span><span class="modal-field-value">' + (f.value || '<span style="color:var(--color-on-surface-variant);font-style:italic">—</span>') + '</span></div>';
-            }).join('');
-
-            document.getElementById('qvBody').innerHTML = html;
-            document.getElementById('quickViewModal').classList.add('show');
+            DetailModal.render({
+                modalId: 'quickViewModal',
+                title: c.name + ' (' + c.type + ')',
+                subtitle: c.code + ' · ' + (c.conflictReason || ''),
+                status: { text: c.conflictReason, cls: urgencyCls },
+                body: DetailModal.section('Replacement Details',
+                    DetailModal.row('Course Code', c.code, { strong: true }) +
+                    DetailModal.row('Course Name', c.name) +
+                    DetailModal.row('Type', c.type === 'L' ? 'Lecture' : 'Tutorial') +
+                    DetailModal.row('Week', 'Week ' + (wn || '-')) +
+                    DetailModal.row('Day', c.day) +
+                    DetailModal.row('Date', formatDate(c.date) + weekTag) +
+                    DetailModal.row('Time', to12h(c.timeStart) + ' to ' + to12h(c.timeEnd) + ' (' + c.duration + ' hr' + (c.duration > 1 ? 's' : '') + ')', { strong: true }) +
+                    DetailModal.row('Venue', c.venue) +
+                    DetailModal.row('Students', String(c.totalStudents)) +
+                    DetailModal.row('Cohort(s)', c.cohorts.join(', ')) +
+                    DetailModal.row('Days Left', daysLeftVal + ' days') +
+                    DetailModal.row('Conflict Reason', c.conflictReason)
+                )
+            });
         }
 
         function qvArrange() {
@@ -488,7 +487,7 @@
 
         function hideQuickView() {
             qvCurrent = null;
-            document.getElementById('quickViewModal').classList.remove('show');
+            DetailModal.close();
         }
 
         function clearAll() {

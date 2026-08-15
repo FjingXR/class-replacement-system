@@ -1,5 +1,23 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-15] Quick-View modal redesign: unified detail sheet
+
+### Summary
+
+The Quick View (Replacement Details) modal now uses the shared `DetailModal` "Detail Sheet": identity header (title + subtitle + conflict badge), single flat group, definition rows without per-row borders. Same fields preserved. Modal body is JS-generated.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | `.modal-title#qvTitle` + `.modal-status-badge`; body emptied; overlay-click close added. |
+| `quickView()` | Rewritten | Uses `DetailModal.render`. |
+| `hideQuickView()` | Updated | Uses `DetailModal.close()`. |
+
+---
+
 ## [2026-08-15] Page-specific summary card descriptions
 
 Added page-specific `description` text to each summary card (Total Conflicted / Venues Affected / Students Affected / Duration Hours / Distinct Courses) instead of relying on the shared generic descriptions. (`replacement-home-UI-design-template.blade.php` summary bar.)

@@ -1192,6 +1192,144 @@ html.dark .filter-select {
     transform: scale(0.97);
 }
 
+/* ── Detail Sheet modal (unified inspection UI for details modals) ────── */
+/* Applies to every *details* modal. Confirm/reject/notes modals keep the
+   plain `.modal` shell above. Key: groups instead of boxes, definition rows
+   without per-row borders, a single shared timeline, and category tabs. */
+
+.modal.modal--detail {
+    max-width: 480px;
+}
+.modal--detail .modal-header {
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 22px 0;
+}
+.modal--detail .modal-title {
+    text-align: left;
+    flex: 1;
+}
+.modal--detail .modal-subtitle {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-on-surface-variant);
+    margin-top: 3px;
+    line-height: 1.35;
+}
+.modal--detail .modal-body {
+    padding: 14px 22px 18px;
+}
+/* Status badge pinned top-right of the identity strip (theme owns colors) */
+.modal--detail .modal-status-badge {
+    margin-top: 2px;
+}
+
+/* ── Detail groups (breathing room + thin rule, not boxes) ── */
+.detail-group { padding: 4px 0 10px; }
+.detail-group + .detail-group { border-top: 1px solid var(--color-outline-variant); margin-top: 8px; }
+.detail-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    margin-bottom: 8px;
+}
+
+/* ── Definition rows (no per-row borders) ── */
+.detail-row {
+    display: flex;
+    gap: 16px;
+    padding: 3px 0;
+}
+.detail-label {
+    width: 128px;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-on-surface-variant);
+    padding-top: 1px;
+}
+.detail-value {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-on-surface);
+    line-height: 1.45;
+    word-break: break-word;
+}
+.detail-value--strong { font-size: 15px; font-weight: 600; }
+.detail-value--muted { color: var(--color-on-surface-variant); }
+.detail-caption { font-size: 12px; color: var(--color-on-surface-variant); margin-top: 2px; }
+
+/* ── Shared horizontal timeline rail (global info, pinned above tabs) ── */
+.modal-timeline {
+    display: flex;
+    align-items: flex-start;
+    margin: 12px 0 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-outline-variant);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-variant);
+}
+.modal-timeline .tl-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    position: relative;
+    min-width: 0;
+    padding: 0 6px;
+}
+.modal-timeline .tl-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    border: 2px solid var(--color-outline);
+    background: var(--color-surface);
+    flex-shrink: 0;
+}
+.modal-timeline .tl-step.completed .tl-dot { background: var(--color-success); border-color: var(--color-success); }
+.modal-timeline .tl-step.active .tl-dot { background: var(--color-tertiary); border-color: var(--color-tertiary); }
+.modal-timeline .tl-label { font-size: 11px; font-weight: 600; color: var(--color-on-surface); white-space: nowrap; }
+.modal-timeline .tl-time { font-size: 10px; color: var(--color-on-surface-variant); white-space: nowrap; }
+.modal-timeline .tl-connector {
+    flex: 1;
+    height: 2px;
+    align-self: center;
+    margin: 0 4px;
+    background: var(--color-outline-variant);
+    min-width: 24px;
+}
+.modal-timeline .tl-connector.completed { background: var(--color-success); }
+.modal-timeline .tl-connector.active { background: linear-gradient(90deg, var(--color-success), var(--color-tertiary)); }
+
+/* ── Category tab bar (only rendered when the detail modal has 2+ groups) ── */
+.modal-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--color-outline);
+    margin: 0 0 14px;
+}
+.modal-tab {
+    padding: 7px 12px;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--color-on-surface-variant);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+.modal-tab:hover { color: var(--color-on-surface); }
+.modal-tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+.modal-tab-panel { display: none; }
+.modal-tab-panel.active { display: block; }
+
 /* ── Semester bar / week-picker ────────────────────────────── */
 .semester-bar {
     display: flex;

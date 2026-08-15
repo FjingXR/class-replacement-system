@@ -163,19 +163,6 @@
         .lecturer-cell-email:hover { opacity: 0.8; }
         .lecturer-cell-email .copy-icon { font-size: 10px; opacity: 0.6; }
 
-        /* ───── Mini Request Timeline ───── */
-        .request-timeline { display: flex; align-items: center; gap: 0; padding: 12px 0 16px; border-bottom: 1px solid var(--color-outline-variant); margin-bottom: 16px; }
-        .timeline-step { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; z-index: 1; }
-        .timeline-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--color-outline); background: var(--color-surface); transition: all 0.3s; }
-        .timeline-step.completed .timeline-dot { background: var(--color-success); border-color: var(--color-success); }
-        .timeline-step.active .timeline-dot { background: var(--color-tertiary); border-color: var(--color-tertiary); animation: pulse 1.5s infinite; }
-        .timeline-label { font-size: 11px; font-weight: 500; color: var(--color-on-surface-variant); }
-        .timeline-time { font-size: 10px; color: var(--color-on-surface-variant); opacity: 0.7; }
-        .timeline-connector { flex: 1; height: 2px; background: var(--color-outline-variant); min-width: 40px; }
-        .timeline-connector.completed { background: var(--color-success); }
-        .timeline-connector.active { background: linear-gradient(90deg, var(--color-success), var(--color-warning)); }
-        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.4); } 50% { box-shadow: 0 0 0 6px rgba(156, 39, 176, 0); } }
-
         /* ───── Responsive Card View (base .request-card styles in theme.css) ───── */
         @media (max-width: 768px) {
             .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
@@ -289,7 +276,8 @@
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
         <div class="modal-header">
-            <h2>Request Details</h2>
+            <span class="modal-title" id="modalTitle">Request Details</span>
+            <span class="modal-status-badge" id="modalStatusBadge"></span>
             <button class="modal-close" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-body" id="modalBody"></div>
@@ -817,28 +805,6 @@
             updateWeekArrowState();
         }
 
-        // ── Mini timeline (§7p) ──
-        function buildTimeline(r) {
-            const steps = [
-                { label: 'Submitted', time: r.requestedAt, done: true },
-                { label: 'Viewed', time: r.viewedAt, done: !!r.viewedAt },
-                { label: 'Reviewed', time: r.reviewedAt, done: !!r.reviewedAt }
-            ];
-            let html = '<div class="request-timeline">';
-            let foundFirstIncomplete = false;
-            steps.forEach((s, i) => {
-                const cls = s.done ? 'completed' : (!foundFirstIncomplete && (foundFirstIncomplete = true) ? 'active' : 'pending');
-                html += '<div class="timeline-step ' + cls + '">';
-                html += '<div class="timeline-dot"></div>';
-                html += '<div class="timeline-label">' + s.label + '</div>';
-                html += '<div class="timeline-time">' + (s.time ? formatDateTime(s.time) : '—') + '</div>';
-                html += '</div>';
-                if (i < steps.length - 1) html += '<div class="timeline-connector ' + (s.done ? 'completed' : '') + '"></div>';
-            });
-            html += '</div>';
-            return html;
-        }
-
         // ── Modal ──
         let currentModalId = null;
 
@@ -848,65 +814,73 @@
             currentModalId = r.id;
             viewedIds.add(r.id);
 
-            const body = document.getElementById('modalBody');
-            let html = '';
+            // Global timeline (always visible above the tabs)
+            const timeline = [
+                { label: 'Submitted', time: formatDateTime(r.requestedAt), state: 'completed' },
+                { label: 'Viewed', time: r.viewedAt ? formatDateTime(r.viewedAt) : '—', state: r.viewedAt ? 'completed' : 'pending' },
+                { label: 'Reviewed', time: r.reviewedAt ? formatDateTime(r.reviewedAt) : 'Pending', state: r.reviewedAt ? 'completed' : (r.status === 'Pending' ? 'active' : 'pending') }
+            ];
 
-            // Timeline
-            html += buildTimeline(r);
-
-            // Section 1: Request Information
-            html += '<div class="modal-section"><div class="modal-section-title">Request Information</div>';
+            // Tab 1: Request Information
             var modalLec = lookupLecturer(r.lecturer);
+            var reqRows = '';
             if (modalLec) {
-                html += '<p><strong>Lecturer:</strong> ' + modalLec.name + '</p>';
-                html += '<p><strong>Staff ID:</strong> ' + modalLec.staffId + '</p>';
-                html += '<p><strong>Email:</strong> <span class="lecturer-cell-email" onclick="copyEmail(\'' + modalLec.email + '\', event)" title="Click to copy">' + modalLec.email + ' 📋</span></p>';
+                reqRows += DetailModal.row('Lecturer', modalLec.name, { strong: true });
+                reqRows += DetailModal.row('Staff ID', modalLec.staffId ? '<span class="detail-value--muted">' + modalLec.staffId + '</span>' : null);
+                reqRows += DetailModal.row('Email', '<span class="lecturer-cell-email" onclick="copyEmail(\'' + modalLec.email + '\', event)" title="Click to copy">' + modalLec.email + ' <span class="copy-icon">📋</span></span>');
             } else {
-                html += '<p><strong>Lecturer:</strong> ' + r.lecturer + '</p>';
+                reqRows += DetailModal.row('Lecturer', r.lecturer, { strong: true });
             }
-            html += '<p><strong>Course:</strong> ' + r.courseCode + ' — ' + r.courseName + '</p>';
-            html += '<p><strong>Requested:</strong> ' + formatDateTime(r.requestedAt) + '</p>';
-            html += '<p><strong>Status:</strong> <span class="badge ' + statusClass(r.status) + '">' + r.status + '</span></p>';
+            reqRows += DetailModal.row('Course', '<span class="detail-value--strong">' + r.courseCode + '</span> — ' + r.courseName);
+            reqRows += DetailModal.row('Requested', formatDateTime(r.requestedAt));
+            reqRows += DetailModal.row('Status', '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>');
             if (r.rejectionReason) {
-                html += '<p style="color:var(--color-error)"><strong>Rejection Reason:</strong> ' + r.rejectionReason + '</p>';
+                reqRows += DetailModal.row('Rejection Reason', r.rejectionReason, { strong: true });
             }
-            html += '</div>';
+            const reqSection = DetailModal.section('Request Information', reqRows);
 
-            // Section 2: Original Class Detail
-            html += '<div class="modal-section"><div class="modal-section-title">Original Class Detail</div>';
-            html += '<p><strong>Date:</strong> ' + r.classDay + ', ' + r.classDate + '</p>';
-            html += '<p><strong>Time:</strong> ' + DateHelper.to12h(r.timeStart) + ' to ' + DateHelper.to12h(r.timeEnd) + ' (' + r.duration + 'h)</p>';
-            html += '<p><strong>Venue:</strong> ' + r.venue + '</p>';
-            html += '<p><strong>Students:</strong> ' + r.totalStudents + ' (' + r.cohorts.join(', ') + ')</p>';
-            html += '</div>';
+            // Tab 2: Original Class Detail
+            const origSection = DetailModal.section('Original Class', 
+                DetailModal.row('Date', r.classDay + ', ' + r.classDate) +
+                DetailModal.row('Time', DateHelper.to12h(r.timeStart) + ' to ' + DateHelper.to12h(r.timeEnd) + ' (' + r.duration + 'h)', { strong: true }) +
+                DetailModal.row('Venue', r.venue) +
+                DetailModal.row('Students', String(r.totalStudents) + ' <span class="detail-value--muted">(' + r.cohorts.join(', ') + ')</span>')
+            );
 
-            // Section 3: Requested Replacement Class
-            html += '<div class="modal-section"><div class="modal-section-title">Requested Replacement Class</div>';
-            html += '<p><strong>Date:</strong> ' + r.replacementDate + '</p>';
-            html += '<p><strong>Time:</strong> ' + DateHelper.format12hRange(r.replacementTime) + '</p>';
-            html += '<p><strong>Venue:</strong> ' + r.replacementVenue + '</p>';
-            html += '<p><strong>Slot Validity:</strong> ' + slotValidityHtml(r) + '</p>';
-            html += '</div>';
+            // Tab 3: Requested Replacement Class
+            const repSection = DetailModal.section('Replacement Class',
+                DetailModal.row('Date', r.replacementDate) +
+                DetailModal.row('Time', DateHelper.format12hRange(r.replacementTime), { strong: true }) +
+                DetailModal.row('Venue', r.replacementVenue) +
+                DetailModal.row('Slot Validity', slotValidityHtml(r))
+            );
 
-            // Section 4: Review (if reviewed)
+            const tabs = [{ key: 'info', label: 'Request Info', html: reqSection }];
+            tabs.push({ key: 'original', label: 'Original Class', html: origSection });
+            tabs.push({ key: 'replacement', label: 'Replacement Class', html: repSection });
             if (r.reviewedBy) {
-                html += '<div class="modal-section"><div class="modal-section-title">Review</div>';
-                html += '<p><strong>Reviewed By:</strong> ' + r.reviewedBy + '</p>';
-                html += '<p><strong>Reviewed At:</strong> ' + formatDateTime(r.reviewedAt) + '</p>';
-                if (r.remarks) {
-                    html += '<p><strong>Remarks:</strong> ' + r.remarks + '</p>';
-                }
-                html += '</div>';
+                const reviewSection = DetailModal.section('Review',
+                    DetailModal.row('Reviewed By', r.reviewedBy) +
+                    DetailModal.row('Reviewed At', formatDateTime(r.reviewedAt)) +
+                    (r.remarks ? DetailModal.row('Remarks', r.remarks) : '')
+                );
+                tabs.push({ key: 'review', label: 'Review', html: reviewSection });
             }
 
-            body.innerHTML = html;
+            DetailModal.render({
+                modalId: 'modalOverlay',
+                title: 'Request Details',
+                subtitle: '#' + r.id + ' · ' + r.courseCode + ' — ' + r.courseName,
+                status: { text: r.status, cls: statusClass(r.status) },
+                timeline: timeline,
+                tabs: tabs
+            });
 
             // Toggle footer buttons — bottom-left Close is always visible
             document.getElementById('rejectRequestBtn').style.display = r.status === 'Pending' ? '' : 'none';
             document.getElementById('approveRequestBtn').style.display = r.status === 'Pending' ? '' : 'none';
             document.getElementById('closeModalBtn').style.display = '';
 
-            document.getElementById('modalOverlay').classList.add('show');
             renderTable();
         }
 
@@ -917,7 +891,7 @@
         }
 
         function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('show');
+            DetailModal.close();
             currentModalId = null;
         }
 

@@ -1,5 +1,24 @@
 # Changelog — Venue Timetable UI
 
+## [2026-08-15] Detail modal redesign + fix (was never opening)
+
+### Summary
+
+- **Fix**: the Booked-Class detail modal opened with `.classList.add('open')` but only `.modal-overlay.show` is styled — the modal never displayed. Now uses `DetailModal` (`.show`).
+- **Redesign**: converts the static `modal-field` rows to the shared `DetailModal` "Detail Sheet" (identity header, single flat group, definition rows without per-row borders). Same data (Course/Name/Lecturer/Venue/Cohort/Time/Status/Remarks).
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/venue-timetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | Body emptied (JS-generated now). |
+| `openModal()` | Rewritten | Uses `DetailModal.render`; fixed `.open` → `.show`. |
+| `closeModal()` | Updated | Uses `DetailModal.close()`. |
+
+---
+
 ## [2026-08-15] Page-specific summary card descriptions
 
 ### Summary

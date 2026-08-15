@@ -1,5 +1,11 @@
 # Changelog — Student My Timetable
 
+## [2026-08-15] Class detail modal redesign: unified detail sheet
+
+The Class Detail modal now uses the shared `DetailModal` "Detail Sheet" via the shared `openClassModal()` (single flat group, definition rows, identity header). No page-specific changes needed.
+
+---
+
 ## SDD Change: `student-my-timetable-ui`
 **Date:** 2026-08-02
 **Scope:** View-only weekly timetable for students + rule #6 CSS promotion + 14 UI enhancements

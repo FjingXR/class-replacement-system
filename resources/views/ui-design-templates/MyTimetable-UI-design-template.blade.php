@@ -267,15 +267,10 @@
 
         function openModal(event) {
             currentModalEvent = event;
-            document.getElementById('modalTitle').textContent = event.code || 'Class Details';
 
             const days = weekData[currentWeek].days;
             const isConflict = days[event.di] && days[event.di].holiday;
             const displayStatus = isConflict ? 'conflict' : event.status;
-
-            const badge = document.getElementById('modalStatusBadge');
-            badge.textContent = displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1);
-            badge.className = 'modal-status-badge ' + displayStatus;
 
             const replaceBtn = document.getElementById('btnReplaceNow');
             replaceBtn.style.display = isConflict ? 'flex' : 'none';
@@ -294,16 +289,7 @@
                 studentValue = event.studentCounts.join('+') + ' = ' + event.studentCounts.reduce((a, b) => a + b, 0);
             }
 
-            let timelineHtml = '';
-            if (event.status === 'pending') {
-                timelineHtml = '<div class="status-timeline">' +
-                    '<div class="step completed">Submitted \u2713</div>' +
-                    '<div class="step active">Under Review</div>' +
-                    '<div class="step">Awaiting Replacement</div>' +
-                '</div>';
-            }
-
-            const fields = [
+            const rows = [
                 { label: 'Subject Code', value: event.code },
                 { label: 'Subject Name', value: event.name },
                 { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
@@ -313,26 +299,34 @@
                 { label: 'Venue', value: event.venue || '—' },
                 { label: 'Day', value: dayNames[event.di] },
                 { label: 'Date', value: weekData[currentWeek].days[event.di].date },
-                { label: 'Time', value: startStr + ' – ' + endStr },
+                { label: 'Time', value: startStr + ' – ' + endStr, strong: true },
                 { label: 'Status', value: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) },
                 { label: 'Remarks', value: event.remarks || '—' },
             ];
 
             if (event.status === 'pending') {
-                fields.splice(fields.length - 1, 0,
+                rows.splice(rows.length - 1, 0,
                     { label: 'Requested At', value: event.requestedAt || '—' },
                     { label: 'Requested By', value: event.requestedBy || '—' }
                 );
             }
 
-            document.getElementById('modalBody').innerHTML = timelineHtml + fields.map(f =>
-                `<div class="modal-field">
-                    <span class="field-label">${f.label}</span>
-                    <span class="field-value">${f.value}</span>
-                </div>`
-            ).join('');
-
-            document.getElementById('classModal').style.display = 'flex';
+            DetailModal.render({
+                modalId: 'classModal',
+                title: event.code || 'Class Details',
+                subtitle: event.name,
+                status: { text: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1), cls: displayStatus },
+                timeline: event.status === 'pending'
+                    ? [
+                        { label: 'Submitted', time: event.requestedAt || 'Done', state: 'completed' },
+                        { label: 'Under Review', time: 'In progress', state: 'active' },
+                        { label: 'Awaiting Replacement', time: 'Next', state: 'pending' },
+                      ]
+                    : null,
+                body: DetailModal.section('Class Information',
+                    rows.map(r => DetailModal.row(r.label, r.value, { strong: r.strong })).join('')
+                )
+            });
         }
 
         function closeModal() {

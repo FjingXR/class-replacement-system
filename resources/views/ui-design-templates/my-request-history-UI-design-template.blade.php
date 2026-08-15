@@ -122,50 +122,6 @@
             color: var(--color-on-error);
         }
 
-        /* ───── F6: Status History Timeline ───── */
-        .timeline {
-            padding: 8px 0 4px 0;
-        }
-        .timeline-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            position: relative;
-            padding-bottom: 16px;
-        }
-        .timeline-step:last-child { padding-bottom: 0; }
-        .timeline-connector {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-shrink: 0;
-            width: 2px;
-            min-height: 16px;
-            background: var(--color-outline);
-            margin-top: 4px;
-        }
-        .timeline-step:last-child .timeline-connector { display: none; }
-        .timeline-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .timeline-text {
-            flex: 1;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-        .timeline-label {
-            font-weight: 600;
-            color: var(--color-on-surface);
-        }
-        .timeline-time {
-            font-size: 11px;
-            color: var(--color-on-surface-variant);
-            margin-top: 1px;
-        }
-
         /* ───── F7: Keyboard Shortcuts ───── */
         .row-focused { outline: 2px solid var(--color-primary); outline-offset: -2px; }
 
@@ -292,7 +248,8 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="detailsModal">
             <div class="modal-header">
-                <h3 class="modal-title">Request Details</h3>
+                <span class="modal-title" id="modalTitle">Request Details</span>
+                <span class="modal-status-badge" id="modalStatusBadge"></span>
                 <button class="modal-close" onclick="closeModal()">✕</button>
             </div>
             <div class="modal-body" id="modalBody"></div>
@@ -723,75 +680,76 @@
             document.getElementById('summaryRejected').textContent = rejected;
         }
 
+        function cohortBreakdown(r) {
+            if (!r.cohortCounts) return String(r.totalStudents);
+            var parts = [];
+            for (var ci = 0; ci < r.cohorts.length; ci++) {
+                parts.push(r.cohortCounts[ci]);
+            }
+            return parts.join(' + ') + ' = ' + r.totalStudents;
+        }
+
+        function statusDesc(s) {
+            var map = { 'Pending': 'Awaiting approval', 'Approved': 'Replacement scheduled', 'Rejected': 'Request declined', 'Cancelled': 'Request withdrawn', 'Completed': 'Replacement conducted' };
+            return map[s] || '';
+        }
+
         function openModalById(id) {
             const r = mockRequests.find(x => x.id === id);
             if (!r) return;
-            const body = document.getElementById('modalBody');
-            var html = '';
 
-            function field(label, value) {
-                if (value === null || value === '') return '';
-                return '<div class="modal-field"><span class="modal-field-label">' + label + '</span><span class="modal-field-value">' + value + '</span></div>';
-            }
+            // Global timeline (always visible above the tabs)
+            const reviewTime = r.reviewedAt ? formatDateTime(r.reviewedAt) : null;
+            const timeline = [
+                { label: 'Request Submitted', time: formatDateTime(r.requestedAt), state: 'completed' },
+                { label: 'Under Review', time: reviewTime || '—', state: r.status === 'Pending' ? 'active' : 'completed' },
+                { label: r.status, time: reviewTime || '—', state: r.status === 'Pending' ? 'pending' : 'completed' }
+            ];
 
-            function section(title) {
-                return '<div class="modal-section-title">' + title + '</div>'; }
+            // Tab 1: General Info
+            const genRows =
+                DetailModal.row('Request No.', '#' + r.id, { strong: true }) +
+                DetailModal.row('Requested At', formatDateTime(r.requestedAt)) +
+                DetailModal.row('Status', '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span> <span class="detail-caption">' + statusDesc(r.status) + '</span>') +
+                (r.status === 'Rejected' && r.rejectionReason ? DetailModal.row('Rejection Reason', r.rejectionReason, { strong: true }) : '') +
+                DetailModal.row('Course Code', r.courseCode, { strong: true }) +
+                DetailModal.row('Course Name', r.courseName) +
+                DetailModal.row('Class Type', r.classType === 'L' ? 'Lecture' : 'Tutorial');
+            const genSection = DetailModal.section('General Info', genRows);
 
-            function cohortBreakdown(r) {
-                if (!r.cohortCounts) return String(r.totalStudents);
-                var parts = [];
-                for (var ci = 0; ci < r.cohorts.length; ci++) {
-                    parts.push(r.cohortCounts[ci]);
-                }
-                return parts.join(' + ') + ' = ' + r.totalStudents;
-            }
+            // Tab 2: Original Class Detail
+            const origSection = DetailModal.section('Original Class',
+                DetailModal.row('Cohort(s)', r.cohorts.join(', ')) +
+                DetailModal.row('Total Students', cohortBreakdown(r)) +
+                DetailModal.row('Original Date', formatDate(r.classDate)) +
+                DetailModal.row('Original Day', r.classDay) +
+                DetailModal.row('Original Time', to12h(r.timeStart) + ' to ' + to12h(r.timeEnd), { strong: true }) +
+                DetailModal.row('Duration', String(r.duration) + ' hours') +
+                DetailModal.row('Original Venue', r.venue)
+            );
 
-            function statusDesc(s) {
-                var map = { 'Pending': 'Awaiting approval', 'Approved': 'Replacement scheduled', 'Rejected': 'Request declined', 'Cancelled': 'Request withdrawn', 'Completed': 'Replacement conducted' };
-                return map[s] || '';
-            }
+            // Tab 3: Requested Replacement Class
+            const repSection = DetailModal.section('Replacement Class',
+                DetailModal.row('Replacement Date', r.replacementDate ? formatDate(r.replacementDate) : null) +
+                DetailModal.row('Replacement Time', r.replacementTime ? DateHelper.format12hRange(r.replacementTime) : null, { strong: true }) +
+                DetailModal.row('Replacement Venue', r.replacementVenue || '—') +
+                DetailModal.row('Reviewed By', r.reviewedBy) +
+                DetailModal.row('Reviewed At', r.reviewedAt ? formatDateTime(r.reviewedAt) : null)
+            );
 
-            html += section('General Info');
-            html += field('Request No.', '#' + r.id);
-            html += field('Requested At', formatDateTime(r.requestedAt));
-            html += field('Status', '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span><span style="color:var(--color-on-surface-variant);font-size:12px;margin-left:8px">' + statusDesc(r.status) + '</span>');
-            if (r.status === 'Rejected') {
-                html += field('Rejection Reason', r.rejectionReason);
-            }
-            html += field('Course Code', r.courseCode);
-            html += field('Course Name', r.courseName);
-            html += field('Class Type', r.classType === 'L' ? 'Lecture' : 'Tutorial');
+            DetailModal.render({
+                modalId: 'modalOverlay',
+                title: 'Request Details',
+                subtitle: '#' + r.id + ' · ' + r.courseCode + ' — ' + r.courseName,
+                status: { text: r.status, cls: statusClass(r.status) },
+                timeline: timeline,
+                tabs: [
+                    { key: 'general', label: 'General Info', html: genSection },
+                    { key: 'original', label: 'Original Class', html: origSection },
+                    { key: 'replacement', label: 'Replacement Class', html: repSection }
+                ]
+            });
 
-            html += section('Original Class Detail');
-            html += field('Cohort(s)', r.cohorts.join(', '));
-            html += field('Total Students', cohortBreakdown(r));
-            html += field('Original Date', formatDate(r.classDate));
-            html += field('Original Day', r.classDay);
-            html += field('Original Time', to12h(r.timeStart) + ' to ' + to12h(r.timeEnd));
-            html += field('Duration', String(r.duration) + ' hours');
-            html += field('Original Venue', r.venue);
-
-            html += section('Requested Replacement Class');
-            html += field('Replacement Date', r.replacementDate ? formatDate(r.replacementDate) : null);
-            html += field('Replacement Time', r.replacementTime ? DateHelper.format12hRange(r.replacementTime) : null);
-            html += field('Replacement Venue', r.replacementVenue || '—');
-            html += field('Reviewed By', r.reviewedBy);
-            html += field('Reviewed At', r.reviewedAt ? formatDateTime(r.reviewedAt) : null);
-
-            if (r.status === 'Pending' || r.status === 'Approved' || r.status === 'Rejected') {
-                html += '<div class="modal-section-title">Request Timeline</div>';
-                html += '<div class="timeline">';
-                var submittedTime = formatDateTime(r.requestedAt);
-                var reviewTime = r.reviewedAt ? formatDateTime(r.reviewedAt) : null;
-                var statusColor = r.status === 'Pending' ? 'var(--color-warning)' : r.status === 'Approved' ? 'var(--color-success)' : 'var(--color-error)';
-                html += '<div class="timeline-step"><div class="timeline-connector"><div class="timeline-dot" style="background:var(--color-primary)"></div></div><div class="timeline-text"><div class="timeline-label">Request Submitted</div><div class="timeline-time">' + submittedTime + '</div></div></div>';
-                html += '<div class="timeline-step"><div class="timeline-connector"><div class="timeline-dot" style="background:var(--color-outline)"></div></div><div class="timeline-text"><div class="timeline-label">Under Review</div><div class="timeline-time">' + (reviewTime || '—') + '</div></div></div>';
-                html += '<div class="timeline-step"><div class="timeline-connector"><div class="timeline-dot" style="background:' + statusColor + '"></div></div><div class="timeline-text"><div class="timeline-label">' + r.status + '</div><div class="timeline-time">' + (reviewTime || '—') + '</div></div></div>';
-                html += '</div>';
-            }
-
-            body.innerHTML = html;
-            document.getElementById('modalOverlay').classList.add('show');
             document.getElementById('cancelRequestBtn').style.display = r.status === 'Pending' ? 'inline-block' : 'none';
         }
 
@@ -802,7 +760,7 @@
         }
 
         function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('show');
+            DetailModal.close();
         }
 
         function confirmCancelRequest() {

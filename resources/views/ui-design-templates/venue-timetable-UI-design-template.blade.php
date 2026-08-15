@@ -553,40 +553,7 @@
                     <span class="modal-status-badge" id="modalStatusBadge">Normal</span>
                     <button class="modal-close" onclick="closeModal()">&times;</button>
                 </div>
-                <div class="modal-body" id="modalBody">
-                    <div class="modal-field">
-                        <span class="field-label">Course</span>
-                        <span class="field-value" id="mdlCourse">—</span>
-                    </div>
-                    <div class="modal-field">
-                        <span class="field-label">Name</span>
-                        <span class="field-value" id="mdlName">—</span>
-                    </div>
-                    <div class="modal-field">
-                        <span class="field-label">Lecturer</span>
-                        <span class="field-value" id="mdlLecturer">—</span>
-                    </div>
-                    <div class="modal-field">
-                        <span class="field-label">Venue</span>
-                        <span class="field-value" id="mdlVenue">—</span>
-                    </div>
-                    <div class="modal-field">
-                        <span class="field-label">Cohort</span>
-                        <span class="field-value" id="mdlCohort">—</span>
-                    </div>
-                    <div class="modal-field">
-                        <span class="field-label">Time</span>
-                        <span class="field-value" id="mdlTime">—</span>
-                    </div>
-                    <div class="modal-field">
-                        <span class="field-label">Status</span>
-                        <span class="field-value"><span class="badge" id="mdlStatusBadge">—</span></span>
-                    </div>
-                    <div class="modal-field">
-                        <span class="field-label">Remarks</span>
-                        <span class="field-value" id="mdlRemarks">—</span>
-                    </div>
-                </div>
+                <div class="modal-body" id="modalBody"></div>
                 <div class="modal-footer">
                     <button class="btn-close-modal" onclick="closeModal()">Close</button>
                 </div>
@@ -1102,31 +1069,30 @@
            ════════════════════════════════════════════ */
 
         function openModal(e, di) {
-            const modal = document.getElementById('eventModal');
-            document.getElementById('modalTitle').textContent = 'Class Details';
-            document.getElementById('mdlCourse').textContent = e.code;
-            document.getElementById('mdlName').textContent = e.name || '—';
-            document.getElementById('mdlLecturer').textContent = e.lecturer || '—';
-            document.getElementById('mdlVenue').textContent = currentVenue ? `${currentVenue.code} — ${currentVenue.type} (${currentVenue.capacity} seats)` : e.venue;
-            document.getElementById('mdlCohort').textContent = e.cohort || '—';
-
             const startTime = typeof to12h === 'function' ? to12h(hours[e.start]) : hours[e.start];
             const endTime = typeof to12h === 'function' ? to12h(hours[e.end + 1] || add30min(hours[e.end])) : hours[e.end + 1] || add30min(hours[e.end]);
-            document.getElementById('mdlTime').textContent = `${startTime} – ${endTime}`;
+            const venueStr = currentVenue ? `${currentVenue.code} — ${currentVenue.type} (${currentVenue.capacity} seats)` : (e.venue || '—');
 
-            const statusBadge = document.getElementById('mdlStatusBadge');
-            statusBadge.textContent = e.status;
-            statusBadge.className = `badge badge-${e.status}`;
-            document.getElementById('modalStatusBadge').textContent = e.status;
-            document.getElementById('modalStatusBadge').className = `modal-status-badge badge-${e.status}`;
-
-            document.getElementById('mdlRemarks').textContent = e.remarks || '—';
-
-            modal.classList.add('open');
+            DetailModal.render({
+                modalId: 'eventModal',
+                title: 'Class Details',
+                subtitle: e.code + ' · ' + (e.name || ''),
+                status: { text: e.status, cls: 'badge-' + e.status },
+                body: DetailModal.section('Class Information',
+                    DetailModal.row('Course', e.code, { strong: true }) +
+                    DetailModal.row('Name', e.name || '—') +
+                    DetailModal.row('Lecturer', e.lecturer || '—') +
+                    DetailModal.row('Venue', venueStr) +
+                    DetailModal.row('Cohort', e.cohort || '—') +
+                    DetailModal.row('Time', startTime + ' – ' + endTime, { strong: true }) +
+                    DetailModal.row('Status', '<span class="badge badge-' + e.status + '">' + e.status + '</span>') +
+                    DetailModal.row('Remarks', e.remarks || '—')
+                )
+            });
         }
 
         function closeModal() {
-            document.getElementById('eventModal').classList.remove('open');
+            DetailModal.close();
         }
 
         /* ════════════════════════════════════════════

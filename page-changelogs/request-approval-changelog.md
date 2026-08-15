@@ -1,5 +1,44 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Detail modal redesign: category tabs + unified detail sheet
+
+### Summary
+
+The Request Details modal is now built on a shared **"Detail Sheet"** system (`DetailModal` in `ui-common.js`) with:
+
+- **Identity header** — left-aligned title + muted subtitle (request `#id · code — name`), single status badge top-right.
+- **Global timeline** — a single horizontal rail (Submitted → Viewed → Reviewed) pinned above the tabs, always visible; shared `.modal-timeline` component.
+- **Category tabs** — Request Info / Original Class / Replacement Class, plus a conditional **Review** tab that only appears when review data exists. Click to switch panels; title/timeline/footer stay static.
+- **Groups instead of boxes** — `detail-group` + `detail-group-title` with a thin top rule; definition `detail-row`s (label/value) with no per-row bottom borders; `--strong`/`--muted` emphasis.
+- Removed the old `<p>`-based boxed sections and `request-timeline` page CSS.
+
+All fields, actions (approve/reject), and footer behaviour preserved.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | Header now `.modal-title#modalTitle` + `.modal-status-badge`; body emptied. |
+| `openModalById()` | Rewritten | Uses `DetailModal.render` with global timeline + 4 tabs (Review conditional on `reviewedBy`). |
+| Page styles | Removed | Old `.request-timeline`/`.timeline-*` CSS block. |
+
+#### `public/css/theme.css`
+
+| Location | Change | Detail |
+|---|---|---|
+| After modal shell | Added | `.modal--detail`, `.detail-group(.title)`, `.detail-row/label/value` (+ `--strong/--muted`), `.modal-timeline.tl-*`, `.modal-tabs`/`.modal-tab`/`.modal-tab-panel`. |
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `DetailModal` (new) | Added | Shared render/timeline/section/row/tab helpers + open/close. |
+| `openClassModal()` | Updated | Rewritten to use `DetailModal` (single flat group). |
+
+---
+
 ## [2026-08-15] Fix: duplicate data-tip tooltip on hover (init ran twice)
 
 ### Summary
