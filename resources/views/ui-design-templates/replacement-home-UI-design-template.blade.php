@@ -364,6 +364,13 @@
                         row.onclick = function() { quickView(idx); };
                         row.style.cursor = 'pointer';
                     })(row, i);
+                    row.setAttribute('data-tip', HtmlBuilder.rowTip(
+                        c.code + ' — ' + c.name + ' (' + c.type + ')',
+                        dayAbbr(c.day) + ', ' + formatDate(c.date) + ', ' + c.timeStart + '–' + c.timeEnd,
+                        c.venue,
+                        c.totalStudents + ' student' + (c.totalStudents !== 1 ? 's' : '') + (c.cohorts.length ? ' (' + c.cohorts.join(', ') + ')' : ''),
+                        c.conflictReason || ''
+                    ));
                     body.appendChild(row);
                 });
             }

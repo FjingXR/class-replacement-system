@@ -1290,6 +1290,16 @@ class HtmlBuilder {
             '<span>' + c.cohorts.join(', ') + '</span>' +
             '</div>';
     }
+
+    static rowTip(/* ...parts */) {
+        return Array.prototype.filter
+            .call(arguments, function(p) { return p != null && p !== ''; })
+            .join(' | ');
+    }
+
+    static tipAttr(tooltipStr) {
+        return ' data-tip="' + tooltipStr.replace(/"/g, '&quot;') + '"';
+    }
 }
 
 // ───── Skeleton Loading ─────

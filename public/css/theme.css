@@ -1789,6 +1789,14 @@ html.dark .semester-bar select:not(.week-select) {
     opacity: 1;
     visibility: visible;
 }
+tr[data-tip]::after {
+    bottom: auto;
+    top: calc(-100% - 6px);
+    left: 8px;
+    max-width: 560px;
+    white-space: nowrap;
+}
+tr[data-tip]::before { display: none; }
 
 /* ── Copy toast ─────────────────────────────────────────────── */
 .copy-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--color-inverse-surface); color: var(--color-on-inverse-surface); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; }

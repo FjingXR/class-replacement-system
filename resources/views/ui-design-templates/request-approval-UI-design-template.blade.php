@@ -550,7 +550,18 @@
             if (level === 'urgent') rowClass += ' row-urgent';
             else if (urgencyDays(r.classDate) <= 7) rowClass += ' row-soon';
 
-            let html = '<tr data-id="' + r.id + '"' + (rowClass ? ' class="' + rowClass.trim() + '"' : '') + ' onclick="openModalById(' + r.id + ')" style="cursor:pointer">';
+            var lecName = (typeof lookupLecturer === 'function' && lookupLecturer(r.lecturer)) ? lookupLecturer(r.lecturer).name : r.lecturer;
+
+            let html = '<tr data-id="' + r.id + '"' + (rowClass ? ' class="' + rowClass.trim() + '"' : '')
+                + HtmlBuilder.tipAttr(HtmlBuilder.rowTip(
+                    r.courseCode + ' — ' + r.courseName,
+                    lecName,
+                    dayAbbr(r.classDay) + ', ' + formatDate(r.classDate) + ', ' + r.timeStart + '–' + r.timeEnd + ' ' + r.venue +
+                        (r.replacementDate ? ' → ' + dayAbbr(isoDayName(r.replacementDate)) + ', ' + formatDate(r.replacementDate) + ', ' + r.replacementTime + ' ' + r.replacementVenue : ''),
+                    r.totalStudents + ' student' + (r.totalStudents !== 1 ? 's' : ''),
+                    r.status
+                ))
+                + ' onclick="openModalById(' + r.id + ')" style="cursor:pointer">';
 
             // Checkbox column
             if (r.status === 'Pending') {
