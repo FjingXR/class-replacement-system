@@ -389,9 +389,9 @@
                 card.className = 'replacement-card';
                 card.setAttribute('role', 'button');
                 card.setAttribute('tabindex', '0');
-                card.addEventListener('click', function() { goToReplacementWith(c.code, c.date); });
+                card.addEventListener('click', function() { goToReplacementWith(c.code, c.date, c.duration); });
                 card.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToReplacementWith(c.code, c.date); }
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToReplacementWith(c.code, c.date, c.duration); }
                 });
                 card.innerHTML = HtmlBuilder.replacementHomeCard(c, {
                     daysLeft: daysLeft,
@@ -425,8 +425,13 @@
             populateWeekSelect('weekFilter', { includeAll: true });
         }
 
-        function goToReplacementWith(code, date) {
-            window.location.href = '/replacement-arrangement?code=' + encodeURIComponent(code) + '&date=' + encodeURIComponent(date) + '&from=replacement-home';
+        function goToReplacementWith(code, date, duration) {
+            let url = '/replacement-arrangement?code=' + encodeURIComponent(code) + '&date=' + encodeURIComponent(date);
+            if (duration !== undefined && duration !== null && !isNaN(duration)) {
+                url += '&duration=' + duration;
+            }
+            url += '&from=replacement-home';
+            window.location.href = url;
         }
 
 
@@ -482,8 +487,9 @@
             if (qvCurrent) {
                 var c = qvCurrent.code;
                 var d = qvCurrent.date;
+                var dur = qvCurrent.duration;
                 hideQuickView();
-                goToReplacementWith(c, d);
+                goToReplacementWith(c, d, dur);
             }
         }
 

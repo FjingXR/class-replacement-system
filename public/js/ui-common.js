@@ -813,6 +813,9 @@ function goToReplacement(code, cohort, opts, from) {
         if (opts.start !== undefined) params.push('start=' + opts.start);
         if (opts.end !== undefined) params.push('end=' + opts.end);
         if (opts.venue) params.push('originalVenue=' + encodeURIComponent(opts.venue));
+        if (opts.duration !== undefined && opts.duration !== null && !isNaN(opts.duration)) {
+            params.push('duration=' + opts.duration);
+        }
     }
     if (from) params.push('from=' + from);
     if (params.length) url += '?' + params.join('&');

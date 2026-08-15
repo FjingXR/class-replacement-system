@@ -792,7 +792,9 @@
 @endsection
 
 @section('page-scripts')
-        const MAX_SELECTION = 4;
+        // Max selectable slots — derived from the original class duration passed via
+        // URL (duration in hours × 2 = 30-min slots), defaulting to 4 slots (2 hours).
+        let MAX_SELECTION = 4;
 
         const weekData = generateWeekData();
         const venueSlotData = MockData.venueSlots;
@@ -1625,7 +1627,8 @@
                 day: params.get('day'),
                 start: params.get('start'),
                 end: params.get('end'),
-                originalVenue: params.get('originalVenue')
+                originalVenue: params.get('originalVenue'),
+                duration: params.get('duration')
             };
             return urlParams;
         }
@@ -1668,6 +1671,12 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             readUrlParams();
+            // If the original class duration was passed in (hours), cap the selection
+            // at that many 30-min slots so the replacement matches the class length.
+            if (urlParams.duration && !isNaN(parseFloat(urlParams.duration))) {
+                const hrs = parseFloat(urlParams.duration);
+                if (hrs > 0) MAX_SELECTION = Math.round(hrs * 2);
+            }
             buildSubjectDropdown();
             buildVenueDropdown();
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;

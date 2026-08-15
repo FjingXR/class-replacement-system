@@ -1,5 +1,20 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-15] Pass class duration to replacement-arrangement
+
+The "Arrange" navigation now includes the conflicted class `duration` (hours) as a `duration=` query param, so the replacement page can match the selection length. (Replacement-home already had `c.duration` in its data.)
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `goToReplacementWith()` | Updated | Accepts optional `duration` and appends `&duration=` to the URL. |
+| Card click / keydown / quick-view | Updated | Pass `c.duration` / `qvCurrent.duration`. |
+
+---
+
 ## [2026-08-15] Quick-View: status description as its own row
 
 Added a **Status Description** row alongside the days-left badge ("Urgent — arrange a replacement soon" / "Approaching — plan a replacement" / "Within normal lead time").

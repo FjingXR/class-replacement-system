@@ -1,5 +1,25 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-15] Replace Now passes original class duration to replacement-arrangement
+
+The **Replace Now** button now includes `duration` (in hours, derived from the event's `start`/`end` slot indices via `(end - start + 1) / 2`) in the URL when navigating to `/replacement-arrangement`. The arrangement page then caps the selection at that many 30-min slots (duration × 2) so the replacement matches the original class length.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `btnReplaceNow` | Updated | `goToReplacement(..., { day, start, end, venue, duration })` — duration = `(end - start + 1) / 2` hours. |
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `goToReplacement()` | Updated | Appends `duration` to the query string when `opts.duration` is a valid number. |
+
+---
+
 ## [2026-08-15] Event hover tooltip shows cohort(s) instead of venue
 
 The event-block tooltip previously showed `name · venue`, but the venue is already displayed on the block. It now shows the **cohort(s)** (`name · DFT2 (S1)`) — useful for a lecturer teaching across cohorts (the lecturer in the tooltip would just be the viewer). Implemented via a new `tooltipExtra(event)` option on the shared `buildTimetableGrid`; the CSS tooltip reads `attr(data-tip2)`.
