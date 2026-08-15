@@ -1,5 +1,21 @@
 # Changelog — Venue Timetable UI
 
+## [2026-08-15] Page-specific summary card descriptions
+
+### Summary
+
+Added page-specific `description` text to each summary card (Total Slots / Available / Pending / Unavailable) instead of relying on the shared generic descriptions in `ui-summary-bar`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/venue-timetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Summary bar cards | Updated | Each card now passes a page-specific `description` (e.g. Unavailable = "booked class, Sunday, or public holiday"). |
+
+---
+
 ## [2026-08-15] Summary: Sunday + Public Holiday folded into "Unavailable"
 
 ### Summary

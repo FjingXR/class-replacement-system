@@ -681,10 +681,14 @@
         <!-- ─── Summary Bar ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
-                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots'],
-                ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available'],
-                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
-                ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable'],
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots',
+                    'description' => 'All time slots shown for <strong>this venue</strong> in the selected week.'],
+                ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available',
+                    'description' => '<strong>Free slots</strong> you can select as the replacement.'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
+                    'description' => 'Your replacement requests <strong>awaiting approval</strong>.'],
+                ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable',
+                    'description' => '<strong>Cannot select</strong> — booked by others, Sunday, or public holiday.'],
             ]
         ])
 

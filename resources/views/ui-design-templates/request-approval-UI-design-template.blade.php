@@ -10,17 +10,37 @@
 
         .col-replacement .cell-class-block .class-time {
             font-weight: 600;
+            white-space: nowrap;
         }
         .col-replacement .cell-class-block .class-venue {
             font-size: 11px;
             color: var(--color-on-surface-variant);
             display: inline-flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
         }
-        .col-replacement .cell-class-block .class-venue::before {
-            content: '📍';
-            font-size: 10px;
+        /* Slot-validity badge — sits to the LEFT of the venue; bg varies by status */
+        .slot-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .slot-badge.slot-valid {
+            background: var(--color-success-container);
+            color: var(--color-on-success-container);
+            border: 1px solid var(--color-success);
+        }
+        .slot-badge.slot-conflict {
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+            border: 1px solid var(--color-error);
         }
 
         /* ───── Status Badges (page-specific overrides) ───── */
@@ -120,12 +140,6 @@
         /* ───── Keyboard Highlight ───── */
         .row-focused { background: var(--color-primary-container) !important; border-left: 3px solid var(--color-primary); }
 
-        /* ───── Slot Validity Icons ───── */
-        .slot-icon { font-size: 11px; margin-left: 4px; font-weight: 600; }
-        .slot-valid { color: var(--color-primary); }
-        .slot-conflict { color: var(--color-error); }
-        .slot-tentative { color: var(--color-tertiary); }
-
         /* ───── Row Flash Animations ───── */
         .row-flash-approved { animation: flashGreen 0.6s ease; }
         .row-flash-rejected { animation: flashRed 0.6s ease; }
@@ -189,6 +203,7 @@
         '<strong>Hover headers</strong> — hover a column name to see what it means',
         '<strong>Bulk action</strong> — tick checkboxes then approve/reject multiple requests at once',
         '<strong>Quick action</strong> — use the approve/reject buttons on individual rows',
+        '<strong>Request age</strong> — colour indicates how long ago it was submitted: <span style="color:var(--color-primary)">● ≤1 day</span> <span style="color:var(--color-tertiary)">● 2–3 days</span> <span style="color:var(--color-error)">● 4+ days</span>',
     ]
 ])
 
@@ -249,11 +264,16 @@
 </div>
 
 @include('partials.ui-summary-bar', ['cards' => [
-    ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests'],
-    ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending Requests'],
-    ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved'],
-    ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected'],
-    ['class' => 'card-total', 'valueId' => 'summaryReviewed', 'label' => 'Total Reviewed']
+    ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests',
+        'description' => 'Replacement requests <strong>matching your current filters</strong> in the selected period.'],
+    ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending Requests',
+        'description' => 'Requests still <strong>waiting for your approval</strong> — no decision made yet.'],
+    ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved',
+        'description' => 'Requests you have <strong>approved</strong> and are ready to proceed.'],
+    ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected',
+        'description' => 'Requests you <strong>declined</strong> — the lecturer will need an alternative arrangement.'],
+    ['class' => 'card-total', 'valueId' => 'summaryReviewed', 'label' => 'Total Reviewed',
+        'description' => 'Requests already <strong>decided</strong> (approved, rejected, or completed).']
 ]])
 
 <div class="empty-state" id="emptyState" style="display:none">
@@ -374,10 +394,11 @@
 
         // ── Slot validity helper ──
         function slotValidityHtml(r) {
+            const badge = '<span class="slot-badge ' + (r.slotValidity === 'conflict' ? 'slot-conflict' : 'slot-valid') + '">' + (r.slotValidity === 'conflict' ? '⚠' : '✓') + '</span>';
             if (r.slotValidity === 'conflict') {
-                return '<span class="slot-icon slot-conflict">⚠</span>' + (r.conflictReason ? ' <span style="color:var(--color-error);font-size:11px">' + r.conflictReason + '</span>' : '');
+                return badge + (r.conflictReason ? ' <span style="color:var(--color-error);font-size:11px">' + r.conflictReason + '</span>' : '');
             }
-            return '<span class="slot-icon slot-valid">✓</span>';
+            return badge;
         }
 
         // ── Request age helper (§7.5) ──
@@ -455,13 +476,13 @@
         // ── Table columns ──
         const columns = [
             { label: '#', sortable: false, tip: 'Row number' },
-            { label: 'Requested Timestamp', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested' },
+            { label: 'Requested Timestamp', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested. Age colour: green ≤1 day, amber 2–3 days, red 4+ days' },
             { label: 'Lecturer', sortable: false, tip: 'Lecturer who submitted the request' },
             { label: 'Course Code & Name', sortable: false, tip: 'Course affected by the conflict' },
-            { label: 'Original Class', sortable: true, field: 'classDate', tip: 'Original class session being replaced' },
+            { label: 'Original Class', sortable: true, field: 'classDate', tip: 'Original class the request refers to — its state varies (still upcoming, replaced, cancelled, holiday, etc.)' },
             { label: 'Proposed Replacement', sortable: true, field: 'replacementDate', tip: 'Proposed new date, time, and venue' },
             { label: 'Students', sortable: false, tip: 'Number of students enrolled' },
-            { label: 'Urgency', sortable: true, field: 'urgencyDays', tip: 'Days remaining until the original class' },
+            { label: 'Urgency', sortable: true, field: 'urgencyDays', tip: 'Days until the original class: ≤3 days = Urgent (red), 4+ days = Normal' },
             { label: 'Status', sortable: true, field: 'status', tip: 'Current approval status' },
             { label: 'Actions', sortable: false, tip: 'Approve or reject this request' }
         ];
@@ -556,9 +577,9 @@
             let html = '<tr data-id="' + r.id + '"' + (rowClass ? ' class="' + rowClass.trim() + '"' : '')
                 + ' onclick="openModalById(' + r.id + ')" style="cursor:pointer">';
 
-            // Checkbox column
+            // Checkbox column — stopPropagation so clicking it doesn't open the row modal
             if (r.status === 'Pending') {
-                html += '<td class="col-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="toggleRowSelect(' + r.id + ')"></td>';
+                html += '<td class="col-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="toggleRowSelect(' + r.id + ')" onclick="event.stopPropagation()"></td>';
             } else {
                 html += '<td class="col-checkbox"></td>';
             }
@@ -575,19 +596,17 @@
             html += '<td><div class="cell-code">' + r.courseCode + '</div><div class="cell-name">' + r.courseName + '</div></td>';
             html += '<td>' + HtmlBuilder.classBlock(r) + '</td>';
 
-            // Proposed Replacement with slot validity icon
-            const slotIcon = r.slotValidity === 'conflict'
-                ? '<span class="slot-icon slot-conflict" title="Conflict">⚠</span>'
-                : '<span class="slot-icon slot-valid" title="Slot available">✓</span>';
-            html += '<td>' + HtmlBuilder.replacementBlock(r) + ' ' + slotIcon + '</td>';
+            // Proposed Replacement — slot validity as a status-colored badge beside the venue
+            const slotBadge = '<span class="slot-badge ' + (r.slotValidity === 'conflict' ? 'slot-conflict' : 'slot-valid') + '" title="' + (r.slotValidity === 'conflict' ? (r.conflictReason || 'Slot conflict') : 'Slot available') + '">' + (r.slotValidity === 'conflict' ? '⚠' : '✓') + '</span>';
+            html += '<td>' + HtmlBuilder.replacementBlock(r, { colorStatus: false, slotBadge: slotBadge }) + '</td>';
 
             html += '<td>' + r.totalStudents + '</td>';
             html += '<td><span class="urgency-badge ' + urgencyClass(level) + '">' + urgencyLabel(level) + '</span></td>';
             html += '<td><span class="badge ' + statusClass(r.status) + '" onclick="openModalById(' + r.id + ')" style="cursor:pointer">' + r.status + '</span></td>';
 
             const actions = r.status === 'Pending'
-                ? '<div style="display:flex;gap:6px;align-items:center"><button class="btn-approve" onclick="approveRequest(' + r.id + ')">✓ Approve</button><button class="btn-reject" onclick="openRejectModal(' + r.id + ')">✕ Reject</button></div>'
-                : '<button class="btn-view" onclick="openModalById(' + r.id + ')">👁 View</button>';
+                ? '<div style="display:flex;gap:6px;align-items:center"><button class="btn-approve" onclick="event.stopPropagation();approveRequest(' + r.id + ')">✓ Approve</button><button class="btn-reject" onclick="event.stopPropagation();openRejectModal(' + r.id + ')">✕ Reject</button></div>'
+                : '<button class="btn-view" onclick="event.stopPropagation();openModalById(' + r.id + ')">👁 View</button>';
             html += '<td>' + actions + '</td>';
             html += '</tr>';
             return html;
@@ -856,7 +875,7 @@
             // Section 2: Original Class Detail
             html += '<div class="modal-section"><div class="modal-section-title">Original Class Detail</div>';
             html += '<p><strong>Date:</strong> ' + r.classDay + ', ' + r.classDate + '</p>';
-            html += '<p><strong>Time:</strong> ' + r.timeStart + ' – ' + r.timeEnd + ' (' + r.duration + 'h)</p>';
+            html += '<p><strong>Time:</strong> ' + DateHelper.to12h(r.timeStart) + ' to ' + DateHelper.to12h(r.timeEnd) + ' (' + r.duration + 'h)</p>';
             html += '<p><strong>Venue:</strong> ' + r.venue + '</p>';
             html += '<p><strong>Students:</strong> ' + r.totalStudents + ' (' + r.cohorts.join(', ') + ')</p>';
             html += '</div>';
@@ -864,7 +883,7 @@
             // Section 3: Requested Replacement Class
             html += '<div class="modal-section"><div class="modal-section-title">Requested Replacement Class</div>';
             html += '<p><strong>Date:</strong> ' + r.replacementDate + '</p>';
-            html += '<p><strong>Time:</strong> ' + r.replacementTime + '</p>';
+            html += '<p><strong>Time:</strong> ' + DateHelper.format12hRange(r.replacementTime) + '</p>';
             html += '<p><strong>Venue:</strong> ' + r.replacementVenue + '</p>';
             html += '<p><strong>Slot Validity:</strong> ' + slotValidityHtml(r) + '</p>';
             html += '</div>';

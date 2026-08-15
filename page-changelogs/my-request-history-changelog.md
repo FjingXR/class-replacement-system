@@ -1,5 +1,29 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-15] Row polish: plain class time, consistent AM/PM, corrected tips, age legend
+
+### Summary
+
+- **Class time plain text** — "Requested Replacement" time no longer gets a coloured `status-*` chip; removed the page-specific `.class-time.status-*` badge CSS. It's plain bold text.
+- **Consistent time format** — replacement time ranges now render as `11:00 AM to 1:00 PM` via `DateHelper.format12hRange` (table + modal); modal "Original Time" uses `to` between 12h times.
+- **Header tips** — Requested At tip documents age colours; Original Class tip corrected ("its state varies…" — not all are being replaced).
+- **Request age** — `requestAgeHtml` now relative to actual today (was hardcoded `2026-08-29`), shows **Today**/**Yesterday**, keeps colour legend (green ≤1 day, amber 2–3, red 4+). Guide block documents the colours.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Page styles | Updated | Removed `.col-replacement .class-time.status-*` badge CSS block. |
+| `replacementBlock` call | Updated | `replacementBlock(r, { showVenue: false, colorStatus: false })`. |
+| Header columns | Updated | Requested At + Original Class tips rewritten. |
+| Details modal | Updated | Original Time `to12h(a) to to12h(b)`; Replacement Time via `format12hRange`. |
+| Guide block | Updated | Added request-age colour legend item. |
+| Summary bar | Updated | Page-specific card descriptions. |
+
+---
+
 ## [2026-08-15] Nav label, Requested Replacement column, status-chip colors
 
 ### Summary

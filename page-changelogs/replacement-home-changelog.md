@@ -1,5 +1,11 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-15] Page-specific summary card descriptions
+
+Added page-specific `description` text to each summary card (Total Conflicted / Venues Affected / Students Affected / Duration Hours / Distinct Courses) instead of relying on the shared generic descriptions. (`replacement-home-UI-design-template.blade.php` summary bar.)
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
 
 ### Summary

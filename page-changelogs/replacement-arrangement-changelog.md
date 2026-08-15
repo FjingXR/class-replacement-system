@@ -1,5 +1,21 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-15] Page-specific summary card descriptions
+
+### Summary
+
+Added page-specific `description` text to each summary card (Total Slots / Available / Pending / Unavailable) instead of relying on the shared generic descriptions.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Summary bar cards | Updated | Each card now passes a page-specific `description` (e.g. Available = "Free slots you can select as the replacement"). |
+
+---
+
 ## [2026-08-15] Summary bar added; Occupied/Reserved/Sunday/PH → one "Unavailable" card
 
 ### Summary

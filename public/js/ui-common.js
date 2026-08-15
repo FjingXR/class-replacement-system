@@ -1089,6 +1089,18 @@ class DateHelper {
         return h12 + ':' + m + ' ' + ampm;
     }
 
+    /**
+     * Convert a 24h time range string like "09:00 – 11:00" (also "09:00-11:00",
+     * "09:00 - 11:00") into "9:00 AM to 11:00 AM". Returns the input unchanged
+     * when it does not look like a time range.
+     */
+    static format12hRange(t) {
+        if (!t) return t;
+        const m = String(t).match(/(\d{1,2}:\d{2})\s*[-–—]\s*(\d{1,2}:\d{2})/);
+        if (!m) return t;
+        return DateHelper.to12h(m[1]) + ' to ' + DateHelper.to12h(m[2]);
+    }
+
     static formatDate(iso) {
         const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         const parts = iso.split('-');
@@ -1186,13 +1198,15 @@ class HtmlBuilder {
         var dateStr = DateHelper.formatDate(r.replacementDate);
         var wn = getWeekNumber(r.replacementDate);
         var weekTag = wn ? ' (Week ' + wn + ')' : '';
-        var statusCls = statusClass(r.status);
         var html = '<div class="cell-class-block">'
             + '<span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br>'
-            + '<span class="class-time ' + statusCls + '">' + r.replacementTime + '</span>';
+            + '<span class="class-time' + (opts.colorStatus === false ? '' : ' ' + statusClass(r.status)) + '">'
+            + DateHelper.format12hRange(r.replacementTime) + '</span>';
         if (opts.showVenue !== false) {
             var venue = r.replacementVenue || r.venue || '—';
-            html += '<br><span class="class-venue">' + venue + '</span>';
+            html += '<br><span class="class-venue">'
+                + (opts.slotBadge ? opts.slotBadge : '')
+                + '<span class="venue-label">' + venue + '</span></span>';
         }
         return html + '</div>';
     }
@@ -1605,15 +1619,34 @@ function statusClass(status) {
 
 /**
  * Build HTML for a request-age indicator (shared: my-request-history, request-approval).
+ * Age is computed relative to ACTUAL today (the mock data is generated relative
+ * to `new Date()`), so "yesterday" shows as Yesterday, not a drift from a fixed date.
+ *
+ * Color legend:
+ *   Today / Yesterday (≤1 day)  → age-fresh  (primary / green)
+ *   2–3 days                    → age-waiting (tertiary / amber)
+ *   4+ days                     → age-stale  (error / red)
  * @param {string} requestedAt - ISO/timestamp string of when the request was made
  * @returns {string} HTML string
  */
 function requestAgeHtml(requestedAt) {
-    const REFERENCE_DATE = new Date('2026-08-29T00:00:00');
-    const diff = Math.floor((REFERENCE_DATE - new Date(requestedAt).getTime()) / 86400000);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const req = new Date(requestedAt);
+    if (isNaN(req.getTime())) return '<div class="request-age request-age--unknown">—</div>';
+    req.setHours(0, 0, 0, 0);
+    const diff = Math.round((now.getTime() - req.getTime()) / 86400000);
     if (diff < 0) return '<div class="request-age request-age--unknown">—</div>';
+    let label;
+    if (diff === 0) {
+        label = 'Today';
+    } else if (diff === 1) {
+        label = 'Yesterday';
+    } else {
+        label = diff + ' days ago';
+    }
     const cls = diff <= 1 ? 'age-fresh' : diff <= 3 ? 'age-waiting' : 'age-stale';
-    return '<div class="request-age ' + cls + '">' + diff + ' day' + (diff !== 1 ? 's' : '') + ' ago</div>';
+    return '<div class="request-age ' + cls + '" title="' + label + ' — ' + (cls === 'age-fresh' ? 'recently submitted' : cls === 'age-waiting' ? '2–3 days old' : '4+ days old') + '">' + label + '</div>';
 }
 
 
@@ -1730,29 +1763,63 @@ class BackNavigator {
     }
 }
 
-// ───── Header Tooltip (above table headers, avoids grid-wrapper overflow:hidden) ─────
+// ───── Data-Tip Tooltip (above the element, avoids grid-wrapper overflow:hidden) ─────
+// Shows a fixed tooltip ABOVE any element carrying a `data-tip` attribute
+// (table headers, legend items, icon buttons, etc.). Clamps to the viewport
+// so the tip is always fully visible.
 
-function initHeaderTooltips() {
+function initDataTipTooltips() {
     var tip = document.createElement('div');
-    tip.className = 'header-tooltip';
-    tip.style.cssText = 'position:fixed;padding:5px 10px;background:var(--color-inverse-surface);color:var(--color-on-inverse-surface);font-size:11px;font-weight:500;white-space:nowrap;border-radius:var(--radius-xs);pointer-events:none;opacity:0;visibility:hidden;transition:opacity 0.15s,visibility 0.15s;z-index:9999';
+    tip.className = 'data-tip-tooltip';
+    tip.style.cssText = 'position:fixed;padding:5px 10px;background:var(--color-inverse-surface);color:var(--color-on-inverse-surface);font-size:11px;font-weight:500;white-space:nowrap;border-radius:var(--radius-xs);box-shadow:var(--shadow-sm);pointer-events:none;opacity:0;visibility:hidden;transition:opacity 0.15s,visibility 0.15s;z-index:9999';
     document.body.appendChild(tip);
+
+    function findTip(node) {
+        if (!node) return null;
+        return node.closest ? node.closest('[data-tip]') : null;
+    }
+    function hide() {
+        tip.style.opacity = '0';
+        tip.style.visibility = 'hidden';
+    }
+
     document.addEventListener('mouseenter', function(e) {
-        var node = e.target.closest ? e.target : e.target.parentElement;
-        var th = node && node.closest ? node.closest('th[data-tip]') : null;
-        if (!th) return;
-        var r = th.getBoundingClientRect();
-        tip.textContent = th.getAttribute('data-tip');
-        tip.style.left = Math.max(4, r.left) + 'px';
-        tip.style.top = (r.top - tip.offsetHeight - 6) + 'px';
+        var el = findTip(e.target);
+        if (!el) return;
+        var r = el.getBoundingClientRect();
+        tip.textContent = el.getAttribute('data-tip');
+        // Force layout so offsetWidth/offsetHeight are accurate (text just set)
+        tip.style.visibility = 'hidden';
+        tip.style.opacity = '1';
+        tip.style.left = '0px';
+        tip.style.top = '0px';
+        var tw = tip.offsetWidth;
+        var th = tip.offsetHeight;
+        var left = r.left + (r.width / 2) - (tw / 2);
+        left = Math.max(4, Math.min(left, window.innerWidth - tw - 4));
+        var top = r.top - th - 6;
+        if (top < 4) {
+            // Not enough room above — show below the element instead
+            top = r.bottom + 6;
+        }
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
         tip.style.opacity = '1';
         tip.style.visibility = 'visible';
     }, true);
+
     document.addEventListener('mouseleave', function(e) {
-        var node = e.target.closest ? e.target : e.target.parentElement;
-        if (node && node.closest && node.closest('th[data-tip]')) {
-            tip.style.opacity = '0';
-            tip.style.visibility = 'hidden';
-        }
+        if (findTip(e.target)) hide();
     }, true);
+
+    // Safety: hide when focusing away / on scroll so stale tips don't linger
+    document.addEventListener('mouseout', function(e) {
+        if (findTip(e.relatedTarget)) return;
+        if (findTip(e.target)) hide();
+    }, true);
+}
+
+// Back-compat alias: pages that used initHeaderTooltips() before.
+function initHeaderTooltips() {
+    initDataTipTooltips();
 }

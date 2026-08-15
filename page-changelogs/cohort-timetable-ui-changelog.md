@@ -1,5 +1,11 @@
 # Changelog — Cohort Timetable UI
 
+## [2026-08-15] Page-specific summary card descriptions
+
+Added page-specific `description` text to each summary card (Total Classes / Teaching Hours / Replacements / Pending / Conflicts) instead of relying on the shared generic descriptions. (`CohortTimetable-UI-design-template.blade.php` summary bar.)
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
 
 ### Summary

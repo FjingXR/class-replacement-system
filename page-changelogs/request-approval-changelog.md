@@ -1,5 +1,47 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Row polish: time format, slot badge, tips, age + checkbox/modal fixes
+
+### Summary
+
+- **Class time plain text** — the "Proposed Replacement" time no longer gets a coloured `status-*` class; it's plain bold text.
+- **Consistent time format** — replacement time ranges now render as `10:00 AM to 1:00 PM` (24h `09:00 – 11:00` → 12h via `DateHelper.format12hRange`) everywhere (table + modal).
+- **Slot-validity badge** — the ✓/⚠ slot icon is now a round status-coloured badge (`.slot-badge.slot-valid` green, `.slot-conflict` red) placed to the LEFT of the venue inside `.class-venue`, matching other pages.
+- **Header tips** — Original Class tip corrected ("its state varies…" — not all are being replaced); Urgency tip now documents `≤3 days = Urgent (red), 4+ days = Normal`; Requested Timestamp tip documents age colours.
+- **Modal/checkbox** — approve/reject buttons now call `event.stopPropagation()` so the details modal no longer pops when acting on a row; the row checkbox also stops propagation so it can be ticked without opening the modal.
+- **Request age** — `requestAgeHtml` now computes age relative to actual today (was hardcoded `2026-08-29`), shows **Today**/**Yesterday** instead of "1 day ago", and preserves the colour legend (green ≤1 day, amber 2–3 days, red 4+ days). Guide block documents the colours.
+- **Data-tip tooltips above elements** — `initHeaderTooltips()` generalised to `initDataTipTooltips()` so ANY element with a `data-tip` (headers, legend items, etc.) shows a tooltip ABOVE it, centred and clamped to the viewport (flips below if no room above). Auto-initialised in the shared `ui-template` layout for all pages; `ui-common.js` cache-busted to `?v=2`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Page styles | Updated | Added `.slot-badge` round badge styles (valid/conflict), removed old `.slot-icon` CSS, `.class-venue` no longer uses `::before` 📍. |
+| `renderRow()` | Updated | `replacementBlock(r, { colorStatus: false, slotBadge })`; checkbox + approve/reject buttons add `event.stopPropagation()`; replaced trailing slot icon with badge left of venue. |
+| `columns` tips | Updated | Original Class, Urgency, Requested Timestamp tips rewritten. |
+| `slotValidityHtml()` | Updated | Uses `.slot-badge` instead of `.slot-icon`. |
+| Modal | Updated | Times use `DateHelper.to12h` / `format12hRange`. |
+| Guide block | Updated | Added request-age colour legend item. |
+| Summary bar | Updated | Page-specific card descriptions. |
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `HtmlBuilder.replacementBlock()` | Updated | Added `opts.colorStatus` (defaults to coloured), `opts.slotBadge`, wraps venue in `.venue-label`; time via `DateHelper.format12hRange`. |
+| `DateHelper.format12hRange()` | Added | Converts `09:00 – 11:00` → `9:00 AM to 11:00 AM`. |
+| `requestAgeHtml()` | Updated | Relative to actual today; Today/Yesterday labels; colour legend tooltip (green ≤1 day, amber 2–3, red 4+). |
+
+#### `resources/views/partials/ui-summary-bar.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Summary hint | Updated | "…selected period (filters apply)." → "…selected period and any active filters." |
+
+---
+
 ## [2026-08-15] Summary stats now follow the week/status/urgency/search filters
 
 ### Summary

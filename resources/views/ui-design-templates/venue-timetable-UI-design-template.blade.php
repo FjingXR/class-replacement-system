@@ -528,10 +528,14 @@
         <!-- ─── Summary Bar ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
-                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots'],
-                ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available'],
-                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
-                ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable'],
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots',
+                    'description' => 'All time slots shown for <strong>this venue</strong> in the selected week.'],
+                ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available',
+                    'description' => '<strong>Free time slots</strong> that can be booked for this venue.'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
+                    'description' => 'Slots held by <strong>replacement requests</strong> awaiting approval.'],
+                ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable',
+                    'description' => '<strong>Cannot book</strong> — booked class, Sunday, or public holiday.'],
             ]
         ])
 

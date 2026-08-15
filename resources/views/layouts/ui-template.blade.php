@@ -33,7 +33,7 @@
     </div>
 
     <script src="/js/mock-data.js?v=3"></script>
-    <script src="/js/ui-common.js?v=1"></script>
+    <script src="/js/ui-common.js?v=2"></script>
     <script src="/js/logout-modal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -41,6 +41,7 @@
             if (pageKey) initScrollRestore(pageKey);
             updateIcon(document.documentElement.classList.contains('dark')); initMobileNav();
             if (typeof updateNavBadge === 'function') updateNavBadge();
+            if (typeof initDataTipTooltips === 'function') initDataTipTooltips();
         });
 
         @yield('page-scripts')

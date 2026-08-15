@@ -190,11 +190,16 @@
         <!-- ─── Weekly Summary Bar ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
-                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes'],
-                ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Teaching Hours'],
-                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements'],
-                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
-                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts'],
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes',
+                    'description' => 'Total classes in <strong>your weekly timetable</strong> for the selected week.'],
+                ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Teaching Hours',
+                    'description' => 'Total <strong>teaching hours</strong> in your timetable for the selected week (each slot = <strong>30 minutes</strong>).'],
+                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements',
+                    'description' => 'Classes where a <strong>replacement lecturer</strong> is covering you this week.'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
+                    'description' => 'Replacement requests of yours still <strong>waiting for approval</strong> or a volunteer.'],
+                ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts',
+                    'description' => '<strong>Scheduling clashes</strong> in your timetable or classes on <strong>public holidays</strong> that need attention.'],
             ]
         ])
 

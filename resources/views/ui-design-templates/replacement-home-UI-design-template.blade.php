@@ -182,11 +182,16 @@
         <!-- ─── Summary Dashboard ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
-                ['class' => 'card-conflict', 'valueId' => 'summaryConflicted', 'label' => 'Total Conflicted'],
-                ['class' => 'card-venues', 'valueId' => 'summaryVenues', 'label' => 'Venues Affected'],
-                ['class' => 'card-students', 'valueId' => 'summaryStudents', 'label' => 'Students Affected'],
-                ['class' => 'card-duration', 'valueId' => 'summaryDuration', 'label' => 'Duration Hours'],
-                ['class' => 'card-courses', 'valueId' => 'summaryCourses', 'label' => 'Distinct Courses'],
+                ['class' => 'card-conflict', 'valueId' => 'summaryConflicted', 'label' => 'Total Conflicted',
+                    'description' => 'Classes in the selected period that <strong>need a replacement</strong> arrangement.'],
+                ['class' => 'card-venues', 'valueId' => 'summaryVenues', 'label' => 'Venues Affected',
+                    'description' => 'Number of <strong>unique venues</strong> involved in the conflicted classes.'],
+                ['class' => 'card-students', 'valueId' => 'summaryStudents', 'label' => 'Students Affected',
+                    'description' => 'Total <strong>students impacted</strong> by the scheduling conflicts.'],
+                ['class' => 'card-duration', 'valueId' => 'summaryDuration', 'label' => 'Duration Hours',
+                    'description' => 'Total <strong>hours of class time</strong> that need to be rescheduled.'],
+                ['class' => 'card-courses', 'valueId' => 'summaryCourses', 'label' => 'Distinct Courses',
+                    'description' => 'Number of <strong>different courses</strong> affected by the conflicts.'],
             ]
         ])
 

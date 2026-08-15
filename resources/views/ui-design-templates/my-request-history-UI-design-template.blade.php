@@ -22,44 +22,6 @@
             font-weight: 600;
         }
 
-        /* ───── Class-time Status Colors (page-specific, container-based) ───── */
-        .col-replacement .class-time.status-pending {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: var(--radius-xs);
-            background: var(--color-tertiary-container);
-            color: var(--color-on-tertiary-container);
-        }
-        .col-replacement .class-time.status-approved {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: var(--radius-xs);
-            background: var(--color-success-container);
-            color: var(--color-on-success-container);
-        }
-        .col-replacement .class-time.status-rejected {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: var(--radius-xs);
-            background: var(--color-error-container);
-            color: var(--color-on-error-container);
-        }
-        .col-replacement .class-time.status-cancelled {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: var(--radius-xs);
-            background: var(--color-surface-variant);
-            color: var(--color-on-surface-variant);
-            opacity: 0.6;
-        }
-        .col-replacement .class-time.status-completed {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: var(--radius-xs);
-            background: var(--color-primary-container);
-            color: var(--color-on-primary-container);
-        }
-
         /* ───── Status Badges (page-specific overrides) ───── */
         .badge {
             display: inline-block;
@@ -248,6 +210,7 @@
                 '<strong>Hover headers</strong> — hover a column name to see what it means',
                 '<strong>Cancel request</strong> — tick the checkbox on pending requests then use "Cancel Selected"',
                 '<strong>View details</strong> — click the details icon on any row to see the full request',
+                '<strong>Request age</strong> — colour indicates how long ago it was submitted: <span style="color:var(--color-primary)">● ≤1 day</span> <span style="color:var(--color-tertiary)">● 2–3 days</span> <span style="color:var(--color-error)">● 4+ days</span>',
             ]
         ])
 
@@ -309,11 +272,16 @@
         <!-- ─── Summary Stat Cards ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
-                ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests'],
-                ['class' => 'card-hours', 'valueId' => 'summaryHours', 'label' => 'Replacement Hours'],
-                ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved'],
-                ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending'],
-                ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected'],
+                ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests',
+                    'description' => 'Replacement requests <strong>you submitted</strong> that match your current filters.'],
+                ['class' => 'card-hours', 'valueId' => 'summaryHours', 'label' => 'Replacement Hours',
+                    'description' => 'Total <strong>replacement class hours</strong> across your filtered requests.'],
+                ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved',
+                    'description' => 'Your requests that have been <strong>approved</strong> and are ready to proceed.'],
+                ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending',
+                    'description' => 'Your requests still <strong>waiting for approval</strong> or a volunteer.'],
+                ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected',
+                    'description' => 'Your requests that were <strong>declined</strong> and need an alternative arrangement.'],
             ]
         ])
 
@@ -507,9 +475,9 @@
             tr.appendChild(thCheck);
 
             const columns = [
-                { label: 'Requested At', cls: 'col-requested-at', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested' },
+                { label: 'Requested At', cls: 'col-requested-at', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested. Age colour: green ≤1 day, amber 2–3 days, red 4+ days' },
                 { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'courseCode', tip: 'Course affected by the conflict' },
-                { label: 'Original Class', cls: 'col-original', sortable: true, field: 'classDate', tip: 'Original class session being replaced' },
+                { label: 'Original Class', cls: 'col-original', sortable: true, field: 'classDate', tip: 'Original class the request refers to — its state varies (still upcoming, replaced, cancelled, holiday, etc.)' },
                 { label: 'Requested Replacement', cls: 'col-replacement', sortable: false, tip: 'Proposed new date and time' },
                 { label: 'Requested Venue', cls: 'col-venue', sortable: false, tip: 'Venue requested for the replacement' },
                 { label: 'Students', cls: 'col-students', sortable: false, tip: 'Number of enrolled students' },
@@ -589,7 +557,7 @@
                         { html: formatDateTime(r.requestedAt) + requestAgeHtml(r.requestedAt), cls: 'col-requested-at' },
                         { html: '<span class="cell-code">' + r.courseCode + ' <span class="cell-type">(' + r.classType + ')</span></span><span class="cell-name">' + r.courseName + '</span>', cls: 'col-code' },
                         { html: HtmlBuilder.classBlock(r), cls: 'col-original' },
-                        { html: HtmlBuilder.replacementBlock(r, { showVenue: false }), cls: 'col-replacement' },
+                        { html: HtmlBuilder.replacementBlock(r, { showVenue: false, colorStatus: false }), cls: 'col-replacement' },
                         { html: r.venue, cls: 'col-venue' },
                         { html: String(r.totalStudents), cls: 'col-students' },
                         { html: r.cohorts.join('<br>'), cls: 'col-cohort' },
@@ -799,13 +767,13 @@
             html += field('Total Students', cohortBreakdown(r));
             html += field('Original Date', formatDate(r.classDate));
             html += field('Original Day', r.classDay);
-            html += field('Original Time', to12h(r.timeStart) + ' – ' + to12h(r.timeEnd));
+            html += field('Original Time', to12h(r.timeStart) + ' to ' + to12h(r.timeEnd));
             html += field('Duration', String(r.duration) + ' hours');
             html += field('Original Venue', r.venue);
 
             html += section('Requested Replacement Class');
             html += field('Replacement Date', r.replacementDate ? formatDate(r.replacementDate) : null);
-            html += field('Replacement Time', r.replacementTime);
+            html += field('Replacement Time', r.replacementTime ? DateHelper.format12hRange(r.replacementTime) : null);
             html += field('Replacement Venue', r.replacementVenue || '—');
             html += field('Reviewed By', r.reviewedBy);
             html += field('Reviewed At', r.reviewedAt ? formatDateTime(r.reviewedAt) : null);
