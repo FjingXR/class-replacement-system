@@ -1101,10 +1101,11 @@
             div.style.top = firstTd.offsetTop + 'px';
             div.style.left = firstTd.offsetLeft + 'px';
             div.style.height = firstTd.offsetHeight + 'px';
-            div.style.width = (firstTd.offsetWidth * span) + 'px';
+            const table = document.getElementById('timetable');
+            const borderSpacing = parseInt(getComputedStyle(table).borderSpacing) || 0;
+            div.style.width = (firstTd.offsetWidth * span + (span - 1) * borderSpacing) + 'px';
             div.style.pointerEvents = 'none';
             if (!ok) firstTd.style.cursor = 'not-allowed';
-            const table = document.getElementById('timetable');
             table.appendChild(div);
         }
 

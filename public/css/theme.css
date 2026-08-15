@@ -1697,7 +1697,7 @@ html.dark .semester-bar select:not(.week-select) {
     top: 0; bottom: 0; left: 0;
     width: calc(var(--block-cells, 1) * 100%);
     border: 2px dashed;
-    border-radius: var(--radius-md);
+    border-radius: 0;
     z-index: 4;
     pointer-events: none;
     transition: background 0.1s, border-color 0.1s;
