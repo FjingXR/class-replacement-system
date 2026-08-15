@@ -1,5 +1,48 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-15] Summary bar added; Occupied/Reserved/Sunday/PH → one "Unavailable" card
+
+### Summary
+
+Added the shared summary bar (like the venue timetable) with cards **Total Slots / Available / Pending / Unavailable**, so users immediately see the breakdown of the current week's slots. `Unavailable` groups every "cannot book" reason — Occupied, Reserved by Others, Sunday, and Public Holiday — matching the "one Unavailable card" convention from the venue page.
+
+- `updateSummaryStats()` counts exactly the grid's rendered cells, so `Total = Available + Pending + Unavailable` always matches the timetable (incl. overlapping/selected states).
+- "Available" includes the user's current selection (still a pickable slot), keeping the total stable while selecting.
+- Legend updated: "Reserved by Others" + "Occupied / Class on Public Holiday" → single **Unavailable** entry; tooltip explains the grouped reasons.
+- Guide bullet updated to match.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| After legend | Added `@include('partials.ui-summary-bar', ...)` | Cards: Total Slots, Available, Pending, Unavailable (`sumTotal`/`sumAvailable`/`sumPending`/`sumUnavailable`). |
+| Legend bar items | Updated | Collapsed "Reserved by Others" + "Occupied / Class on Public Holiday" into one "Unavailable" entry (`Cannot book — booked by others, Sunday, or public holiday`). |
+| Guide bullet | Updated | `Slot status — Available (green), Unavailable (booked / Sunday / public holiday)`. |
+| `updateSummaryStats()` (new) | Added | Counts rendered cells: available(+selected), pending, unavailable(=occupied+reserved+sunday+ph). |
+| `updateCounter()` | Updated | Calls `updateSummaryStats()` on every build/select/deselect. |
+
+---
+
+## [2026-08-15] Selection summary now scoped to the current week
+
+### Summary
+
+The selection summary previously listed every selected slot across all 14 weeks and venues, regardless of which week the user was viewing. Now `updateSelectionSummary()` only shows selections for the currently viewed week (`weekNav.currentWeek`), so the summary + "X of 4 slots" total match what's visible in the timetable.
+
+Note: the global 4-slot cap (`MAX_SELECTION`) still applies across all weeks/venues via `getGlobalTotal()`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `updateSelectionSummary()` | Updated | Iterates only the current week's selections per venue (`venueData[currentWeek]`) instead of all weeks. The summary grid, count, and total now reflect the selected period. |
+
+---
+
 ## [2026-08-13] OOP Refactor: Legend color consistency
 
 ### Summary

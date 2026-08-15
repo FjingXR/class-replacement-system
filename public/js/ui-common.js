@@ -1179,19 +1179,22 @@ class HtmlBuilder {
         return '<div class="cell-class-block"><span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br><span class="class-time">' + timeStr + '</span> <span class="class-duration">(' + hrs + ')</span></div>';
     }
 
-    static replacementBlock(r) {
+    static replacementBlock(r, opts) {
+        opts = opts || {};
         if (!r.replacementDate) return '<span style="color:var(--color-on-surface-variant);opacity:0.5">&mdash;</span>';
         var d = DateHelper.dayAbbr(DateHelper.isoDayName(r.replacementDate));
         var dateStr = DateHelper.formatDate(r.replacementDate);
         var wn = getWeekNumber(r.replacementDate);
         var weekTag = wn ? ' (Week ' + wn + ')' : '';
         var statusCls = statusClass(r.status);
-        var venue = r.replacementVenue || r.venue || '—';
-        return '<div class="cell-class-block">'
+        var html = '<div class="cell-class-block">'
             + '<span class="class-day-date">' + d + ', ' + dateStr + weekTag + '</span><br>'
-            + '<span class="class-time ' + statusCls + '">' + r.replacementTime + '</span><br>'
-            + '<span class="class-venue">' + venue + '</span>'
-            + '</div>';
+            + '<span class="class-time ' + statusCls + '">' + r.replacementTime + '</span>';
+        if (opts.showVenue !== false) {
+            var venue = r.replacementVenue || r.venue || '—';
+            html += '<br><span class="class-venue">' + venue + '</span>';
+        }
+        return html + '</div>';
     }
 
     static dayHeader(day) {

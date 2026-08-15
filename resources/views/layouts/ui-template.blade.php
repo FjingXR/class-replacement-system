@@ -23,7 +23,7 @@
 <body data-page="{{ $pageKey ?? '' }}">
 
     @if(!isset($hideNav) || !$hideNav)
-        @include('partials.ui-nav-bar', ['activeNav' => $activeNav ?? '', 'notifCount' => $notifCount ?? 3])
+        @include('partials.ui-nav-bar', ['activeNav' => $activeNav ?? '', 'notifCount' => $notifCount ?? 3, 'navItems' => $navItems ?? null])
         @include('partials.ui-logout-modal')
     @endif
 

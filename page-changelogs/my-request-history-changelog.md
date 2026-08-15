@@ -1,5 +1,66 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-15] Nav label, Requested Replacement column, status-chip colors
+
+### Summary
+
+Three page-scoped polish changes to the My Request History page:
+1. The header nav label "Replacement History" was renamed to "Request History" for this page only (throttled per-page via `$navItems` override through the shared layout).
+2. The "Requested Replacement" column no longer renders venue data (the separate "Requested Venue" column already shows it); its header tooltip was updated accordingly. The shared `HtmlBuilder.replacementBlock()` gained a `showVenue` option so venue is still shown on other pages (request-approval) that use the shared helper.
+3. The `class-time.status-*` time chips on this page now use `color-*-container` backgrounds with `color-on-*-container` font colors (consistent with status badges) instead of flat `--color-warning/success/error/primary` text.
+
+### Files Changed
+
+#### `resources/views/layouts/ui-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| nav-bar include | Updated | Pass `'navItems' => $navItems ?? null` through to `partials.ui-nav-bar` so a page/route can override nav labels per-page. `$navItems` defaults to `null` → partial uses its built-in defaults for all other pages. |
+
+#### `routes/web.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `GET /my-request-history-ui` | Updated | Pass a `navItems` array with the replacement-history label changed to "Request History"; other nav items identical to the shared default. |
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `HtmlBuilder.replacementBlock(r, opts)` | Updated | Accepts optional `opts.showVenue`. When `false`, omits the `<span class="class-venue">` from the block. Default (`opts` absent) keeps venue, preserving request-approval rendering. |
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `columns[]` Requested Replacement | Updated | Header tooltip changed from "Proposed new date, time, and venue" → "Proposed new date and time". |
+| table body `col-replacement` cell | Updated | Calls `HtmlBuilder.replacementBlock(r, { showVenue: false })` so no venue renders in the column. |
+| page-styles | Added | Page-scoped `.col-replacement .class-time.status-*` rules: `status-pending` → tertiary-container/on-tertiary-container, `status-approved` → success-container/on-success-container, `status-rejected` → error-container/on-error-container, `status-cancelled` → surface-variant/on-surface-variant, `status-completed` → primary-container/on-primary-container; each with `display:inline-block; padding:2px 8px; border-radius:var(--radius-xs)`. Scoped to this page only (via `.col-replacement` + this page's `<style>` block). |
+
+---
+
+## [2026-08-15] Summary stats now follow the week/status/search filters
+
+### Summary
+
+The summary cards previously always showed stats for the whole semester (all 20 requests) regardless of the active week/status/search filter — contradicting the hint text "Stats are for this week only". Now `updateSummary()` reads from `currentFiltered` instead of the full `mockRequests` array, so the cards always reflect the selected period (All Weeks or Week N, plus any search/status/Exclude-Completed filters).
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `updateSummary()` | Updated | Total/Approved/Pending/Rejected/Hours now computed from `currentFiltered` (the filtered table data) instead of the full `mockRequests` list. |
+
+#### `resources/views/partials/ui-summary-bar.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| summary hint | Updated | Hint text changed from "Stats are for **this week only**." to "Stats are for the **selected period** (filters apply)." since stats now reflect the selected filters. |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
 
 ### Summary

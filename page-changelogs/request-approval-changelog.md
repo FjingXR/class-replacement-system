@@ -1,5 +1,27 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Summary stats now follow the week/status/urgency/search filters
+
+### Summary
+
+The summary cards previously showed stats for all 20 requests regardless of the active week/status/urgency/search filter. Now `updateSummary()` reads from `currentFiltered` (the table data after all filters), so the cards always reflect the selected period (All Weeks or Week N) and other active filters.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `updateSummary()` | Updated | Total/Pending/Approved/Rejected/Reviewed now computed from `currentFiltered` (after week/status/urgency/search/hide-completed filters) instead of the full `MockData.approvalRequests` array. |
+
+#### `resources/views/partials/ui-summary-bar.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| summary hint | Updated | Hint text changed from "Stats are for **this week only**." to "Stats are for the **selected period** (filters apply)." |
+
+---
+
 ## [2026-08-13] Phase 3 UX Enhancement: Collapsible Guide Block
 
 ### Summary

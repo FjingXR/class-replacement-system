@@ -626,7 +626,7 @@
             'guideTitle' => 'How to use this page',
             'guideItems' => [
                 '<strong>Select subject</strong> — choose the course to arrange a replacement for',
-                '<strong>Slot status</strong> — Available (green), Conflicted (red), Unavailable (grey)',
+                '<strong>Slot status</strong> — Available (green), Unavailable (booked / Sunday / public holiday)',
                 '<strong>Select slot</strong> — click an available slot to propose it as the replacement',
                 '<strong>Submit</strong> — confirm your selection to send the request for approval',
                 '<strong>Back</strong> — use the back button to return to the conflict list',
@@ -674,8 +674,17 @@
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to select as replacement'],
                 ['color' => 'var(--color-primary-container)', 'label' => 'Your Current Selection', 'tip' => 'Slot you have selected for the replacement'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending (You)', 'tip' => 'Your replacement request awaiting approval'],
-                ['color' => 'var(--color-surface-variant)', 'label' => 'Reserved by Others', 'tip' => 'Already booked by another lecturer'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Occupied / Class on Public Holiday', 'tip' => 'Regular class scheduled or public holiday'],
+                ['color' => 'var(--color-surface-variant)', 'label' => 'Unavailable', 'tip' => 'Cannot book — booked by others, Sunday, or public holiday'],
+            ]
+        ])
+
+        <!-- ─── Summary Bar ─── -->
+        @include('partials.ui-summary-bar', [
+            'cards' => [
+                ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots'],
+                ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available'],
+                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
+                ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable'],
             ]
         ])
 
@@ -837,30 +846,48 @@
             if (btn) btn.disabled = selectedCells.length === 0;
             updateSelectionSummary();
             updateSelectionProgress();
+            updateSummaryStats();
+        }
+
+        function updateSummaryStats() {
+            /* Count exactly what the grid renders, so the cards match the timetable.
+               Unavailable = Occupied + Booked-by-others(Reserved) + Sunday + Public Holiday.
+               Available includes the user's current selection (still a pickable slot). */
+            const available = document.querySelectorAll('.timetable .cell-content.cell-available').length
+                + document.querySelectorAll('.timetable .cell-content.cell-selected').length;
+            const pending = document.querySelectorAll('.timetable .cell-content.cell-pending').length;
+            const occupied = document.querySelectorAll('.timetable .cell-content.cell-occupied').length;
+            const reserved = document.querySelectorAll('.timetable .cell-content.cell-reserved').length;
+            const sunday = document.querySelectorAll('.timetable .cell-content.cell-sun').length;
+            const ph = document.querySelectorAll('.timetable .cell-content.cell-ph').length;
+            const unavailable = occupied + reserved + sunday + ph;
+
+            document.getElementById('sumTotal').textContent = available + pending + unavailable;
+            document.getElementById('sumAvailable').textContent = available;
+            document.getElementById('sumPending').textContent = pending;
+            document.getElementById('sumUnavailable').textContent = unavailable;
         }
 
         function updateSelectionSummary() {
+            const currWeek = weekNav.currentWeek;
             const allSelections = [];
             Object.keys(selectedSlotsByVenue).forEach(venueKey => {
                 const venueData = selectedSlotsByVenue[venueKey];
                 if (!venueData) return;
-                Object.keys(venueData).forEach(weekKey => {
-                    const weekIdx = parseInt(weekKey);
-                    const slots = venueData[weekKey];
-                    if (slots && slots.length > 0) {
-                        const days = weekData[weekIdx].days;
-                        slots.forEach(s => {
-                            allSelections.push({
-                                venue: venueKey,
-                                weekIdx: weekIdx,
-                                weekLabel: weekData[weekIdx].label,
-                                day: days[s.day],
-                                dayIdx: s.day,
-                                hour: s.hour
-                            });
+                const slots = venueData[currWeek];
+                if (slots && slots.length > 0) {
+                    const days = weekData[currWeek].days;
+                    slots.forEach(s => {
+                        allSelections.push({
+                            venue: venueKey,
+                            weekIdx: currWeek,
+                            weekLabel: weekData[currWeek].label,
+                            day: days[s.day],
+                            dayIdx: s.day,
+                            hour: s.hour
                         });
-                    }
-                });
+                    });
+                }
             });
 
             const totalCount = allSelections.length;

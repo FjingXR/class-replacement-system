@@ -520,8 +520,8 @@
         @include('partials.ui-legend-bar', [
             'items' => [
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Occupied', 'tip' => 'Slot is booked — not available'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Unavailable', 'tip' => 'Cannot book — slot is booked, Sunday, or public holiday'],
             ]
         ])
 
@@ -530,8 +530,8 @@
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots'],
                 ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available'],
-                ['class' => 'card-conflict', 'valueId' => 'sumOccupied', 'label' => 'Occupied'],
                 ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending'],
+                ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable'],
             ]
         ])
 
@@ -1070,29 +1070,27 @@
            ════════════════════════════════════════════ */
 
         function updateSummaries(events) {
+            /* Count exactly what the grid renders (same cells), so the stats
+               always match the timetable — including overlapping bookings that
+               share the same hour slot.
+               Unavailable = Occupied + Sunday + Public Holiday (all 'cannot book').
+               Falls back to 0 when no venue selected. */
             let occupied = 0;
             let pending = 0;
-
-            events.forEach(e => {
-                if (e.status === 'pending') pending++;
-                else occupied++;
-            });
-
-            /* count available slots (Mon-Fri, 08:00-18:00) */
             let available = 0;
-            const data = weekData[currentWeek];
-            for (let di = 0; di < 5; di++) {
-                if (data.days[di].holiday || data.days[di].sunday) continue;
-                for (let hi = 0; hi < hours.length; hi++) {
-                    const hasEvent = events.some(e => e.di === di && hi >= e.start && hi <= e.end);
-                    if (!hasEvent) available++;
-                }
+            if (currentVenue) {
+                occupied = document.querySelectorAll('.timetable .cell-content.cell-occupied').length;
+                pending = document.querySelectorAll('.timetable .cell-content.cell-pending').length;
+                available = document.querySelectorAll('.timetable .cell-content.cell-available').length;
             }
+            const sunday = document.querySelectorAll('.timetable .cell-content.cell-sun').length;
+            const ph = document.querySelectorAll('.timetable .cell-content.cell-ph').length;
+            const unavailable = occupied + sunday + ph;
 
-            document.getElementById('sumTotal').textContent = occupied + pending + available;
+            document.getElementById('sumTotal').textContent = available + pending + unavailable;
             document.getElementById('sumAvailable').textContent = available;
-            document.getElementById('sumOccupied').textContent = occupied;
             document.getElementById('sumPending').textContent = pending;
+            document.getElementById('sumUnavailable').textContent = unavailable;
         }
 
         /* ════════════════════════════════════════════

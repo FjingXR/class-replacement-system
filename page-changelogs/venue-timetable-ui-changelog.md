@@ -1,5 +1,45 @@
 # Changelog — Venue Timetable UI
 
+## [2026-08-15] Summary: Sunday + Public Holiday folded into "Unavailable"
+
+### Summary
+
+The venue summary previously had an "Occupied" card while Sunday (`.cell-sun`) and Public Holiday (`.cell-ph`) cells were not counted at all — so `Total` did not cover the whole grid and the labels were misleading. `Occupied` + `Sunday` + `Public Holiday` are all "cannot book this slot", so they're now grouped under a single **Unavailable** card.
+
+New cards: **Total Slots**, **Available**, **Pending**, **Unavailable** (= Occupied + Sunday + Public Holiday). `Total = Available + Pending + Unavailable` now exactly equals the grid cells. Legend updated to Available / Pending / Unavailable with a tooltip explaining the grouped reasons.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/venue-timetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Summary bar cards | Updated | Replaced "Occupied" card with "Unavailable"; `valueId` `sumOccupied` → `sumUnavailable`. |
+| Legend bar items | Updated | "Occupied" → "Unavailable" with tip `Cannot book — slot is booked, Sunday, or public holiday`. |
+| `updateSummaries()` | Updated | `unavailable = occupied + sunday + ph`; `total = available + pending + unavailable`. |
+
+---
+
+## [2026-08-15] Summary stats now match the rendered grid (accurate counts)
+
+### Summary
+
+The summary cards were inaccurate in two ways:
+1. **Occupied/Pending** counted event objects, not hour slots — a 3-hour booking showed as "1" instead of the 3 cells it occupies on the grid.
+2. **Available** only counted Monday–Friday (`di < 5`), while the grid also renders Saturday as a working day, so `Total`/`Available` under-counted.
+
+Now `updateSummaries()` counts exactly the cells the grid renders (`.cell-occupied`, `.cell-pending`, `.cell-available`), so the cards always match the timetable — including overlapping bookings from multiple cohorts that share an hour slot. Falls back to 0 when no venue is selected.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/venue-timetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `updateSummaries()` | Rewritten | Counts rendered `.cell-content` cells (`occupied`/`pending`/`available`) directly from the `.timetable` DOM instead of re-deriving from `events`; this handles overlapping bookings and all working days (incl. Saturday). |
+
+---
+
 ## [2026-08-13] Legend bar background fix
 
 ### Summary

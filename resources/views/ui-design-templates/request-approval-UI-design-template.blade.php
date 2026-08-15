@@ -624,14 +624,11 @@
 
         // ── Update summary cards ──
         function updateSummary() {
-            const total = MockData.approvalRequests.length;
-            const source = hideCompleted
-                ? MockData.approvalRequests.filter(r => r.status !== 'Completed')
-                : MockData.approvalRequests;
-            const pending = source.filter(r => r.status === 'Pending').length;
-            const approved = source.filter(r => r.status === 'Approved').length;
-            const rejected = source.filter(r => r.status === 'Rejected').length;
-            const reviewed = source.filter(r => ['Approved', 'Rejected', 'Completed'].includes(r.status)).length;
+            const total = currentFiltered.length;
+            const pending = currentFiltered.filter(r => r.status === 'Pending').length;
+            const approved = currentFiltered.filter(r => r.status === 'Approved').length;
+            const rejected = currentFiltered.filter(r => r.status === 'Rejected').length;
+            const reviewed = currentFiltered.filter(r => ['Approved', 'Rejected', 'Completed'].includes(r.status)).length;
 
             document.getElementById('summaryTotal').textContent = total;
             document.getElementById('summaryPending').textContent = pending;

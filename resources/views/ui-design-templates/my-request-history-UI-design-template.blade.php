@@ -22,6 +22,44 @@
             font-weight: 600;
         }
 
+        /* ───── Class-time Status Colors (page-specific, container-based) ───── */
+        .col-replacement .class-time.status-pending {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-xs);
+            background: var(--color-tertiary-container);
+            color: var(--color-on-tertiary-container);
+        }
+        .col-replacement .class-time.status-approved {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-xs);
+            background: var(--color-success-container);
+            color: var(--color-on-success-container);
+        }
+        .col-replacement .class-time.status-rejected {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-xs);
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+        }
+        .col-replacement .class-time.status-cancelled {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-xs);
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface-variant);
+            opacity: 0.6;
+        }
+        .col-replacement .class-time.status-completed {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-xs);
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+        }
+
         /* ───── Status Badges (page-specific overrides) ───── */
         .badge {
             display: inline-block;
@@ -472,7 +510,7 @@
                 { label: 'Requested At', cls: 'col-requested-at', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested' },
                 { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'courseCode', tip: 'Course affected by the conflict' },
                 { label: 'Original Class', cls: 'col-original', sortable: true, field: 'classDate', tip: 'Original class session being replaced' },
-                { label: 'Requested Replacement', cls: 'col-replacement', sortable: false, tip: 'Proposed new date, time, and venue' },
+                { label: 'Requested Replacement', cls: 'col-replacement', sortable: false, tip: 'Proposed new date and time' },
                 { label: 'Requested Venue', cls: 'col-venue', sortable: false, tip: 'Venue requested for the replacement' },
                 { label: 'Students', cls: 'col-students', sortable: false, tip: 'Number of enrolled students' },
                 { label: 'Cohort(s)', cls: 'col-cohort', sortable: false, tip: 'Affected student cohorts' },
@@ -551,7 +589,7 @@
                         { html: formatDateTime(r.requestedAt) + requestAgeHtml(r.requestedAt), cls: 'col-requested-at' },
                         { html: '<span class="cell-code">' + r.courseCode + ' <span class="cell-type">(' + r.classType + ')</span></span><span class="cell-name">' + r.courseName + '</span>', cls: 'col-code' },
                         { html: HtmlBuilder.classBlock(r), cls: 'col-original' },
-                        { html: HtmlBuilder.replacementBlock(r), cls: 'col-replacement' },
+                        { html: HtmlBuilder.replacementBlock(r, { showVenue: false }), cls: 'col-replacement' },
                         { html: r.venue, cls: 'col-venue' },
                         { html: String(r.totalStudents), cls: 'col-students' },
                         { html: r.cohorts.join('<br>'), cls: 'col-cohort' },
@@ -703,12 +741,12 @@
         });
 
         function updateSummary() {
-            const total = mockRequests.length;
-            const approved = mockRequests.filter(function(r) { return r.status === 'Approved'; }).length;
-            const pending = mockRequests.filter(function(r) { return r.status === 'Pending'; }).length;
-            const rejected = mockRequests.filter(function(r) { return r.status === 'Rejected'; }).length;
+            const total = currentFiltered.length;
+            const approved = currentFiltered.filter(function(r) { return r.status === 'Approved'; }).length;
+            const pending = currentFiltered.filter(function(r) { return r.status === 'Pending'; }).length;
+            const rejected = currentFiltered.filter(function(r) { return r.status === 'Rejected'; }).length;
             let hours = 0;
-            mockRequests.forEach(function(r) { hours += r.duration || 0; });
+            currentFiltered.forEach(function(r) { hours += r.duration || 0; });
 
             document.getElementById('summaryTotal').textContent = total;
             document.getElementById('summaryHours').textContent = hours;
