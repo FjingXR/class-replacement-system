@@ -258,6 +258,10 @@
         .light .btn-primary { box-shadow: 0 2px 8px rgba(46, 194, 126, 0.2); }
         .light .btn-primary:hover { box-shadow: 0 4px 16px rgba(46, 194, 126, 0.3); }
 
+        /* ── When block is selected, disable hover on other cells ── */
+        .has-selection .cell-available { cursor: var(--cursor-cancel) !important; }
+        .has-selection .cell-available:hover { filter: none; box-shadow: none; }
+
         .btn-primary:disabled {
             opacity: 0.35;
             cursor: var(--cursor-cancel);
@@ -660,12 +664,14 @@
 
         <div class="hint-text">Select an available (green) time slot</div>
 
+        {{-- Progress bar — commented out for now
         <div class="progress-wrapper" id="progressWrapper">
             <div class="progress-bar" id="progressBar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
             <span class="progress-text" id="progressText">Selected 0 of 4 slots</span>
         </div>
+        --}}
 
         @include('partials.ui-grid-table')
 
@@ -674,7 +680,8 @@
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to select as replacement'],
                 ['color' => 'var(--color-primary-container)', 'label' => 'Your Current Selection', 'tip' => 'Slot you have selected for the replacement'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending (You)', 'tip' => 'Your replacement request awaiting approval'],
-                ['color' => 'var(--color-surface-variant)', 'label' => 'Unavailable', 'tip' => 'Cannot book — booked by others, Sunday, or public holiday'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Classes on Public Holiday / Sunday', 'tip' => 'Cannot book — falls on a public holiday or Sunday'],
+                ['color' => 'var(--color-surface-variant)', 'label' => 'Reserved by Others', 'tip' => 'Cannot book — already reserved by another staff'],
             ]
         ])
 
@@ -695,7 +702,7 @@
         <div class="sel-summary" id="selSummary">
             <div class="sel-summary-header">
                 <span class="sel-summary-title">Selection Summary</span>
-                <span class="sel-summary-count"><strong id="summaryCount">0</strong> / 4 Selected</span>
+                {{--<span class="sel-summary-count"><strong id="summaryCount">0</strong> / 4 Selected</span>--}}
             </div>
             <div class="sel-summary-empty" id="summaryEmpty">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -743,7 +750,7 @@
                     Clear this Page
                 </button>
                 --}}
-                <button class="btn btn-danger" onclick="clearAll()">
+                <button class="btn btn-danger" id="clearAllBtn" disabled onclick="clearAll()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="3 6 5 6 21 6"/>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -861,6 +868,8 @@
             if (el) el.textContent = selectedBlock ? (selectedBlock.endHour - selectedBlock.startHour) : 0;
             const btn = document.querySelector('.btn-primary');
             if (btn) btn.disabled = !selectedBlock;
+            const clearBtn = document.getElementById('clearAllBtn');
+            if (clearBtn) clearBtn.disabled = !selectedBlock;
             updateSelectionSummary();
             updateSelectionProgress();
             updateSummaryStats();
@@ -907,12 +916,11 @@
                 }
             });
 
-            const totalCount = allBlocks.length;
-
-            document.getElementById('summaryCount').textContent = totalCount;
             const grid = document.getElementById('summaryGrid');
 
-            if (totalCount === 0) {
+            if (allBlocks.length === 0) {
+                const sc = document.getElementById('summaryCount');
+                if (sc) sc.textContent = '0';
                 document.getElementById('summaryEmpty').style.display = '';
                 grid.style.display = 'none';
                 grid.innerHTML = '';
@@ -946,6 +954,8 @@
             });
 
             const totalSlots = allBlocks.reduce((sum, b) => sum + b.slotCount, 0);
+            const sc = document.getElementById('summaryCount');
+            if (sc) sc.textContent = totalSlots;
             document.getElementById('infoTotal').textContent = `${totalSlots} of ${MAX_SELECTION} slots`;
             const totalMins = totalSlots * 30;
             const hrs = Math.floor(totalMins / 60);
@@ -957,7 +967,7 @@
             const tip = document.getElementById('summaryTip');
             if (getGlobalTotal() >= MAX_SELECTION) {
                 tip.textContent = 'Tip: Maximum selection reached.';
-            } else if (totalCount > 0) {
+            } else if (allBlocks.length > 0) {
                 tip.textContent = 'Tip: Click the selected block to remove it.';
             } else {
                 tip.textContent = 'Tip: Click an available (green) time slot to begin.';
@@ -984,6 +994,9 @@
             selectedBlock = null;
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
             selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = null;
+            // Re-enable hover on available cells
+            const table = body.closest('.timetable');
+            if (table) table.classList.remove('has-selection');
             updateCounter();
         }
 
@@ -1016,6 +1029,9 @@
             div.setAttribute('tabindex', '0');
             div.addEventListener('click', () => deselectBlock());
             firstTd.appendChild(div);
+            // Disable hover on other available cells
+            const table = body.closest('.timetable');
+            if (table) table.classList.add('has-selection');
         }
 
         function clearMergedBlock(body) {
@@ -1079,9 +1095,14 @@
             if (!firstTd) return;
             const div = document.createElement('div');
             div.className = 'event-block event-selection-preview ' + (ok ? 'preview-ok' : 'preview-fail');
-            div.style.setProperty('--block-cells', span);
+            div.style.position = 'absolute';
+            div.style.top = firstTd.offsetTop + 'px';
+            div.style.left = firstTd.offsetLeft + 'px';
+            div.style.height = firstTd.offsetHeight + 'px';
+            div.style.width = (firstTd.offsetWidth * span) + 'px';
+            div.style.pointerEvents = 'none';
             if (!ok) firstTd.style.cursor = 'not-allowed';
-            firstTd.appendChild(div);
+            body.appendChild(div);
         }
 
         function clearPreview() {
@@ -1742,6 +1763,8 @@
             buildSubjectDropdown();
             buildVenueDropdown();
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
+            /* restore the previously saved week (localStorage), else falls back to week 1 */
+            weekNav.load();
             populateWeekSelect('weekSelector', {
                 ranges: false,
                 selected: weekNav.currentWeek,
@@ -1766,6 +1789,7 @@
                 try {
                     saveCurrentWeek();
                     weekNav.jumpToToday();
+                    weekNav.save();
                     const sel = document.getElementById('weekSelector');
                     if (sel) {
                         sel.value = weekNav.currentWeek;
