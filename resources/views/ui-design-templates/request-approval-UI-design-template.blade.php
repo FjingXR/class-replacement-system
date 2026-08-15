@@ -17,7 +17,7 @@
             color: var(--color-on-surface-variant);
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 7px;
         }
         /* Slot-validity badge — sits to the LEFT of the venue; bg varies by status */
         .slot-badge {
@@ -585,7 +585,7 @@
             }
 
             html += '<td>' + (offset + i + 1) + '</td>';
-            html += '<td>' + formatDateTime(r.requestedAt) + requestAgeHtml(r.requestedAt) + '</td>';
+            html += '<td>' + formatDateTime(r.requestedAt) + requestAgeHtml(r.requestedAt, urgencyLabel(level)) + '</td>';
             var lec = lookupLecturer(r.lecturer);
             if (lec) {
                 html += '<td><div class="lecturer-cell-name">' + lec.name + ' <span class="lecturer-cell-id">(' + lec.staffId + ')</span></div>';
@@ -597,8 +597,8 @@
             html += '<td>' + HtmlBuilder.classBlock(r) + '</td>';
 
             // Proposed Replacement — slot validity as a status-colored badge beside the venue
-            const slotBadge = '<span class="slot-badge ' + (r.slotValidity === 'conflict' ? 'slot-conflict' : 'slot-valid') + '" title="' + (r.slotValidity === 'conflict' ? (r.conflictReason || 'Slot conflict') : 'Slot available') + '">' + (r.slotValidity === 'conflict' ? '⚠' : '✓') + '</span>';
-            html += '<td>' + HtmlBuilder.replacementBlock(r, { colorStatus: false, slotBadge: slotBadge }) + '</td>';
+            const slotBadge = '<span class="slot-badge ' + (r.slotValidity === 'conflict' ? 'slot-conflict' : 'slot-valid') + '" data-tip="' + (r.slotValidity === 'conflict' ? (r.conflictReason || 'Slot conflict') : 'Slot available') + '">' + (r.slotValidity === 'conflict' ? '⚠' : '✓') + '</span>';
+            html += '<td class="col-replacement">' + HtmlBuilder.replacementBlock(r, { colorStatus: false, slotBadge: slotBadge }) + '</td>';
 
             html += '<td>' + r.totalStudents + '</td>';
             html += '<td><span class="urgency-badge ' + urgencyClass(level) + '">' + urgencyLabel(level) + '</span></td>';

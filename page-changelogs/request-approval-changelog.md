@@ -1,5 +1,31 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Slot badge/venue gap, tooltips above, age tip shows urgency
+
+### Summary
+
+- **Slot badge ↔ venue gap** — the row's `<td>` now carries `class="col-replacement"` (it was missing, so the page CSS `.class-venue` gap rule never applied). Gap between the slot badge and venue label is now `7px`.
+- **Tooltips above elements** — the slot badge and request-age use `data-tip` (rendered above via `initDataTipTooltips`) instead of the native `title` attribute (which draws below).
+- **Age tooltip shows urgency** — on request-approval the age tooltip now reads e.g. `3 days ago · Urgency: Urgent` (was redundant "2–3 days old"). `requestAgeHtml(requestedAt, urgencyLabel)` accepts an optional urgency label; the mobile card (`HtmlBuilder.requestCard`) passes it too. Request-history keeps the colour-range info (no urgency concept).
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Page styles | Updated | `.class-venue` gap `4px` → `7px`. |
+| `renderRow()` | Updated | Added `class="col-replacement"` to the replacement `<td>`; slot badge uses `data-tip`; age gets `urgencyLabel(level)`. |
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `requestAgeHtml()` | Updated | Optional `urgencyLabel` param; uses `data-tip` (above) instead of `title`; tooltip `… · Urgency: Urgent/Normal`. |
+| `HtmlBuilder.requestCard()` | Updated | Passes urgency label to `requestAgeHtml` for mobile cards. |
+
+---
+
 ## [2026-08-15] Row polish: time format, slot badge, tips, age + checkbox/modal fixes
 
 ### Summary

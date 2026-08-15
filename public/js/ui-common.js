@@ -1233,11 +1233,13 @@ class HtmlBuilder {
             lecturerHtml = r.lecturer;
         }
         var urgencyHtml = '';
+        var urgencyText = '';
         if (opts.urgencyLevel && opts.urgencyClass && opts.urgencyLabel) {
             var level = opts.urgencyLevel(r.classDate);
             urgencyHtml = '<span class="urgency-badge ' + opts.urgencyClass(level) + '">' + opts.urgencyLabel(level) + '</span>';
+            urgencyText = opts.urgencyLabel(level);
         }
-        var ageHtml = opts.requestAgeHtml ? opts.requestAgeHtml(r.requestedAt) : '';
+        var ageHtml = opts.requestAgeHtml ? opts.requestAgeHtml(r.requestedAt, urgencyText) : '';
         return '<div class="card-header">' +
             '<span class="card-code">#' + r.id + '</span>' +
             '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>' +
@@ -1626,10 +1628,14 @@ function statusClass(status) {
  *   Today / Yesterday (≤1 day)  → age-fresh  (primary / green)
  *   2–3 days                    → age-waiting (tertiary / amber)
  *   4+ days                     → age-stale  (error / red)
+ *
+ * Uses `data-tip` (rendered above the element by initDataTipTooltips) instead of
+ * the native `title`, which browsers draw below.
  * @param {string} requestedAt - ISO/timestamp string of when the request was made
+ * @param {string} [urgencyLabel] - Optional "Urgent"/"Normal" to surface in the tooltip
  * @returns {string} HTML string
  */
-function requestAgeHtml(requestedAt) {
+function requestAgeHtml(requestedAt, urgencyLabel) {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     const req = new Date(requestedAt);
@@ -1646,7 +1652,10 @@ function requestAgeHtml(requestedAt) {
         label = diff + ' days ago';
     }
     const cls = diff <= 1 ? 'age-fresh' : diff <= 3 ? 'age-waiting' : 'age-stale';
-    return '<div class="request-age ' + cls + '" title="' + label + ' — ' + (cls === 'age-fresh' ? 'recently submitted' : cls === 'age-waiting' ? '2–3 days old' : '4+ days old') + '">' + label + '</div>';
+    const tip = urgencyLabel
+        ? label + ' · Urgency: ' + urgencyLabel
+        : label + ' · ' + (cls === 'age-fresh' ? 'recently submitted' : cls === 'age-waiting' ? '2–3 days old' : '4+ days old');
+    return '<div class="request-age ' + cls + '" data-tip="' + tip + '">' + label + '</div>';
 }
 
 
