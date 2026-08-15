@@ -688,7 +688,7 @@ function compareBy(sortState, va, vb) {
 function makeSortableHeader(col, sortState, render) {
     const th = document.createElement('th');
     th.className = col.cls;
-    if (col.tip) th.title = col.tip;
+    if (col.tip) th.setAttribute('data-tip', col.tip);
     if (col.sortable) {
         th.classList.add('sortable');
         var arrow = '';

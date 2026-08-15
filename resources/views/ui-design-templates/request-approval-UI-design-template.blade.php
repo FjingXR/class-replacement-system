@@ -473,7 +473,7 @@
             const thead = document.getElementById('tableHead');
             let html = '<tr><th class="col-checkbox"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>';
             columns.forEach((col, i) => {
-                const tip = col.tip ? ' title="' + col.tip + '"' : '';
+                const tip = col.tip ? ' data-tip="' + col.tip + '"' : '';
                 if (col.sortable) {
                     const arrow = sortState.field === col.field ? (sortState.dir === 'asc' ? ' ▲' : ' ▼') : '';
                     html += '<th class="sortable"' + tip + ' onclick="toggleSort(\'' + col.field + '\')">' + col.label + arrow + '</th>';
@@ -553,14 +553,6 @@
             var lecName = (typeof lookupLecturer === 'function' && lookupLecturer(r.lecturer)) ? lookupLecturer(r.lecturer).name : r.lecturer;
 
             let html = '<tr data-id="' + r.id + '"' + (rowClass ? ' class="' + rowClass.trim() + '"' : '')
-                + HtmlBuilder.tipAttr(HtmlBuilder.rowTip(
-                    r.courseCode + ' — ' + r.courseName,
-                    lecName,
-                    dayAbbr(r.classDay) + ', ' + formatDate(r.classDate) + ', ' + r.timeStart + '–' + r.timeEnd + ' ' + r.venue +
-                        (r.replacementDate ? ' → ' + dayAbbr(isoDayName(r.replacementDate)) + ', ' + formatDate(r.replacementDate) + ', ' + r.replacementTime + ' ' + r.replacementVenue : ''),
-                    r.totalStudents + ' student' + (r.totalStudents !== 1 ? 's' : ''),
-                    r.status
-                ))
                 + ' onclick="openModalById(' + r.id + ')" style="cursor:pointer">';
 
             // Checkbox column

@@ -568,13 +568,6 @@
                         openModalById(r.id);
                     });
                     row.style.cursor = 'pointer';
-                    row.setAttribute('data-tip', HtmlBuilder.rowTip(
-                        r.courseCode + ' — ' + r.courseName + ' (' + r.classType + ')',
-                        dayAbbr(r.classDay) + ', ' + formatDate(r.classDate) + ', ' + r.timeStart + '–' + r.timeEnd +
-                            (r.replacementDate ? ' → ' + dayAbbr(isoDayName(r.replacementDate)) + ', ' + formatDate(r.replacementDate) + ', ' + r.replacementTime + ' ' + r.replacementVenue : ''),
-                        r.totalStudents + ' student' + (r.totalStudents !== 1 ? 's' : ''),
-                        r.status
-                    ));
                     body.appendChild(row);
                 });
             }
