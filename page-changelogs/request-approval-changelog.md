@@ -1,5 +1,21 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Fix: duplicate data-tip tooltip on hover (init ran twice)
+
+### Summary
+
+Hovering a `data-tip` element (e.g. the slot badge) showed **two** tooltips. Cause: the global `initDataTipTooltips()` in the `ui-template` layout runs on every page, but request-approval / request-history / replacement-home also call the legacy `initHeaderTooltips()` alias — so the tooltip div + listeners were created twice. `initDataTipTooltips()` is now guarded by `window.__dataTipTooltipsInitialized` so it can only create one.
+
+### Files Changed
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `initDataTipTooltips()` | Updated | Idempotent guard (`window.__dataTipTooltipsInitialized`) — only one tooltip div / listener set is ever created even when called multiple times. |
+
+---
+
 ## [2026-08-15] Modal: auto-close details on approve/reject + always-visible Close
 
 ### Summary

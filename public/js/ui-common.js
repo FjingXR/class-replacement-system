@@ -1778,6 +1778,11 @@ class BackNavigator {
 // so the tip is always fully visible.
 
 function initDataTipTooltips() {
+    // Idempotent: the global layout init + any per-page legacy initHeaderTooltips()
+    // alias both call this — guard so only ONE tooltip div + listener set is created.
+    if (window.__dataTipTooltipsInitialized) return;
+    window.__dataTipTooltipsInitialized = true;
+
     var tip = document.createElement('div');
     tip.className = 'data-tip-tooltip';
     tip.style.cssText = 'position:fixed;padding:5px 10px;background:var(--color-inverse-surface);color:var(--color-on-inverse-surface);font-size:11px;font-weight:500;white-space:nowrap;border-radius:var(--radius-xs);box-shadow:var(--shadow-sm);pointer-events:none;opacity:0;visibility:hidden;transition:opacity 0.15s,visibility 0.15s;z-index:9999';
