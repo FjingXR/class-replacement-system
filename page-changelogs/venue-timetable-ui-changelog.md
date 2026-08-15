@@ -1,5 +1,35 @@
 # Changelog — Venue Timetable UI
 
+## [2026-08-15] Detail modal: status description as its own row
+
+Added a **Status Description** row ("Replacement request awaiting approval" / "Class booked for this venue") separate from the Status badge.
+
+#### `resources/views/ui-design-templates/venue-timetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `openModal()` | Updated | Split `Status` and `Status Description` rows. |
+
+---
+
+## [2026-08-15] Detail modal refinements: gray × close, split rows, status badge
+
+### Summary
+
+- **Close button** — normal gray `×`; removed header `modal-status-badge`.
+- **Split rows** — Subject Code/Name, Start/End Time split; status as badge row with brief description.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/venue-timetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | Removed header `modal-status-badge`. |
+| `openModal()` | Updated | Split rows, badge status + description. |
+
+---
+
 ## [2026-08-15] Detail modal redesign + fix (was never opening)
 
 ### Summary

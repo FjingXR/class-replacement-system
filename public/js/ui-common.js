@@ -550,6 +550,8 @@ function openClassModal(cfg) {
     const startStr = to12h(hours[event.start]);
     const endStr = to12h(hours[event.end + 1] || add30min(hours[event.end]));
 
+    const statusDesc = event.status === 'pending' ? 'Replacement request awaiting approval' : event.status === 'conflict' ? 'Scheduling conflict — needs attention' : 'Scheduled class with no issues';
+
     const rows = [
         { label: 'Subject Code', value: event.code },
         { label: 'Subject Name', value: event.name },
@@ -558,8 +560,10 @@ function openClassModal(cfg) {
         { label: 'Venue', value: event.venue || '\u2014' },
         { label: 'Day', value: dayNames[di] || days[di].abbr },
         { label: 'Date', value: days[di].date },
-        { label: 'Time', value: startStr + ' \u2013 ' + endStr, strong: true },
-        { label: 'Status', value: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) },
+        { label: 'Start Time', value: startStr, strong: true },
+        { label: 'End Time', value: endStr },
+        { label: 'Status', value: '<span class="badge badge-' + (event.status || 'normal') + '">' + displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) + '</span>' },
+        { label: 'Status Description', value: statusDesc },
         { label: 'Remarks', value: event.remarks || '\u2014' },
     ];
 
@@ -581,12 +585,12 @@ function openClassModal(cfg) {
 
     DetailModal.render({
         modalId: cfg.modalId || 'classModal',
-        title: cfg.title || (event.code + ' \u2014 ' + event.name),
-        status: { text: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1), cls: displayStatus },
+        title: cfg.title || 'Class Details',
+        subtitle: (event.code || '') + (event.name ? ' \u2014 ' + event.name : ''),
         timeline: event.status === 'pending'
             ? [
                 { label: 'Submitted', time: event.requestedAt || 'Done', state: 'completed' },
-                { label: 'Under Review', time: 'In progress', state: 'active' },
+                { label: 'Under Review', time: 'In progress', state: 'active', dot: 'dot-warning' },
                 { label: 'Awaiting Replacement', time: 'Next', state: 'pending' },
               ]
             : null,
@@ -639,15 +643,8 @@ const DetailModal = {
             titleEl.innerHTML = escHtml(cfg.title || '') +
                 (cfg.subtitle ? '<span class="modal-subtitle">' + escHtml(cfg.subtitle) + '</span>' : '');
         }
-        const badgeEl = this._overlay.querySelector('.modal-status-badge');
-        if (badgeEl) {
-            if (cfg.status) {
-                badgeEl.textContent = cfg.status.text || '';
-                badgeEl.className = 'modal-status-badge ' + (cfg.status.cls || '');
-            } else {
-                badgeEl.style.display = 'none';
-            }
-        }
+        // Header status badge intentionally removed — status is shown as a
+        // badge row inside the body (see DetailModal.row with a .badge value).
 
         let html = '';
         if (cfg.timeline && cfg.timeline.length) html += DetailModal.timeline(cfg.timeline);
@@ -685,11 +682,14 @@ const DetailModal = {
     },
 
     // Render a global horizontal timeline rail (always visible, never a tab).
+    // Each step may supply `dot` ('dot-success'|'dot-error'|'dot-warning'|'dot-primary')
+    // so the dot colour reflects that step's status.
     timeline(steps) {
         let html = '<div class="modal-timeline">';
         steps.forEach((s, i) => {
             const st = s.state || 'pending';
-            html += '<div class="tl-step ' + st + '">';
+            const dotCls = s.dot || '';
+            html += '<div class="tl-step ' + st + ' ' + dotCls + '">';
             html += '<div class="tl-dot"></div>';
             html += '<div class="tl-label">' + escHtml(s.label) + '</div>';
             if (s.time) html += '<div class="tl-time">' + escHtml(s.time) + '</div>';

@@ -550,7 +550,6 @@
             <div class="modal">
                 <div class="modal-header">
                     <span class="modal-title" id="modalTitle">Class Details</span>
-                    <span class="modal-status-badge" id="modalStatusBadge">Normal</span>
                     <button class="modal-close" onclick="closeModal()">&times;</button>
                 </div>
                 <div class="modal-body" id="modalBody"></div>
@@ -1077,15 +1076,16 @@
                 modalId: 'eventModal',
                 title: 'Class Details',
                 subtitle: e.code + ' · ' + (e.name || ''),
-                status: { text: e.status, cls: 'badge-' + e.status },
                 body: DetailModal.section('Class Information',
-                    DetailModal.row('Course', e.code, { strong: true }) +
-                    DetailModal.row('Name', e.name || '—') +
+                    DetailModal.row('Subject Code', e.code, { strong: true }) +
+                    DetailModal.row('Subject Name', e.name || '—') +
                     DetailModal.row('Lecturer', e.lecturer || '—') +
                     DetailModal.row('Venue', venueStr) +
                     DetailModal.row('Cohort', e.cohort || '—') +
-                    DetailModal.row('Time', startTime + ' – ' + endTime, { strong: true }) +
+                    DetailModal.row('Start Time', startTime, { strong: true }) +
+                    DetailModal.row('End Time', endTime) +
                     DetailModal.row('Status', '<span class="badge badge-' + e.status + '">' + e.status + '</span>') +
+                    DetailModal.row('Status Description', e.status === 'pending' ? 'Replacement request awaiting approval' : 'Class booked for this venue') +
                     DetailModal.row('Remarks', e.remarks || '—')
                 )
             });

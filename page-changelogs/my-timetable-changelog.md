@@ -1,5 +1,47 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-15] Class detail modal: remove Lecturer row + add Status Description row
+
+### Summary
+
+- Removed the **Lecturer** row (this is the lecturer's own timetable — self-referential).
+- Added a **Status Description** row: "Scheduled class with no issues" / "Replacement request awaiting approval" / "Scheduling conflict — needs attention".
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `openModal()` | Updated | Dropped `Lecturer` row; added `Status Description` row (description now its own row, not inline caption). |
+
+---
+
+## [2026-08-15] Detail modal refinements: gray × close, general title, split rows, dot colours
+
+### Summary
+
+- **Close button** — normal gray `×` (was red dot); removed header `modal-status-badge`.
+- **General title** — header now "Class Details" (course code → subtitle); status as badge row with a brief description.
+- **Split rows** — Start/End Time split; status uses `.badge-*`.
+- **Timeline dot colours vary by status** for pending requests (`dot-warning`).
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `openModal()` | Updated | General title, split rows, badge status, dot colours. |
+
+#### `resources/views/partials/ui-class-detail-modal.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | Removed header `modal-status-badge`. |
+
+---
+
 ## [2026-08-15] Class detail modal redesign: unified detail sheet
 
 ### Summary

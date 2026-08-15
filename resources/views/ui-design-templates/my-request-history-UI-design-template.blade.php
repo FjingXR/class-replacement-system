@@ -249,7 +249,6 @@
         <div class="modal" id="detailsModal">
             <div class="modal-header">
                 <span class="modal-title" id="modalTitle">Request Details</span>
-                <span class="modal-status-badge" id="modalStatusBadge"></span>
                 <button class="modal-close" onclick="closeModal()">✕</button>
             </div>
             <div class="modal-body" id="modalBody"></div>
@@ -698,32 +697,36 @@
             const r = mockRequests.find(x => x.id === id);
             if (!r) return;
 
-            // Global timeline (always visible above the tabs)
+            const statusDot = r.status === 'Pending' ? 'dot-warning' : r.status === 'Approved' || r.status === 'Completed' ? 'dot-success' : r.status === 'Rejected' ? 'dot-error' : 'dot-primary';
+
+            // Global timeline (always visible above the tabs); dot colour follows each step's status
             const reviewTime = r.reviewedAt ? formatDateTime(r.reviewedAt) : null;
             const timeline = [
                 { label: 'Request Submitted', time: formatDateTime(r.requestedAt), state: 'completed' },
-                { label: 'Under Review', time: reviewTime || '—', state: r.status === 'Pending' ? 'active' : 'completed' },
-                { label: r.status, time: reviewTime || '—', state: r.status === 'Pending' ? 'pending' : 'completed' }
+                { label: 'Under Review', time: reviewTime || '—', state: r.status === 'Pending' ? 'active' : 'completed', dot: r.status === 'Pending' ? 'dot-warning' : 'dot-success' },
+                { label: r.status, time: reviewTime || '—', state: r.status === 'Pending' ? 'pending' : 'completed', dot: statusDot }
             ];
 
             // Tab 1: General Info
             const genRows =
                 DetailModal.row('Request No.', '#' + r.id, { strong: true }) +
                 DetailModal.row('Requested At', formatDateTime(r.requestedAt)) +
-                DetailModal.row('Status', '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span> <span class="detail-caption">' + statusDesc(r.status) + '</span>') +
+                DetailModal.row('Status', '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>') +
+                DetailModal.row('Status Description', statusDesc(r.status)) +
                 (r.status === 'Rejected' && r.rejectionReason ? DetailModal.row('Rejection Reason', r.rejectionReason, { strong: true }) : '') +
-                DetailModal.row('Course Code', r.courseCode, { strong: true }) +
-                DetailModal.row('Course Name', r.courseName) +
+                DetailModal.row('Subject Code', r.courseCode, { strong: true }) +
+                DetailModal.row('Subject Name', r.courseName) +
                 DetailModal.row('Class Type', r.classType === 'L' ? 'Lecture' : 'Tutorial');
             const genSection = DetailModal.section('General Info', genRows);
 
-            // Tab 2: Original Class Detail
+            // Tab 2: Original Class Detail — one value per row
             const origSection = DetailModal.section('Original Class',
                 DetailModal.row('Cohort(s)', r.cohorts.join(', ')) +
                 DetailModal.row('Total Students', cohortBreakdown(r)) +
                 DetailModal.row('Original Date', formatDate(r.classDate)) +
                 DetailModal.row('Original Day', r.classDay) +
-                DetailModal.row('Original Time', to12h(r.timeStart) + ' to ' + to12h(r.timeEnd), { strong: true }) +
+                DetailModal.row('Start Time', to12h(r.timeStart), { strong: true }) +
+                DetailModal.row('End Time', to12h(r.timeEnd)) +
                 DetailModal.row('Duration', String(r.duration) + ' hours') +
                 DetailModal.row('Original Venue', r.venue)
             );
@@ -741,7 +744,6 @@
                 modalId: 'modalOverlay',
                 title: 'Request Details',
                 subtitle: '#' + r.id + ' · ' + r.courseCode + ' — ' + r.courseName,
-                status: { text: r.status, cls: statusClass(r.status) },
                 timeline: timeline,
                 tabs: [
                     { key: 'general', label: 'General Info', html: genSection },

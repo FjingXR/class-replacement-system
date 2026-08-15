@@ -1,5 +1,37 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-15] Detail modal: status description as its own row
+
+Status description now shown in a dedicated **Status Description** row (was inline caption). Description from `statusDesc()` map.
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `openModalById()` | Updated | Split `Status` (badge) and `Status Description` rows. |
+
+---
+
+## [2026-08-15] Detail modal refinements: gray × close, body status badge, split rows, dot colours
+
+### Summary
+
+- **Close button** — normal gray `×` (was red dot); removed header `modal-status-badge`.
+- **Status badge + description in body**.
+- **One value per row** — Subject Code/Name, Start/End Time split; status description via `statusDesc`.
+- **Timeline dot colours vary by status** (`dot-*`).
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | Removed header `modal-status-badge`. |
+| `openModalById()` | Updated | Split rows, timeline `dot-*`, removed `status` header cfg. |
+
+---
+
 ## [2026-08-15] Detail modal redesign: category tabs + unified detail sheet
 
 ### Summary

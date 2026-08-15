@@ -1,5 +1,37 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-15] Quick-View: status description as its own row
+
+Added a **Status Description** row alongside the days-left badge ("Urgent — arrange a replacement soon" / "Approaching — plan a replacement" / "Within normal lead time").
+
+#### `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `quickView()` | Updated | Added `Status Description` row after `Status`. |
+
+---
+
+## [2026-08-15] Quick-View refinements: general title, status badges, split rows
+
+### Summary
+
+- **General title** — modal header now "Replacement Details" (was the course name); course code/name moved to subtitle.
+- **Status badges** — days-left urgency badge + conflict-reason badge as body rows (was a header badge).
+- **Split rows** — Start/End Time + Duration split; removed grouped "Time" and "Days Left" rows.
+- **Close button** — normal gray `×`; removed header `modal-status-badge`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | Removed header `qvStatusBadge`. |
+| `quickView()` | Updated | General title, badge rows, split time/duration. |
+
+---
+
 ## [2026-08-15] Quick-View modal redesign: unified detail sheet
 
 ### Summary

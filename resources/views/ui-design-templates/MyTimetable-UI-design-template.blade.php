@@ -289,18 +289,21 @@
                 studentValue = event.studentCounts.join('+') + ' = ' + event.studentCounts.reduce((a, b) => a + b, 0);
             }
 
+            const statusDesc = event.status === 'pending' ? 'Replacement request awaiting approval' : event.status === 'conflict' ? 'Scheduling conflict — needs attention' : 'Scheduled class with no issues';
+
             const rows = [
                 { label: 'Subject Code', value: event.code },
                 { label: 'Subject Name', value: event.name },
                 { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
-                { label: 'Lecturer', value: event.lecturer },
                 { label: 'Cohort', value: cohortValue },
                 { label: 'Total Students', value: studentValue },
                 { label: 'Venue', value: event.venue || '—' },
                 { label: 'Day', value: dayNames[event.di] },
                 { label: 'Date', value: weekData[currentWeek].days[event.di].date },
-                { label: 'Time', value: startStr + ' – ' + endStr, strong: true },
-                { label: 'Status', value: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) },
+                { label: 'Start Time', value: startStr, strong: true },
+                { label: 'End Time', value: endStr },
+                { label: 'Status', value: '<span class="badge badge-' + (event.status || 'normal') + '">' + displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) + '</span>' },
+                { label: 'Status Description', value: statusDesc },
                 { label: 'Remarks', value: event.remarks || '—' },
             ];
 
@@ -313,13 +316,12 @@
 
             DetailModal.render({
                 modalId: 'classModal',
-                title: event.code || 'Class Details',
-                subtitle: event.name,
-                status: { text: displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1), cls: displayStatus },
+                title: 'Class Details',
+                subtitle: (event.code || '') + (event.name ? ' — ' + event.name : ''),
                 timeline: event.status === 'pending'
                     ? [
                         { label: 'Submitted', time: event.requestedAt || 'Done', state: 'completed' },
-                        { label: 'Under Review', time: 'In progress', state: 'active' },
+                        { label: 'Under Review', time: 'In progress', state: 'active', dot: 'dot-warning' },
                         { label: 'Awaiting Replacement', time: 'Next', state: 'pending' },
                       ]
                     : null,

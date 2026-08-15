@@ -7,7 +7,6 @@
     <div class="modal">
         <div class="modal-header">
             <span class="modal-title" id="modalTitle">Class Details</span>
-            <span class="modal-status-badge" id="modalStatusBadge">Normal</span>
             <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
         <div class="modal-body" id="modalBody"></div>

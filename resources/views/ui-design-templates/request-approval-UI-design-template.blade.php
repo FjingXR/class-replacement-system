@@ -277,7 +277,6 @@
     <div class="modal">
         <div class="modal-header">
             <span class="modal-title" id="modalTitle">Request Details</span>
-            <span class="modal-status-badge" id="modalStatusBadge"></span>
             <button class="modal-close" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-body" id="modalBody"></div>
@@ -577,7 +576,7 @@
             var lec = lookupLecturer(r.lecturer);
             if (lec) {
                 html += '<td><div class="lecturer-cell-name">' + lec.name + ' <span class="lecturer-cell-id">(' + lec.staffId + ')</span></div>';
-                html += '<div class="lecturer-cell-email" onclick="copyEmail(\'' + lec.email + '\', event)" title="Click to copy email">' + lec.email + ' <span class="copy-icon">📋</span></div></td>';
+                html += '<div class="lecturer-cell-email" onclick="copyEmail(\'' + lec.email + '\', event)" data-tip="Click to copy email">' + lec.email + ' <span class="copy-icon">📋</span></div></td>';
             } else {
                 html += '<td>' + r.lecturer + '</td>';
             }
@@ -814,11 +813,20 @@
             currentModalId = r.id;
             viewedIds.add(r.id);
 
-            // Global timeline (always visible above the tabs)
+            const statusDescMap = {
+                'Pending': 'Awaiting your approval',
+                'Approved': 'Replacement scheduled — ready to proceed',
+                'Rejected': 'Declined — lecturer needs an alternative',
+                'Completed': 'Replacement conducted',
+                'Cancelled': 'Request withdrawn'
+            };
+            const statusDot = r.status === 'Pending' ? 'dot-warning' : r.status === 'Approved' || r.status === 'Completed' ? 'dot-success' : r.status === 'Rejected' ? 'dot-error' : 'dot-primary';
+
+            // Global timeline (always visible above the tabs); dot colour follows each step's status
             const timeline = [
                 { label: 'Submitted', time: formatDateTime(r.requestedAt), state: 'completed' },
-                { label: 'Viewed', time: r.viewedAt ? formatDateTime(r.viewedAt) : '—', state: r.viewedAt ? 'completed' : 'pending' },
-                { label: 'Reviewed', time: r.reviewedAt ? formatDateTime(r.reviewedAt) : 'Pending', state: r.reviewedAt ? 'completed' : (r.status === 'Pending' ? 'active' : 'pending') }
+                { label: 'Viewed', time: r.viewedAt ? formatDateTime(r.viewedAt) : '—', state: r.viewedAt ? 'completed' : 'pending', dot: r.viewedAt ? 'dot-success' : '' },
+                { label: 'Reviewed', time: r.reviewedAt ? formatDateTime(r.reviewedAt) : (r.status === 'Pending' ? 'Pending' : '—'), state: r.reviewedAt ? 'completed' : (r.status === 'Pending' ? 'active' : 'pending'), dot: statusDot }
             ];
 
             // Tab 1: Request Information
@@ -827,27 +835,33 @@
             if (modalLec) {
                 reqRows += DetailModal.row('Lecturer', modalLec.name, { strong: true });
                 reqRows += DetailModal.row('Staff ID', modalLec.staffId ? '<span class="detail-value--muted">' + modalLec.staffId + '</span>' : null);
-                reqRows += DetailModal.row('Email', '<span class="lecturer-cell-email" onclick="copyEmail(\'' + modalLec.email + '\', event)" title="Click to copy">' + modalLec.email + ' <span class="copy-icon">📋</span></span>');
+                reqRows += DetailModal.row('Email', '<span class="lecturer-cell-email" onclick="copyEmail(\'' + modalLec.email + '\', event)" data-tip="Click to copy email">' + modalLec.email + ' <span class="copy-icon">📋</span></span>');
             } else {
                 reqRows += DetailModal.row('Lecturer', r.lecturer, { strong: true });
             }
-            reqRows += DetailModal.row('Course', '<span class="detail-value--strong">' + r.courseCode + '</span> — ' + r.courseName);
+            reqRows += DetailModal.row('Subject Code', r.courseCode, { strong: true });
+            reqRows += DetailModal.row('Subject Name', r.courseName);
             reqRows += DetailModal.row('Requested', formatDateTime(r.requestedAt));
             reqRows += DetailModal.row('Status', '<span class="badge ' + statusClass(r.status) + '">' + r.status + '</span>');
+            reqRows += DetailModal.row('Status Description', statusDescMap[r.status] || '');
             if (r.rejectionReason) {
                 reqRows += DetailModal.row('Rejection Reason', r.rejectionReason, { strong: true });
             }
             const reqSection = DetailModal.section('Request Information', reqRows);
 
-            // Tab 2: Original Class Detail
-            const origSection = DetailModal.section('Original Class', 
-                DetailModal.row('Date', r.classDay + ', ' + r.classDate) +
-                DetailModal.row('Time', DateHelper.to12h(r.timeStart) + ' to ' + DateHelper.to12h(r.timeEnd) + ' (' + r.duration + 'h)', { strong: true }) +
+            // Tab 2: Original Class Detail — one value per row, no grouping
+            const origSection = DetailModal.section('Original Class',
+                DetailModal.row('Date', r.classDate) +
+                DetailModal.row('Day', r.classDay) +
+                DetailModal.row('Start Time', DateHelper.to12h(r.timeStart), { strong: true }) +
+                DetailModal.row('End Time', DateHelper.to12h(r.timeEnd)) +
+                DetailModal.row('Duration', r.duration + 'h') +
                 DetailModal.row('Venue', r.venue) +
-                DetailModal.row('Students', String(r.totalStudents) + ' <span class="detail-value--muted">(' + r.cohorts.join(', ') + ')</span>')
+                DetailModal.row('Total Students', String(r.totalStudents)) +
+                DetailModal.row('Cohort(s)', r.cohorts.join(', '))
             );
 
-            // Tab 3: Requested Replacement Class
+            // Tab 3: Requested Replacement Class — one value per row
             const repSection = DetailModal.section('Replacement Class',
                 DetailModal.row('Date', r.replacementDate) +
                 DetailModal.row('Time', DateHelper.format12hRange(r.replacementTime), { strong: true }) +
@@ -871,7 +885,6 @@
                 modalId: 'modalOverlay',
                 title: 'Request Details',
                 subtitle: '#' + r.id + ' · ' + r.courseCode + ' — ' + r.courseName,
-                status: { text: r.status, cls: statusClass(r.status) },
                 timeline: timeline,
                 tabs: tabs
             });

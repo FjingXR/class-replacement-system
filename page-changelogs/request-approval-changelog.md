@@ -1,5 +1,42 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Detail modal: status description as its own row
+
+### Summary
+
+The request status's brief description is now shown in a dedicated **Status Description** row (was an inline caption next to the status badge). Description map: Pending → "Awaiting your approval", Approved → "Replacement scheduled — ready to proceed", Rejected → "Declined — lecturer needs an alternative", Completed → "Replacement conducted", Cancelled → "Request withdrawn".
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `openModalById()` | Updated | Split `Status` (badge) and `Status Description` (text) into two rows. |
+
+---
+
+## [2026-08-15] Detail modal refinements: gray × close, body status badge, split rows, dot colours
+
+### Summary
+
+- **Close button** — replaced the small red dot with a normal gray `×` button (top-right); removed the header `modal-status-badge`.
+- **Status badge in body** — status now shown as a coloured badge row inside the modal (not the header); each status carries a brief description (e.g. "Awaiting your approval", "Replacement scheduled — ready to proceed").
+- **One value per row** — split "Course" into **Subject Code** / **Subject Name**; Original Class split Date/Day and Start/End/Duration; Students split into Total Students + Cohort(s).
+- **Timeline dot colours vary by status** — the Reviewed step dot is success/error/warning/primary by request status (`dot-*`).
+- **Click-to-copy tooltip above** — email copy hint uses `data-tip` so the shared tooltip shows above the element.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Modal shell | Updated | Removed header `modal-status-badge`; close stays `.modal-close`. |
+| `openModalById()` | Updated | Split rows, status badge + description, timeline `dot-*`, email `data-tip`, removed `status` header cfg. |
+
+---
+
 ## [2026-08-15] Detail modal redesign: category tabs + unified detail sheet
 
 ### Summary

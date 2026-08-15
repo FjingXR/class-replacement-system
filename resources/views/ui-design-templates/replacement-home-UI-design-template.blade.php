@@ -231,7 +231,6 @@
             <div class="modal" style="max-width:500px">
                 <div class="modal-header">
                     <span class="modal-title" id="qvTitle">Replacement Details</span>
-                    <span class="modal-status-badge" id="qvStatusBadge"></span>
                     <button class="modal-close" onclick="hideQuickView()">✕</button>
                 </div>
                 <div class="modal-body" id="qvBody"></div>
@@ -450,28 +449,31 @@
             qvCurrent = c;
 
             var daysLeftVal = daysLeft(c.date);
-            var urgencyCls = daysLeftVal <= 3 ? 'urgent' : daysLeftVal <= 7 ? 'warning' : 'safe';
+            var urgencyCls = daysLeftVal <= 3 ? 'urgency-urgent' : daysLeftVal <= 7 ? 'urgency-warning' : 'urgency-normal';
             var wn = getWeekNumber(c.date);
             var weekTag = wn ? ' (Week ' + wn + ')' : '';
+            var typeLabel = c.type === 'L' ? 'Lecture' : 'Tutorial';
 
             DetailModal.render({
                 modalId: 'quickViewModal',
-                title: c.name + ' (' + c.type + ')',
-                subtitle: c.code + ' · ' + (c.conflictReason || ''),
-                status: { text: c.conflictReason, cls: urgencyCls },
+                title: 'Replacement Details',
+                subtitle: c.code + ' · ' + c.name + ' (' + typeLabel + ')',
                 body: DetailModal.section('Replacement Details',
-                    DetailModal.row('Course Code', c.code, { strong: true }) +
-                    DetailModal.row('Course Name', c.name) +
-                    DetailModal.row('Type', c.type === 'L' ? 'Lecture' : 'Tutorial') +
+                    DetailModal.row('Status', '<span class="urgency-badge ' + urgencyCls + '">' + daysLeftVal + ' days left</span>') +
+                    DetailModal.row('Status Description', daysLeftVal <= 3 ? 'Urgent — arrange a replacement soon' : daysLeftVal <= 7 ? 'Approaching — plan a replacement' : 'Within normal lead time') +
+                    DetailModal.row('Conflict Reason', '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>') +
+                    DetailModal.row('Subject Code', c.code, { strong: true }) +
+                    DetailModal.row('Subject Name', c.name) +
+                    DetailModal.row('Class Type', typeLabel) +
                     DetailModal.row('Week', 'Week ' + (wn || '-')) +
                     DetailModal.row('Day', c.day) +
                     DetailModal.row('Date', formatDate(c.date) + weekTag) +
-                    DetailModal.row('Time', to12h(c.timeStart) + ' to ' + to12h(c.timeEnd) + ' (' + c.duration + ' hr' + (c.duration > 1 ? 's' : '') + ')', { strong: true }) +
+                    DetailModal.row('Start Time', to12h(c.timeStart)) +
+                    DetailModal.row('End Time', to12h(c.timeEnd)) +
+                    DetailModal.row('Duration', c.duration + ' hr' + (c.duration > 1 ? 's' : '')) +
                     DetailModal.row('Venue', c.venue) +
                     DetailModal.row('Students', String(c.totalStudents)) +
-                    DetailModal.row('Cohort(s)', c.cohorts.join(', ')) +
-                    DetailModal.row('Days Left', daysLeftVal + ' days') +
-                    DetailModal.row('Conflict Reason', c.conflictReason)
+                    DetailModal.row('Cohort(s)', c.cohorts.join(', '))
                 )
             });
         }
