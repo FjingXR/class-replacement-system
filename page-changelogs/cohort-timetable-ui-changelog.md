@@ -1,5 +1,23 @@
 # Changelog — Cohort Timetable UI
 
+## [2026-08-15] Event hover tooltip shows lecturer instead of venue
+
+The event-block tooltip previously showed `name · venue` (venue already on the block). It now shows the **lecturer** (`name · Dr. Christopher Lazarus`) — useful since the cohort is the page context and the lecturer isn't on the block. Uses the new `tooltipExtra(event)` option on the shared `buildTimetableGrid`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `buildTimetable()` | Updated | Passes `tooltipExtra` returning `event.lecturer`. |
+
+#### `public/js/ui-common.js` + `public/css/theme.css`
+
+Shared: `buildTimetableGrid` now sets `dataset.tip2` from `cfg.tooltipExtra`; `.event-block::after` reads `attr(data-tip2)`.
+
+---
+
 ## [2026-08-15] Class detail modal redesign: unified detail sheet
 
 The Class Detail modal now uses the shared `DetailModal` "Detail Sheet" via the shared `openClassModal()` (single flat group, definition rows). Cohort extra field preserved. No page-specific changes needed.

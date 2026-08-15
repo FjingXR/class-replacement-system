@@ -359,7 +359,12 @@
             buildTimetableGrid({
                 events: eventsData[currentWeek] || [],
                 days: weekData[currentWeek].days,
-                onEventClick: function(e) { openModal(e); }
+                onEventClick: function(e) { openModal(e); },
+                tooltipExtra: function(e) {
+                    // Tooltip shows the cohort(s) — the lecturer is the viewer, so venue/lecturer are redundant.
+                    if (e.cohorts && e.cohorts.length) return e.cohorts.join(' + ');
+                    return e.cohort || e.venue || '—';
+                }
             });
             updateSummary();
         }

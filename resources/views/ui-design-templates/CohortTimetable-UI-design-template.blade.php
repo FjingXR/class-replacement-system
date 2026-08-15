@@ -332,7 +332,11 @@
             buildTimetableGrid({
                 events: weekEvents,
                 days: weekData[currentWeek].days,
-                onEventClick: function(e, di) { openModal(e, di); }
+                onEventClick: function(e, di) { openModal(e, di); },
+                tooltipExtra: function(e) {
+                    // Tooltip shows the lecturer — the cohort is the page context, venue is on the block.
+                    return e.lecturer || '—';
+                }
             });
             updateSummaries(weekEvents);
         }

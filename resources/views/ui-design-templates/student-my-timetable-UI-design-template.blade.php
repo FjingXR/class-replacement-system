@@ -150,7 +150,11 @@
             buildTimetableGrid({
                 events: getVisibleEvents(currentWeek),
                 days: weekData[currentWeek].days,
-                onEventClick: function(e) { openModal(e); }
+                onEventClick: function(e) { openModal(e); },
+                tooltipExtra: function(e) {
+                    // Tooltip shows the lecturer — students don't see who teaches from the block.
+                    return e.lecturer || '—';
+                }
             });
             updateSummary();
         }

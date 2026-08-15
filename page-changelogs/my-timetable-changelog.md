@@ -1,5 +1,31 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-15] Event hover tooltip shows cohort(s) instead of venue
+
+The event-block tooltip previously showed `name · venue`, but the venue is already displayed on the block. It now shows the **cohort(s)** (`name · DFT2 (S1)`) — useful for a lecturer teaching across cohorts (the lecturer in the tooltip would just be the viewer). Implemented via a new `tooltipExtra(event)` option on the shared `buildTimetableGrid`; the CSS tooltip reads `attr(data-tip2)`.
+
+### Files Changed
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `buildTimetableGrid()` | Updated | Sets `div.dataset.tip2` from optional `cfg.tooltipExtra(event)` (defaults to venue, so other callers are unaffected). |
+
+#### `public/css/theme.css`
+
+| Location | Change | Detail |
+|---|---|---|
+| `.event-block::after` | Updated | Tooltip content `attr(data-name) ' · ' attr(data-venue)` → `attr(data-name) ' · ' attr(data-tip2)`. |
+
+#### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `buildTimetable()` | Updated | Passes `tooltipExtra` returning the event's `cohorts.join(' + ')` (or `cohort`/venue fallback). |
+
+---
+
 ## [2026-08-15] Class detail modal: remove Lecturer row + add Status Description row
 
 ### Summary

@@ -457,6 +457,9 @@ function buildTimetableGrid(cfg) {
                 div.__eventData = e;
                 div.dataset.name = e.name || '';
                 div.dataset.venue = e.venue || '';
+                div.dataset.tip2 = (typeof cfg.tooltipExtra === 'function')
+                    ? cfg.tooltipExtra(e)
+                    : (e.venue || '');
                 if (isConflict) {
                     div.classList.add('event-public-holiday');
                 } else if (e.status === 'normal') {
