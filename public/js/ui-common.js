@@ -151,6 +151,7 @@ class WeekNavigator {
         this._updateSubtitle();
         this._updateProgress();
         this._scrollToGrid();
+        this.save();
     }
 
     prevWeek() {

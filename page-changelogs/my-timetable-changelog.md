@@ -1,5 +1,19 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-16] Today button now persists week selection
+
+The "Today" button now saves the current week to `localStorage` (via `WeekNavigator.jumpToToday()` calling `this.save()`), consistent with arrow/dropdown navigation. Previously, clicking Today would jump the view but not persist — a page refresh would revert to the old week.
+
+### Files Changed
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `WeekNavigator.jumpToToday()` | Updated | Now calls `this.save()` after updating the UI, matching the behavior of `prevWeek()`/`nextWeek()`/`selectWeek()`. |
+
+---
+
 ## [2026-08-15] Replace Now passes original class duration to replacement-arrangement
 
 The **Replace Now** button now includes `duration` (in hours, derived from the event's `start`/`end` slot indices via `(end - start + 1) / 2`) in the URL when navigating to `/replacement-arrangement`. The arrangement page then caps the selection at that many 30-min slots (duration × 2) so the replacement matches the original class length.

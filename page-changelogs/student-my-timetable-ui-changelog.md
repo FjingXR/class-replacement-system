@@ -1,5 +1,19 @@
 # Changelog — Student My Timetable
 
+## [2026-08-16] Today button now persists week selection
+
+The "Today" button now saves the current week to `localStorage` (via `WeekNavigator.jumpToToday()` calling `this.save()`), consistent with arrow/dropdown navigation. Previously, clicking Today would jump the view but not persist — a page refresh would revert to the old week.
+
+### Files Changed
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `WeekNavigator.jumpToToday()` | Updated | Now calls `this.save()` after updating the UI, matching the behavior of `prevWeek()`/`nextWeek()`/`selectWeek()`. |
+
+---
+
 ## [2026-08-15] Event hover tooltip shows lecturer instead of venue
 
 The event-block tooltip previously showed `name · venue` (venue already on the block). It now shows the **lecturer** (`name · Prof. Dr. Khoo Teik Huat`) — the key info a student doesn't get from the block. Uses the new `tooltipExtra(event)` option on the shared `buildTimetableGrid`.

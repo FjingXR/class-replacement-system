@@ -254,6 +254,12 @@
             saveState();
         }
 
+        function goToday() {
+            weekNav.jumpToToday();
+            currentWeek = weekNav.currentWeek;
+            saveState();
+        }
+
         /* ════════════════════════════════════════════
            STATE PERSISTENCE (localStorage)
            ════════════════════════════════════════════ */
@@ -393,7 +399,7 @@
             restoreState();
         });
 
-        weekNav.initTodayBtn();
+        document.getElementById('todayBtn')?.addEventListener('click', goToday);
         initWeekKeyboardShortcuts();
 
         initTimetableKeyboardHandlers({

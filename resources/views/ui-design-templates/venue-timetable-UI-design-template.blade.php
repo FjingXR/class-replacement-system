@@ -669,12 +669,8 @@
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
             weekSelect.selectedIndex = currentWeek;
 
-            /* today button — delegate to WeekNavigator (no weekNav.save here; persist below) */
+            /* today button — delegated to WeekNavigator.jumpToToday() which now saves internally */
             weekNav.initTodayBtn();
-            document.getElementById('todayBtn')?.addEventListener('click', function() {
-                currentWeek = weekNav.currentWeek;
-                weekNav.save();
-            });
 
             /* show booking hint */
             document.getElementById('bookingHint').style.display = 'flex';

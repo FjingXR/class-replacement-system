@@ -1,5 +1,20 @@
 # Changelog — Cohort Timetable UI
 
+## [2026-08-16] Today button now persists week selection
+
+The "Today" button now saves the current week to `cohortTimetableState` (via a local `goToday()` wrapper that calls `weekNav.jumpToToday()` + `saveState()`), consistent with arrow/dropdown navigation. Previously, clicking Today would jump the view but not persist — a page refresh would revert to the old week.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/CohortTimetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `goToday()` | Added | New wrapper function that calls `weekNav.jumpToToday()`, syncs `currentWeek`, and calls `saveState()` — same pattern as `prevWeek()`/`nextWeek()`/`selectWeek()`. |
+| Today button listener | Updated | Replaced `weekNav.initTodayBtn()` with a single listener that calls `goToday()`, ensuring `cohortTimetableState` is persisted. |
+
+---
+
 ## [2026-08-15] Event hover tooltip shows lecturer instead of venue
 
 The event-block tooltip previously showed `name · venue` (venue already on the block). It now shows the **lecturer** (`name · Dr. Christopher Lazarus`) — useful since the cohort is the page context and the lecturer isn't on the block. Uses the new `tooltipExtra(event)` option on the shared `buildTimetableGrid`.
