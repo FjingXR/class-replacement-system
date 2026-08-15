@@ -1800,6 +1800,23 @@ html.dark .semester-bar select:not(.week-select) {
     opacity: 1;
     visibility: visible;
 }
+/* ── Tooltip to the LEFT (for top-bar buttons — stays inside the bar so it isn't clipped) ── */
+[data-tip][data-tip-pos="left"]::after {
+    bottom: auto;
+    top: 50%;
+    left: auto;
+    right: calc(100% + 8px);
+    transform: translateY(-50%);
+}
+[data-tip][data-tip-pos="left"]::before {
+    bottom: auto;
+    top: 50%;
+    left: auto;
+    right: calc(100% - 2px);
+    border-top-color: transparent;
+    border-left-color: var(--color-inverse-surface);
+    transform: translateY(-50%);
+}
 th[data-tip]::after,
 th[data-tip]::before { display: none; }
 
