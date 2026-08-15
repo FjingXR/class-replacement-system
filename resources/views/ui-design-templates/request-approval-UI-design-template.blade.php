@@ -901,10 +901,10 @@
 
             body.innerHTML = html;
 
-            // Toggle footer buttons
+            // Toggle footer buttons — bottom-left Close is always visible
             document.getElementById('rejectRequestBtn').style.display = r.status === 'Pending' ? '' : 'none';
             document.getElementById('approveRequestBtn').style.display = r.status === 'Pending' ? '' : 'none';
-            document.getElementById('closeModalBtn').style.display = r.status === 'Pending' ? 'none' : '';
+            document.getElementById('closeModalBtn').style.display = '';
 
             document.getElementById('modalOverlay').classList.add('show');
             renderTable();
@@ -923,6 +923,7 @@
 
         // ── Approve (§7.6 — approval notes modal) ──
         function approveRequest(id) {
+            closeModal();               // auto-close Request Details when acting from it
             openApproveNotesModal([id]);
         }
 
@@ -963,6 +964,7 @@
 
         // ── Reject modal ──
         function openRejectModal(id) {
+            closeModal();               // auto-close Request Details when acting from it
             currentRejectId = id;
             document.getElementById('rejectReasonInput').value = '';
             document.getElementById('confirmRejectBtn').disabled = true;

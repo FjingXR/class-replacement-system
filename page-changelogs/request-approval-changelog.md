@@ -1,5 +1,24 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Modal: auto-close details on approve/reject + always-visible Close
+
+### Summary
+
+- When Approve or Reject is clicked inside the Request Details modal, the details modal now **auto-closes** before the approve-notes / rejection-reason modal opens. Only a layer of `closeModal()` in `approveRequest()` and `openRejectModal()` — harmless when invoked from row buttons (no details modal is open there), verified no regression.
+- The bottom-left **Close** button in the Request Details modal is now **always visible** (was `display:none` for Pending rows) so the user can always dismiss the modal.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `approveRequest()` | Updated | Calls `closeModal()` before opening the approve-notes modal. |
+| `openRejectModal()` | Updated | Calls `closeModal()` before opening the rejection-reason modal. |
+| `openModalById()` | Updated | `closeModalBtn` always shown (`display:''`), no longer hidden for Pending rows. |
+
+---
+
 ## [2026-08-15] Slot badge/venue gap, tooltips above, age tip shows urgency
 
 ### Summary
