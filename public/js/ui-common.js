@@ -1085,6 +1085,57 @@ class ModalController {
     }
 }
 
+// ───── BulkSelection (shared by my-request-history + request-approval) ─────
+// Owns the set of selected ids and the bulk action bar UI (visibility + count),
+// plus resetting row/header checkboxes on clear(). Pages own their own refresh
+// (renderTable / highlight) after mutating.
+
+class BulkSelection {
+    constructor(cfg) {
+        cfg = cfg || {};
+        this.ids = new Set();
+        this.bar = document.getElementById(cfg.barId || 'bulkActionBar');
+        this.count = document.getElementById(cfg.countId || 'bulkCount');
+        this.checkboxSelector = cfg.checkboxSelector || null;   // e.g. '.row-checkbox'
+        this.headerCheckboxId = cfg.headerCheckboxId || null;   // e.g. 'headerCheckbox'
+    }
+
+    get size() { return this.ids.size; }
+
+    has(id) { return this.ids.has(id); }
+
+    add(id) { this.ids.add(id); this.updateBar(); }
+
+    delete(id) { this.ids.delete(id); this.updateBar(); }
+
+    toggle(id) { this.ids.has(id) ? this.ids.delete(id) : this.ids.add(id); this.updateBar(); }
+
+    setAll(ids) { this.ids = new Set(ids || []); this.updateBar(); }
+
+    clear() {
+        this.ids.clear();
+        if (this.checkboxSelector) {
+            document.querySelectorAll(this.checkboxSelector).forEach(function (cb) { cb.checked = false; });
+        }
+        if (this.headerCheckboxId) {
+            var hc = document.getElementById(this.headerCheckboxId);
+            if (hc) hc.checked = false;
+        }
+        this.updateBar();
+    }
+
+    updateBar() {
+        var bar = this.bar;
+        if (!bar) return;
+        if (this.ids.size === 0) {
+            bar.classList.remove('visible');
+            return;
+        }
+        bar.classList.add('visible');
+        if (this.count) this.count.textContent = this.ids.size + ' selected';
+    }
+}
+
 // ───── Login page helpers ─────
 
 function togglePassword() {

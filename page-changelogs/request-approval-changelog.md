@@ -1,5 +1,29 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-15] Promote bulk selection to shared OOP BulkSelection class
+
+### Summary
+
+Extracted the duplicated bulk-selection state + bar logic (set of selected ids, toggling the bar's `.visible` class, updating the count, clearing) into a shared `BulkSelection` class in `ui-common.js` (mirrors the existing `ModalController`/`TableController` OOP pattern). Both request-approval and my-request-history now drive their bulk UI through `bulk` (`bulk.add/delete/has/toggle/clear/setAll/updateBar`). Page logic stays in the page (e.g. `renderTable()`, `highlightSelectedRows()`), but the raw `selectedIds` Set + bar/toggle/clear wins are now shared. Request-approval's `toggleSelectAll` now uses `bulk.setAll()`.
+
+### Files Changed
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `BulkSelection` | Added | Class owning `ids` Set + `bar`/`count` elements; methods `add/delete/toggle/has/clear/setAll/updateBar`; `clear()` optionally unchecks `checkboxSelector` + `headerCheckboxId`. |
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| State | Updated | `let selectedIds = new Set()` → `let bulk = new BulkSelection({...})`. |
+| Bulk fns | Updated | `toggleSelectAll` uses `bulk.setAll()`; `toggleRowSelect`/`clearSelection`/`updateBatchBar`/`bulkApprove` delegate to `bulk`. |
+| Other refs | Updated | `selectedIds.*` → `bulk.*` (approve/reject/reset/renderRow). |
+
+---
+
 ## [2026-08-15] Bulk bar gains a "Clear" button (consistent with request history)
 
 ### Summary

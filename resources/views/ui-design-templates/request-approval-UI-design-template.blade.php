@@ -448,7 +448,7 @@
         const RPP_OPTIONS = [10, 20, 50];
 
         // ── Feature state ──
-        let selectedIds = new Set();
+        let bulk = new BulkSelection({ barId: 'bulkActionBar', countId: 'bulkCount' });
         let viewedIds = new Set();
         let currentApproveIds = [];
         let currentRejectId = null;
@@ -565,7 +565,7 @@
         // ── Render a single row ──
         function renderRow(r, offset, i) {
             const level = urgencyLevel(r.classDate);
-            const isSelected = selectedIds.has(r.id);
+            const isSelected = bulk.has(r.id);
             const isViewed = viewedIds.has(r.id);
             let rowClass = '';
             if (isViewed) rowClass += ' row-viewed';
@@ -759,31 +759,27 @@
         // ── Bulk selection (§7.1) ──
         function toggleSelectAll() {
             const visible = currentFiltered.filter(r => r.status === 'Pending');
-            if (selectedIds.size === visible.length) { selectedIds.clear(); }
-            else { visible.forEach(r => selectedIds.add(r.id)); }
+            if (bulk.size === visible.length) { bulk.clear(); }
+            else { bulk.setAll(visible.map(r => r.id)); }
             renderTable();
         }
 
         function toggleRowSelect(id) {
-            if (selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id);
+            bulk.toggle(id);
             renderTable();
         }
 
         function updateBatchBar() {
-            const bar = document.getElementById('bulkActionBar');
-            const count = document.getElementById('bulkCount');
-            if (selectedIds.size === 0) { bar.classList.remove('visible'); return; }
-            bar.classList.add('visible');
-            count.textContent = selectedIds.size + ' selected';
+            bulk.updateBar();
         }
 
         function clearSelection() {
-            selectedIds.clear();
+            bulk.clear();
             renderTable();
         }
 
         function bulkApprove() {
-            const ids = [...selectedIds];
+            const ids = [...bulk.ids];
             openApproveNotesModal(ids);
         }
 
@@ -953,7 +949,7 @@
             const label = ids.length === 1 ? 'Request #' + ids[0] : ids.length + ' requests';
             const notesLine = notes ? '\nNotes: ' + notes : '';
             closeApproveNotesModal();
-            selectedIds.clear();
+            bulk.clear();
             renderTable();
             updateNavBadge();
             toast.show(label + ' approved.' + notesLine, function() {
@@ -990,12 +986,12 @@
                 return;
             }
             const isBulk = currentRejectId === null;
-            const ids = isBulk ? [...selectedIds] : [currentRejectId];
+            const ids = isBulk ? [...bulk.ids] : [currentRejectId];
             const prevStatuses = {};
             ids.forEach(id => { const r = MockData.approvalRequests.find(x => x.id === id); prevStatuses[id] = r.status; r.status = 'Rejected'; });
             const label = isBulk ? ids.length + ' request(s)' : 'Request #' + currentRejectId;
             closeRejectModal();
-            selectedIds.clear();
+            bulk.clear();
             renderTable();
             updateNavBadge();
             toast.show(label + ' rejected.', function() {
@@ -1052,7 +1048,7 @@
             document.getElementById('rowsPerPage').value = '10';
             hideCompleted = true;
             document.getElementById('hideCompletedToggle').checked = true;
-            selectedIds.clear();
+            bulk.clear();
             viewedIds.clear();
             currentPage = 1;
             sortState = { field: 'requestedAt', dir: 'asc' };

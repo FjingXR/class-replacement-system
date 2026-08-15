@@ -1,5 +1,25 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-15] Promote bulk selection to shared OOP BulkSelection class
+
+### Summary
+
+Replaced the page-local `selectedIds` Set + `updateBulkBar()`/`clearAllSelections()` DOM code with the shared `BulkSelection` class from `ui-common.js` (same OOP pattern as `ModalController`). The local `bulk` instance is configured with `checkboxSelector: '.row-checkbox'` and `headerCheckboxId: 'headerCheckbox'` so `bulk.clear()` also resets row + header checkboxes. `updateBulkBar()`/`clearAllSelections()` now just delegate to `bulk.updateBar()`/`bulk.clear()`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| State | Updated | `let selectedIds = new Set()` → `let bulk = new BulkSelection({...checkboxSelector, headerCheckboxId})`. |
+| Header/row checkbox handlers | Updated | Use `bulk.add/delete`; drop redundant `updateBulkBar()` calls. |
+| `updateBulkBar()` | Updated | Delegates to `bulk.updateBar()`. |
+| `clearAllSelections()` | Updated | Delegates to `bulk.clear()` (which resets row + header checkboxes). |
+| Batch cancel | Updated | `selectedIds.*` → `bulk.*`. |
+
+---
+
 ## [2026-08-15] Detail modal: status description as its own row
 
 Status description now shown in a dedicated **Status Description** row (was inline caption). Description from `statusDesc()` map.

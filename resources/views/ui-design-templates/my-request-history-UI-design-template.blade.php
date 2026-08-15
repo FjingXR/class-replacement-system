@@ -313,7 +313,7 @@
         let rowsPerPage = parseInt(localStorage.getItem('mrh-rows-per-page')) || 10;
         let sortState = { field: 'requestedAt', dir: 'desc' };
         let currentFiltered = [];
-        let selectedIds = new Set();
+        let bulk = new BulkSelection({ barId: 'bulkActionBar', countId: 'bulkCount', checkboxSelector: '.row-checkbox', headerCheckboxId: 'headerCheckbox' });
         let searchDebounce = null;
         let focusedRowIndex = -1;
 
@@ -419,12 +419,11 @@
                     cb.checked = headerCheck.checked;
                     var id = parseInt(cb.dataset.id);
                     if (headerCheck.checked) {
-                        selectedIds.add(id);
+                        bulk.add(id);
                     } else {
-                        selectedIds.delete(id);
+                        bulk.delete(id);
                     }
                 });
-                updateBulkBar();
                 highlightSelectedRows();
             });
             thCheck.appendChild(headerCheck);
@@ -454,7 +453,7 @@
 
             updateResultCount({ elId: 'resultCount', data: currentFiltered, total: mockRequests.length, label: 'results' });
             updateSummary();
-            updateBulkBar();
+            bulk.updateBar();
 
             if (isFullyEmpty) {
                 document.getElementById('emptyState').style.display = 'flex';
@@ -482,7 +481,7 @@
                     const row = document.createElement('tr');
                     row.dataset.id = r.id;
                     row.dataset.pending = r.status === 'Pending' ? 'true' : 'false';
-                    if (selectedIds.has(r.id)) row.classList.add('row-selected');
+                    if (bulk.has(r.id)) row.classList.add('row-selected');
 
                     const globalIndex = offset + i;
                     const isPending = r.status === 'Pending';
@@ -495,15 +494,14 @@
                     rowCheck.className = 'bulk-checkbox row-checkbox';
                     rowCheck.dataset.id = r.id;
                     rowCheck.disabled = !isPending;
-                    if (selectedIds.has(r.id)) rowCheck.checked = true;
+                    if (bulk.has(r.id)) rowCheck.checked = true;
                     rowCheck.addEventListener('change', function() {
                         var id = parseInt(this.dataset.id);
                         if (this.checked) {
-                            selectedIds.add(id);
+                            bulk.add(id);
                         } else {
-                            selectedIds.delete(id);
+                            bulk.delete(id);
                         }
-                        updateBulkBar();
                         highlightSelectedRows();
                     });
                     checkTd.appendChild(rowCheck);
@@ -571,7 +569,7 @@
         function highlightSelectedRows() {
             document.querySelectorAll('#tableBody tr').forEach(function(row) {
                 var id = parseInt(row.dataset.id);
-                if (selectedIds.has(id)) {
+                if (bulk.has(id)) {
                     row.classList.add('row-selected');
                 } else {
                     row.classList.remove('row-selected');
@@ -580,14 +578,7 @@
         }
 
         function updateBulkBar() {
-            var bar = document.getElementById('bulkActionBar');
-            var countEl = document.getElementById('bulkCount');
-            if (selectedIds.size > 0) {
-                bar.classList.add('visible');
-                countEl.textContent = selectedIds.size + ' selected';
-            } else {
-                bar.classList.remove('visible');
-            }
+            bulk.updateBar();
         }
 
         function quickCancel(id) {
@@ -610,7 +601,7 @@
                 var idx = mockRequests.findIndex(function(r) { return r.id === pendingCancelId; });
                 if (idx !== -1) {
                     var removed = mockRequests.splice(idx, 1)[0];
-                    selectedIds.delete(pendingCancelId);
+                    bulk.delete(pendingCancelId);
                     pendingCancelId = null;
                     closeCancelConfirm();
                     closeModal();
@@ -624,11 +615,11 @@
         });
 
         function batchCancelSelected() {
-            var count = selectedIds.size;
+            var count = bulk.size;
             if (count === 0) return;
             var rows = [];
             mockRequests.forEach(function(r) {
-                if (selectedIds.has(r.id)) {
+                if (bulk.has(r.id)) {
                     rows.push(r);
                 }
             });
@@ -652,10 +643,10 @@
         }
 
         document.getElementById('confirmBatchCancelAction').addEventListener('click', function() {
-            var removed = mockRequests.filter(function(r) { return selectedIds.has(r.id); });
-            mockRequests = mockRequests.filter(function(r) { return !selectedIds.has(r.id); });
+            var removed = mockRequests.filter(function(r) { return bulk.has(r.id); });
+            mockRequests = mockRequests.filter(function(r) { return !bulk.has(r.id); });
             var count = removed.length;
-            selectedIds.clear();
+            bulk.clear();
             closeBatchCancelConfirm();
             renderTable();
             toast.show(count + ' request' + (count !== 1 ? 's' : '') + ' cancelled.', function() {
@@ -781,10 +772,7 @@
         }
 
         function clearAllSelections() {
-            selectedIds.clear();
-            document.querySelectorAll('.row-checkbox').forEach(function(cb) { cb.checked = false; });
-            var headerCheck = document.getElementById('headerCheckbox');
-            if (headerCheck) headerCheck.checked = false;
+            bulk.clear();   // clears ids + unchecks .row-checkbox + #headerCheckbox
             highlightSelectedRows();
             updateBulkBar();
         }
