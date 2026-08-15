@@ -208,7 +208,7 @@
             <button class="urgency-filter-chip" data-urgency="urgent" onclick="setUrgencyFilter('urgent')">Urgent</button>
             <button class="urgency-filter-chip" data-urgency="normal" onclick="setUrgencyFilter('normal')">Normal</button>
         </div>
-        @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeekFilter()', 'nextOnclick' => 'nextWeekFilter()', 'selectId' => 'weekFilter', 'selectOnclick' => 'weekFilterChanged(this.value)', 'showTodayBtn' => false])
+        @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeekFilter()', 'nextOnclick' => 'nextWeekFilter()', 'selectId' => 'weekFilter', 'selectOnclick' => 'onWeekFilterChange(this.value)', 'showTodayBtn' => false])
         <label class="toggle-wrapper" id="completedToggle">
             <input type="checkbox" id="hideCompletedToggle" checked onchange="toggleHideCompleted()">
             <span class="toggle-track"><span class="toggle-thumb"></span></span>
@@ -698,7 +698,7 @@
             }
             if (week !== 'all') {
                 const weekLabel = document.getElementById('weekFilter').selectedOptions[0]?.textContent || week;
-                chips.push('<span class="filter-chip">Week: ' + weekLabel + '<button class="filter-chip-remove" onclick="document.getElementById(\'weekFilter\').value=\'all\';weekFilterChanged()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Week: ' + weekLabel + '<button class="filter-chip-remove" onclick="document.getElementById(\'weekFilter\').value=\'all\';onWeekFilterChange()" title="Remove">&times;</button></span>');
             }
             if (search) {
                 chips.push('<span class="filter-chip">Search: "' + search + '"<button class="filter-chip-remove" onclick="document.getElementById(\'searchInput\').value=\'\';renderTable()" title="Remove">&times;</button></span>');
@@ -793,9 +793,12 @@
         }
 
         // ── Week filter change handler ──
-        const _sharedWeekFilterChanged = window.weekFilterChanged;
-        function weekFilterChanged(value) {
-            _sharedWeekFilterChanged({ onBeforeRebuild: function() { currentPage = 1; saveFilters(); }, onRebuild: renderTable });
+        function onWeekFilterChange(value) {
+            if (typeof pageState !== 'undefined' && pageState) pageState.currentPage = 1;
+            currentPage = 1;
+            saveFilters();
+            renderTable();
+            updateWeekArrowState();
         }
 
         // ── Mini timeline (§7p) ──

@@ -838,11 +838,8 @@
             rows.forEach(function(r) { r.classList.remove('row-focused'); });
         }
 
-        // Week filter change — MRH wiring for the shared weekFilterChanged() helper.
-        const _sharedWeekFilterChanged = window.weekFilterChanged;
-        function weekFilterChanged(value) {
-            _sharedWeekFilterChanged({ onBeforeRebuild: function() { pageState.currentPage = 1; saveFilters(); }, onRebuild: renderTable });
-        }
+        // Week filter change — uses shared weekFilterChanged() from ui-common.js.
+        // It reads the select value, resets page, calls renderTable(), updates arrows.
 
 
 
