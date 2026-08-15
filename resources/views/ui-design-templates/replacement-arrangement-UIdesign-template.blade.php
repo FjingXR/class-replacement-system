@@ -805,31 +805,40 @@
         var weekNav = new WeekNavigator(MockData.semester, weekData, 'weekSelector');
         weekNav.onBeforeNavigate = function() { saveCurrentWeek(); };
         let currentVenue = 'B103';
-        let selectedCells = [];
-        let selectionHistory = [];
+        let selectedBlock = null;          // { day, startHour, endHour } or null
+        let selectionHistory = [];          // block-level undo: each entry = { action:'select'|'deselect', block:{...} }
         let focusedCell = { day: null, hour: null };
 
         function saveCurrentWeek() {
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
-            selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = selectedCells.map(c => ({ day: c.day, hour: c.hour }));
+            selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = selectedBlock ? { day: selectedBlock.day, startHour: selectedBlock.startHour, endHour: selectedBlock.endHour } : null;
         }
 
         function loadCurrentWeek() {
-            selectedCells = [];
+            selectedBlock = null;
+            clearPreview();
             const venueData = selectedSlotsByVenue[currentVenue] || {};
-            const saved = venueData[weekNav.currentWeek] || [];
+            const saved = venueData[weekNav.currentWeek] || null;
             const body = document.getElementById('tableBody');
-            saved.forEach(s => {
-                const cellDiv = body.querySelector(
-                    `td[data-day="${s.day}"][data-hour="${s.hour}"] .cell-content`
-                );
-                if (cellDiv && cellDiv.classList.contains('cell-available')) {
-                    cellDiv.classList.remove('cell-available');
-                    cellDiv.classList.add('cell-selected');
-                    cellDiv.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(s.hour);
-                    selectedCells.push({ day: s.day, hour: s.hour, el: cellDiv });
+            if (saved) {
+                const firstTd = body.querySelector(`td[data-day="${saved.day}"][data-hour="${saved.startHour}"]`);
+                if (firstTd) {
+                    const cellDiv = firstTd.querySelector('.cell-content');
+                    if (cellDiv && cellDiv.classList.contains('cell-available')) {
+                        const span = saved.endHour - saved.startHour;
+                        // Check all cells in range are still available
+                        let allAvailable = true;
+                        for (let h = saved.startHour; h < saved.endHour; h++) {
+                            const td = body.querySelector(`td[data-day="${saved.day}"][data-hour="${h}"] .cell-content`);
+                            if (!td || !td.classList.contains('cell-available')) { allAvailable = false; break; }
+                        }
+                        if (allAvailable) {
+                            selectedBlock = { day: saved.day, startHour: saved.startHour, endHour: saved.endHour };
+                            renderMergedBlock(body);
+                        }
+                    }
                 }
-            });
+            }
         }
 
         function getDays() {
@@ -840,8 +849,8 @@
         function getGlobalTotal() {
             let total = 0;
             Object.values(selectedSlotsByVenue).forEach(venue => {
-                Object.values(venue).forEach(slots => {
-                    if (slots) total += slots.length;
+                Object.values(venue).forEach(block => {
+                    if (block) total += (block.endHour - block.startHour);
                 });
             });
             return total;
@@ -849,9 +858,9 @@
 
         function updateCounter() {
             const el = document.getElementById('selCount');
-            if (el) el.textContent = selectedCells.length;
+            if (el) el.textContent = selectedBlock ? (selectedBlock.endHour - selectedBlock.startHour) : 0;
             const btn = document.querySelector('.btn-primary');
-            if (btn) btn.disabled = selectedCells.length === 0;
+            if (btn) btn.disabled = !selectedBlock;
             updateSelectionSummary();
             updateSelectionProgress();
             updateSummaryStats();
@@ -878,27 +887,27 @@
 
         function updateSelectionSummary() {
             const currWeek = weekNav.currentWeek;
-            const allSelections = [];
+            const allBlocks = [];
             Object.keys(selectedSlotsByVenue).forEach(venueKey => {
                 const venueData = selectedSlotsByVenue[venueKey];
                 if (!venueData) return;
-                const slots = venueData[currWeek];
-                if (slots && slots.length > 0) {
+                const block = venueData[currWeek];
+                if (block) {
                     const days = weekData[currWeek].days;
-                    slots.forEach(s => {
-                        allSelections.push({
-                            venue: venueKey,
-                            weekIdx: currWeek,
-                            weekLabel: weekData[currWeek].label,
-                            day: days[s.day],
-                            dayIdx: s.day,
-                            hour: s.hour
-                        });
+                    allBlocks.push({
+                        venue: venueKey,
+                        weekIdx: currWeek,
+                        weekLabel: weekData[currWeek].label,
+                        day: days[block.day],
+                        dayIdx: block.day,
+                        startHour: block.startHour,
+                        endHour: block.endHour,
+                        slotCount: block.endHour - block.startHour
                     });
                 }
             });
 
-            const totalCount = allSelections.length;
+            const totalCount = allBlocks.length;
 
             document.getElementById('summaryCount').textContent = totalCount;
             const grid = document.getElementById('summaryGrid');
@@ -917,30 +926,28 @@
             grid.innerHTML = '';
             document.getElementById('summaryInfo').style.display = '';
 
-            const sorted = allSelections.sort((a, b) => a.venue.localeCompare(b.venue) || a.weekIdx - b.weekIdx || a.dayIdx - b.dayIdx || a.hour - b.hour);
-
-            sorted.forEach(s => {
-                const startStr = hours[s.hour];
-                const endStr = add30min(startStr);
+            allBlocks.forEach(b => {
+                const startStr = hours[b.startHour];
+                const endStr = add30min(hours[b.endHour - 1]);
+                const endDisplay = add30min(hours[b.endHour - 1]); // end of last slot
 
                 const card = document.createElement('div');
                 card.className = 'sel-summary-card';
-                card.dataset.venue = s.venue;
-                card.dataset.week = s.weekIdx;
-                card.dataset.day = s.dayIdx;
-                card.dataset.hour = s.hour;
+                card.dataset.venue = b.venue;
+                card.dataset.week = b.weekIdx;
                 card.innerHTML = `
-                    <button class="card-remove" onclick="deselectFromSummary('${s.venue}', ${s.weekIdx}, ${s.dayIdx}, ${s.hour})" aria-label="Remove">×</button>
-                    <div class="card-venue">${s.venue}</div>
-                    <div class="card-day">${s.weekLabel} · ${s.day.abbr}</div>
-                    <div class="card-date">${s.day.date}</div>
-                    <div class="card-time">${startStr} → ${endStr}</div>
+                    <button class="card-remove" onclick="deselectBlock()" aria-label="Remove">×</button>
+                    <div class="card-venue">${b.venue}</div>
+                    <div class="card-day">${b.weekLabel} · ${b.day.abbr}</div>
+                    <div class="card-date">${b.day.date}</div>
+                    <div class="card-time">${to12h(startStr)} – ${to12h(endDisplay)} · ${b.slotCount} slots</div>
                 `;
                 grid.appendChild(card);
             });
 
-            document.getElementById('infoTotal').textContent = `${totalCount} of ${MAX_SELECTION} slots`;
-            const totalMins = totalCount * 30;
+            const totalSlots = allBlocks.reduce((sum, b) => sum + b.slotCount, 0);
+            document.getElementById('infoTotal').textContent = `${totalSlots} of ${MAX_SELECTION} slots`;
+            const totalMins = totalSlots * 30;
             const hrs = Math.floor(totalMins / 60);
             const mins = totalMins % 60;
             const durationStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
@@ -949,37 +956,140 @@
 
             const tip = document.getElementById('summaryTip');
             if (getGlobalTotal() >= MAX_SELECTION) {
-                tip.textContent = 'Tip: Maximum of 4 selections reached.';
+                tip.textContent = 'Tip: Maximum selection reached.';
             } else if (totalCount > 0) {
-                tip.textContent = 'Tip: Click another green time slot to add more selections.';
+                tip.textContent = 'Tip: Click the selected block to remove it.';
             } else {
                 tip.textContent = 'Tip: Click an available (green) time slot to begin.';
             }
         }
 
-        function deselectFromSummary(venue, weekIdx, di, hi) {
-            const card = document.querySelector(`.sel-summary-card[data-venue="${venue}"][data-week="${weekIdx}"][data-day="${di}"][data-hour="${hi}"]`);
-            if (card) card.classList.add('card-removing');
-            setTimeout(() => {
-                const venueData = selectedSlotsByVenue[venue];
-                if (venueData) {
-                    const slots = venueData[weekIdx];
-                    if (slots) {
-                        const idx = slots.findIndex(s => s.day === di && s.hour === hi);
-                        if (idx !== -1) slots.splice(idx, 1);
+        function deselectBlock() {
+            if (!selectedBlock) return;
+            const body = document.getElementById('tableBody');
+            clearMergedBlock(body);
+            // Restore cell-available on all cells in range
+            for (let h = selectedBlock.startHour; h < selectedBlock.endHour; h++) {
+                const td = body.querySelector(`td[data-day="${selectedBlock.day}"][data-hour="${h}"]`);
+                if (td) {
+                    const cellDiv = td.querySelector('.cell-content');
+                    if (cellDiv) {
+                        cellDiv.classList.remove('cell-selected');
+                        cellDiv.classList.add('cell-available');
+                        cellDiv.innerHTML = timeLabelHtml(h);
                     }
                 }
-                if (venue === currentVenue && weekIdx === weekNav.currentWeek) {
-                    const cell = selectedCells.find(c => c.day === di && c.hour === hi);
-                    if (cell) {
-                        cell.el.classList.remove('cell-selected');
-                        cell.el.classList.add('cell-available');
-                        cell.el.innerHTML = timeLabelHtml(hi);
-                        selectedCells = selectedCells.filter(c => !(c.day === di && c.hour === hi));
+            }
+            pushHistory({ action: 'deselect', block: { ...selectedBlock } });
+            selectedBlock = null;
+            if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
+            selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = null;
+            updateCounter();
+        }
+
+        function renderMergedBlock(body) {
+            if (!selectedBlock) return;
+            const span = selectedBlock.endHour - selectedBlock.startHour;
+            // Remove existing block if any
+            clearMergedBlock(body);
+            // Hide intermediate tds and set colSpan on first td
+            for (let h = selectedBlock.startHour; h < selectedBlock.endHour; h++) {
+                const td = body.querySelector(`td[data-day="${selectedBlock.day}"][data-hour="${h}"]`);
+                if (!td) continue;
+                if (h === selectedBlock.startHour) {
+                    td.colSpan = span;
+                } else {
+                    td.style.display = 'none';
+                }
+                // Mark cells as selected
+                const cellDiv = td.querySelector('.cell-content');
+                if (cellDiv) {
+                    cellDiv.classList.remove('cell-available');
+                    cellDiv.classList.add('cell-selected');
+                }
+            }
+            // Create event-block on first td
+            const firstTd = body.querySelector(`td[data-day="${selectedBlock.day}"][data-hour="${selectedBlock.startHour}"]`);
+            if (!firstTd) return;
+            const div = document.createElement('div');
+            div.className = 'event-block event-selection';
+            div.setAttribute('tabindex', '0');
+            div.addEventListener('click', () => deselectBlock());
+            firstTd.appendChild(div);
+        }
+
+        function clearMergedBlock(body) {
+            if (!body) body = document.getElementById('tableBody');
+            // Remove existing event-block
+            body.querySelectorAll('.event-selection').forEach(el => el.remove());
+            // Reset colSpan and display on all cells
+            if (selectedBlock) {
+                for (let h = selectedBlock.startHour; h < selectedBlock.endHour; h++) {
+                    const td = body.querySelector(`td[data-day="${selectedBlock.day}"][data-hour="${h}"]`);
+                    if (td) {
+                        td.colSpan = 1;
+                        td.style.display = '';
                     }
                 }
-                updateCounter();
-            }, 200);
+            }
+        }
+
+        function isCellAvailable(day, hour) {
+            const body = document.getElementById('tableBody');
+            const td = body.querySelector(`td[data-day="${day}"][data-hour="${hour}"] .cell-content`);
+            return td && td.classList.contains('cell-available');
+        }
+
+        function canPlaceBlock(day, startHour) {
+            const span = MAX_SELECTION;
+            if (startHour + span > hours.length) return false;
+            for (let h = startHour; h < startHour + span; h++) {
+                if (!isCellAvailable(day, h)) return false;
+            }
+            return true;
+        }
+
+        function selectBlock(day, startHour) {
+            if (selectedBlock) {
+                showAlertModal('Clear current selection', 'You already have a selected block. Clear it first before selecting a new one.');
+                return;
+            }
+            const span = MAX_SELECTION;
+            if (!canPlaceBlock(day, startHour)) return;
+            selectedBlock = { day, startHour, endHour: startHour + span };
+            previewRange = null;
+            const body = document.getElementById('tableBody');
+            renderMergedBlock(body);
+            if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
+            selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = { day, startHour, endHour: startHour + span };
+            pushHistory({ action: 'select', block: { ...selectedBlock } });
+            updateCounter();
+        }
+
+        let previewRange = null;
+
+        function previewBlock(day, startHour, el) {
+            clearPreview();
+            if (selectedBlock) return;
+            const span = MAX_SELECTION;
+            const body = document.getElementById('tableBody');
+            const ok = canPlaceBlock(day, startHour);
+            previewRange = { day, startHour, endHour: startHour + span };
+            const firstTd = body.querySelector(`td[data-day="${day}"][data-hour="${startHour}"]`);
+            if (!firstTd) return;
+            const div = document.createElement('div');
+            div.className = 'event-block event-selection-preview ' + (ok ? 'preview-ok' : 'preview-fail');
+            div.style.setProperty('--block-cells', span);
+            if (!ok) firstTd.style.cursor = 'not-allowed';
+            firstTd.appendChild(div);
+        }
+
+        function clearPreview() {
+            const body = document.getElementById('tableBody');
+            if (!body) return;
+            body.querySelectorAll('.event-selection-preview').forEach(el => el.remove());
+            body.querySelectorAll('td[data-hour]').forEach(td => { td.style.cursor = ''; });
+            previewRange = null;
         }
 
         function buildTimetable() {
@@ -1008,10 +1118,14 @@
                         } else {
                             div.className += ' cell-available';
                             div.addEventListener('click', () => toggleCell(di, hi, div));
+                            div.addEventListener('mouseenter', () => previewBlock(di, hi, div));
+                            div.addEventListener('mouseleave', () => clearPreview());
                         }
                     } else {
                         div.className += ' cell-available';
                         div.addEventListener('click', () => toggleCell(di, hi, div));
+                        div.addEventListener('mouseenter', () => previewBlock(di, hi, div));
+                        div.addEventListener('mouseleave', () => clearPreview());
                     }
 
                     const timeLabel = document.createElement('span');
@@ -1033,49 +1147,19 @@
         }
 
         function toggleCell(di, hi, el) {
-            if (el.classList.contains('cell-selected')) {
-                pushHistory({ action: 'deselect', day: di, hour: hi, venue: currentVenue, week: weekNav.currentWeek });
-                el.classList.remove('cell-selected');
-                el.classList.add('cell-available');
-                el.innerHTML = timeLabelHtml(hi);
-                selectedCells = selectedCells.filter(c => !(c.day === di && c.hour === hi));
-                saveCurrentWeek();
-                updateCounter();
+            // If clicking inside the current block, deselect it
+            if (selectedBlock && di === selectedBlock.day && hi >= selectedBlock.startHour && hi < selectedBlock.endHour) {
+                deselectBlock();
                 return;
             }
-
+            // Otherwise try to place a new block starting at this cell
             if (el.classList.contains('cell-available')) {
-                if (getGlobalTotal() >= MAX_SELECTION) {
-                    showAlertModal(
-                        'Selection Limit',
-                        `You can only select up to ${MAX_SELECTION} slots in total across all weeks.`
-                    );
-                    return;
-                }
-                el.classList.remove('cell-available');
-                el.classList.add('cell-selected');
-                el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(hi);
-                selectedCells.push({ day: di, hour: hi, el });
-                pushHistory({ action: 'select', day: di, hour: hi, venue: currentVenue, week: weekNav.currentWeek });
-                const conflict = checkConflict(di, hi);
-                if (conflict) {
-                    toast.show('This slot overlaps with your ' + conflict + ' class');
-                }
-                saveCurrentWeek();
-                updateCounter();
+                selectBlock(di, hi);
             }
         }
 
         function clearSelection() {
-            selectedCells.forEach(c => {
-                c.el.classList.remove('cell-selected');
-                c.el.classList.add('cell-available');
-                c.el.innerHTML = timeLabelHtml(c.hour);
-            });
-            selectedCells = [];
-            if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
-            selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = [];
-            updateCounter();
+            deselectBlock();
         }
 
         function onVenueChange() {
@@ -1125,13 +1209,14 @@
             const slots = [];
             for (const venue in selectedSlotsByVenue) {
                 for (const week in selectedSlotsByVenue[venue]) {
-                    for (const slot of selectedSlotsByVenue[venue][week]) {
+                    const block = selectedSlotsByVenue[venue][week];
+                    if (block) {
                         const shortDayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                        const dayData = weekData[week].days[slot.day];
-                        const dayName = shortDayNames[slot.day];
+                        const dayData = weekData[week].days[block.day];
+                        const dayName = shortDayNames[block.day];
                         const dateStr = dayData.date.replace(/ \d{4}$/, '');
-                        const startStr = hours[slot.hour];
-                        const endStr = add30min(startStr);
+                        const startStr = hours[block.startHour];
+                        const endStr = add30min(hours[block.endHour - 1]);
                         const timeRange = to12h(startStr) + '–' + to12h(endStr);
                         slots.push(venue + ' · ' + dayName + ', ' + dateStr + ' · ' + timeRange);
                     }
@@ -1144,31 +1229,25 @@
         }
 
         function proceed() {
-            if (selectedCells.length === 0) {
+            if (!selectedBlock) {
                 showConfirmModal('No Selection', 'Please select at least one timeslot before proceeding.', null);
                 return;
             }
             const days = weekData[weekNav.currentWeek].days;
             const weekLabel = weekData[weekNav.currentWeek].label;
-            const listHtml = selectedCells.map(c => {
-                const day = days[c.day];
-                const startStr = hours[c.hour];
-                const endStr = add30min(startStr);
-                return `<div style="padding:3px 0;font-size:13px;">${currentVenue} · (${weekLabel}) ${day.abbr}, ${day.date} — ${to12h(startStr)} ~ ${to12h(endStr)}</div>`;
-            }).join('');
+            const day = days[selectedBlock.day];
+            const startStr = hours[selectedBlock.startHour];
+            const endStr = add30min(hours[selectedBlock.endHour - 1]);
+            const slotCount = selectedBlock.endHour - selectedBlock.startHour;
+            const listHtml = `<div style="padding:3px 0;font-size:13px;">${currentVenue} · (${weekLabel}) ${day.abbr}, ${day.date} — ${to12h(startStr)} ~ ${to12h(endStr)} · ${slotCount} slots</div>`;
             showConfirmModal(
                 'Confirm Your Selection',
-                `<div style="margin-bottom:12px;font-weight:500;">You are about to submit a replacement request for the following <strong>${selectedCells.length}</strong> slot(s):</div>
+                `<div style="margin-bottom:12px;font-weight:500;">You are about to submit a replacement request for the following block:</div>
                  <div style="border:1px solid var(--color-outline);border-radius:var(--radius-sm);padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
                 function() {
                     hideConfirmModal();
                     const toast = buildSubmissionToastMessage();
-                    selectedCells.forEach(c => {
-                        c.el.classList.remove('cell-selected');
-                        c.el.classList.add('cell-available');
-                        c.el.innerHTML = timeLabelHtml(c.hour);
-                    });
-                    selectedCells = [];
+                    deselectBlock();
                     Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
                     updateCounter();
                     toast.show(toast.message, null, 5000, 'View \u2192', '/my-request-history-ui', toast.details);
@@ -1182,24 +1261,18 @@
                 'Are you sure you want to clear all selections across <strong>ALL</strong> weeks? This action cannot be undone.',
                 function() {
                     hideConfirmModal();
-                    var savedCells = selectedCells.slice();
+                    var savedBlock = selectedBlock ? { ...selectedBlock } : null;
                     var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
                     Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
-                    selectedCells.forEach(c => {
-                        c.el.classList.remove('cell-selected');
-                        c.el.classList.add('cell-available');
-                        c.el.innerHTML = timeLabelHtml(c.hour);
-                    });
-                    selectedCells = [];
+                    deselectBlock();
                     updateCounter();
                     toast.show('All selections cleared.', function() {
                         Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
-                        savedCells.forEach(c => {
-                            c.el.classList.remove('cell-available');
-                            c.el.classList.add('cell-selected');
-                            c.el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(c.hour);
-                        });
-                        selectedCells = savedCells;
+                        if (savedBlock) {
+                            selectedBlock = savedBlock;
+                            const body = document.getElementById('tableBody');
+                            renderMergedBlock(body);
+                        }
                         updateCounter();
                     });
                 }
@@ -1207,19 +1280,23 @@
         }
 
         function navigateTo(url) {
-            if (selectedCells.length > 0) {
+            if (selectedBlock) {
                 showConfirmModal(
                     'Unsaved Changes',
-                    'You have selected time slots that will be lost if you leave this page. Are you sure you want to leave?',
+                    'You have a selected block that will be lost if you leave this page. Are you sure you want to leave?',
                     function() {
-                        var savedCells = selectedCells.slice();
+                        var savedBlock = selectedBlock ? { ...selectedBlock } : null;
                         var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
                         hideConfirmModal();
-                        selectedCells = [];
                         Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
+                        deselectBlock();
                         toast.show('Selections cleared.', function() {
                             Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
-                            selectedCells = savedCells;
+                            if (savedBlock) {
+                                selectedBlock = savedBlock;
+                                const body = document.getElementById('tableBody');
+                                renderMergedBlock(body);
+                            }
                         });
                         window.location.href = url;
                     }
@@ -1230,32 +1307,26 @@
         }
 
         function goBack() {
-            if (selectedCells.length > 0) {
+            if (selectedBlock) {
                 showConfirmModal(
                     'Unsaved Changes',
-                    'You have selected time slots that will be lost if you leave this page. Are you sure you want to go back?',
+                    'You have a selected block that will be lost if you leave this page. Are you sure you want to go back?',
                     function() {
                         hideConfirmModal();
-                        var savedCells = selectedCells.slice();
+                        var savedBlock = selectedBlock ? { ...selectedBlock } : null;
                         var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
                         Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
-                        selectedCells.forEach(c => {
-                            c.el.classList.remove('cell-selected');
-                            c.el.classList.add('cell-available');
-                            c.el.innerHTML = timeLabelHtml(c.hour);
-                        });
-                        selectedCells = [];
+                        deselectBlock();
                         updateCounter();
                         var navTimer = setTimeout(function() { BackNavigator.navigate(); }, 5000);
                         toast.show('Selections cleared.', function() {
                             clearTimeout(navTimer);
                             Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
-                            savedCells.forEach(c => {
-                                c.el.classList.remove('cell-available');
-                                c.el.classList.add('cell-selected');
-                                c.el.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(c.hour);
-                            });
-                            selectedCells = savedCells;
+                            if (savedBlock) {
+                                selectedBlock = savedBlock;
+                                const body = document.getElementById('tableBody');
+                                renderMergedBlock(body);
+                            }
                             updateCounter();
                         });
                     }
@@ -1305,30 +1376,19 @@
             if (selectionHistory.length === 0) return;
             const last = selectionHistory.pop();
             const body = document.getElementById('tableBody');
-            const cellDiv = body.querySelector(
-                'td[data-day="' + last.day + '"][data-hour="' + last.hour + '"] .cell-content'
-            );
-            if (!cellDiv) return;
 
             if (last.action === 'select') {
-                cellDiv.classList.remove('cell-selected');
-                cellDiv.classList.add('cell-available');
-                cellDiv.innerHTML = timeLabelHtml(last.hour);
-                selectedCells = selectedCells.filter(c => !(c.day === last.day && c.hour === last.hour));
-                if (selectedSlotsByVenue[last.venue] && selectedSlotsByVenue[last.venue][last.week]) {
-                    const slots = selectedSlotsByVenue[last.venue][last.week];
-                    const idx = slots.findIndex(s => s.day === last.day && s.hour === last.hour);
-                    if (idx !== -1) slots.splice(idx, 1);
+                // Undo a block selection → deselect it
+                if (selectedBlock && selectedBlock.day === last.block.day && selectedBlock.startHour === last.block.startHour) {
+                    deselectBlock();
                 }
             } else if (last.action === 'deselect') {
-                if (cellDiv.classList.contains('cell-available')) {
-                    cellDiv.classList.remove('cell-available');
-                    cellDiv.classList.add('cell-selected');
-                    cellDiv.innerHTML = '<span class="sel-text"></span>' + timeLabelHtml(last.hour);
-                    selectedCells.push({ day: last.day, hour: last.hour, el: cellDiv });
-                    if (!selectedSlotsByVenue[last.venue]) selectedSlotsByVenue[last.venue] = {};
-                    if (!selectedSlotsByVenue[last.venue][last.week]) selectedSlotsByVenue[last.venue][last.week] = [];
-                    selectedSlotsByVenue[last.venue][last.week].push({ day: last.day, hour: last.hour });
+                // Undo a block deselect → re-select it
+                if (!selectedBlock) {
+                    selectedBlock = { ...last.block };
+                    renderMergedBlock(body);
+                    if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
+                    selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = { day: selectedBlock.day, startHour: selectedBlock.startHour, endHour: selectedBlock.endHour };
                 }
             }
             updateCounter();

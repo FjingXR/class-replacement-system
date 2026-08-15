@@ -1675,6 +1675,40 @@ html.dark .semester-bar select:not(.week-select) {
     background: var(--color-error-container);
     color: var(--color-on-error-container);
 }
+.event-selection {
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+    border: 2px solid var(--color-primary);
+}
+.event-selection .ev-code,
+.event-selection .ev-venue,
+.event-selection .ev-time,
+.event-selection .ev-note {
+    display: none;
+}
+.event-selection:hover {
+    filter: brightness(1.08);
+    box-shadow: inset 0 0 0 1.5px var(--color-primary);
+}
+
+.event-selection-preview {
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: calc(var(--block-cells, 1) * 100%);
+    border: 2px dashed;
+    border-radius: var(--radius-md);
+    z-index: 4;
+    pointer-events: none;
+    transition: background 0.1s, border-color 0.1s;
+}
+.event-selection-preview.preview-ok {
+    border-color: var(--color-tertiary);
+    background: color-mix(in srgb, var(--color-tertiary-container) 40%, transparent);
+}
+.event-selection-preview.preview-fail {
+    border-color: var(--color-error);
+    background: color-mix(in srgb, var(--color-error-container) 40%, transparent);
+}
 
 .offday-slot .event-block {
     background: var(--color-error-container);
@@ -1908,6 +1942,21 @@ html.dark .semester-bar select:not(.week-select) {
 /* ── Event hover tooltip ────────────────────────────────────── */
 .event-block::after { content: attr(data-name) ' · ' attr(data-tip2); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--color-inverse-surface); color: var(--color-on-inverse-surface); padding: 4px 8px; border-radius: var(--radius-xs); font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 50; }
 .event-block:hover::after { opacity: 1; }
+.event-block.event-selection::after {
+    content: "REMOVE?";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 11px; font-weight: 700;
+    color: var(--color-on-primary);
+    opacity: 0; transition: opacity 0.15s;
+    pointer-events: none; white-space: nowrap;
+    z-index: 51;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+.event-block.event-selection:hover::after { opacity: 1; }
 .ev-code { cursor: pointer; }
 
 /* ── Copy toast ─────────────────────────────────────────────── */
