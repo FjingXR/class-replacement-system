@@ -261,6 +261,7 @@
         /* ── When block is selected, disable hover on other cells ── */
         .has-selection .cell-available { cursor: var(--cursor-cancel) !important; }
         .has-selection .cell-available:hover { filter: none; box-shadow: none; }
+        .has-selection .cell-available:hover::after { opacity: 0 !important; }
 
         .btn-primary:disabled {
             opacity: 0.35;
@@ -685,7 +686,7 @@
             ]
         ])
 
-        <!-- ─── Summary Bar ─── -->
+        {{-- Summary Bar — commented out for now
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots',
@@ -698,6 +699,7 @@
                     'description' => '<strong>Cannot select</strong> — booked by others, Sunday, or public holiday.'],
             ]
         ])
+        --}}
 
         <div class="sel-summary" id="selSummary">
             <div class="sel-summary-header">
@@ -1102,14 +1104,16 @@
             div.style.width = (firstTd.offsetWidth * span) + 'px';
             div.style.pointerEvents = 'none';
             if (!ok) firstTd.style.cursor = 'not-allowed';
-            body.appendChild(div);
+            const table = document.getElementById('timetable');
+            table.appendChild(div);
         }
 
         function clearPreview() {
+            const table = document.getElementById('timetable');
+            if (!table) return;
+            table.querySelectorAll('.event-selection-preview').forEach(el => el.remove());
             const body = document.getElementById('tableBody');
-            if (!body) return;
-            body.querySelectorAll('.event-selection-preview').forEach(el => el.remove());
-            body.querySelectorAll('td[data-hour]').forEach(td => { td.style.cursor = ''; });
+            if (body) body.querySelectorAll('td[data-hour]').forEach(td => { td.style.cursor = ''; });
             previewRange = null;
         }
 

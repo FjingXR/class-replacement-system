@@ -471,6 +471,7 @@ body {
     border-collapse: separate;
     border-spacing: 4px;
     table-layout: auto;
+    position: relative;
 }
 .timetable th, .timetable td {
     border: none;
