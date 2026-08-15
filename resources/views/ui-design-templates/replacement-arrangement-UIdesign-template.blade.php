@@ -734,6 +734,7 @@
                 <span><strong>Cohort:</strong> DFT2 (S1) / DSF2 (S1) / DFT2 (S1) Jefferson Ng (2310971)</span>
             </div>
             <div class="footer-right">
+                {{-- Clear this Page button — disabled for now (single-block selection)
                 <button class="btn btn-outline" onclick="clearSelection()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"/>
@@ -741,6 +742,7 @@
                     </svg>
                     Clear this Page
                 </button>
+                --}}
                 <button class="btn btn-danger" onclick="clearAll()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="3 6 5 6 21 6"/>
@@ -749,7 +751,7 @@
                     Clear ALL
                 </button>
                 <button class="btn btn-primary" onclick="proceed()">
-                    Proceed
+                    Submit Request
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"/>
                         <polyline points="12 5 19 12 12 19"/>
