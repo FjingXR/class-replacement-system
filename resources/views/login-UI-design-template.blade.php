@@ -360,7 +360,7 @@
         }
         .light .login-btn:hover { box-shadow: 0 8px 25px rgba(46, 194, 126, 0.2); background: #2db876; }
         .login-btn:active { transform: translateY(0) scale(0.99); }
-        .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .login-btn:disabled { opacity: 0.5; cursor: var(--cursor-cancel); transform: none; box-shadow: none; }
 
         .login-btn .spinner {
             width: 18px;

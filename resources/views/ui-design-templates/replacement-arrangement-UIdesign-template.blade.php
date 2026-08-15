@@ -135,7 +135,7 @@
         }
         .toolbar-center .selector-dropdown:disabled {
             opacity: 0.7;
-            cursor: not-allowed;
+            cursor: var(--cursor-cancel);
         }
 
         .hint-text {
@@ -260,7 +260,7 @@
 
         .btn-primary:disabled {
             opacity: 0.35;
-            cursor: not-allowed;
+            cursor: var(--cursor-cancel);
             filter: none !important;
             box-shadow: none !important;
             transform: none !important;

@@ -835,7 +835,7 @@ html.dark .filter-select {
 }
 .page-btn:disabled {
     opacity: 0.3;
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
 }
 
 /* ───── Rows Per Page ───── */
@@ -1228,7 +1228,7 @@ html.dark .filter-select {
 }
 .week-arrow:disabled {
     opacity: 0.3;
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
 }
 .week-arrow:disabled:hover {
     background: transparent;
@@ -1457,12 +1457,7 @@ html.dark .semester-bar select:not(.week-select) {
 }
 
 /* ── Cancel cursor (shared across timetable cells + disabled elements) ── */
-.timetable,
-.btn-danger:disabled,
-.page-btn:disabled,
-.week-arrow:disabled,
-.event-block--readonly,
-.bulk-checkbox:disabled {
+:root {
     --cursor-cancel: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%23c62828' stroke-width='2.5'/%3E%3Cline x1='8' y1='8' x2='24' y2='24' stroke='%23c62828' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, not-allowed;
 }
 
@@ -1479,7 +1474,7 @@ html.dark .semester-bar select:not(.week-select) {
     background: var(--color-error-container);
 }
 .timetable td.hour-cell.offday-slot:not(:has(.event-block)):not(:has(.cell-ph)):not(:has(.cell-sun)) {
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
     pointer-events: none;
 }
 .timetable td.hour-cell.offday-slot .cell-empty {
@@ -1690,7 +1685,6 @@ html.dark .semester-bar select:not(.week-select) {
 .cell-ph {
     background: transparent;
     --hover-label: 'PH';
-    --cursor-cancel: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%23c62828' stroke-width='2.5'/%3E%3Cline x1='8' y1='8' x2='24' y2='24' stroke='%23c62828' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, not-allowed;
 }
 .cell-ph::after {
     content: var(--hover-label);
@@ -1715,7 +1709,6 @@ html.dark .semester-bar select:not(.week-select) {
 .cell-sun {
     background: transparent;
     --hover-label: 'Sun';
-    --cursor-cancel: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%23c62828' stroke-width='2.5'/%3E%3Cline x1='8' y1='8' x2='24' y2='24' stroke='%23c62828' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, not-allowed;
 }
 .cell-sun::after {
     content: var(--hover-label);
@@ -1807,6 +1800,8 @@ html.dark .semester-bar select:not(.week-select) {
     opacity: 1;
     visibility: visible;
 }
+.logout-btn[data-tip]::after { bottom: auto; top: calc(100% + 8px); }
+.logout-btn[data-tip]::before { bottom: auto; top: calc(100% + 3px); border-top-color: transparent; border-bottom-color: var(--color-inverse-surface); }
 th[data-tip]::after,
 th[data-tip]::before { display: none; }
 
@@ -2206,7 +2201,8 @@ th[data-tip]::before { display: none; }
     }
 
     .day-card-content {
-        overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: visible;
         transition: max-height 0.3s ease, opacity 0.2s;
         max-height: 500px;
         opacity: 1;
@@ -2381,14 +2377,14 @@ body {
 .semester-bar select:disabled,
 .semester-bar select:disabled:hover {
     opacity: 0.5;
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
     background: var(--color-surface-variant);
     color: var(--color-on-surface-variant);
 }
 
 /* ── Event block readonly modifier ───────────────────────────── */
 .event-block--readonly {
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
     pointer-events: none;
 }
 
@@ -2509,7 +2505,7 @@ body {
 }
 .btn-danger:disabled {
     opacity: 0.4;
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
     pointer-events: none;
 }
 .btn-outline {
@@ -2541,7 +2537,7 @@ body {
 }
 .bulk-checkbox:disabled {
     opacity: 0.3;
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
 }
 .row-selected { background: var(--color-primary-container) !important; }
 

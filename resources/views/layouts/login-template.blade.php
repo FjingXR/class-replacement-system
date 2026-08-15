@@ -259,7 +259,7 @@
         }
         .light .login-btn:hover:not(:disabled) { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); background: var(--login-btn-hover-light); }
         .login-btn:active:not(:disabled) { transform: scale(0.98); }
-        .login-btn:disabled { background: var(--color-outline); opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+        .login-btn:disabled { background: var(--color-outline); opacity: 0.4; cursor: var(--cursor-cancel); transform: none; box-shadow: none; }
 
         .login-btn .spinner {
             width: 18px;

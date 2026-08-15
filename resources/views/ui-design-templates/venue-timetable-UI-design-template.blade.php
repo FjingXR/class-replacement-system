@@ -267,7 +267,7 @@
             border: 1px solid var(--color-outline);
             border-radius: var(--radius-sm);
             padding: 6px 10px;
-            cursor: not-allowed;
+            cursor: var(--cursor-cancel);
             opacity: 0.5;
             color: var(--color-on-surface-variant);
             position: relative;

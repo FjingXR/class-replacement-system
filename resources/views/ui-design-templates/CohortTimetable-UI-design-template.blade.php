@@ -10,7 +10,7 @@
         .semester-bar select:disabled,
         .semester-bar select:disabled:hover {
             opacity: 0.5;
-            cursor: not-allowed;
+            cursor: var(--cursor-cancel);
             background: var(--color-surface-variant);
             color: var(--color-on-surface-variant);
         }

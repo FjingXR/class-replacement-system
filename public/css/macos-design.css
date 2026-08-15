@@ -284,7 +284,7 @@ body {
 
 .macos-btn:disabled {
     opacity: 0.4;
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
     transform: none;
 }
 
@@ -411,7 +411,7 @@ body {
 .macos-input:disabled {
     background: var(--macos-fill-secondary);
     opacity: 0.6;
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
 }
 
 /* Input with Icon */
@@ -600,7 +600,7 @@ body {
 
 .macos-toggle:disabled {
     opacity: 0.4;
-    cursor: not-allowed;
+    cursor: var(--cursor-cancel);
 }
 
 /* ───── Checkbox ───── */
