@@ -35,7 +35,7 @@
             <span class="notif-badge" id="notifBadge">{{ $notifCount ?? 3 }}</span>
         </button>
 
-        <div class="user-panel">
+        <div class="user-panel" id="userPanel">
             <div class="user-profile">
                 <div class="user-avatar">KL</div>
                 <div class="user-info">
@@ -100,6 +100,39 @@
         </button>
     </div>
 </div>
+
+{{-- ─── Session warning: color the user-panel pill based on session age ───
+    MOCK: authStart simulates a login timestamp 25 seconds ago so you see
+    red → tertiary → primary transition live without waiting.
+
+    BACKEND WIRE LATER:
+    Replace the authStart line with the real session-start value, e.g.:
+        const authStart = {{ $authStartedAt }};   // Unix ms from backend
+    and remove the mock offset.
+--}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // MOCK: pretend the user logged in 25 seconds ago
+    var authStart = Date.now() - (25 * 1000);
+
+    var panel = document.getElementById('userPanel');
+    if (!panel) return;
+
+    function updateSessionColor() {
+        var elapsed = (Date.now() - authStart) / 1000;
+        panel.classList.remove('session-critical', 'session-warning');
+        if (elapsed < 30) {
+            panel.classList.add('session-critical');       // < 30s   → error-container (red)
+        } else if (elapsed < 120) {
+            panel.classList.add('session-warning');        // < 2 min → tertiary-container
+        }
+        // >= 2 min → no extra class, base .user-panel = primary-container
+    }
+
+    updateSessionColor();
+    setInterval(updateSessionColor, 30000);
+});
+</script>
 
 <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display:none;">
     @csrf
