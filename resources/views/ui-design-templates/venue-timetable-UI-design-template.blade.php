@@ -566,10 +566,13 @@
                 document.getElementById('venueSelectDropdown'),
                 {
                     venues: MockData.venues,
-                    initialCode: preselect,
+                    initialCode: preselect || MockData.venues[0]?.code,
                     onSelect: function(code) { onVenueChange(); }
                 }
             );
+
+            /* trigger initial venue change to load timetable */
+            onVenueChange();
 
             /* init favourite button */
             updateFavStar();
