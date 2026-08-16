@@ -57,6 +57,11 @@ window.MockData = {
     ],
 
     // ─────────────────────────────────────────────────────────────────────
+    // §2.2b  currentUser — logged-in staff (mock phase).
+    // ─────────────────────────────────────────────────────────────────────
+    currentUser: { name: 'En. Lim Jia Zheng', staffId: '5770' },
+
+    // ─────────────────────────────────────────────────────────────────────
     // §2.3  cohorts — registry mirroring dataset/cohorts.md + CodingMAIN §8
     // fixed student counts (mirrors DatabaseSeeder::STUDENT_COUNTS).
     // Codes use the dataset's own display format (DFT/DSF omit G1, RSD/RAF/RBU

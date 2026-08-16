@@ -37,10 +37,10 @@
 
         <div class="user-panel" id="userPanel">
             <div class="user-profile">
-                <div class="user-avatar">KL</div>
+                <div class="user-avatar">LJZ</div>
                 <div class="user-info">
-                    <span class="user-name">Kylian Mbappe</span>
-                    <span class="user-id">25SMR10186</span>
+                    <span class="user-name">En. Lim Jia Zheng</span>
+                    <span class="user-id">5770</span>
                     <span class="user-role">Lecturer</span>
                 </div>
             </div>
@@ -83,10 +83,10 @@
     </div>
     <div class="nav-drawer-user">
         <div class="nav-drawer-user-info">
-            <div class="nav-drawer-user-avatar">KL</div>
+            <div class="nav-drawer-user-avatar">LJZ</div>
             <div class="nav-drawer-user-details">
-                <span class="nav-drawer-user-name">Kylian Mbappe</span>
-                <span class="nav-drawer-user-id">25SMR10186</span>
+                <span class="nav-drawer-user-name">En. Lim Jia Zheng</span>
+                <span class="nav-drawer-user-id">5770</span>
                 <span class="nav-drawer-user-role">Lecturer</span>
             </div>
         </div>

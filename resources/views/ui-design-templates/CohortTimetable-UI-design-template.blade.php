@@ -50,7 +50,7 @@
             'guideItems' => [
                 '<strong>Select cohort</strong> — choose a faculty, then a cohort to view its timetable',
                 '<strong>Week navigation</strong> — use arrows or Today button to browse weeks',
-                '<strong>Slot status</strong> — Normal (green), Conflicted (red), Pending (amber), Approved (blue), Rejected (grey)',
+                '<strong>Slot status</strong> — Blue: Your classes, Green: Others\' classes, Grey: Others\' pending, Amber: Your pending, Red: Conflict',
                 '<strong>View details</strong> — click any slot to see class details and venue info',
             ]
         ])
@@ -70,7 +70,15 @@
         @include('partials.ui-grid-table')
 
         <!-- ─── Legend Bar ─── -->
-        @include('partials.ui-legend-bar')
+        @include('partials.ui-legend-bar', [
+            'items' => [
+                ['color' => 'var(--color-primary-container)', 'label' => 'Your Classes', 'tip' => 'Normal or replacement sessions assigned to you'],
+                ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Normal or replacement sessions by other lecturers'],
+                ['color' => 'var(--color-surface-variant)', 'label' => 'Others\' Pending', 'tip' => 'Replacement request by other lecturers, awaiting PL approval'],
+                ['color' => 'var(--color-tertiary-container)', 'label' => 'Your Pending', 'tip' => 'Your replacement request, awaiting PL approval'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Conflict', 'tip' => 'Scheduling conflict or public holiday'],
+            ]
+        ])
 
         <!-- ─── Summary Bar ─── -->
         @include('partials.ui-summary-bar', [
@@ -340,8 +348,19 @@
                 days: weekData[currentWeek].days,
                 onEventClick: function(e, di) { openModal(e, di); },
                 tooltipExtra: function(e) {
-                    // Tooltip shows the lecturer — the cohort is the page context, venue is on the block.
                     return e.lecturer || '—';
+                },
+                statusClassFn: function(div, e, isConflict) {
+                    if (isConflict) {
+                        div.classList.add('event-public-holiday');
+                        return;
+                    }
+                    var isMine = e.lecturer === MockData.currentUser.name;
+                    if (e.status === 'pending') {
+                        div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
+                    } else {
+                        div.classList.add(isMine ? 'event-mine' : 'event-others');
+                    }
                 }
             });
             updateSummaries(weekEvents);

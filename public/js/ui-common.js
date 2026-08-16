@@ -461,7 +461,9 @@ function buildTimetableGrid(cfg) {
                 div.dataset.tip2 = (typeof cfg.tooltipExtra === 'function')
                     ? cfg.tooltipExtra(e)
                     : (e.venue || '');
-                if (isConflict) {
+                if (typeof cfg.statusClassFn === 'function') {
+                    cfg.statusClassFn(div, e, isConflict);
+                } else if (isConflict) {
                     div.classList.add('event-public-holiday');
                 } else if (e.status === 'normal') {
                     div.classList.add('event-normal');

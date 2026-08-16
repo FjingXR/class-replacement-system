@@ -1676,6 +1676,23 @@ html.dark .semester-bar select:not(.week-select) {
     background: var(--color-error-container);
     color: var(--color-on-error-container);
 }
+/* ── Cohort timetable: own vs others (scoped) ── */
+.timetable .event-mine {
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+}
+.timetable .event-others {
+    background: var(--color-success-container);
+    color: var(--color-on-success-container);
+}
+.timetable .event-others-pending {
+    background: var(--color-surface-variant);
+    color: var(--color-on-surface-variant);
+}
+.timetable .event-mine-pending {
+    background: var(--color-tertiary-container);
+    color: var(--color-on-tertiary-container);
+}
 .event-selection {
     background: var(--color-primary-container);
     color: var(--color-on-primary-container);
