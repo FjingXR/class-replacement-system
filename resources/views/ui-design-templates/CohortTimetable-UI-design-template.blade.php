@@ -139,12 +139,14 @@
             MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(entry) {
                 var flagCode = entry[0], flagStatus = entry[1], flagDate = entry[2] || '';
                 var flagRequestedAt = entry[3] || '';
+                var flagRequestId = entry[4] || '';
                 var weekEvents = allEvents[rsd3g2Cohort][weekIdx];
                 weekEvents.forEach(function(evt) {
                     if (evt.code === flagCode) {
                         evt.status = flagStatus;
                         if (flagDate) evt.remarks = flagDate;
                         if (flagRequestedAt) evt.requestedAt = flagRequestedAt;
+                        if (flagRequestId) evt.requestId = flagRequestId;
                     }
                 });
             });

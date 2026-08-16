@@ -341,7 +341,7 @@ window.MockData = {
             // Other venues (kept minimal)
             { cohortId: 'rsd2s1', week: 0,  event: { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng',      status: 'normal',      name: 'Database Systems',               remarks: '' } },
             { cohortId: 'rsd2s1', week: 1,  event: { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng',      status: 'replacement', name: 'Database Systems',               remarks: '24-Aug-2026' } },
-            { cohortId: 'rsd2s1', week: 2,  event: { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng',      status: 'pending',     name: 'Database Systems',               remarks: '', requestedAt: '25 Aug 2026, 10:00 AM', requestedBy: 'En. Lim Jia Zheng' } },
+            { cohortId: 'rsd2s1', week: 2,  event: { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng',      status: 'pending',     name: 'Database Systems',               remarks: '', requestedAt: '25 Aug 2026, 10:00 AM', requestedBy: 'En. Lim Jia Zheng', requestId: 5 } },
             { cohortId: 'rsd2s1', week: 3,  event: { di: 1, start: 0, end: 3, code: 'BMIT5678', type: 'L', venue: 'B105', lecturer: 'En. Lim Jia Zheng',      status: 'normal',      name: 'Database Systems',               remarks: '' } },
             { cohortId: 'rsd3s1g1', week: 0, event: { di: 0, start: 8,  end: 11, code: 'BMIT7070', type: 'L', venue: 'A101', lecturer: 'Prof. Dr. Khoo Teik Huat', status: 'normal',  name: 'Advanced Software Engineering', remarks: '' } },
             { cohortId: 'rsd3s1g1', week: 0, event: { di: 1, start: 12, end: 15, code: 'BMIT7072', type: 'L', venue: 'A104', lecturer: 'Prof. Dr. Suresh',         status: 'normal',  name: 'Capstone Project',              remarks: '' } },
@@ -454,14 +454,14 @@ window.MockData = {
         rsd3g2Flags: {
             0:  [],
             1:  [['BMIT7072', 'replacement', '26-Aug-2026'], ['BMIT7074', 'replacement', '25-Aug-2026'], ['BMIT5678', 'replacement', '24-Aug-2026']],
-            2:  [['BMIT7073', 'pending', ''], ['BMIT7075', 'pending', ''], ['BMIT2233', 'pending', '', '25 Aug 2026, 10:00 AM']],
+            2:  [['BMIT7073', 'pending', ''], ['BMIT7075', 'pending', ''], ['BMIT2233', 'pending', '', '25 Aug 2026, 10:00 AM', 12]],
             3:  [['BMIT7070', 'replacement', '27-Aug-2026']],
-            4:  [['BMIT7071', 'pending', ''], ['BMIT5678', 'pending', '', '03 Sep 2026, 09:30 AM']],
+            4:  [['BMIT7071', 'pending', ''], ['BMIT5678', 'pending', '', '03 Sep 2026, 09:30 AM', 5]],
             5:  [['BMIT2233', 'replacement', '07-Sep-2026']],
             7:  [['BMIT7074', 'replacement', '01-Sep-2026'], ['BMIT5678', 'replacement', '01-Sep-2026']],
-            9:  [['BMIT7075', 'pending', ''], ['BMIT2233', 'pending', '', '08 Sep 2026, 11:00 AM']],
+            9:  [['BMIT7075', 'pending', ''], ['BMIT2233', 'pending', '', '08 Sep 2026, 11:00 AM', 16]],
             11: [['BMIT7072', 'replacement', '08-Sep-2026'], ['BMIT5678', 'replacement', '08-Sep-2026']],
-            13: [['BMIT7071', 'pending', ''], ['BMIT2233', 'pending', '', '15 Sep 2026, 02:30 PM']],
+            13: [['BMIT7071', 'pending', ''], ['BMIT2233', 'pending', '', '15 Sep 2026, 02:30 PM', 8]],
         },
     },
 
