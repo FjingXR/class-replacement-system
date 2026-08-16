@@ -477,7 +477,9 @@ function buildTimetableGrid(cfg) {
                 const endTime = to12h(hours[e.end + 1] || add30min(hours[e.end]));
 
                 let extraHtml = '';
-                if (e.status === 'replacement' && e.remarks) {
+                if (typeof cfg.replacementNoteFn === 'function') {
+                    extraHtml = cfg.replacementNoteFn(e) || '';
+                } else if (e.status === 'replacement' && e.remarks) {
                     extraHtml = '<span class="ev-note">(Replaced for ' + e.remarks + ')</span>';
                 }
 

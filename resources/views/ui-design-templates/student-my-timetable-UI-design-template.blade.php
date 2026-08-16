@@ -89,14 +89,19 @@
                 const code = flag[0];
                 const status = flag[1];
                 const remarks = flag[2];
+                const flagRequestedAt = flag[3] || '';
                 const evArr = eventsByWeek[w];
                 if (evArr) {
                     const ev = evArr.find(function(e) { return e.code === code; });
                     if (ev) {
                         ev.status = status;
                         ev.remarks = remarks;
-                        if (status === 'pending') {
+                        if (flagRequestedAt) {
+                            ev.requestedAt = flagRequestedAt;
+                        } else if (status === 'pending') {
                             ev.requestedAt = '01 Sep 2026, 09:15 AM';
+                        }
+                        if (status === 'pending') {
                             ev.requestedBy = ev.lecturer;
                         }
                     }

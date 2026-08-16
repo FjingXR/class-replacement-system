@@ -138,11 +138,13 @@
             var weekIdx = parseInt(w);
             MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(entry) {
                 var flagCode = entry[0], flagStatus = entry[1], flagDate = entry[2] || '';
+                var flagRequestedAt = entry[3] || '';
                 var weekEvents = allEvents[rsd3g2Cohort][weekIdx];
                 weekEvents.forEach(function(evt) {
                     if (evt.code === flagCode) {
                         evt.status = flagStatus;
                         if (flagDate) evt.remarks = flagDate;
+                        if (flagRequestedAt) evt.requestedAt = flagRequestedAt;
                     }
                 });
             });
@@ -361,6 +363,18 @@
                     } else {
                         div.classList.add(isMine ? 'event-mine' : 'event-others');
                     }
+                },
+                replacementNoteFn: function(e) {
+                    var isMine = e.lecturer === MockData.currentUser.name;
+                    if (!isMine) return '';
+                    if (e.status === 'replacement' && e.remarks) {
+                        return '<span class="ev-note">(Replaced for ' + e.remarks + ')</span>';
+                    }
+                    if (e.status === 'pending' && e.requestedAt) {
+                        var submitted = e.requestedAt.split(',')[0];
+                        return '<span class="ev-note">(Pending since ' + submitted + ')</span>';
+                    }
+                    return '';
                 }
             });
             updateSummaries(weekEvents);
