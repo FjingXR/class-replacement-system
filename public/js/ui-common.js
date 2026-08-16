@@ -346,6 +346,20 @@ const hours = [
  *   delegated to this callback instead of the default event-block layout. Used by
  *   replacement-arrangement + venue-timetable (selection cell model).
  */
+function buildReplacementNote(e, opts) {
+    opts = opts || {};
+    var checkOwnership = opts.checkOwnership;
+    if (typeof checkOwnership === 'function' && !checkOwnership(e)) return '';
+    if (e.status === 'replacement' && e.remarks) {
+        return '<span class="ev-note">(Replaced for ' + e.remarks + ')</span>';
+    }
+    if (e.status === 'pending' && e.requestedAt) {
+        var submitted = e.requestedAt.split(',')[0];
+        return '<span class="ev-note">(Pending since ' + submitted + ')</span>';
+    }
+    return '';
+}
+
 function buildTimetableGrid(cfg) {
     const head = document.getElementById(cfg.headId || 'tableHead');
     const body = document.getElementById(cfg.bodyId || 'tableBody');

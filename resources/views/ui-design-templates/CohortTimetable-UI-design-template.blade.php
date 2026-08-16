@@ -365,16 +365,9 @@
                     }
                 },
                 replacementNoteFn: function(e) {
-                    var isMine = e.lecturer === MockData.currentUser.name;
-                    if (!isMine) return '';
-                    if (e.status === 'replacement' && e.remarks) {
-                        return '<span class="ev-note">(Replaced for ' + e.remarks + ')</span>';
-                    }
-                    if (e.status === 'pending' && e.requestedAt) {
-                        var submitted = e.requestedAt.split(',')[0];
-                        return '<span class="ev-note">(Pending since ' + submitted + ')</span>';
-                    }
-                    return '';
+                    return buildReplacementNote(e, {
+                        checkOwnership: function(ev) { return ev.lecturer === MockData.currentUser.name; }
+                    });
                 }
             });
             updateSummaries(weekEvents);
