@@ -138,14 +138,146 @@
             cursor: var(--cursor-cancel);
         }
 
-        .hint-text {
-            text-align: center;
-            font-size: 12px;
-            color: var(--color-on-surface-variant);
-            margin-top: 12px;
-            margin-bottom: -4px;
+        /* ── Toolbar Restructure (2-zone) ── */
+        .toolbar-restructure {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .toolbar-primary {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 280px;
+        }
+        .toolbar-primary .selector-dropdown {
+            width: 100%;
+            max-width: 320px;
+        }
+        .toolbar-primary .toolbar-subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-on-surface);
+        }
+        .toolbar-filters {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        /* ── Slot Dropdown (custom) ── */
+        .slot-dd {
+            position: relative;
+            margin-top: 4px;
+        }
+        .slot-dd-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            background: var(--color-surface);
+            color: var(--color-on-surface);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            min-width: 240px;
+            text-align: left;
+        }
+        .slot-dd-trigger:hover {
+            border-color: var(--color-primary);
+        }
+        .slot-dd-trigger svg {
+            margin-left: auto;
+            flex-shrink: 0;
             opacity: 0.6;
-            font-weight: 400;
+        }
+        .slot-dd-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            min-width: 320px;
+            max-height: 280px;
+            overflow-y: auto;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 50;
+        }
+        .slot-dd-panel.open {
+            display: block;
+        }
+        .slot-dd-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.12s;
+            border-bottom: 1px solid var(--color-outline-variant);
+        }
+        .slot-dd-item:last-child {
+            border-bottom: none;
+        }
+        .slot-dd-item:hover {
+            background: var(--color-surface-variant);
+        }
+        .slot-dd-item.selected {
+            background: var(--color-primary-container);
+        }
+        .slot-dd-item-label {
+            flex: 1;
+            font-size: 13px;
+            color: var(--color-on-surface);
+        }
+        .slot-dd-item-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: var(--radius-lg);
+        }
+        .slot-dd-item-star {
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0.3;
+            transition: opacity 0.15s, color 0.15s;
+            flex-shrink: 0;
+        }
+        .slot-dd-item-star.active {
+            opacity: 1;
+            color: var(--color-tertiary);
+        }
+        .slot-dd-item-star:hover {
+            opacity: 0.8;
+        }
+
+        /* ── Slot Tooltip (above) ── */
+        .slot-dd-tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-sm);
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--color-on-surface);
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+            z-index: 51;
+            pointer-events: none;
+        }
+        .slot-dd-tooltip.show {
+            display: block;
         }
 
         .cell-selected {
@@ -454,7 +586,29 @@
         @media (max-width: 768px) {
             .top-title { font-size: 16px; }
             .top-logo { height: 26px; }
-            .toolbar-left, .toolbar-right { justify-content: center; }
+            .toolbar-restructure {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .toolbar-primary {
+                min-width: 0;
+                width: 100%;
+            }
+            .toolbar-primary .selector-dropdown {
+                max-width: 100%;
+            }
+            .toolbar-filters {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .slot-dd-trigger {
+                min-width: 0;
+                width: 100%;
+            }
+            .slot-dd-panel {
+                min-width: 100%;
+            }
             .footer-area { flex-direction: column; text-align: center; }
             .footer-left { justify-content: center; }
             .footer-right {
@@ -638,31 +792,28 @@
             ]
         ])
 
-        <div class="toolbar">
-            <div class="toolbar-left">
-                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => true])
-            </div>
-            <div class="toolbar-center">
+        <div class="toolbar toolbar-restructure">
+            <div class="toolbar-primary">
                 <select class="selector-dropdown" id="subjectSelector" onchange="onSubjectChange()">
                     <option value="">Select a subject</option>
                 </select>
                 <div class="toolbar-subtitle" id="subjectInfo"></div>
-                <div class="toolbar-meta" id="subjectMeta"></div>
+
+                {{-- Slot Picker: custom dropdown (button + panel) --}}
+                <div class="slot-dd" id="slotPicker" style="display:none;">
+                    <button class="slot-dd-trigger" type="button" id="slotTrigger" onclick="toggleSlotPanel()">
+                        <span id="slotTriggerText">Select a slot to replace</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="slot-dd-panel" id="slotPanel"></div>
+                    <div class="slot-dd-tooltip" id="slotTooltip"></div>
+                </div>
             </div>
-            <div class="toolbar-right">
+            <div class="toolbar-filters">
+                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => true])
                 @include('partials.ui-venue-dropdown', ['selectId' => 'buildingSelector'])
             </div>
         </div>
-
-        <div class="venue-count-note" id="venueCountNote" style="display:none; font-size:12px; color:var(--color-on-surface-variant); padding:4px 16px;"></div>
-
-        <!-- Slot Picker: shows conflict/cancelled slots when subject selected -->
-        <div class="slot-picker" id="slotPicker" style="display:none; margin: 12px 16px; padding: 12px 16px; background: var(--color-surface); border: 1px solid var(--color-outline); border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
-            <div style="font-size: 13px; font-weight: 600; color: var(--color-on-surface); margin-bottom: 8px;">Select slot to replace:</div>
-            <div id="slotPickerList" style="display: flex; flex-direction: column; gap: 6px;"></div>
-        </div>
-
-        <div class="hint-text">Select an available (green) time slot</div>
 
         {{-- Progress bar — commented out for now
         <div class="progress-wrapper" id="progressWrapper">
@@ -672,6 +823,8 @@
             <span class="progress-text" id="progressText">Selected 0 of 4 slots</span>
         </div>
         --}}
+
+        <div class="venue-count-note" id="venueCountNote" style="display:none; font-size:12px; color:var(--color-on-surface-variant); padding:4px 0;"></div>
 
         @include('partials.ui-grid-table')
 
@@ -739,7 +892,6 @@
 
         <div class="footer-area">
             <div class="footer-left">
-                <span><strong>Cohort:</strong> DFT2 (S1) / DSF2 (S1) / DFT2 (S1) Jefferson Ng (2310971)</span>
             </div>
             <div class="footer-right">
                 {{-- Clear this Page button — disabled for now (single-block selection)
@@ -1272,6 +1424,10 @@
                  <div style="border:1px solid var(--color-outline);border-radius:var(--radius-sm);padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
                 function() {
                     hideConfirmModal();
+                    // Save as recent slot
+                    if (selectedOriginalSlot) {
+                        setRecentSlot(selectedOriginalSlot);
+                    }
                     const toast = buildSubmissionToastMessage();
                     deselectBlock();
                     Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
@@ -1545,13 +1701,11 @@
         function onSubjectChange() {
             const code = document.getElementById('subjectSelector').value;
             const infoEl = document.getElementById('subjectInfo');
-            const metaEl = document.getElementById('subjectMeta');
             const noteEl = document.getElementById('venueCountNote');
 
             if (!code) {
                 currentCourse = null;
                 infoEl.textContent = '';
-                metaEl.textContent = '';
                 noteEl.style.display = 'none';
                 selectedOriginalSlot = null;
                 renderSlotPicker([]);
@@ -1562,8 +1716,7 @@
             currentCourse = (MockData.courses || []).find(c => c.code === code);
             if (!currentCourse) return;
 
-            infoEl.textContent = currentCourse.code + ' — ' + currentCourse.name + ' (' + currentCourse.type + ')';
-            metaEl.textContent = 'Cohort: ' + currentCourse.cohorts.join(', ') + ' | Students: ' + currentCourse.studentCount;
+            infoEl.textContent = currentCourse.code + ' — ' + currentCourse.name + ' (' + currentCourse.type + ')  ·  ' + currentCourse.studentCount + ' Students';
 
             // Extract and render conflict/cancelled slots for this subject
             const slots = extractSlotsForSubject(code);
@@ -1606,8 +1759,18 @@
                 
                 weekData.forEach(event => {
                     if (event.code === courseCode && (event.status === 'conflict' || event.status === 'cancelled')) {
+                        const weekIdx = parseInt(weekKey);
+                        const dayIdx = event.di;
+                        // Build date string from weekData if available
+                        let dateStr = '';
+                        try {
+                            const wData = weekData;
+                            if (wData && wData[weekIdx] && wData[weekIdx].days && wData[weekIdx].days[dayIdx]) {
+                                dateStr = wData[weekIdx].days[dayIdx].date;
+                            }
+                        } catch(e) {}
                         slots.push({
-                            week: parseInt(weekKey),
+                            week: weekIdx,
                             day: event.di,
                             dayName: slotDayNames[event.di] || 'Unknown',
                             start: event.start,
@@ -1615,7 +1778,9 @@
                             venue: event.venue,
                             status: event.status,
                             name: event.name,
-                            type: event.type
+                            type: event.type,
+                            code: courseCode,
+                            date: dateStr
                         });
                     }
                 });
@@ -1626,63 +1791,182 @@
 
         function renderSlotPicker(slots) {
             const picker = document.getElementById('slotPicker');
-            const list = document.getElementById('slotPickerList');
+            const panel = document.getElementById('slotPanel');
+            const triggerText = document.getElementById('slotTriggerText');
+            const tooltip = document.getElementById('slotTooltip');
             
             if (!slots || slots.length === 0) {
                 picker.style.display = 'none';
                 return;
             }
             
-            list.innerHTML = '';
+            picker.style.display = '';
+            panel.innerHTML = '';
+            selectedOriginalSlot = null;
+            triggerText.textContent = 'Select a slot to replace';
+
             slots.forEach((slot, index) => {
                 const startStr = to12h(hours[slot.start]);
                 const endStr = to12h(hours[slot.end + 1] || add30min(hours[slot.end]));
-                const statusClass = slot.status === 'conflict' ? 'status-conflict' : 'status-cancelled';
                 const statusLabel = slot.status === 'conflict' ? 'Conflict' : 'Cancelled';
-                
-                const div = document.createElement('div');
-                div.className = 'slot-picker-item';
-                div.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--color-outline); border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s;';
-                div.innerHTML = `
-                    <input type="radio" name="originalSlot" id="slot_${index}" value="${index}" style="cursor: pointer;">
-                    <label for="slot_${index}" style="flex: 1; cursor: pointer; font-size: 13px;">
-                        Week ${slot.week} · ${slot.dayName} ${startStr} – ${endStr} @ ${slot.venue}
-                    </label>
-                    <span class="badge ${statusClass}" style="font-size: 11px; padding: 2px 8px; border-radius: var(--radius-lg); background: ${slot.status === 'conflict' ? 'var(--color-error-container)' : 'var(--color-surface-variant)'}; color: ${slot.status === 'conflict' ? 'var(--color-on-error-container)' : 'var(--color-on-surface-variant)'};">
-                        ${statusLabel}
-                    </span>
+                const statusBg = slot.status === 'conflict' ? 'var(--color-error-container)' : 'var(--color-surface-variant)';
+                const statusColor = slot.status === 'conflict' ? 'var(--color-on-error-container)' : 'var(--color-on-surface-variant)';
+                const fullLabel = 'Week ' + slot.week + ' · ' + slotDayNames[slot.day] + ', ' + slot.date;
+
+                const item = document.createElement('div');
+                item.className = 'slot-dd-item';
+                item.dataset.index = index;
+                item.innerHTML = `
+                    <span class="slot-dd-item-star" data-index="${index}" title="Toggle favourite">★</span>
+                    <span class="slot-dd-item-label">W${slot.week} · ${slot.dayName} ${startStr} – ${endStr} @ ${slot.venue}</span>
+                    <span class="slot-dd-item-badge" style="background:${statusBg};color:${statusColor};">${statusLabel}</span>
                 `;
-                
-                div.addEventListener('click', () => {
-                    document.getElementById(`slot_${index}`).checked = true;
-                    selectedOriginalSlot = slot;
-                    updateHintText();
+
+                // Click to select
+                item.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('slot-dd-item-star')) return;
+                    selectSlot(slot, index);
+                    closeSlotPanel();
                 });
-                
-                div.addEventListener('mouseenter', () => {
-                    if (selectedOriginalSlot !== slot) {
-                        div.style.background = 'var(--color-surface-variant)';
+
+                // Hover tooltip (above)
+                item.addEventListener('mouseenter', (e) => {
+                    if (e.target.classList.contains('slot-dd-item-star')) {
+                        tooltip.classList.remove('show');
+                        return;
                     }
+                    tooltip.textContent = fullLabel;
+                    tooltip.classList.add('show');
+                    const rect = item.getBoundingClientRect();
+                    const panelRect = panel.getBoundingClientRect();
+                    tooltip.style.left = (rect.left - panelRect.left) + 'px';
+                    tooltip.style.bottom = '';
+                    tooltip.style.top = '-' + (tooltip.offsetHeight + 8) + 'px';
                 });
-                
-                div.addEventListener('mouseleave', () => {
-                    if (selectedOriginalSlot !== slot) {
-                        div.style.background = '';
-                    }
+                item.addEventListener('mouseleave', () => {
+                    tooltip.classList.remove('show');
                 });
-                
-                list.appendChild(div);
+
+                // Favourite star
+                const star = item.querySelector('.slot-dd-item-star');
+                const fav = getFavouriteSlot();
+                if (fav && fav.code === slot.code && fav.day === slot.day && fav.start === slot.start && fav.venue === slot.venue) {
+                    star.classList.add('active');
+                }
+                star.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavourite(slot, star);
+                });
+
+                panel.appendChild(item);
             });
-            
-            picker.style.display = '';
+
+            // Apply default selection priority
+            applyDefaultSlotSelection(slots);
         }
 
-        function updateHintText() {
-            const hintEl = document.getElementById('hintText');
-            if (selectedOriginalSlot) {
-                hintEl.textContent = 'Now select a new venue + time slot on the grid below';
+        function selectSlot(slot, index) {
+            selectedOriginalSlot = slot;
+            const triggerText = document.getElementById('slotTriggerText');
+            const startStr = to12h(hours[slot.start]);
+            const endStr = to12h(hours[slot.end + 1] || add30min(hours[slot.end]));
+            triggerText.textContent = 'W' + slot.week + ' · ' + slot.dayName + ' ' + startStr + ' – ' + endStr;
+
+            // Update selected state in panel
+            document.querySelectorAll('.slot-dd-item').forEach(item => {
+                item.classList.toggle('selected', parseInt(item.dataset.index) === index);
+            });
+        }
+
+        function toggleSlotPanel() {
+            const panel = document.getElementById('slotPanel');
+            const isOpen = panel.classList.contains('open');
+            if (isOpen) {
+                closeSlotPanel();
             } else {
-                hintEl.textContent = 'Select an available (green) time slot';
+                panel.classList.add('open');
+                // Close on outside click
+                setTimeout(() => {
+                    document.addEventListener('click', closeSlotPanelOnOutside);
+                }, 0);
+            }
+        }
+
+        function closeSlotPanel() {
+            const panel = document.getElementById('slotPanel');
+            panel.classList.remove('open');
+            document.removeEventListener('click', closeSlotPanelOnOutside);
+        }
+
+        function closeSlotPanelOnOutside(e) {
+            const picker = document.getElementById('slotPicker');
+            if (!picker.contains(e.target)) {
+                closeSlotPanel();
+            }
+        }
+
+        // ── Favourite Slot (global, localStorage) ──
+        const FAV_KEY = 'replacement-favourite';
+
+        function getFavouriteSlot() {
+            try {
+                return JSON.parse(localStorage.getItem(FAV_KEY) || 'null');
+            } catch (e) { return null; }
+        }
+
+        function toggleFavourite(slot, starEl) {
+            const current = getFavouriteSlot();
+            const isCurrentFav = current && current.code === slot.code && current.day === slot.day && current.start === slot.start && current.venue === slot.venue;
+            if (isCurrentFav) {
+                localStorage.removeItem(FAV_KEY);
+                starEl.classList.remove('active');
+            } else {
+                localStorage.setItem(FAV_KEY, JSON.stringify({ code: slot.code, day: slot.day, start: slot.start, end: slot.end, venue: slot.venue, week: slot.week }));
+                // Update all stars
+                document.querySelectorAll('.slot-dd-item-star').forEach(s => s.classList.remove('active'));
+                starEl.classList.add('active');
+            }
+        }
+
+        // ── Recent Slot (last submitted, localStorage) ──
+        const RECENT_KEY = 'replacement-recent';
+
+        function getRecentSlot() {
+            try {
+                return JSON.parse(localStorage.getItem(RECENT_KEY) || 'null');
+            } catch (e) { return null; }
+        }
+
+        function setRecentSlot(slot) {
+            localStorage.setItem(RECENT_KEY, JSON.stringify({ code: slot.code, day: slot.day, start: slot.start, end: slot.end, venue: slot.venue, week: slot.week }));
+        }
+
+        // ── Default Selection Priority ──
+        function applyDefaultSlotSelection(slots) {
+            // 1. URL params from Venue Timetable (already handled in applyUrlParams)
+            // 2. Favourite
+            const fav = getFavouriteSlot();
+            if (fav) {
+                const match = slots.find(s => s.code === fav.code && s.day === fav.day && s.start === fav.start && s.venue === fav.venue);
+                if (match) {
+                    const idx = slots.indexOf(match);
+                    selectSlot(match, idx);
+                    return;
+                }
+            }
+            // 3. Recent
+            const recent = getRecentSlot();
+            if (recent) {
+                const match = slots.find(s => s.code === recent.code && s.day === recent.day && s.start === recent.start && s.venue === recent.venue);
+                if (match) {
+                    const idx = slots.indexOf(match);
+                    selectSlot(match, idx);
+                    return;
+                }
+            }
+            // 4. First option
+            if (slots.length > 0) {
+                selectSlot(slots[0], 0);
             }
         }
 
@@ -1725,13 +2009,8 @@
                     s.venue === urlParams.originalVenue
                 );
                 if (matchingSlot) {
-                    selectedOriginalSlot = matchingSlot;
                     const slotIndex = slots.indexOf(matchingSlot);
-                    const radio = document.getElementById(`slot_${slotIndex}`);
-                    if (radio) {
-                        radio.checked = true;
-                        updateHintText();
-                    }
+                    selectSlot(matchingSlot, slotIndex);
                 }
             }
         }
