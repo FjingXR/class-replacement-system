@@ -163,12 +163,27 @@
             color: var(--color-on-surface);
         }
         .course-label-center {
-            text-align: center;
             width: 100%;
             margin: 0 0 12px;
-            font-size: 22px;
-            font-weight: 700;
+        }
+        .title-row {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--color-on-surface);
+        }
+        .title-label {
+            font-weight: 600;
             color: var(--color-on-bg);
+        }
+        .title-not-selected {
+            color: var(--color-on-surface-variant);
+            font-style: italic;
+        }
+        .title-hint {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            font-style: normal;
+            margin-left: 4px;
         }
         .semester-chip { display: none; }
         .page-header .semester-chip { display: none; }
@@ -1699,6 +1714,51 @@
         let currentCourse = null;
         let urlParams = {};
 
+        function renderTitleSummary() {
+            const el = document.getElementById('subjectInfo');
+            const hasSubject = !!currentCourse;
+            const hasSlot = !!selectedOriginalSlot;
+
+            // Line 1: Subject
+            const subjectLine = hasSubject
+                ? currentCourse.code + ' — ' + currentCourse.name + ' (' + currentCourse.type + ')'
+                : null;
+
+            // Line 2: Time Slot
+            let slotLine = null;
+            if (hasSlot) {
+                const startStr = to12h(hours[selectedOriginalSlot.start]);
+                const endStr = to12h(hours[selectedOriginalSlot.end + 1] || add30min(hours[selectedOriginalSlot.end]));
+                const dateParts = selectedOriginalSlot.date.split(' ');
+                const shortDate = dateParts[1] + ' ' + dateParts[0];
+                slotLine = 'Week ' + selectedOriginalSlot.week + ' · ' + selectedOriginalSlot.dayName + ', ' + shortDate + ' ' + dateParts[2] + ' · ' + startStr + '–' + endStr + ' @ ' + selectedOriginalSlot.venue;
+            }
+
+            // Line 3: Cohorts
+            let cohortsLine = null;
+            if (hasSubject) {
+                cohortsLine = currentCourse.cohorts.join(' + ');
+            }
+
+            // Line 4: Total Students
+            let totalLine = null;
+            if (hasSubject) {
+                const counts = currentCourse.cohortCounts || [];
+                if (counts.length > 1) {
+                    totalLine = counts.join(' + ') + ' = ' + currentCourse.studentCount;
+                } else {
+                    totalLine = '' + currentCourse.studentCount;
+                }
+            }
+
+            el.innerHTML = `<div class="title-subtitle">Conflict Schedule</div>
+                <div class="title-row"><span class="title-label">Subject:</span> ${subjectLine ? subjectLine : '<span class="title-not-selected">Not selected</span>' + (!hasSubject ? '<span class="title-hint">— Select a Subject first</span>' : '')}</div>
+                <div class="title-row"><span class="title-label">Time Slot:</span> ${slotLine ? slotLine : '<span class="title-not-selected">Not selected</span>' + (hasSubject && !hasSlot ? '<span class="title-hint">— Then pick a Conflict Slot</span>' : '')}</div>
+                <div class="title-row"><span class="title-label">Cohorts:</span> ${cohortsLine ? cohortsLine : '<span class="title-not-selected">Not selected</span>'}</div>
+                <div class="title-row"><span class="title-label">Total Students:</span> ${totalLine ? totalLine : '0'}</div>
+            `;
+        }
+
         function buildSubjectDropdown() {
             const sel = document.getElementById('subjectSelector');
             const courses = MockData.courses || [];
@@ -1714,15 +1774,14 @@
 
         function onSubjectChange() {
             const code = document.getElementById('subjectSelector').value;
-            const infoEl = document.getElementById('subjectInfo');
             const noteEl = document.getElementById('venueCountNote');
 
             if (!code) {
                 currentCourse = null;
-                infoEl.textContent = '';
-                noteEl.style.display = 'none';
                 selectedOriginalSlot = null;
+                noteEl.style.display = 'none';
                 renderSlotPicker([]);
+                renderTitleSummary();
                 buildVenueFilter();
                 return;
             }
@@ -1730,12 +1789,13 @@
             currentCourse = (MockData.courses || []).find(c => c.code === code);
             if (!currentCourse) return;
 
-            infoEl.textContent = currentCourse.code + ' — ' + currentCourse.name + ' (' + currentCourse.type + ')  ·  ' + currentCourse.studentCount + ' Students';
+            selectedOriginalSlot = null;
+            document.getElementById('slotTriggerText').textContent = 'Select a slot to replace';
 
             // Extract and render conflict/cancelled slots for this subject
             const slots = extractSlotsForSubject(code);
             renderSlotPicker(slots);
-            
+            renderTitleSummary();
             buildVenueFilter();
         }
 
@@ -1886,6 +1946,8 @@
             document.querySelectorAll('.slot-dd-item').forEach(item => {
                 item.classList.toggle('selected', parseInt(item.dataset.index) === index);
             });
+
+            renderTitleSummary();
         }
 
         function toggleSlotPanel() {
@@ -2004,7 +2066,7 @@
             if (urlParams.code) {
                 sel.value = urlParams.code;
                 sel.disabled = true;
-                sel.dispatchEvent(new Event('change'));
+                onSubjectChange();
             }
             if (urlParams.venue) {
                 if (venueDropdown) {
@@ -2036,6 +2098,8 @@
                 if (hrs > 0) MAX_SELECTION = Math.round(hrs * 2);
             }
             buildSubjectDropdown();
+            renderTitleSummary();
+            applyUrlParams();
 
             /* init venue dropdown */
             venueDropdown = new VenueDropdown(
@@ -2064,7 +2128,6 @@
                 }
             });
             buildTimetable();
-            applyUrlParams();
 
             document.addEventListener('keydown', handleKeyDown);
             initWeekKeyboardShortcuts();

@@ -3026,6 +3026,14 @@ body {
 }
 .filter-chip-remove:hover { background: var(--color-primary); color: var(--color-on-primary); }
 
+/* ── Title Subtitle ────────────────────────────────────────────── */
+.title-subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-error);
+    margin-bottom: 2px;
+}
+
 /* ── Status Time Colors (request pages) ────────────────────────── */
 .class-time.status-pending { color: var(--color-warning); }
 .class-time.status-approved { color: var(--color-success); }
