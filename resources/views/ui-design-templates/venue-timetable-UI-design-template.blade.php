@@ -608,7 +608,7 @@
             updateFavStar();
 
             /* update recent */
-            updateRecent(code);
+            if (venueDropdown) venueDropdown.updateRecent(code);
 
             /* show skeleton */
             SkeletonLoader.with(function() {
@@ -1007,23 +1007,6 @@
             star.classList.toggle('active', isFav);
             star.disabled = favs.length >= venueDropdown.maxFavourites && !isFav;
             star.title = star.disabled ? 'Maximum 5 favourites' : 'Toggle favourite';
-        }
-
-        /* ════════════════════════════════════════════
-           RECENT VENUES (localStorage)
-           ════════════════════════════════════════════ */
-
-        function getRecent() {
-            try { return JSON.parse(localStorage.getItem('venueRecent') || '[]'); }
-            catch (e) { return []; }
-        }
-
-        function updateRecent(code) {
-            let recent = getRecent();
-            recent = recent.filter(c => c !== code);
-            recent.unshift(code);
-            if (recent.length > 5) recent = recent.slice(0, 5);
-            localStorage.setItem('venueRecent', JSON.stringify(recent));
         }
 
         /* ════════════════════════════════════════════

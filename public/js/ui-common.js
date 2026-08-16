@@ -2063,7 +2063,9 @@ class VenueDropdown {
         this.venues = (opts.venues || []).slice();
         this.onSelect = opts.onSelect || function() {};
         this.storageKey = opts.storageKey || 'venueFavourites';
+        this.recentStorageKey = opts.recentStorageKey || 'venueRecent';
         this.maxFavourites = opts.maxFavourites || 5;
+        this.maxRecent = opts.maxRecent || 5;
         this.filter = opts.filter || null;
         this.selectedCode = opts.initialCode || null;
 
@@ -2116,6 +2118,19 @@ class VenueDropdown {
         this._updateActive();
     }
 
+    getRecent() {
+        try { return JSON.parse(localStorage.getItem(this.recentStorageKey) || '[]'); }
+        catch (e) { return []; }
+    }
+
+    updateRecent(code) {
+        let recent = this.getRecent();
+        recent = recent.filter(c => c !== code);
+        recent.unshift(code);
+        if (recent.length > this.maxRecent) recent = recent.slice(0, this.maxRecent);
+        localStorage.setItem(this.recentStorageKey, JSON.stringify(recent));
+    }
+
     setFilter(filterFn) {
         this.filter = filterFn;
         this._buildGroups();
@@ -2143,14 +2158,23 @@ class VenueDropdown {
             .map(code => venues.find(v => v.code === code))
             .filter(Boolean);
         if (favVenues.length > 0) {
-            this._addGroup('★ Favourites', favVenues, true);
+            this._addGroup('★ Favourites', favVenues, 'favourite');
+        }
+
+        // Recent group
+        const recent = this.getRecent();
+        const recentVenues = recent
+            .map(code => venues.find(v => v.code === code))
+            .filter(Boolean);
+        if (recentVenues.length > 0) {
+            this._addGroup('Recent', recentVenues, 'recent');
         }
 
         // Type groups
         typeOrder.forEach(type => {
             const group = venues.filter(v => v.type === type);
             if (group.length > 0) {
-                this._addGroup(typeLabels[type] || type, group, false);
+                this._addGroup(typeLabels[type] || type, group, 'type');
             }
         });
 
@@ -2162,7 +2186,7 @@ class VenueDropdown {
         }
     }
 
-    _addGroup(label, venues, isFavourite) {
+    _addGroup(label, venues, groupType) {
         const group = document.createElement('div');
         group.className = 'venue-dd-group';
 
@@ -2183,15 +2207,15 @@ class VenueDropdown {
             const favs = this.getFavourites();
             const isFav = favs.includes(v.code);
 
-            if (isFav && !isFavourite) {
+            if (isFav && groupType === 'type') {
                 const star = document.createElement('span');
                 star.className = 'fav-star';
                 star.textContent = '⭐';
                 item.appendChild(star);
-            } else if (isFavourite) {
+            } else if (groupType === 'favourite' || groupType === 'recent') {
                 const star = document.createElement('span');
                 star.className = 'fav-star';
-                star.textContent = '⭐';
+                star.textContent = groupType === 'favourite' ? '⭐' : '🕐';
                 item.appendChild(star);
             }
 
@@ -2200,14 +2224,12 @@ class VenueDropdown {
             name.textContent = v.code;
             item.appendChild(name);
 
-            if (!isFavourite) {
-                // Type groups: no type label (implied)
+            if (groupType === 'type') {
                 const meta = document.createElement('span');
                 meta.className = 'venue-meta';
                 meta.textContent = v.capacity + ' seats';
                 item.appendChild(meta);
             } else {
-                // Favourites group: show type + capacity
                 const meta = document.createElement('span');
                 meta.className = 'venue-meta';
                 const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
