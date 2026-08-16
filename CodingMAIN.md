@@ -102,6 +102,13 @@ composer run test             # lint:check + types:check + phpunit
 npm run dev / npm run build   # vite (not heavily used; UI uses static /css /js)
 ```
 
+### Fix stale Blade cache (after UI changes)
+`php artisan view:clear` is broken (missing cache path). Use this instead:
+```bash
+pkill -9 php && rm -f storage/framework/views/*.php && php artisan serve --port=8000 &
+```
+**Always kill old server first** — old processes hold stale compiled views in memory.
+
 ### Test login
 - Default password for ALL seeded users: `Tarumt@2026`
 - Lecturers: login by email (`surayaini@tarc.edu.my`, etc.) via `/login/staff`

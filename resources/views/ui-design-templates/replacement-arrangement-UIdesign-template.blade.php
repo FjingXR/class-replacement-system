@@ -1753,7 +1753,7 @@
 
             el.innerHTML = `<div class="title-subtitle">Conflict Schedule</div>
                 <div class="title-row"><span class="title-label">Subject:</span> ${subjectLine ? subjectLine : '<span class="title-not-selected">Not selected</span>' + (!hasSubject ? '<span class="title-hint">— Select a Subject first</span>' : '')}</div>
-                <div class="title-row"><span class="title-label">Time Slot:</span> ${slotLine ? slotLine : '<span class="title-not-selected">Not selected</span>' + (hasSubject && !hasSlot ? '<span class="title-hint">— Then pick a Conflict Slot</span>' : '')}</div>
+                <div class="title-row"><span class="title-label">Time Slot:</span> ${slotLine ? slotLine : '<span class="title-not-selected">Not selected</span>' + (!hasSlot ? '<span class="title-hint">— Then pick a Conflict Slot</span>' : '')}</div>
                 <div class="title-row"><span class="title-label">Cohorts:</span> ${cohortsLine ? cohortsLine : '<span class="title-not-selected">Not selected</span>'}</div>
                 <div class="title-row"><span class="title-label">Total Students:</span> ${totalLine ? totalLine : '0'}</div>
             `;

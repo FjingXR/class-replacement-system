@@ -34,4 +34,5 @@ and the matching `page-changelogs/*.md` to learn house style before designing.
 - Working branch: `fjing`. Never commit secrets. Never push unless asked.
 - Before finishing a task that touches PHP: run `composer run lint:check` + `composer run types:check`.
 - After any UI page change: update the matching `page-changelogs/*.md`.
+- **After any UI Blade change:** clear stale cache before verifying: `pkill -9 php && rm -f storage/framework/views/*.php && php artisan serve --port=8000 &`. Always kill old server first — old processes hold stale compiled views in memory.
 - DB is PostgreSQL (`class_replacement`, user `philler`). Reset demo data: `php artisan migrate:fresh --seed`.
