@@ -193,6 +193,11 @@
             gap: 12px;
             flex-shrink: 0;
         }
+        .toolbar-center {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
 
         /* ── Slot Dropdown (custom) ── */
         .slot-dd {
@@ -629,6 +634,10 @@
                 align-items: stretch;
                 gap: 8px;
             }
+            .toolbar-center {
+                flex-direction: column;
+                align-items: stretch;
+            }
             .slot-dd-trigger {
                 min-width: 0;
                 width: 100%;
@@ -837,9 +846,11 @@
                     <div class="slot-dd-tooltip" id="slotTooltip"></div>
                 </div>
             </div>
+            <div class="toolbar-center">
+                @include('partials.ui-venue-dropdown', ['selectId' => 'buildingSelector'])
+            </div>
             <div class="toolbar-filters">
                 @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => true])
-                @include('partials.ui-venue-dropdown', ['selectId' => 'buildingSelector'])
             </div>
         </div>
 
