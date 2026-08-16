@@ -254,10 +254,10 @@
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
                 <div class="modal-footer-left">
-                    <button class="btn-danger" id="cancelRequestBtn" style="display:none" onclick="openCancelConfirm()">Cancel Request</button>
+                    <button class="btn-outline" onclick="closeModal()">Close</button>
                 </div>
                 <div class="modal-footer-right">
-                    <button class="btn-outline" onclick="closeModal()">Close</button>
+                    <button class="btn-danger" id="cancelRequestBtn" style="display:none" onclick="openCancelConfirm()">Cancel Request</button>
                 </div>
             </div>
         </div>

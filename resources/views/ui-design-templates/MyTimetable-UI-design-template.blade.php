@@ -206,11 +206,11 @@
     <!-- ═══ Class Detail Modal ═══ -->
     @section('modal-footer')
         <div class="modal-footer-left">
-            <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement(currentModalEvent?.code, currentModalEvent?.cohort, { day: currentModalEvent?.di, start: currentModalEvent?.start, end: currentModalEvent?.end, venue: currentModalEvent?.venue, duration: (currentModalEvent && currentModalEvent.start !== undefined && currentModalEvent.end !== undefined) ? ((currentModalEvent.end - currentModalEvent.start + 1) / 2) : undefined }, 'my-timetable')">Replace Now</button>
-            <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()"></button>
+            <button class="btn-close-modal" onclick="closeModal()">Close</button>
         </div>
         <div class="modal-footer-right">
-            <button class="btn-close-modal" onclick="closeModal()">Close</button>
+            <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement(currentModalEvent?.code, currentModalEvent?.cohort, { day: currentModalEvent?.di, start: currentModalEvent?.start, end: currentModalEvent?.end, venue: currentModalEvent?.venue, duration: (currentModalEvent && currentModalEvent.start !== undefined && currentModalEvent.end !== undefined) ? ((currentModalEvent.end - currentModalEvent.start + 1) / 2) : undefined }, 'my-timetable')">Replace Now</button>
+            <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()"></button>
         </div>
     @endsection
     @include('partials.ui-class-detail-modal')
@@ -270,17 +270,13 @@
 
             const days = weekData[currentWeek].days;
             const isConflict = days[event.di] && days[event.di].holiday;
-            const displayStatus = isConflict ? 'conflict' : event.status;
 
             const replaceBtn = document.getElementById('btnReplaceNow');
             replaceBtn.style.display = isConflict ? 'flex' : 'none';
 
             const cancelBtn = document.getElementById('btnCancelClass');
-            cancelBtn.style.display = isConflict ? 'none' : 'flex';
-            cancelBtn.textContent = event.status === 'pending' ? 'Cancel Request?' : 'Cancel Class?';
-
-            const startStr = to12h(hours[event.start]);
-            const endStr = to12h(hours[event.end + 1] || add30min(hours[event.end]));
+            cancelBtn.style.display = (isConflict || event.status === 'pending') ? 'none' : 'flex';
+            cancelBtn.textContent = 'Cancel Class?';
 
             let cohortValue = event.cohort;
             let studentValue = event.studentCount ? String(event.studentCount) : '—';
@@ -289,45 +285,16 @@
                 studentValue = event.studentCounts.join('+') + ' = ' + event.studentCounts.reduce((a, b) => a + b, 0);
             }
 
-            const statusDesc = event.status === 'pending' ? 'Replacement request awaiting approval' : event.status === 'conflict' ? 'Scheduling conflict — needs attention' : 'Scheduled class with no issues';
-
-            const rows = [
-                { label: 'Subject Code', value: event.code },
-                { label: 'Subject Name', value: event.name },
-                { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
-                { label: 'Cohort', value: cohortValue },
-                { label: 'Total Students', value: studentValue },
-                { label: 'Venue', value: event.venue || '—' },
-                { label: 'Day', value: dayNames[event.di] },
-                { label: 'Date', value: weekData[currentWeek].days[event.di].date },
-                { label: 'Start Time', value: startStr, strong: true },
-                { label: 'End Time', value: endStr },
-                { label: 'Status', value: '<span class="badge badge-' + (event.status || 'normal') + '">' + displayStatus.charAt(0).toUpperCase() + displayStatus.slice(1) + '</span>' },
-                { label: 'Status Description', value: statusDesc },
-                { label: 'Remarks', value: event.remarks || '—' },
-            ];
-
-            if (event.status === 'pending') {
-                rows.splice(rows.length - 1, 0,
-                    { label: 'Requested At', value: event.requestedAt || '—' },
-                    { label: 'Requested By', value: event.requestedBy || '—' }
-                );
-            }
-
-            DetailModal.render({
+            openClassModal({
+                event: event,
+                dayIndex: event.di,
+                days: days,
                 modalId: 'classModal',
                 title: 'Class Details',
-                subtitle: (event.code || '') + (event.name ? ' — ' + event.name : ''),
-                timeline: event.status === 'pending'
-                    ? [
-                        { label: 'Submitted', time: event.requestedAt || 'Done', state: 'completed' },
-                        { label: 'Under Review', time: 'In progress', state: 'active', dot: 'dot-warning' },
-                        { label: 'Awaiting Replacement', time: 'Next', state: 'pending' },
-                      ]
-                    : null,
-                body: DetailModal.section('Class Information',
-                    rows.map(r => DetailModal.row(r.label, r.value, { strong: r.strong })).join('')
-                )
+                extraFields: [
+                    { label: 'Cohort', value: cohortValue },
+                    { label: 'Total Students', value: studentValue }
+                ]
             });
         }
 
