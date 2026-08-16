@@ -650,8 +650,7 @@
                 <div class="toolbar-meta" id="subjectMeta"></div>
             </div>
             <div class="toolbar-right">
-                <select class="selector-dropdown" id="buildingSelector" onchange="onVenueChange()">
-                </select>
+                @include('partials.ui-venue-dropdown', ['selectId' => 'buildingSelector'])
             </div>
         </div>
 
@@ -814,6 +813,7 @@
         var weekNav = new WeekNavigator(MockData.semester, weekData, 'weekSelector');
         weekNav.onBeforeNavigate = function() { saveCurrentWeek(); };
         let currentVenue = 'B103';
+        let venueDropdown = null;
         let selectedBlock = null;          // { day, startHour, endHour } or null
         let selectionHistory = [];          // block-level undo: each entry = { action:'select'|'deselect', block:{...} }
         let focusedCell = { day: null, hour: null };
@@ -964,7 +964,7 @@
             const mins = totalMins % 60;
             const durationStr = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
             document.getElementById('infoDuration').textContent = durationStr;
-            document.getElementById('infoBuilding').textContent = document.getElementById('buildingSelector').value;
+            document.getElementById('infoBuilding').textContent = venueDropdown ? venueDropdown.getSelected() : currentVenue;
 
             const tip = document.getElementById('summaryTip');
             if (getGlobalTotal() >= MAX_SELECTION) {
@@ -1190,7 +1190,7 @@
 
         function onVenueChange() {
             saveCurrentWeek();
-            currentVenue = document.getElementById('buildingSelector').value;
+            currentVenue = venueDropdown ? venueDropdown.getSelected() : 'B103';
             buildTimetable();
         }
 
@@ -1519,12 +1519,7 @@
                 case '3':
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
-                        const venueIdx = parseInt(e.key) - 1;
-                        const venueSel = document.getElementById('buildingSelector');
-                        if (venueIdx < venueSel.options.length) {
-                            venueSel.selectedIndex = venueIdx;
-                            onVenueChange();
-                        }
+                        /* Ctrl+1-9 to select venue by index — handled by VenueDropdown internally */
                     }
                     break;
             }
@@ -1560,7 +1555,7 @@
                 noteEl.style.display = 'none';
                 selectedOriginalSlot = null;
                 renderSlotPicker([]);
-                buildVenueDropdown(false);
+                buildVenueFilter();
                 return;
             }
 
@@ -1574,37 +1569,24 @@
             const slots = extractSlotsForSubject(code);
             renderSlotPicker(slots);
             
-            buildVenueDropdown(true);
+            buildVenueFilter();
         }
 
-        function buildVenueDropdown(filterByCourse) {
-            const sel = document.getElementById('buildingSelector');
-            const venues = MockData.venues || [];
+        function buildVenueFilter() {
             const noteEl = document.getElementById('venueCountNote');
-            sel.innerHTML = '';
+            if (!venueDropdown) return;
 
-            let filtered = venues;
-            if (filterByCourse && currentCourse) {
-                const allowedType = currentCourse.type === 'L' ? ['LectureHall', 'Tutorial'] : ['Tutorial'];
-                filtered = venues.filter(v => {
-                    const typeOk = v.type === 'Tutorial' || (currentCourse.type === 'L' && v.type === 'LectureHall');
-                    const capOk = v.capacity >= currentCourse.studentCount;
+            if (currentCourse) {
+                venueDropdown.setFilter(function(v) {
+                    var typeOk = v.type === 'Tutorial' || (currentCourse.type === 'L' && v.type === 'LectureHall');
+                    var capOk = v.capacity >= currentCourse.studentCount;
                     return typeOk && capOk;
                 });
-            }
-
-            filtered.forEach(v => {
-                const opt = document.createElement('option');
-                opt.value = v.code;
-                const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
-                opt.textContent = v.code + ' — ' + typeLabel + ' (' + v.capacity + ' seats)';
-                sel.appendChild(opt);
-            });
-
-            if (filterByCourse && currentCourse) {
-                noteEl.textContent = 'Showing ' + filtered.length + ' venues that fit ' + currentCourse.studentCount + ' students';
+                var count = venueDropdown.getFiltered ? venueDropdown.getFiltered().length : 0;
+                noteEl.textContent = 'Showing venues that fit ' + currentCourse.studentCount + ' students';
                 noteEl.style.display = '';
             } else {
+                venueDropdown.setFilter(null);
                 noteEl.style.display = 'none';
             }
         }
@@ -1729,11 +1711,8 @@
                 sel.dispatchEvent(new Event('change'));
             }
             if (urlParams.venue) {
-                const venueSel = document.getElementById('buildingSelector');
-                const venueOpt = Array.from(venueSel.options).find(o => o.value === urlParams.venue);
-                if (venueOpt) {
-                    venueSel.value = urlParams.venue;
-                    onVenueChange();
+                if (venueDropdown) {
+                    venueDropdown.select(urlParams.venue);
                 }
             }
             
@@ -1766,7 +1745,16 @@
                 if (hrs > 0) MAX_SELECTION = Math.round(hrs * 2);
             }
             buildSubjectDropdown();
-            buildVenueDropdown();
+
+            /* init venue dropdown */
+            venueDropdown = new VenueDropdown(
+                document.getElementById('buildingSelectorDropdown'),
+                {
+                    venues: MockData.venues,
+                    initialCode: currentVenue,
+                    onSelect: function(code) { onVenueChange(); }
+                }
+            );
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             /* restore the previously saved week (localStorage), else falls back to week 1 */
             weekNav.load();

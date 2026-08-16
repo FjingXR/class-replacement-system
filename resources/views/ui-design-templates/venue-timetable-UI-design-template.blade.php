@@ -11,9 +11,6 @@
             gap: 12px;
             flex-wrap: wrap;
         }
-        .venue-bar select {
-            min-width: 280px;
-        }
         .venue-dropdown-wrap {
             display: inline-flex;
             align-items: center;
@@ -46,34 +43,6 @@
             outline-offset: 2px;
         }
 
-        /* ───── Recent / All sections in dropdown ───── */
-        #venueSelect optgroup {
-            font-weight: 600;
-            color: var(--color-on-surface);
-        }
-        #venueSelect option {
-            font-weight: 400;
-            color: var(--color-on-surface);
-        }
-
-        /* ───── Filter Bar ───── */
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-        }
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .filter-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--color-on-surface-variant);
-        }
         .segment-toggle {
             display: inline-flex;
             border: 1px solid var(--color-outline);
@@ -103,56 +72,6 @@
         .segment-toggle button:focus-visible {
             outline: 2px solid var(--color-primary);
             outline-offset: -2px;
-        }
-
-        /* ───── Venue Type Filter ───── */
-        .venue-type-filter {
-            position: relative;
-        }
-        .venue-type-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: transparent;
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-sm);
-            padding: 6px 12px;
-            font-size: 13px;
-            color: var(--color-on-surface-variant);
-            cursor: pointer;
-        }
-        .venue-type-btn:hover {
-            background: var(--color-surface-variant);
-        }
-        .venue-type-btn:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
-        }
-        .venue-type-dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            margin-top: 4px;
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-sm);
-            padding: 8px 12px;
-            z-index: 100;
-            min-width: 180px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
-        }
-        .venue-type-dropdown.open {
-            display: block;
-        }
-        .venue-type-dropdown label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 0;
-            font-size: 13px;
-            color: var(--color-on-surface);
-            cursor: pointer;
         }
 
         /* ───── Booking Banner ───── */
@@ -338,16 +257,9 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-            .venue-bar select {
+            .venue-bar .venue-dd-trigger {
                 min-width: 0;
                 width: 100%;
-            }
-            .venue-type-filter {
-                width: 100%;
-            }
-            .venue-type-btn {
-                width: 100%;
-                justify-content: center;
             }
             .segment-toggle {
                 width: 100%;
@@ -460,8 +372,8 @@
         <!-- ─── Venue + Week Picker ─── -->
         <div class="semester-bar">
             <div class="venue-dropdown-wrap">
-                <select id="venueSelect" onchange="onVenueChange()"></select>
-                <button class="fav-btn" id="favStar" onclick="toggleFavourite()" title="Toggle favourite">&#9734;</button>
+                @include('partials.ui-venue-dropdown', ['selectId' => 'venueSelect'])
+                <button class="fav-btn" id="favStar" title="Toggle favourite">&#9734;</button>
             </div>
             @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelect', 'selectOnclick' => 'selectWeek(this.value)', 'disabled' => false])
             <button class="print-btn" title="Coming soon" disabled style="margin-left:auto;">
@@ -482,23 +394,6 @@
             <div class="history-panel" id="historyPanel"></div>
         </details>
         ─── END Past 4 Weeks ─── -->
-
-        <!-- ─── Filter Bar ─── -->
-        <div class="filter-bar">
-            <div class="filter-group">
-                <label>Venue Type:</label>
-                <div class="venue-type-filter">
-                    <button class="venue-type-btn" id="venueTypeBtn" onclick="toggleVenueTypeDropdown()">
-                        All Types &#9662;
-                    </button>
-                    <div class="venue-type-dropdown" id="venueTypeDropdown">
-                        <label><input type="checkbox" value="Tutorial" checked onchange="applyVenueTypeFilter()"> Tutorial</label>
-                        <label><input type="checkbox" value="LectureHall" checked onchange="applyVenueTypeFilter()"> Lecture Hall</label>
-                        <label><input type="checkbox" value="Lab" checked onchange="applyVenueTypeFilter()"> Lab</label>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- ─── History Panel (Past 4 Weeks) — disabled ───
         <div class="history-panel" id="historyPanel"></div>
@@ -578,7 +473,7 @@
 
         let currentVenue = null;
         let currentWeek = 0;
-        let venueTypeFilters = { Tutorial: true, LectureHall: true, Lab: true };
+        let venueDropdown = null;
         let currentTab = 'current';
         let currentCourseCode = null;
         let currentCohort = null;
@@ -603,15 +498,18 @@
         const weekNav = new WeekNavigator(MockData.semester, weekData);
 
         /* ════════════════════════════════════════════
-           STATE PERSISTENCE (venue + venueType only)
+           STATE PERSISTENCE (venue only)
            ════════════════════════════════════════════ */
 
-        const venueState = createStatePersistence('venueTimetableState', {
-            fields: [
-                { id: 'venueSelect', type: 'select', key: 'venue' },
-                { id: 'venueTypeDropdown', type: 'checkbox-group', key: 'venueTypes' },
-            ]
-        });
+        function saveState() {
+            if (venueDropdown) localStorage.setItem('venueTimetableState', JSON.stringify({ venue: venueDropdown.getSelected() }));
+        }
+        function restoreState() {
+            try {
+                const state = JSON.parse(localStorage.getItem('venueTimetableState') || '{}');
+                return state.venue || null;
+            } catch (e) { return null; }
+        }
 
         /* ════════════════════════════════════════════
            URL PARAMS
@@ -659,11 +557,23 @@
             weekNav.load();
             currentWeek = weekNav.currentWeek;
 
-            /* restore venue + venueType (before buildVenueDropdown which triggers buildTimetable) */
-            restoreState();
+            /* restore venue from state or URL param */
+            const savedVenue = restoreState();
+            const preselect = window._preselectVenue || savedVenue;
 
-            /* venue dropdown */
-            buildVenueDropdown();
+            /* init venue dropdown */
+            venueDropdown = new VenueDropdown(
+                document.getElementById('venueSelectDropdown'),
+                {
+                    venues: MockData.venues,
+                    initialCode: preselect,
+                    onSelect: function(code) { onVenueChange(); }
+                }
+            );
+
+            /* init favourite button */
+            updateFavStar();
+            document.getElementById('favStar').addEventListener('click', toggleFavourite);
 
             /* week nav */
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
@@ -680,91 +590,12 @@
             initWeekKeyboardShortcuts();
         });
 
-        function buildVenueDropdown() {
-            const select = document.getElementById('venueSelect');
-            select.innerHTML = '';
-
-            const favourites = getFavourites();
-            const recent = getRecent();
-
-            /* filter venues by type */
-            const filteredVenues = MockData.venues.filter(v => venueTypeFilters[v.type] !== false);
-
-            /* check if any venues match */
-            if (filteredVenues.length === 0) {
-                document.getElementById('noMatchBanner').classList.add('show');
-                onVenueChange();
-                return;
-            }
-            document.getElementById('noMatchBanner').classList.remove('show');
-
-            /* Favourites section */
-            if (favourites.length > 0) {
-                const favGroup = document.createElement('optgroup');
-                favGroup.label = '★ Favourites';
-                favourites.forEach(code => {
-                    const v = filteredVenues.find(x => x.code === code);
-                    if (v) {
-                        const opt = document.createElement('option');
-                        opt.value = v.code;
-                        opt.textContent = `${v.code} — ${v.type} (${v.capacity} seats)`;
-                        favGroup.appendChild(opt);
-                    }
-                });
-                if (favGroup.children.length > 0) {
-                    select.appendChild(favGroup);
-                }
-            }
-
-            /* Recent section */
-            if (recent.length > 0) {
-                const recentGroup = document.createElement('optgroup');
-                recentGroup.label = 'Recent';
-                recent.forEach(code => {
-                    const v = filteredVenues.find(x => x.code === code);
-                    if (v) {
-                        const opt = document.createElement('option');
-                        opt.value = v.code;
-                        opt.textContent = `${v.code} — ${v.type} (${v.capacity} seats)`;
-                        recentGroup.appendChild(opt);
-                    }
-                });
-                if (recentGroup.children.length > 0) {
-                    select.appendChild(recentGroup);
-                }
-            }
-
-            /* All Venues section */
-            const allGroup = document.createElement('optgroup');
-            allGroup.label = 'All Venues';
-            filteredVenues.forEach(v => {
-                const opt = document.createElement('option');
-                opt.value = v.code;
-                opt.textContent = `${v.code} — ${v.type} (${v.capacity} seats)`;
-                allGroup.appendChild(opt);
-            });
-            select.appendChild(allGroup);
-
-            /* preselect */
-            if (window._preselectVenue) {
-                select.value = window._preselectVenue;
-                delete window._preselectVenue;
-            }
-
-            /* if current venue is filtered out, select first available */
-            if (currentVenue && !filteredVenues.some(v => v.code === currentVenue.code)) {
-                currentVenue = filteredVenues[0];
-            }
-
-            onVenueChange();
-        }
-
         /* ════════════════════════════════════════════
            VENUE CHANGE
            ════════════════════════════════════════════ */
 
         function onVenueChange() {
-            const code = document.getElementById('venueSelect').value;
+            const code = venueDropdown ? venueDropdown.getSelected() : null;
             if (!code) return;
 
             currentVenue = MockData.venues.find(v => v.code === code);
@@ -860,37 +691,6 @@
         /* ════════════════════════════════════════════
            FILTERS
            ════════════════════════════════════════════ */
-
-        function toggleVenueTypeDropdown() {
-            document.getElementById('venueTypeDropdown').classList.toggle('open');
-        }
-
-        function applyVenueTypeFilter() {
-            const checks = document.querySelectorAll('#venueTypeDropdown input[type="checkbox"]');
-            venueTypeFilters = {};
-            let allChecked = true;
-            checks.forEach(cb => {
-                venueTypeFilters[cb.value] = cb.checked;
-                if (!cb.checked) allChecked = false;
-            });
-            document.getElementById('venueTypeBtn').innerHTML = (allChecked ? 'All Types' : 'Filtered') + ' &#9662;';
-            buildVenueDropdown();
-        }
-
-        function resetFilters() {
-            venueTypeFilters = { Tutorial: true, LectureHall: true, Lab: true };
-            document.querySelectorAll('#venueTypeDropdown input[type="checkbox"]').forEach(cb => cb.checked = true);
-            document.getElementById('venueTypeBtn').innerHTML = 'All Types &#9662;';
-            document.getElementById('noMatchBanner').classList.remove('show');
-            buildTimetable();
-        }
-
-        /* close venue type dropdown on outside click */
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.venue-type-filter')) {
-                document.getElementById('venueTypeDropdown').classList.remove('open');
-            }
-        });
 
         /* ════════════════════════════════════════════
            GET VENUE EVENTS (from all cohorts)
@@ -1184,36 +984,26 @@
         }
 
         /* ════════════════════════════════════════════
-           FAVOURITES (localStorage)
+           FAVOURITES (via VenueDropdown)
            ════════════════════════════════════════════ */
-
-        function getFavourites() {
-            try { return JSON.parse(localStorage.getItem('venueFavourites') || '[]'); }
-            catch (e) { return []; }
-        }
 
         // TODO: persist to DB instead of localStorage
         function toggleFavourite() {
-            if (!currentVenue) return;
-            const favs = getFavourites();
-            const idx = favs.indexOf(currentVenue.code);
-            if (idx === -1) {
-                favs.push(currentVenue.code);
-            } else {
-                favs.splice(idx, 1);
-            }
-            localStorage.setItem('venueFavourites', JSON.stringify(favs));
+            if (!currentVenue || !venueDropdown) return;
+            venueDropdown.toggleFavourite(currentVenue.code);
+            venueDropdown.refreshFavourites();
             updateFavStar();
-            buildVenueDropdown();
         }
 
         function updateFavStar() {
             const star = document.getElementById('favStar');
-            if (!currentVenue) return;
-            const favs = getFavourites();
+            if (!currentVenue || !venueDropdown) return;
+            const favs = venueDropdown.getFavourites();
             const isFav = favs.includes(currentVenue.code);
             star.textContent = isFav ? '\u2605' : '\u2606';
             star.classList.toggle('active', isFav);
+            star.disabled = favs.length >= venueDropdown.maxFavourites && !isFav;
+            star.title = star.disabled ? 'Maximum 5 favourites' : 'Toggle favourite';
         }
 
         /* ════════════════════════════════════════════
@@ -1231,29 +1021,6 @@
             recent.unshift(code);
             if (recent.length > 5) recent = recent.slice(0, 5);
             localStorage.setItem('venueRecent', JSON.stringify(recent));
-        }
-
-        /* ════════════════════════════════════════════
-           STATE PERSISTENCE (using ui-common.js helper)
-           ════════════════════════════════════════════ */
-
-        function saveState() {
-            venueState.save({ venueTypes: venueTypeFilters });
-        }
-
-        function restoreState() {
-            const state = venueState.restore();
-            if (state.venue && MockData.venues.some(v => v.code === state.venue)) {
-                document.getElementById('venueSelect').value = state.venue;
-            }
-            if (state.venueTypes) {
-                venueTypeFilters = state.venueTypes;
-                document.querySelectorAll('#venueTypeDropdown input[type="checkbox"]').forEach(cb => {
-                    cb.checked = venueTypeFilters[cb.value] !== false;
-                });
-                const allChecked = Object.values(venueTypeFilters).every(v => v);
-                document.getElementById('venueTypeBtn').innerHTML = (allChecked ? 'All Types' : 'Filtered') + ' &#9662;';
-            }
         }
 
         /* ════════════════════════════════════════════

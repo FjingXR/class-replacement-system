@@ -2043,3 +2043,266 @@ function initDataTipTooltips() {
 function initHeaderTooltips() {
     initDataTipTooltips();
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   VenueDropdown — nested grouped venue picker
+   ═══════════════════════════════════════════════════════════════ */
+class VenueDropdown {
+    /**
+     * @param {HTMLElement} container  — .venue-dd element
+     * @param {Object}      opts
+     * @param {Array}        opts.venues         — MockData.venues array
+     * @param {Function}     opts.onSelect       — callback(code) when venue selected
+     * @param {string}       [opts.storageKey]   — localStorage key for favourites
+     * @param {number}       [opts.maxFavourites] — max favourites (default 5)
+     * @param {string}       [opts.initialCode]  — pre-selected venue code
+     * @param {Function}     [opts.filter]       — filter function(v) for venues
+     */
+    constructor(container, opts) {
+        this.container = container;
+        this.venues = (opts.venues || []).slice();
+        this.onSelect = opts.onSelect || function() {};
+        this.storageKey = opts.storageKey || 'venueFavourites';
+        this.maxFavourites = opts.maxFavourites || 5;
+        this.filter = opts.filter || null;
+        this.selectedCode = opts.initialCode || null;
+
+        this.trigger = container.querySelector('.venue-dd-trigger');
+        this.panel = container.querySelector('.venue-dd-panel');
+
+        this._onDocClick = this._onDocClick.bind(this);
+        this._onKeydown = this._onKeydown.bind(this);
+
+        this._buildGroups();
+        this._bindEvents();
+
+        if (this.selectedCode) this._updateTrigger();
+    }
+
+    /* ── Public API ─────────────────────────────────────────── */
+
+    select(code) {
+        this.selectedCode = code;
+        this._updateTrigger();
+        this._updateActive();
+        this._close();
+        this.onSelect(code);
+    }
+
+    getSelected() {
+        return this.selectedCode;
+    }
+
+    getFavourites() {
+        try { return JSON.parse(localStorage.getItem(this.storageKey) || '[]'); }
+        catch (e) { return []; }
+    }
+
+    toggleFavourite(code) {
+        const favs = this.getFavourites();
+        const idx = favs.indexOf(code);
+        if (idx === -1) {
+            if (favs.length >= this.maxFavourites) return false;
+            favs.push(code);
+        } else {
+            favs.splice(idx, 1);
+        }
+        localStorage.setItem(this.storageKey, JSON.stringify(favs));
+        return true;
+    }
+
+    refreshFavourites() {
+        this._buildGroups();
+        this._updateActive();
+    }
+
+    setFilter(filterFn) {
+        this.filter = filterFn;
+        this._buildGroups();
+        this._updateActive();
+    }
+
+    destroy() {
+        document.removeEventListener('click', this._onDocClick, true);
+        document.removeEventListener('keydown', this._onKeydown, true);
+    }
+
+    /* ── Build groups ───────────────────────────────────────── */
+
+    _buildGroups() {
+        this.panel.innerHTML = '';
+        const venues = this.filter ? this.venues.filter(this.filter) : this.venues;
+        const favs = this.getFavourites();
+
+        // Type map for grouping
+        const typeOrder = ['Tutorial', 'LectureHall', 'Lab', 'CiscoLab'];
+        const typeLabels = { Tutorial: 'Tutorial', LectureHall: 'Lecture Hall', Lab: 'Lab', CiscoLab: 'CiscoLab' };
+
+        // Favourites group
+        const favVenues = favs
+            .map(code => venues.find(v => v.code === code))
+            .filter(Boolean);
+        if (favVenues.length > 0) {
+            this._addGroup('★ Favourites', favVenues, true);
+        }
+
+        // Type groups
+        typeOrder.forEach(type => {
+            const group = venues.filter(v => v.type === type);
+            if (group.length > 0) {
+                this._addGroup(typeLabels[type] || type, group, false);
+            }
+        });
+
+        if (venues.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'venue-dd-empty';
+            empty.textContent = 'No venues available';
+            this.panel.appendChild(empty);
+        }
+    }
+
+    _addGroup(label, venues, isFavourite) {
+        const group = document.createElement('div');
+        group.className = 'venue-dd-group';
+
+        const header = document.createElement('div');
+        header.className = 'venue-dd-group-header';
+        header.textContent = label;
+        group.appendChild(header);
+
+        const items = document.createElement('div');
+        items.className = 'venue-dd-group-items';
+
+        venues.forEach(v => {
+            const item = document.createElement('div');
+            item.className = 'venue-dd-item';
+            if (v.code === this.selectedCode) item.classList.add('active');
+            item.dataset.code = v.code;
+
+            const favs = this.getFavourites();
+            const isFav = favs.includes(v.code);
+
+            if (isFav && !isFavourite) {
+                const star = document.createElement('span');
+                star.className = 'fav-star';
+                star.textContent = '⭐';
+                item.appendChild(star);
+            } else if (isFavourite) {
+                const star = document.createElement('span');
+                star.className = 'fav-star';
+                star.textContent = '⭐';
+                item.appendChild(star);
+            }
+
+            const name = document.createElement('span');
+            name.className = 'venue-name';
+            name.textContent = v.code;
+            item.appendChild(name);
+
+            if (!isFavourite) {
+                // Type groups: no type label (implied)
+                const meta = document.createElement('span');
+                meta.className = 'venue-meta';
+                meta.textContent = v.capacity + ' seats';
+                item.appendChild(meta);
+            } else {
+                // Favourites group: show type + capacity
+                const meta = document.createElement('span');
+                meta.className = 'venue-meta';
+                const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
+                meta.textContent = typeLabel + ' · ' + v.capacity + ' seats';
+                item.appendChild(meta);
+            }
+
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.select(v.code);
+            });
+
+            items.appendChild(item);
+        });
+
+        // Hover expand: one group at a time
+        header.addEventListener('mouseenter', () => {
+            this._expandGroup(group);
+        });
+        group.addEventListener('mouseleave', () => {
+            group.classList.remove('expanded');
+        });
+
+        group.appendChild(items);
+        this.panel.appendChild(group);
+    }
+
+    _expandGroup(group) {
+        this.panel.querySelectorAll('.venue-dd-group.expanded').forEach(g => {
+            if (g !== group) g.classList.remove('expanded');
+        });
+        group.classList.add('expanded');
+    }
+
+    /* ── Open / Close ───────────────────────────────────────── */
+
+    _open() {
+        this.container.classList.add('open');
+        document.addEventListener('click', this._onDocClick, true);
+        document.addEventListener('keydown', this._onKeydown, true);
+    }
+
+    _close() {
+        this.container.classList.remove('open');
+        this.panel.querySelectorAll('.venue-dd-group.expanded').forEach(g => {
+            g.classList.remove('expanded');
+        });
+        document.removeEventListener('click', this._onDocClick, true);
+        document.removeEventListener('keydown', this._onKeydown, true);
+    }
+
+    _toggle() {
+        if (this.container.classList.contains('open')) {
+            this._close();
+        } else {
+            this._open();
+        }
+    }
+
+    /* ── Event handlers ─────────────────────────────────────── */
+
+    _bindEvents() {
+        this.trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this._toggle();
+        });
+    }
+
+    _onDocClick(e) {
+        if (!this.container.contains(e.target)) {
+            this._close();
+        }
+    }
+
+    _onKeydown(e) {
+        if (e.key === 'Escape') this._close();
+    }
+
+    /* ── Helpers ────────────────────────────────────────────── */
+
+    _updateTrigger() {
+        if (!this.selectedCode) {
+            this.trigger.textContent = 'Select a venue ▾';
+            return;
+        }
+        const v = this.venues.find(x => x.code === this.selectedCode);
+        if (v) {
+            const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
+            this.trigger.textContent = v.code + ' — ' + typeLabel + ' (' + v.capacity + ' seats) ▾';
+        }
+    }
+
+    _updateActive() {
+        this.panel.querySelectorAll('.venue-dd-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.code === this.selectedCode);
+        });
+    }
+}

@@ -1918,6 +1918,131 @@ html.dark .semester-bar select:not(.week-select) {
 .today-btn { width: auto; min-width: 32px; height: 32px; padding: 0 10px; border-radius: var(--radius-sm); border: none; background: var(--color-primary-container); color: var(--color-on-primary-container); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.15s; flex-shrink: 0; font-size: 13px; }
 .today-btn:hover { opacity: 0.85; }
 
+/* ── Nested Venue Dropdown ──────────────────────────────────── */
+.venue-dd {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+.venue-dd-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 240px;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-on-surface);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.venue-dd-trigger:hover {
+    border-color: var(--color-outline-strong);
+}
+.venue-dd.open .venue-dd-trigger {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px var(--color-primary);
+}
+.venue-dd-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-outline);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
+    z-index: 1000;
+    display: none;
+    padding: 4px 0;
+}
+.venue-dd.open .venue-dd-panel {
+    display: block;
+}
+.venue-dd-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+}
+.venue-dd-group-header:hover {
+    background: var(--color-surface-variant);
+}
+.venue-dd-group-header::after {
+    content: '\203A';
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--color-on-surface-variant);
+    transition: transform 0.2s;
+}
+.venue-dd-group.expanded .venue-dd-group-header::after {
+    transform: rotate(90deg);
+}
+.venue-dd-group-items {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+}
+.venue-dd-group.expanded .venue-dd-group-items {
+    max-height: 600px;
+}
+.venue-dd-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px 7px 28px;
+    font-size: 13px;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    transition: background 0.1s;
+    white-space: nowrap;
+}
+.venue-dd-item:hover {
+    background: var(--color-surface-variant);
+}
+.venue-dd-item.active {
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+    font-weight: 600;
+}
+.venue-dd-item .fav-star {
+    font-size: 14px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.venue-dd-item .venue-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.venue-dd-item .venue-meta {
+    margin-left: auto;
+    font-size: 12px;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+.venue-dd-empty {
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--color-on-surface-variant);
+    font-style: italic;
+}
+
 /* ── Week subtitle ──────────────────────────────────────────── */
 .week-subtitle { font-size: 0.85rem; color: var(--color-on-surface-variant); margin: 4px 0 8px; }
 
