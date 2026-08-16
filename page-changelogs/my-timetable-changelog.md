@@ -1,5 +1,52 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-16] Venue dropdown redesigned as cascading 4-level columns
+
+The venue dropdown is now a **cascading column picker** with a fixed 4-level hierarchy — **Type → Block → Floor → Room** — where each level occupies its own vertical column and a child column appears immediately to the right of its parent. Hovering (or clicking) a parent reveals the next column; only the **Room** is selectable.
+
+```
+ TYPE          BLOCK       FLOOR           ROOM
+ Tutorial   ›  Block B  ›  Ground Floor  ›  B002 — 35 seats ...
+ Lecture ...                            ›  Floor 1  ›  B100 — 35 seats ...
+ Lab        ›  ...        ...
+ CiscoLab   ›  ...
+```
+
+- Chevrons (`›`) appear only on items with a level beneath them; final Room rows show capacity + a checkmark/highlight when selected.
+- **Favourites** and **Recent** are utility groups that are **not** hierarchy levels — they render at the top of the first column as **expandable 2-level groups** (`★ Favourites › [rooms]`, `Recent › [rooms]`), hidden when empty.
+- Floor rule: 1st digit after the letter — `B0__` = Ground Floor, `B1__` = Floor 1, etc.
+- The open menu grows horizontally to fit columns; no internal horizontal scrollbar.
+
+### Files Changed
+
+#### `public/js/ui-common.js`
+
+| Location | Change | Detail |
+|---|---|---|
+| `VenueDropdown._buildGroups()` | Rewritten | Creates the 4 `.venue-col` containers and resets active state (`activeType/activeBlock/activeFloor/activeUnit`). |
+| `VenueDropdown._buildTypeColumn()` | Rewritten | Renders `★ Favourites` and `Recent` as expandable 2-level parent rows (hidden when empty), then `Types` list. |
+| `VenueDropdown._buildBlockColumn()` | New | Hovering a Type builds the Block column (`Block A/B/C…`) for that type. |
+| `VenueDropdown._buildFloorColumn()` | New | Hovering a Block builds the Floor column (Ground Floor / Floor N). |
+| `VenueDropdown._buildRoomColumn()` | New | Hovering a Floor builds the Room column (final selectable rooms with capacity). |
+| `VenueDropdown._buildUnitColumn()` | New | Hovering Favourites/Recent builds its room list in the second column (2-level only). |
+| `VenueDropdown._createParentItem()` | New | Creates a `.venue-col-item-parent` row with label + chevron, tagged with `data-type`/`data-block`/`data-floor`/`data-unit`. |
+| `VenueDropdown._createRoomItem()` | New | Creates a `.venue-col-item-room` row (star/clock icon for fav/recent, code, capacity, ✓ + `.selected` when active). |
+| `VenueDropdown._updateActiveParents()` | Updated | Toggles `.active` on the current type/block/floor/unit parent row. |
+| `VenueDropdown._open()` | Updated | Resets to just the Type column on every open. |
+| `VenueDropdown._updateActive()` | Updated | Syncs `.selected` + ✓ checkmark across all room rows on select. |
+
+#### `public/css/theme.css`
+
+| Location | Change | Detail |
+|---|---|---|
+| `.venue-dd-group*`, `.venue-dd-item*` | Removed | Old single-level flyout markup replaced by the cascading column model. |
+| `.venue-col` | Added | Vertical column; hidden until `.visible`. |
+| `.venue-col-header` | Added | Uppercase section label (Favourites / Recent / Types / Blocks / Floors / Rooms). |
+| `.venue-col-item`, `.venue-col-item-parent` | Added | Row + chevron styling (`.active` highlights the current parent). |
+| `.venue-col-item-room`, `.selected`, `.venue-col-item-check` | Added | Final room rows with capacity meta, selected highlight + ✓. |
+
+---
+
 ## [2026-08-16] Today button now persists week selection
 
 The "Today" button now saves the current week to `localStorage` (via `WeekNavigator.jumpToToday()` calling `this.save()`), consistent with arrow/dropdown navigation. Previously, clicking Today would jump the view but not persist — a page refresh would revert to the old week.

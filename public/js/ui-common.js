@@ -2144,141 +2144,341 @@ class VenueDropdown {
         document.removeEventListener('keydown', this._onKeydown, true);
     }
 
-    /* ── Build groups ───────────────────────────────────────── */
+    /* ── Build columns ──────────────────────────────────────── */
 
     _buildGroups() {
         this.panel.innerHTML = '';
-        const venues = this.filter ? this.venues.filter(this.filter) : this.venues;
-        const favs = this.getFavourites();
+        this.columns = [];
+        this.activeType = null;
+        this.activeBlock = null;
+        this.activeFloor = null;
+        this.activeUnit = null;
 
-        // Type map for grouping
-        const typeOrder = ['Tutorial', 'LectureHall', 'Lab', 'CiscoLab'];
-        const typeLabels = { Tutorial: 'Tutorial', LectureHall: 'Lecture Hall', Lab: 'Lab', CiscoLab: 'CiscoLab' };
-
-        // Favourites group
-        const favVenues = favs
-            .map(code => venues.find(v => v.code === code))
-            .filter(Boolean);
-        if (favVenues.length > 0) {
-            this._addGroup('★ Favourites', favVenues, 'favourite');
+        // Four hierarchy columns: Type | Block | Floor | Room
+        for (let i = 0; i < 4; i++) {
+            const col = document.createElement('div');
+            col.className = 'venue-col';
+            this.panel.appendChild(col);
+            this.columns.push(col);
         }
 
-        // Recent group
-        const recent = this.getRecent();
-        const recentVenues = recent
-            .map(code => venues.find(v => v.code === code))
-            .filter(Boolean);
-        if (recentVenues.length > 0) {
-            this._addGroup('Recent', recentVenues, 'recent');
+        this._buildTypeColumn();
+        this._clearColumnsFrom(1);
+    }
+
+    _getVenues() {
+        return this.filter ? this.venues.filter(this.filter) : this.venues;
+    }
+
+    _clearColumnsFrom(start) {
+        for (let i = start; i < this.columns.length; i++) {
+            const col = this.columns[i];
+            col.innerHTML = '';
+            col.classList.remove('visible');
+        }
+    }
+
+    _addSectionHeader(col, label) {
+        const header = document.createElement('div');
+        header.className = 'venue-col-header';
+        header.textContent = label;
+        col.appendChild(header);
+    }
+
+    _buildTypeColumn() {
+        const col = this.columns[0];
+        col.innerHTML = '';
+        col.classList.add('visible');
+        const venues = this._getVenues();
+
+        // Favourites — expandable 2-level group: ★ Favourites › [rooms]
+        if (this.getFavourites().some(code => venues.some(v => v.code === code))) {
+            const row = this._createParentItem('★ Favourites', { unit: 'favourites' });
+            row.addEventListener('mouseenter', () => this._buildUnitColumn('favourites'));
+            row.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._buildUnitColumn('favourites');
+            });
+            col.appendChild(row);
         }
 
-        // Type groups
-        typeOrder.forEach(type => {
-            const group = venues.filter(v => v.type === type);
-            if (group.length > 0) {
-                this._addGroup(typeLabels[type] || type, group, 'type');
-            }
-        });
+        // Recent — expandable 2-level group: Recent › [rooms]
+        if (this.getRecent().some(code => venues.some(v => v.code === code))) {
+            const row = this._createParentItem('Recent', { unit: 'recent' });
+            row.addEventListener('mouseenter', () => this._buildUnitColumn('recent'));
+            row.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._buildUnitColumn('recent');
+            });
+            col.appendChild(row);
+        }
+
+        this._addSectionHeader(col, 'Types');
 
         if (venues.length === 0) {
             const empty = document.createElement('div');
             empty.className = 'venue-dd-empty';
             empty.textContent = 'No venues available';
-            this.panel.appendChild(empty);
+            col.appendChild(empty);
+            return;
         }
-    }
 
-    _addGroup(label, venues, groupType) {
-        const group = document.createElement('div');
-        group.className = 'venue-dd-group';
-
-        const header = document.createElement('div');
-        header.className = 'venue-dd-group-header';
-        header.textContent = label;
-        group.appendChild(header);
-
-        const items = document.createElement('div');
-        items.className = 'venue-dd-group-items';
-
-        venues.forEach(v => {
-            const item = document.createElement('div');
-            item.className = 'venue-dd-item';
-            if (v.code === this.selectedCode) item.classList.add('active');
-            item.dataset.code = v.code;
-
-            const favs = this.getFavourites();
-            const isFav = favs.includes(v.code);
-
-            if (isFav && groupType === 'type') {
-                const star = document.createElement('span');
-                star.className = 'fav-star';
-                star.textContent = '⭐';
-                item.appendChild(star);
-            } else if (groupType === 'favourite' || groupType === 'recent') {
-                const star = document.createElement('span');
-                star.className = 'fav-star';
-                star.textContent = groupType === 'favourite' ? '⭐' : '🕐';
-                item.appendChild(star);
-            }
-
-            const name = document.createElement('span');
-            name.className = 'venue-name';
-            name.textContent = v.code;
-            item.appendChild(name);
-
-            if (groupType === 'type') {
-                const meta = document.createElement('span');
-                meta.className = 'venue-meta';
-                meta.textContent = v.capacity + ' seats';
-                item.appendChild(meta);
-            } else {
-                const meta = document.createElement('span');
-                meta.className = 'venue-meta';
-                const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
-                meta.textContent = typeLabel + ' · ' + v.capacity + ' seats';
-                item.appendChild(meta);
-            }
-
-            item.addEventListener('click', (e) => {
+        const typeOrder = ['Tutorial', 'LectureHall', 'Lab', 'CiscoLab'];
+        const typeLabels = { Tutorial: 'Tutorial', LectureHall: 'Lecture Hall', Lab: 'Lab', CiscoLab: 'CiscoLab' };
+        typeOrder.forEach(type => {
+            const catVenues = venues.filter(v => v.type === type);
+            if (catVenues.length === 0) return;
+            const row = this._createParentItem(typeLabels[type] || type, { type });
+            row.addEventListener('mouseenter', () => this._buildBlockColumn(type));
+            row.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.select(v.code);
+                this._buildBlockColumn(type);
             });
-
-            items.appendChild(item);
+            col.appendChild(row);
         });
 
-        // Hover expand: one group at a time
-        header.addEventListener('mouseenter', () => {
-            this._expandGroup(group);
-        });
-        group.addEventListener('mouseleave', () => {
-            group.classList.remove('expanded');
-        });
-
-        group.appendChild(items);
-        this.panel.appendChild(group);
+        this._updateActiveParents();
     }
 
-    _expandGroup(group) {
-        this.panel.querySelectorAll('.venue-dd-group.expanded').forEach(g => {
-            if (g !== group) g.classList.remove('expanded');
+    _buildUnitColumn(unit) {
+        this.activeType = null;
+        this.activeBlock = null;
+        this.activeFloor = null;
+        this.activeUnit = unit;
+        this._clearColumnsFrom(1);
+        const col = this.columns[1];
+        col.classList.add('visible');
+        this._addSectionHeader(col, unit === 'favourites' ? 'Favourites' : 'Recent');
+
+        const venues = this._getVenues();
+        const codes = unit === 'favourites' ? this.getFavourites() : this.getRecent();
+        const list = codes
+            .map(code => venues.find(v => v.code === code))
+            .filter(Boolean);
+
+        if (list.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'venue-dd-empty';
+            empty.textContent = 'No items';
+            col.appendChild(empty);
+            return;
+        }
+
+        list.forEach(v => col.appendChild(this._createRoomItem(v, unit === 'favourites' ? 'favourite' : 'recent')));
+        this._updateActiveParents();
+    }
+
+    _buildBlockColumn(type) {
+        this.activeType = type;
+        this.activeUnit = null;
+        this._clearColumnsFrom(1);
+        const col = this.columns[1];
+        col.classList.add('visible');
+        this._addSectionHeader(col, 'Blocks');
+
+        const venues = this._getVenues();
+        const catVenues = venues.filter(v => v.type === type);
+        const blocks = [...new Set(catVenues.map(v => v.code.charAt(0)))].sort();
+
+        if (blocks.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'venue-dd-empty';
+            empty.textContent = 'No blocks';
+            col.appendChild(empty);
+            return;
+        }
+
+        blocks.forEach(block => {
+            const row = this._createParentItem('Block ' + block, { block });
+            row.addEventListener('mouseenter', () => this._buildFloorColumn(type, block));
+            row.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._buildFloorColumn(type, block);
+            });
+            col.appendChild(row);
         });
-        group.classList.add('expanded');
+
+        this._updateActiveParents();
+    }
+
+    _buildFloorColumn(type, block) {
+        this.activeType = type;
+        this.activeBlock = block;
+        this._clearColumnsFrom(2);
+        const col = this.columns[2];
+        col.classList.add('visible');
+        this._addSectionHeader(col, 'Floors');
+
+        const venues = this._getVenues();
+        const blockVenues = venues.filter(v => v.type === type && v.code.charAt(0) === block);
+
+        // Floor from 2nd char: 0 = Ground, 1+ = Floor N
+        const floorMap = {};
+        blockVenues.forEach(v => {
+            const d = parseInt(v.code.charAt(1));
+            const label = d === 0 ? 'Ground Floor' : 'Floor ' + d;
+            if (!floorMap[label]) floorMap[label] = [];
+            floorMap[label].push(v);
+        });
+        const floorOrder = Object.keys(floorMap).sort((a, b) => {
+            const da = parseInt(a) || 0;
+            const db = parseInt(b) || 0;
+            return da - db;
+        });
+
+        if (floorOrder.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'venue-dd-empty';
+            empty.textContent = 'No floors';
+            col.appendChild(empty);
+            return;
+        }
+
+        floorOrder.forEach(floor => {
+            const row = this._createParentItem(floor, { floor });
+            row.addEventListener('mouseenter', () => this._buildRoomColumn(type, block, floor));
+            row.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this._buildRoomColumn(type, block, floor);
+            });
+            col.appendChild(row);
+        });
+
+        this._updateActiveParents();
+    }
+
+    _buildRoomColumn(type, block, floor) {
+        this.activeType = type;
+        this.activeBlock = block;
+        this.activeFloor = floor;
+        this._clearColumnsFrom(3);
+        const col = this.columns[3];
+        col.classList.add('visible');
+        this._addSectionHeader(col, 'Rooms');
+
+        const venues = this._getVenues();
+        const floorVenues = venues.filter(v => {
+            if (v.type !== type || v.code.charAt(0) !== block) return false;
+            const d = parseInt(v.code.charAt(1));
+            const label = d === 0 ? 'Ground Floor' : 'Floor ' + d;
+            return label === floor;
+        });
+
+        if (floorVenues.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'venue-dd-empty';
+            empty.textContent = 'No rooms';
+            col.appendChild(empty);
+            return;
+        }
+
+        floorVenues.forEach(v => col.appendChild(this._createRoomItem(v, 'hierarchy')));
+        this._updateActiveParents();
+    }
+
+    _createParentItem(label, data) {
+        const row = document.createElement('div');
+        row.className = 'venue-col-item venue-col-item-parent';
+        for (const k in data) row.dataset[k] = data[k];
+
+        const name = document.createElement('span');
+        name.className = 'venue-col-item-name';
+        name.textContent = label;
+        row.appendChild(name);
+
+        const chevron = document.createElement('span');
+        chevron.className = 'venue-col-item-chevron';
+        chevron.textContent = '›';
+        row.appendChild(chevron);
+
+        return row;
+    }
+
+    _createRoomItem(v, groupType) {
+        const row = document.createElement('div');
+        row.className = 'venue-col-item venue-col-item-room';
+        row.dataset.code = v.code;
+        if (v.code === this.selectedCode) row.classList.add('selected');
+
+        const favs = this.getFavourites();
+        const isFav = favs.includes(v.code);
+
+        if (groupType === 'favourite') {
+            const icon = document.createElement('span');
+            icon.className = 'venue-col-item-icon';
+            icon.textContent = '⭐';
+            row.appendChild(icon);
+        } else if (groupType === 'recent') {
+            const icon = document.createElement('span');
+            icon.className = 'venue-col-item-icon';
+            icon.textContent = '🕐';
+            row.appendChild(icon);
+        } else if (isFav) {
+            const icon = document.createElement('span');
+            icon.className = 'venue-col-item-icon';
+            icon.textContent = '⭐';
+            row.appendChild(icon);
+        }
+
+        const name = document.createElement('span');
+        name.className = 'venue-col-item-name';
+        name.textContent = v.code;
+        row.appendChild(name);
+
+        const meta = document.createElement('span');
+        meta.className = 'venue-col-item-meta';
+        meta.textContent = v.capacity + ' seats';
+        row.appendChild(meta);
+
+        if (v.code === this.selectedCode) {
+            const check = document.createElement('span');
+            check.className = 'venue-col-item-check';
+            check.textContent = '✓';
+            row.appendChild(check);
+        }
+
+        row.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.select(v.code);
+        });
+
+        return row;
+    }
+
+    _updateActiveParents() {
+        if (!this.columns) return;
+        this.columns[0].querySelectorAll('.venue-col-item-parent').forEach(row => {
+            if (row.dataset.type) {
+                row.classList.toggle('active', row.dataset.type === this.activeType);
+            } else if (row.dataset.unit) {
+                row.classList.toggle('active', row.dataset.unit === this.activeUnit);
+            }
+        });
+        this.columns[1].querySelectorAll('.venue-col-item-parent').forEach(row => {
+            row.classList.toggle('active', row.dataset.block === this.activeBlock);
+        });
+        this.columns[2].querySelectorAll('.venue-col-item-parent').forEach(row => {
+            row.classList.toggle('active', row.dataset.floor === this.activeFloor);
+        });
     }
 
     /* ── Open / Close ───────────────────────────────────────── */
 
     _open() {
         this.container.classList.add('open');
+        // Reset to just the Type column on every open
+        this.activeType = null;
+        this.activeBlock = null;
+        this.activeFloor = null;
+        this.activeUnit = null;
+        this._clearColumnsFrom(0);
+        this._buildTypeColumn();
         document.addEventListener('click', this._onDocClick, true);
         document.addEventListener('keydown', this._onKeydown, true);
     }
 
     _close() {
         this.container.classList.remove('open');
-        this.panel.querySelectorAll('.venue-dd-group.expanded').forEach(g => {
-            g.classList.remove('expanded');
-        });
         document.removeEventListener('click', this._onDocClick, true);
         document.removeEventListener('keydown', this._onKeydown, true);
     }
@@ -2325,8 +2525,22 @@ class VenueDropdown {
     }
 
     _updateActive() {
-        this.panel.querySelectorAll('.venue-dd-item').forEach(item => {
-            item.classList.toggle('active', item.dataset.code === this.selectedCode);
+        if (!this.columns) return;
+        this.columns.forEach(col => {
+            col.querySelectorAll('.venue-col-item-room').forEach(row => {
+                const isSel = row.dataset.code === this.selectedCode;
+                row.classList.toggle('selected', isSel);
+                let check = row.querySelector('.venue-col-item-check');
+                if (isSel && !check) {
+                    check = document.createElement('span');
+                    check.className = 'venue-col-item-check';
+                    check.textContent = '✓';
+                    row.appendChild(check);
+                } else if (!isSel && check) {
+                    check.remove();
+                }
+            });
         });
+        this._updateActiveParents();
     }
 }
