@@ -42,6 +42,13 @@
             outline: 2px solid var(--color-primary);
             outline-offset: 2px;
         }
+        .fav-btn:disabled {
+            cursor: var(--cursor-cancel);
+            opacity: 0.4;
+        }
+        .fav-btn:disabled:hover {
+            background: transparent;
+        }
 
         .segment-toggle {
             display: inline-flex;
@@ -373,7 +380,7 @@
         <div class="semester-bar">
             <div class="venue-dropdown-wrap">
                 @include('partials.ui-venue-dropdown', ['selectId' => 'venueSelect'])
-                <button class="fav-btn" id="favStar" title="Toggle favourite">&#9734;</button>
+                <button class="fav-btn" id="favStar" data-tip="Add to Favourites">&#9734;</button>
             </div>
             @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelect', 'selectOnclick' => 'selectWeek(this.value)', 'disabled' => false])
             <button class="print-btn" title="Coming soon" disabled style="margin-left:auto;">
@@ -1006,7 +1013,7 @@
             star.textContent = isFav ? '\u2605' : '\u2606';
             star.classList.toggle('active', isFav);
             star.disabled = favs.length >= venueDropdown.maxFavourites && !isFav;
-            star.title = star.disabled ? 'Maximum 5 favourites' : 'Toggle favourite';
+            star.dataset.tip = star.disabled ? 'Maximum 5 Favourites' : 'Add to Favourites';
         }
 
         /* ════════════════════════════════════════════
