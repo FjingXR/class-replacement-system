@@ -162,6 +162,16 @@
             font-weight: 500;
             color: var(--color-on-surface);
         }
+        .course-label-center {
+            text-align: center;
+            width: 100%;
+            margin: 0 0 12px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-on-bg);
+        }
+        .semester-chip { display: none; }
+        .page-header .semester-chip { display: none; }
         .toolbar-filters {
             display: flex;
             align-items: center;
@@ -259,25 +269,27 @@
             opacity: 0.8;
         }
 
-        /* ── Slot Tooltip (above) ── */
+        .slot-dd-item-date {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+            margin-left: auto;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
         .slot-dd-tooltip {
             display: none;
             position: absolute;
-            bottom: calc(100% + 8px);
-            left: 0;
+            padding: 6px 12px;
             background: var(--color-surface);
             border: 1px solid var(--color-outline);
-            border-radius: var(--radius-sm);
-            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
             font-size: 12px;
             color: var(--color-on-surface);
             white-space: nowrap;
-            box-shadow: var(--shadow-sm);
-            z-index: 51;
             pointer-events: none;
-        }
-        .slot-dd-tooltip.show {
-            display: block;
+            z-index: 60;
         }
 
         .cell-selected {
@@ -781,6 +793,8 @@
 
     @include('partials.ui-page-header', [])
 
+    <div class="course-label-center" id="subjectInfo"></div>
+
         @include('partials.ui-guide-block', [
             'guideTitle' => 'How to use this page',
             'guideItems' => [
@@ -797,7 +811,6 @@
                 <select class="selector-dropdown" id="subjectSelector" onchange="onSubjectChange()">
                     <option value="">Select a subject</option>
                 </select>
-                <div class="toolbar-subtitle" id="subjectInfo"></div>
 
                 {{-- Slot Picker: custom dropdown (button + panel) --}}
                 <div class="slot-dd" id="slotPicker" style="display:none;">
@@ -1691,6 +1704,7 @@
             const courses = MockData.courses || [];
             sel.innerHTML = '<option value="">Select a subject</option>';
             courses.forEach(c => {
+                if (extractSlotsForSubject(c.code).length === 0) return;
                 const opt = document.createElement('option');
                 opt.value = c.code;
                 opt.textContent = c.code + ' — ' + c.name;
@@ -1751,39 +1765,35 @@
 
         function extractSlotsForSubject(courseCode) {
             const slots = [];
-            const cohortTimetable = MockData.cohortTimetable || {};
+            const events = (MockData.cohortTimetable || {}).events || [];
             
-            Object.keys(cohortTimetable).forEach(weekKey => {
-                const weekData = cohortTimetable[weekKey];
-                if (!weekData || !Array.isArray(weekData)) return;
-                
-                weekData.forEach(event => {
-                    if (event.code === courseCode && (event.status === 'conflict' || event.status === 'cancelled')) {
-                        const weekIdx = parseInt(weekKey);
-                        const dayIdx = event.di;
-                        // Build date string from weekData if available
-                        let dateStr = '';
-                        try {
-                            const wData = weekData;
-                            if (wData && wData[weekIdx] && wData[weekIdx].days && wData[weekIdx].days[dayIdx]) {
-                                dateStr = wData[weekIdx].days[dayIdx].date;
-                            }
-                        } catch(e) {}
-                        slots.push({
-                            week: weekIdx,
-                            day: event.di,
-                            dayName: slotDayNames[event.di] || 'Unknown',
-                            start: event.start,
-                            end: event.end,
-                            venue: event.venue,
-                            status: event.status,
-                            name: event.name,
-                            type: event.type,
-                            code: courseCode,
-                            date: dateStr
-                        });
-                    }
-                });
+            events.forEach(entry => {
+                const e = entry.event;
+                if (!e) return;
+                if (e.code === courseCode && (e.status === 'conflict' || e.status === 'cancelled')) {
+                    const weekIdx = entry.week;
+                    const dayIdx = e.di;
+                    // Build date string from weekData
+                    let dateStr = '';
+                    try {
+                        if (weekData[weekIdx] && weekData[weekIdx].days && weekData[weekIdx].days[dayIdx]) {
+                            dateStr = weekData[weekIdx].days[dayIdx].date;
+                        }
+                    } catch(ex) {}
+                    slots.push({
+                        week: weekIdx,
+                        day: dayIdx,
+                        dayName: slotDayNames[dayIdx] || 'Unknown',
+                        start: e.start,
+                        end: e.end,
+                        venue: e.venue,
+                        status: e.status,
+                        name: e.name,
+                        type: e.type,
+                        code: courseCode,
+                        date: dateStr
+                    });
+                }
             });
             
             return slots.sort((a, b) => a.week - b.week || a.day - b.day || a.start - b.start);
@@ -1793,7 +1803,6 @@
             const picker = document.getElementById('slotPicker');
             const panel = document.getElementById('slotPanel');
             const triggerText = document.getElementById('slotTriggerText');
-            const tooltip = document.getElementById('slotTooltip');
             
             if (!slots || slots.length === 0) {
                 picker.style.display = 'none';
@@ -1811,40 +1820,39 @@
                 const statusLabel = slot.status === 'conflict' ? 'Conflict' : 'Cancelled';
                 const statusBg = slot.status === 'conflict' ? 'var(--color-error-container)' : 'var(--color-surface-variant)';
                 const statusColor = slot.status === 'conflict' ? 'var(--color-on-error-container)' : 'var(--color-on-surface-variant)';
-                const fullLabel = 'Week ' + slot.week + ' · ' + slotDayNames[slot.day] + ', ' + slot.date;
+                // Parse "18 Aug 2026" → "Aug 18"
+                const dateParts = slot.date.split(' ');
+                const shortDate = dateParts[1] + ' ' + dateParts[0];
+                const fullLabel = 'Week ' + slot.week + ' · ' + slotDayNames[slot.day] + ', ' + slot.date + ', ' + startStr + ' - ' + endStr + ' @ ' + slot.venue;
 
                 const item = document.createElement('div');
                 item.className = 'slot-dd-item';
                 item.dataset.index = index;
                 item.innerHTML = `
                     <span class="slot-dd-item-star" data-index="${index}" title="Toggle favourite">★</span>
-                    <span class="slot-dd-item-label">W${slot.week} · ${slot.dayName} ${startStr} – ${endStr} @ ${slot.venue}</span>
+                    <span class="slot-dd-item-label">W${slot.week} · ${shortDate}, ${startStr} - ${endStr} @ ${slot.venue}</span>
                     <span class="slot-dd-item-badge" style="background:${statusBg};color:${statusColor};">${statusLabel}</span>
                 `;
+
+                // Hover tooltip
+                const tooltip = document.getElementById('slotTooltip');
+                item.addEventListener('mouseenter', (e) => {
+                    const itemRect = item.getBoundingClientRect();
+                    const pickerRect = picker.getBoundingClientRect();
+                    tooltip.textContent = fullLabel;
+                    tooltip.style.top = (itemRect.top - pickerRect.top) + 'px';
+                    tooltip.style.left = (panel.offsetWidth - 1) + 'px';
+                    tooltip.style.display = 'block';
+                });
+                item.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
 
                 // Click to select
                 item.addEventListener('click', (e) => {
                     if (e.target.classList.contains('slot-dd-item-star')) return;
                     selectSlot(slot, index);
                     closeSlotPanel();
-                });
-
-                // Hover tooltip (above)
-                item.addEventListener('mouseenter', (e) => {
-                    if (e.target.classList.contains('slot-dd-item-star')) {
-                        tooltip.classList.remove('show');
-                        return;
-                    }
-                    tooltip.textContent = fullLabel;
-                    tooltip.classList.add('show');
-                    const rect = item.getBoundingClientRect();
-                    const panelRect = panel.getBoundingClientRect();
-                    tooltip.style.left = (rect.left - panelRect.left) + 'px';
-                    tooltip.style.bottom = '';
-                    tooltip.style.top = '-' + (tooltip.offsetHeight + 8) + 'px';
-                });
-                item.addEventListener('mouseleave', () => {
-                    tooltip.classList.remove('show');
                 });
 
                 // Favourite star
@@ -1870,7 +1878,9 @@
             const triggerText = document.getElementById('slotTriggerText');
             const startStr = to12h(hours[slot.start]);
             const endStr = to12h(hours[slot.end + 1] || add30min(hours[slot.end]));
-            triggerText.textContent = 'W' + slot.week + ' · ' + slot.dayName + ' ' + startStr + ' – ' + endStr;
+            const dateParts = slot.date.split(' ');
+            const shortDate = dateParts[1] + ' ' + dateParts[0];
+            triggerText.textContent = 'W' + slot.week + ' · ' + shortDate + ', ' + startStr + ' - ' + endStr;
 
             // Update selected state in panel
             document.querySelectorAll('.slot-dd-item').forEach(item => {
@@ -1894,7 +1904,9 @@
 
         function closeSlotPanel() {
             const panel = document.getElementById('slotPanel');
+            const tooltip = document.getElementById('slotTooltip');
             panel.classList.remove('open');
+            tooltip.style.display = 'none';
             document.removeEventListener('click', closeSlotPanelOnOutside);
         }
 
