@@ -884,10 +884,16 @@
             var urlParams = new URLSearchParams(window.location.search);
             var deepLinkId = parseInt(urlParams.get('id'));
             if (deepLinkId) {
-                var idx = currentFiltered.findIndex(function(r) { return r.id === deepLinkId; });
-                if (idx !== -1) {
-                    setTimeout(function() { openModalById(deepLinkId); }, 100);
-                }
+                var tryCount = 0;
+                var poll = setInterval(function() {
+                    tryCount++;
+                    if (mockRequests.find(function(r) { return r.id === deepLinkId; })) {
+                        clearInterval(poll);
+                        openModalById(deepLinkId);
+                    } else if (tryCount > 20) {
+                        clearInterval(poll);
+                    }
+                }, 100);
             }
         });
 @endsection
