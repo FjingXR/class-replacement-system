@@ -3030,8 +3030,75 @@ body {
 .title-subtitle {
     font-size: 13px;
     font-weight: 600;
-    color: var(--color-error);
+    color: var(--color-on-bg);
     margin-bottom: 2px;
+}
+
+/* ── Section Heading ─────────────────────────────────────────── */
+.section-heading {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-on-bg);
+    margin: 0 0 2px;
+}
+.section-heading-sub {
+    font-size: 13px;
+    color: var(--color-on-surface-variant);
+    margin: 0 0 8px;
+}
+
+/* ── Card Title ──────────────────────────────────────────────── */
+.card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-on-surface);
+    margin: 0 0 4px;
+}
+
+/* ── Title Row (side-by-side) ────────────────────────────────── */
+.title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+.title-row-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-on-bg);
+    margin: 0;
+}
+.title-row-sub {
+    font-size: 13px;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+}
+
+/* ── Overline (eyebrow) ─────────────────────────────────────── */
+.overline {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+/* ── Kicker (title + badge) ─────────────────────────────────── */
+.kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-on-bg);
+}
+.kicker-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
 }
 
 /* ── Status Time Colors (request pages) ────────────────────────── */
