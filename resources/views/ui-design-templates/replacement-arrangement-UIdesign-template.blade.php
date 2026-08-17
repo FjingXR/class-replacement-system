@@ -2136,7 +2136,6 @@
             );
             updateFavStar();
             document.getElementById('favStar').addEventListener('click', toggleFavourite);
-            applyUrlParams();
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             /* restore the previously saved week (localStorage), else falls back to week 1 */
             weekNav.load();
@@ -2154,7 +2153,8 @@
                     return w.label + ' \u00B7 ' + first + ' ~ ' + last;
                 }
             });
-            buildTimetable();
+            /* applyUrlParams AFTER week selector is ready (triggers onVenueChange → buildTimetable) */
+            applyUrlParams();
 
             document.addEventListener('keydown', handleKeyDown);
             initWeekKeyboardShortcuts();
