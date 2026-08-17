@@ -3101,6 +3101,28 @@ body {
     color: var(--color-on-primary-container);
 }
 
+/* ── Favourite Button ─────────────────────────────────────────── */
+.fav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--color-on-surface-variant);
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+}
+.fav-btn:hover { background: var(--color-surface-variant); }
+.fav-btn.active { color: var(--color-tertiary); border-color: var(--color-tertiary); }
+.fav-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.fav-btn:disabled { cursor: var(--cursor-cancel); opacity: 0.4; }
+.fav-btn:disabled:hover { background: transparent; }
+
 /* ── Status Time Colors (request pages) ────────────────────────── */
 .class-time.status-pending { color: var(--color-warning); }
 .class-time.status-approved { color: var(--color-success); }

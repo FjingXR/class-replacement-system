@@ -848,6 +848,7 @@
             </div>
             <div class="toolbar-center">
                 @include('partials.ui-venue-dropdown', ['selectId' => 'buildingSelector'])
+                <button class="fav-btn" id="favStar" data-tip="Add to Favourites">&#9734;</button>
             </div>
             <div class="toolbar-filters">
                 @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => true])
@@ -1383,6 +1384,16 @@
             saveCurrentWeek();
             currentVenue = venueDropdown ? venueDropdown.getSelected() : 'B103';
             buildTimetable();
+            updateFavStar();
+        }
+
+        function toggleFavourite() {
+            if (!currentVenue || !venueDropdown) return;
+            venueDropdown.toggleFavourite(currentVenue, document.getElementById('favStar'));
+        }
+
+        function updateFavStar() {
+            venueDropdown && venueDropdown.updateFavStar(document.getElementById('favStar'), currentVenue);
         }
 
         let confirmCallback = null;
@@ -2121,6 +2132,8 @@
                     onSelect: function(code) { onVenueChange(); }
                 }
             );
+            updateFavStar();
+            document.getElementById('favStar').addEventListener('click', toggleFavourite);
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             /* restore the previously saved week (localStorage), else falls back to week 1 */
             weekNav.load();

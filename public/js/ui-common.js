@@ -2139,7 +2139,7 @@ class VenueDropdown {
         catch (e) { return []; }
     }
 
-    toggleFavourite(code) {
+    toggleFavourite(code, starEl) {
         const favs = this.getFavourites();
         const idx = favs.indexOf(code);
         if (idx === -1) {
@@ -2149,6 +2149,8 @@ class VenueDropdown {
             favs.splice(idx, 1);
         }
         localStorage.setItem(this.storageKey, JSON.stringify(favs));
+        this.refreshFavourites();
+        if (starEl) this.updateFavStar(starEl, code);
         return true;
     }
 
@@ -2179,6 +2181,16 @@ class VenueDropdown {
     destroy() {
         document.removeEventListener('click', this._onDocClick, true);
         document.removeEventListener('keydown', this._onKeydown, true);
+    }
+
+    updateFavStar(starEl, code) {
+        if (!starEl || !code) return;
+        const favs = this.getFavourites();
+        const isFav = favs.includes(code);
+        starEl.textContent = isFav ? '\u2605' : '\u2606';
+        starEl.classList.toggle('active', isFav);
+        starEl.disabled = favs.length >= this.maxFavourites && !isFav;
+        starEl.dataset.tip = starEl.disabled ? 'Maximum 5 Favourites' : (isFav ? 'Remove from Favourites' : 'Add to Favourites');
     }
 
     /* ── Build columns ──────────────────────────────────────── */

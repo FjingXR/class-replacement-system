@@ -16,39 +16,6 @@
             align-items: center;
             gap: 6px;
         }
-        .fav-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-sm);
-            background: transparent;
-            cursor: pointer;
-            font-size: 18px;
-            color: var(--color-on-surface-variant);
-            transition: background 0.15s, color 0.15s;
-            flex-shrink: 0;
-        }
-        .fav-btn:hover {
-            background: var(--color-surface-variant);
-        }
-        .fav-btn.active {
-            color: var(--color-tertiary);
-            border-color: var(--color-tertiary);
-        }
-        .fav-btn:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
-        }
-        .fav-btn:disabled {
-            cursor: var(--cursor-cancel);
-            opacity: 0.4;
-        }
-        .fav-btn:disabled:hover {
-            background: transparent;
-        }
 
         .segment-toggle {
             display: inline-flex;
@@ -1000,20 +967,11 @@
         // TODO: persist to DB instead of localStorage
         function toggleFavourite() {
             if (!currentVenue || !venueDropdown) return;
-            venueDropdown.toggleFavourite(currentVenue.code);
-            venueDropdown.refreshFavourites();
-            updateFavStar();
+            venueDropdown.toggleFavourite(currentVenue.code, document.getElementById('favStar'));
         }
 
         function updateFavStar() {
-            const star = document.getElementById('favStar');
-            if (!currentVenue || !venueDropdown) return;
-            const favs = venueDropdown.getFavourites();
-            const isFav = favs.includes(currentVenue.code);
-            star.textContent = isFav ? '\u2605' : '\u2606';
-            star.classList.toggle('active', isFav);
-            star.disabled = favs.length >= venueDropdown.maxFavourites && !isFav;
-            star.dataset.tip = star.disabled ? 'Maximum 5 Favourites' : 'Add to Favourites';
+            venueDropdown && venueDropdown.updateFavStar(document.getElementById('favStar'), currentVenue.code);
         }
 
         /* ════════════════════════════════════════════
