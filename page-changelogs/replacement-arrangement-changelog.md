@@ -1,5 +1,19 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-16] Moved `.info-label` from local `<style>` to shared `theme.css`
+
+The `.info-label` class (used for field overlines in the info panel) was defined locally in the page's `<style>` block. Moved to `theme.css` as a shared utility class so other pages can reuse it.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Location | Change |
+|---|---|
+| `<style>` block ~line 591 | Removed local `.info-label` definition (now in `theme.css`) |
+
+---
+
 ## [2026-08-15] Selection target from URL `duration` param
 
 The page now reads a `duration` (hours) query param and caps the replacement selection at `duration × 2` (30-min slots) via `MAX_SELECTION`, so the proposed replacement matches the original class length. Defaults to 4 slots (2 hours) when the param is absent/invalid. Done with the user's explicit note that URL params are **not** trusted authority in the real backend — this is mock-phase convenience.

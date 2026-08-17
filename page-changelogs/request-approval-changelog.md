@@ -1,5 +1,23 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-08-16] Replaced hardcoded inline styles with shared utility classes
+
+Refactored 6 hardcoded inline style instances to use shared CSS classes from `theme.css`. Textareas use `.modal-textarea`, labels use `.section-heading-sub`, action buttons use `.action-row`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/request-approval-UI-design-template.blade.php`
+
+| Line | Before | After |
+|---|---|---|
+| 323 | `style="margin-bottom:8px;font-size:13px;color:..."` | `class="section-heading-sub" style="margin-bottom:8px"` |
+| 324 | textarea inline styles | `class="modal-textarea"` |
+| 345 | `style="margin-bottom:8px;font-size:13px;color:..."` | `class="section-heading-sub" style="margin-bottom:8px"` |
+| 346 | textarea inline styles | `class="modal-textarea"` |
+| 609 | `style="display:flex;gap:6px;align-items:center"` | `class="action-row"` |
+
+---
+
 ## [2026-08-15] Promote bulk selection to shared OOP BulkSelection class
 
 ### Summary

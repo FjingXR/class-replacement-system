@@ -1,5 +1,19 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-08-16] Replaced hardcoded inline styles with shared utility classes
+
+Refactored hardcoded `font-size`/`font-weight`/`color` inline styles to use shared CSS classes from `theme.css`. Specifically, the cancel-modal description text now uses `.section-heading-sub`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`
+
+| Line | Before | After |
+|---|---|---|
+| 227 | `style="font-size:13px;opacity:0.7;margin-top:6px"` | `class="section-heading-sub" style="margin-top:6px"` |
+
+---
+
 ## [2026-08-16] Venue dropdown redesigned as cascading 4-level columns
 
 The venue dropdown is now a **cascading column picker** with a fixed 4-level hierarchy — **Type → Block → Floor → Room** — where each level occupies its own vertical column and a child column appears immediately to the right of its parent. Hovering (or clicking) a parent reveals the next column; only the **Room** is selectable.

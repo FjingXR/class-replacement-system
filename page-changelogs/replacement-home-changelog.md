@@ -1,5 +1,19 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-08-16] Replaced hardcoded inline styles with shared utility classes
+
+Refactored keyboard shortcut hint text to use `.hint-text` class from `theme.css`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-home-UI-design-template.blade.php`
+
+| Line | Before | After |
+|---|---|---|
+| 215 | `style="margin-top:12px;font-size:11px;color:..."` | `class="hint-text" style="margin-top:12px;text-align:center"` |
+
+---
+
 ## [2026-08-15] Pass class duration to replacement-arrangement
 
 The "Arrange" navigation now includes the conflicted class `duration` (hours) as a `duration=` query param, so the replacement page can match the selection length. (Replacement-home already had `c.duration` in its data.)

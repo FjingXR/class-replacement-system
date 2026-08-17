@@ -384,7 +384,7 @@ function buildTimetableGrid(cfg) {
     const cornerTh = document.createElement('th');
     cornerTh.className = 'time-header-col';
     cornerTh.style.cssText = 'position: sticky; left: 0; z-index: 40;';
-    cornerTh.innerHTML = '<span style="font-size:13px;font-weight:600;">Day / Time</span>';
+    cornerTh.innerHTML = '<span class="card-title">Day / Time</span>';
     timeHeaderRow.appendChild(cornerTh);
 
     for (let i = 0; i < hours.length; i += 2) {
@@ -1516,7 +1516,7 @@ class HtmlBuilder {
         var urgencyCls = opts.urgencyClass(days);
         return [
             { html: opts.index, cls: 'col-no' },
-            { html: '<span class="cell-code">' + c.code + '</span><span class="cell-name">' + c.name + ' <span style="font-weight:400;font-size:12px;color:var(--color-on-surface-variant)">(' + typeLabel + ')</span></span>', cls: 'col-code' },
+            { html: '<span class="cell-code">' + c.code + '</span><span class="cell-name">' + c.name + ' <span class="cell-type-label">(' + typeLabel + ')</span></span>', cls: 'col-code' },
             { html: opts.formatClassBlock(c), cls: 'col-original' },
             { html: '<span class="' + urgencyCls + '">' + days + ' days</span>', cls: 'col-urgency' },
             { html: c.venue, cls: 'col-venue' },
@@ -1532,7 +1532,7 @@ class HtmlBuilder {
         var days = opts.daysLeft(c.date);
         var urgencyCls = opts.urgencyClass(days);
         return '<div class="rc-header">' +
-            '<span class="rc-code">' + c.code + ' <span style="font-weight:400;font-size:12px;color:var(--color-on-surface-variant)">(' + typeLabel + ')</span></span>' +
+            '<span class="rc-code">' + c.code + ' <span class="cell-type-label">(' + typeLabel + ')</span></span>' +
             '<span class="badge ' + opts.badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>' +
             '</div>' +
             '<div class="rc-body">' +
@@ -2021,7 +2021,6 @@ function initDataTipTooltips() {
 
     var tip = document.createElement('div');
     tip.className = 'data-tip-tooltip';
-    tip.style.cssText = 'position:fixed;padding:5px 10px;background:var(--color-inverse-surface);color:var(--color-on-inverse-surface);font-size:11px;font-weight:500;white-space:nowrap;border-radius:var(--radius-xs);box-shadow:var(--shadow-sm);pointer-events:none;opacity:0;visibility:hidden;transition:opacity 0.15s,visibility 0.15s;z-index:9999';
     document.body.appendChild(tip);
 
     function findTip(node) {

@@ -320,8 +320,8 @@
                 <button class="reject-preset-chip" onclick="applyRejectPreset('Lecturer unavailable')">Lecturer unavailable</button>
                 <button class="reject-preset-chip" onclick="applyRejectPreset('')">Other</button>
             </div>
-            <p style="margin-bottom:8px;font-size:13px;color:var(--color-on-surface-variant)">Please provide a reason for rejection (required):</p>
-            <textarea id="rejectReasonInput" placeholder="Enter rejection reason..." rows="4" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:var(--radius-xs);font-size:13px;resize:vertical;font-family:inherit"></textarea>
+            <p class="section-heading-sub" style="margin-bottom:8px">Please provide a reason for rejection (required):</p>
+            <textarea id="rejectReasonInput" placeholder="Enter rejection reason..." rows="4" class="modal-textarea"></textarea>
         </div>
         <div class="modal-footer">
             <div class="modal-footer-left">
@@ -342,8 +342,8 @@
         </div>
         <div class="modal-body">
             <div id="approveNotesSummary" style="margin-bottom:12px;font-size:13px;white-space:pre-line;color:var(--color-on-surface)"></div>
-            <p style="margin-bottom:8px;font-size:13px;color:var(--color-on-surface-variant)">Notes (optional):</p>
-            <textarea id="approveNotesInput" placeholder="Optional note for the audit trail..." rows="2" style="width:100%;padding:8px;border:1px solid var(--color-outline);border-radius:var(--radius-xs);font-size:13px;resize:vertical;font-family:inherit"></textarea>
+            <p class="section-heading-sub" style="margin-bottom:8px">Notes (optional):</p>
+            <textarea id="approveNotesInput" placeholder="Optional note for the audit trail..." rows="2" class="modal-textarea"></textarea>
         </div>
         <div class="modal-footer">
             <div class="modal-footer-left">
@@ -606,7 +606,7 @@
             html += '<td><span class="badge ' + statusClass(r.status) + '" onclick="openModalById(' + r.id + ')" style="cursor:pointer">' + r.status + '</span></td>';
 
             const actions = r.status === 'Pending'
-                ? '<div style="display:flex;gap:6px;align-items:center"><button class="btn-approve" onclick="event.stopPropagation();approveRequest(' + r.id + ')">✓ Approve</button><button class="btn-reject" onclick="event.stopPropagation();openRejectModal(' + r.id + ')">✕ Reject</button></div>'
+                ? '<div class="action-row"><button class="btn-approve" onclick="event.stopPropagation();approveRequest(' + r.id + ')">✓ Approve</button><button class="btn-reject" onclick="event.stopPropagation();openRejectModal(' + r.id + ')">✕ Reject</button></div>'
                 : '<button class="btn-view" onclick="event.stopPropagation();openModalById(' + r.id + ')">👁 View</button>';
             html += '<td>' + actions + '</td>';
             html += '</tr>';

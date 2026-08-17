@@ -1,5 +1,21 @@
 # Changelog — Lecturer My Request History
 
+## [2026-08-16] Replaced hardcoded inline styles with shared utility classes
+
+Refactored 3 hardcoded inline style instances to use shared CSS classes from `theme.css`. Paragraph descriptions use `.page-desc`, title+badge rows use `.kicker` + `.badge-sm`.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/my-request-history-UI-design-template.blade.php`
+
+| Line | Before | After |
+|---|---|---|
+| 589 | `style="font-size:14px;color:..."` | `class="page-desc" style="color:var(--color-on-surface);line-height:1.5;margin-bottom:12px"` |
+| 627-630 | `style="display:flex;align-items:center;gap:6px"` + badge inline override | `class="kicker"` + `class="badge badge-sm"` |
+| 636 | `style="font-size:14px;color:..."` | `class="page-desc" style="color:var(--color-on-surface);line-height:1.5;margin-bottom:8px"` |
+
+---
+
 ## [2026-08-15] Promote bulk selection to shared OOP BulkSelection class
 
 ### Summary

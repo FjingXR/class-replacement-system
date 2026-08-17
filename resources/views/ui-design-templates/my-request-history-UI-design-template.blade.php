@@ -586,7 +586,7 @@
             if (!r) return;
             pendingCancelId = id;
             document.getElementById('cancelConfirmBody').innerHTML =
-                '<p style="font-size:14px;color:var(--color-on-surface);line-height:1.5;margin-bottom:12px">Are you sure you want to cancel this replacement request? This action cannot be undone.</p>' +
+                '<p class="page-desc" style="color:var(--color-on-surface);line-height:1.5;margin-bottom:12px">Are you sure you want to cancel this replacement request? This action cannot be undone.</p>' +
                 '<div style="background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:12px;font-size:13px;line-height:1.6">' +
                 '<strong>' + r.courseCode + '</strong> — ' + r.courseName + '<br>' +
                 'Class: ' + r.classDay + ', ' + formatDate(r.classDate) + '<br>' +
@@ -625,15 +625,15 @@
             });
             var listHtml = rows.map(function(r) {
                 return '<div style="padding:8px 0;border-bottom:1px solid var(--color-outline);font-size:13px;line-height:1.5">' +
-                    '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+                    '<div class="kicker">' +
                     '<strong>' + r.courseCode + '</strong> — ' + r.courseName +
-                    ' <span class="badge ' + statusClass(r.status) + '" style="font-size:10px;padding:2px 6px">' + r.status + '</span></div>' +
+                    ' <span class="badge ' + statusClass(r.status) + ' badge-sm">' + r.status + '</span></div>' +
                     '<div style="color:var(--color-on-surface-variant);font-size:12px;margin-top:2px">' +
                     r.classDay + ', ' + formatDate(r.classDate) + ' &middot; ' + r.timeStart + ' – ' + r.timeEnd + ' &middot; ' + r.venue +
                     '</div></div>';
             }).join('');
             document.getElementById('batchCancelBody').innerHTML =
-                '<p style="font-size:14px;color:var(--color-on-surface);line-height:1.5;margin-bottom:8px">Cancel ' + count + ' selected request(s)? This action cannot be undone.</p>' +
+                '<p class="page-desc" style="color:var(--color-on-surface);line-height:1.5;margin-bottom:8px">Cancel ' + count + ' selected request(s)? This action cannot be undone.</p>' +
                 '<div style="max-height:200px;overflow-y:auto">' + listHtml + '</div>';
             document.getElementById('batchCancelOverlay').style.display = 'flex';
         }

@@ -588,13 +588,6 @@
             flex-direction: column;
             gap: 2px;
         }
-        .info-label {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--color-on-surface-variant);
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
         .info-value {
             font-size: 14px;
             font-weight: 600;

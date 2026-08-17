@@ -224,7 +224,7 @@
             </div>
             <div class="cancel-modal-body">
                 <p>Are you sure you want to cancel this class?</p>
-                <p style="font-size:13px;opacity:0.7;margin-top:6px;">This action cannot be undone. A cancellation notice will be sent to all affected parties.</p>
+                <p class="section-heading-sub" style="margin-top:6px;">This action cannot be undone. A cancellation notice will be sent to all affected parties.</p>
             </div>
             <div class="cancel-modal-footer">
                 <button class="btn-cancel-secondary" onclick="closeCancelConfirm(false)">No, Keep It</button>

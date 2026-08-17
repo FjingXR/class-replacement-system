@@ -3101,6 +3101,70 @@ body {
     color: var(--color-on-primary-container);
 }
 
+/* ── Cell Type Label ────────────────────────────────────────── */
+.cell-type-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-on-surface-variant);
+}
+
+/* ── Badge Small (modifier) ─────────────────────────────────── */
+.badge-sm {
+    font-size: 10px;
+    padding: 2px 6px;
+}
+
+/* ── Info Label (field overline) ────────────────────────────── */
+.info-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--color-on-surface-variant);
+}
+
+/* ── Hint Text ──────────────────────────────────────────────── */
+.hint-text {
+    font-size: 11px;
+    color: var(--color-on-surface-variant);
+}
+
+/* ── Modal Textarea ─────────────────────────────────────────── */
+.modal-textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--color-outline);
+    border-radius: var(--radius-xs);
+    font-size: 13px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* ── Action Row (button row) ────────────────────────────────── */
+.action-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* ── Data-Tip Tooltip (shared CSS) ──────────────────────────── */
+.data-tip-tooltip {
+    position: fixed;
+    padding: 5px 10px;
+    background: var(--color-inverse-surface);
+    color: var(--color-on-inverse-surface);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: var(--radius-xs);
+    box-shadow: var(--shadow-sm);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+    z-index: 9999;
+}
+
 /* ── Favourite Button ─────────────────────────────────────────── */
 .fav-btn {
     display: inline-flex;
