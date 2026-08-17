@@ -335,7 +335,7 @@
             content: "";
         }
         .cell-selected:hover .sel-text::before {
-            content: "REMOVE";
+            content: "Click Me to Remove Slots";
         }
 
         .cell-time-label { display: none; }
@@ -1082,10 +1082,13 @@
             const ph = document.querySelectorAll('.timetable .cell-content.cell-ph').length;
             const unavailable = occupied + reserved + sunday + ph;
 
-            document.getElementById('sumTotal').textContent = available + pending + unavailable;
-            document.getElementById('sumAvailable').textContent = available;
-            document.getElementById('sumPending').textContent = pending;
-            document.getElementById('sumUnavailable').textContent = unavailable;
+            const sumTotal = document.getElementById('sumTotal');
+            if (sumTotal) {
+                sumTotal.textContent = available + pending + unavailable;
+                document.getElementById('sumAvailable').textContent = available;
+                document.getElementById('sumPending').textContent = pending;
+                document.getElementById('sumUnavailable').textContent = unavailable;
+            }
         }
 
         function updateSelectionSummary() {
@@ -1945,7 +1948,7 @@
                 }
                 star.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    toggleFavourite(slot, star);
+                    toggleSlotFavourite(slot, star);
                 });
 
                 panel.appendChild(item);
@@ -2010,7 +2013,7 @@
             } catch (e) { return null; }
         }
 
-        function toggleFavourite(slot, starEl) {
+        function toggleSlotFavourite(slot, starEl) {
             const current = getFavouriteSlot();
             const isCurrentFav = current && current.code === slot.code && current.day === slot.day && current.start === slot.start && current.venue === slot.venue;
             if (isCurrentFav) {
