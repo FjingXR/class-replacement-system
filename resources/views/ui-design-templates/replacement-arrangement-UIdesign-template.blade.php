@@ -2148,6 +2148,8 @@
             });
             /* applyUrlParams AFTER week selector is ready (triggers onVenueChange → buildTimetable) */
             applyUrlParams();
+            /* ensure grid always renders on load (applyUrlParams only triggers via venue param) */
+            buildTimetable();
 
             document.addEventListener('keydown', handleKeyDown);
             initWeekKeyboardShortcuts();
