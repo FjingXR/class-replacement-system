@@ -2124,19 +2124,19 @@
             }
             buildSubjectDropdown();
             renderTitleSummary();
-            applyUrlParams();
 
             /* init venue dropdown */
             venueDropdown = new VenueDropdown(
                 document.getElementById('buildingSelectorDropdown'),
                 {
                     venues: MockData.venues,
-                    initialCode: currentVenue,
+                    initialCode: urlParams.venue || currentVenue,
                     onSelect: function(code) { onVenueChange(); }
                 }
             );
             updateFavStar();
             document.getElementById('favStar').addEventListener('click', toggleFavourite);
+            applyUrlParams();
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             /* restore the previously saved week (localStorage), else falls back to week 1 */
             weekNav.load();
