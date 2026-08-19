@@ -844,7 +844,7 @@
                 <button class="fav-btn" id="favStar" data-tip="Add to Favourites">&#9734;</button>
             </div>
             <div class="toolbar-filters">
-                @include('partials.ui-week-nav', ['prevOnclick' => 'guardedPrevWeek()', 'nextOnclick' => 'guardedNextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'guardedWeekChange()', 'showTodayBtn' => true])
+                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.selectWeek(parseInt(this.value, 10))', 'showTodayBtn' => true])
             </div>
         </div>
 
@@ -1507,67 +1507,6 @@
             }
         }
 
-        // ── Week navigation guards ──
-
-        function guardedWeekNav(actionFn) {
-            if (!selectedBlock) { actionFn(); return; }
-            showConfirmModal(
-                'Change Week?',
-                'Your selection will be <strong>saved</strong>. You can return to this week later to continue. Proceed?',
-                function() {
-                    hideConfirmModal();
-                    // Persist the current block to selectedSlotsByVenue BEFORE clearing
-                    saveCurrentWeek();
-                    // Temporarily suppress saveCurrentWeek so navigation doesn't overwrite with null
-                    var savedCallback = weekNav.onBeforeNavigate;
-                    weekNav.onBeforeNavigate = null;
-                    clearVisualSelection();
-                    actionFn();
-                    weekNav.onBeforeNavigate = savedCallback;
-                }
-            );
-        }
-
-        function guardedPrevWeek() { guardedWeekNav(function() { weekNav.prevWeek(); }); }
-
-        function guardedNextWeek() { guardedWeekNav(function() { weekNav.nextWeek(); }); }
-
-        function guardedJumpToToday() {
-            guardedWeekNav(function() {
-                weekNav.jumpToToday();
-                weekNav.save();
-                var sel = document.getElementById('weekSelector');
-                if (sel) sel.value = weekNav.currentWeek;
-            });
-        }
-
-        function guardedWeekChange() {
-            var sel = document.getElementById('weekSelector');
-            var newWeek = parseInt(sel.value, 10);
-            if (newWeek === weekNav.currentWeek) return;
-            if (!selectedBlock) { weekNav.selectWeek(newWeek); return; }
-            var oldWeek = weekNav.currentWeek;
-            showConfirmModal(
-                'Change Week?',
-                'Your selection will be <strong>saved</strong>. You can return to this week later to continue. Proceed?',
-                function() {
-                    hideConfirmModal();
-                    saveCurrentWeek();
-                    var savedCallback = weekNav.onBeforeNavigate;
-                    weekNav.onBeforeNavigate = null;
-                    clearVisualSelection();
-                    weekNav.selectWeek(newWeek);
-                    weekNav.onBeforeNavigate = savedCallback;
-                }
-            );
-            var cancelBtn = document.querySelector('#confirmModal .btn-outline');
-            if (cancelBtn) {
-                cancelBtn.onclick = function(e) {
-                    hideConfirmModal(e);
-                    sel.value = oldWeek;
-                };
-            }
-        }
 
         function buildSubmissionToastMessage() {
             const slots = [];
@@ -2342,7 +2281,11 @@
 
             document.getElementById('todayBtn')?.addEventListener('click', function() {
                 try {
-                    guardedJumpToToday();
+                    saveCurrentWeek();
+                    weekNav.jumpToToday();
+                    weekNav.save();
+                    var sel = document.getElementById('weekSelector');
+                    if (sel) sel.value = weekNav.currentWeek;
                 } catch (err) {
                     window.__todayBtnError = err.message + ' | ' + (err.stack || '').split('\n').slice(0,3).join(' ');
                 }
