@@ -844,7 +844,7 @@
                 <button class="fav-btn" id="favStar" data-tip="Add to Favourites">&#9734;</button>
             </div>
             <div class="toolbar-filters">
-                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.onWeekChange()', 'showTodayBtn' => true])
+                @include('partials.ui-week-nav', ['prevOnclick' => 'guardedPrevWeek()', 'nextOnclick' => 'guardedNextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'guardedWeekChange()', 'showTodayBtn' => true])
             </div>
         </div>
 
@@ -1002,6 +1002,10 @@
         let selectedBlock = null;          // { day, startHour, endHour } or null
         let selectionHistory = [];          // block-level undo: each entry = { action:'select'|'deselect', block:{...} }
         let focusedCell = { day: null, hour: null };
+        let revertingChange = false;        // suppress confirm guards while restoring a dropdown on cancel
+        let lastSubject = '';               // last committed subject code
+        let lastSlotIndex = null;           // last committed original-slot pick index
+        let slotPickerSlots = [];           // currently rendered original-slot list (for cancel restore)
 
         function saveCurrentWeek() {
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
@@ -1185,6 +1189,29 @@
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
             selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = null;
             // Re-enable hover on available cells
+            const table = body.closest('.timetable');
+            if (table) table.classList.remove('has-selection');
+            updateCounter();
+        }
+
+        // Like deselectBlock, but preserves saved data in selectedSlotsByVenue
+        // so loadCurrentWeek can restore the selection when navigating back.
+        function clearVisualSelection() {
+            if (!selectedBlock) return;
+            const body = document.getElementById('tableBody');
+            clearMergedBlock(body);
+            for (let h = selectedBlock.startHour; h < selectedBlock.endHour; h++) {
+                const td = body.querySelector(`td[data-day="${selectedBlock.day}"][data-hour="${h}"]`);
+                if (td) {
+                    const cellDiv = td.querySelector('.cell-content');
+                    if (cellDiv) {
+                        cellDiv.classList.remove('cell-selected');
+                        cellDiv.classList.add('cell-available');
+                        cellDiv.innerHTML = timeLabelHtml(h);
+                    }
+                }
+            }
+            selectedBlock = null;
             const table = body.closest('.timetable');
             if (table) table.classList.remove('has-selection');
             updateCounter();
@@ -1377,8 +1404,36 @@
         }
 
         function onVenueChange() {
+            if (revertingChange) return;
+            const newVenue = venueDropdown ? venueDropdown.getSelected() : 'B103';
+            if (selectedBlock && newVenue !== currentVenue) {
+                showConfirmModal(
+                    'Change Venue?',
+                    'You have selected slots on the grid. Changing the <strong>venue</strong> will clear them. Continue?',
+                    function() {
+                        hideConfirmModal();
+                        deselectBlock();
+                        applyVenueChange(newVenue);
+                    }
+                );
+                // Cancel path: snap the dropdown back to the current venue
+                const cancelBtn = document.querySelector('#confirmModal .btn-outline');
+                if (cancelBtn) {
+                    cancelBtn.onclick = function(e) {
+                        hideConfirmModal(e);
+                        revertingChange = true;
+                        venueDropdown.select(currentVenue);
+                        revertingChange = false;
+                    };
+                }
+                return;
+            }
+            applyVenueChange(newVenue);
+        }
+
+        function applyVenueChange(newVenue) {
             saveCurrentWeek();
-            currentVenue = venueDropdown ? venueDropdown.getSelected() : 'B103';
+            currentVenue = newVenue;
             buildTimetable();
             updateFavStar();
         }
@@ -1427,6 +1482,91 @@
             if (e) e.stopPropagation();
             document.getElementById('confirmModal').style.display = 'none';
             confirmCallback = null;
+            // Reset Cancel button to its default behavior after any custom handler
+            const cancelBtn = document.querySelector('#confirmModal .btn-outline');
+            if (cancelBtn) cancelBtn.onclick = function(ev) { hideConfirmModal(ev); };
+        }
+
+        function confirmChangeWithSelection(actionLabel, proceedFn, cancelFn) {
+            if (!selectedBlock) { proceedFn(); return; }
+            showConfirmModal(
+                'Clear Current Selection?',
+                'You have selected slots on the grid. Changing the <strong>' + actionLabel + '</strong> will remove them. Continue?',
+                function() {
+                    hideConfirmModal();
+                    deselectBlock();
+                    proceedFn();
+                }
+            );
+            const cancelBtn = document.querySelector('#confirmModal .btn-outline');
+            if (cancelBtn) {
+                cancelBtn.onclick = function(e) {
+                    hideConfirmModal(e);
+                    if (cancelFn) cancelFn();
+                };
+            }
+        }
+
+        // ── Week navigation guards ──
+
+        function guardedWeekNav(actionFn) {
+            if (!selectedBlock) { actionFn(); return; }
+            showConfirmModal(
+                'Change Week?',
+                'Your selection will be <strong>saved</strong>. You can return to this week later to continue. Proceed?',
+                function() {
+                    hideConfirmModal();
+                    // Persist the current block to selectedSlotsByVenue BEFORE clearing
+                    saveCurrentWeek();
+                    // Temporarily suppress saveCurrentWeek so navigation doesn't overwrite with null
+                    var savedCallback = weekNav.onBeforeNavigate;
+                    weekNav.onBeforeNavigate = null;
+                    clearVisualSelection();
+                    actionFn();
+                    weekNav.onBeforeNavigate = savedCallback;
+                }
+            );
+        }
+
+        function guardedPrevWeek() { guardedWeekNav(function() { weekNav.prevWeek(); }); }
+
+        function guardedNextWeek() { guardedWeekNav(function() { weekNav.nextWeek(); }); }
+
+        function guardedJumpToToday() {
+            guardedWeekNav(function() {
+                weekNav.jumpToToday();
+                weekNav.save();
+                var sel = document.getElementById('weekSelector');
+                if (sel) sel.value = weekNav.currentWeek;
+            });
+        }
+
+        function guardedWeekChange() {
+            var sel = document.getElementById('weekSelector');
+            var newWeek = parseInt(sel.value, 10);
+            if (newWeek === weekNav.currentWeek) return;
+            if (!selectedBlock) { weekNav.selectWeek(newWeek); return; }
+            var oldWeek = weekNav.currentWeek;
+            showConfirmModal(
+                'Change Week?',
+                'Your selection will be <strong>saved</strong>. You can return to this week later to continue. Proceed?',
+                function() {
+                    hideConfirmModal();
+                    saveCurrentWeek();
+                    var savedCallback = weekNav.onBeforeNavigate;
+                    weekNav.onBeforeNavigate = null;
+                    clearVisualSelection();
+                    weekNav.selectWeek(newWeek);
+                    weekNav.onBeforeNavigate = savedCallback;
+                }
+            );
+            var cancelBtn = document.querySelector('#confirmModal .btn-outline');
+            if (cancelBtn) {
+                cancelBtn.onclick = function(e) {
+                    hideConfirmModal(e);
+                    sel.value = oldWeek;
+                };
+            }
         }
 
         function buildSubmissionToastMessage() {
@@ -1508,10 +1648,10 @@
         }
 
         function navigateTo(url) {
-            if (selectedBlock) {
+            if (selectedBlock || getGlobalTotal() > 0) {
                 showConfirmModal(
                     'Unsaved Changes',
-                    'You have a selected block that will be lost if you leave this page. Are you sure you want to leave?',
+                    'You have selections that will be lost if you leave this page. Are you sure you want to leave?',
                     function() {
                         var savedBlock = selectedBlock ? { ...selectedBlock } : null;
                         var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
@@ -1535,10 +1675,10 @@
         }
 
         function goBack() {
-            if (selectedBlock) {
+            if (selectedBlock || getGlobalTotal() > 0) {
                 showConfirmModal(
                     'Unsaved Changes',
-                    'You have a selected block that will be lost if you leave this page. Are you sure you want to go back?',
+                    'You have selections that will be lost if you leave this page. Are you sure you want to go back?',
                     function() {
                         hideConfirmModal();
                         var savedBlock = selectedBlock ? { ...selectedBlock } : null;
@@ -1791,7 +1931,25 @@
         }
 
         function onSubjectChange() {
+            if (revertingChange) return;
             const code = document.getElementById('subjectSelector').value;
+
+            if (selectedBlock && code !== lastSubject) {
+                confirmChangeWithSelection('subject', function() {
+                    lastSubject = code;
+                    applySubjectChange(code);
+                }, function() {
+                    revertingChange = true;
+                    document.getElementById('subjectSelector').value = lastSubject;
+                    revertingChange = false;
+                });
+                return;
+            }
+            lastSubject = code;
+            applySubjectChange(code);
+        }
+
+        function applySubjectChange(code) {
             const noteEl = document.getElementById('venueCountNote');
 
             if (!code) {
@@ -1881,7 +2039,9 @@
             const picker = document.getElementById('slotPicker');
             const panel = document.getElementById('slotPanel');
             const triggerText = document.getElementById('slotTriggerText');
-            
+
+            slotPickerSlots = slots || [];
+
             if (!slots || slots.length === 0) {
                 picker.style.display = 'none';
                 return;
@@ -1952,6 +2112,32 @@
         }
 
         function selectSlot(slot, index) {
+            if (revertingChange) return;
+
+            if (selectedBlock && index !== lastSlotIndex) {
+                confirmChangeWithSelection('time slot', function() {
+                    lastSlotIndex = index;
+                    commitSlotSelection(slot, index);
+                }, function() {
+                    // Snap the picker back to the previously committed slot
+                    revertingChange = true;
+                    if (lastSlotIndex !== null && lastSlotIndex !== undefined && slotPickerSlots[lastSlotIndex]) {
+                        commitSlotSelection(slotPickerSlots[lastSlotIndex], lastSlotIndex);
+                    } else {
+                        selectedOriginalSlot = null;
+                        document.getElementById('slotTriggerText').textContent = 'Select a slot to replace';
+                        document.querySelectorAll('.slot-dd-item').forEach(item => item.classList.remove('selected'));
+                        renderTitleSummary();
+                    }
+                    revertingChange = false;
+                });
+                return;
+            }
+            lastSlotIndex = index;
+            commitSlotSelection(slot, index);
+        }
+
+        function commitSlotSelection(slot, index) {
             selectedOriginalSlot = slot;
             const triggerText = document.getElementById('slotTriggerText');
             const startStr = to12h(hours[slot.start]);
@@ -2083,7 +2269,6 @@
             const sel = document.getElementById('subjectSelector');
             if (urlParams.code) {
                 sel.value = urlParams.code;
-                sel.disabled = true;
                 onSubjectChange();
             }
             if (urlParams.venue) {
@@ -2148,6 +2333,7 @@
             });
             /* applyUrlParams AFTER week selector is ready (triggers onVenueChange → buildTimetable) */
             applyUrlParams();
+            lastSubject = document.getElementById('subjectSelector').value;
             /* ensure grid always renders on load (applyUrlParams only triggers via venue param) */
             buildTimetable();
 
@@ -2156,14 +2342,7 @@
 
             document.getElementById('todayBtn')?.addEventListener('click', function() {
                 try {
-                    saveCurrentWeek();
-                    weekNav.jumpToToday();
-                    weekNav.save();
-                    const sel = document.getElementById('weekSelector');
-                    if (sel) {
-                        sel.value = weekNav.currentWeek;
-                        buildTimetable();
-                    }
+                    guardedJumpToToday();
                 } catch (err) {
                     window.__todayBtnError = err.message + ' | ' + (err.stack || '').split('\n').slice(0,3).join(' ');
                 }

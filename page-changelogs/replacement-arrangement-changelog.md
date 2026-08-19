@@ -1,5 +1,101 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-08-19] Fix: week-navigation confirmation preserves selection + back button checks saved slots
+
+### Problem
+
+1. `guardedWeekNav` called `deselectBlock()` which permanently destroyed the saved selection (`selectedSlotsByVenue[currentVenue][week] = null`). Navigating back to the original week did NOT restore the user's selection.
+2. `goBack()` and `navigateTo()` only checked `selectedBlock` — if the user had saved selections in other weeks (from a week-change guard), the back button skipped the confirmation and silently lost all saved data.
+
+### Fix
+
+- Added `clearVisualSelection()` — clears the grid visuals and `selectedBlock` WITHOUT nulling `selectedSlotsByVenue`. The selection is preserved and restored by `loadCurrentWeek()` when navigating back.
+- `guardedWeekNav` now: calls `saveCurrentWeek()` → temporarily suppresses `weekNav.onBeforeNavigate` (prevents `saveCurrentWeek` from overwriting with null during navigation) → calls `clearVisualSelection()` → navigates → restores callback.
+- `guardedWeekChange` uses the same save-before-clear pattern.
+- `guardedJumpToToday` delegates to `guardedWeekNav` (removed redundant `saveCurrentWeek` that was undoing the save).
+- `goBack()` / `navigateTo()` now check `selectedBlock || getGlobalTotal() > 0` — catches saved selections across all venues/weeks.
+- Confirmation message updated: "Your selection will be **saved**. You can return to this week later to continue."
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `clearVisualSelection()` | Added | Clears grid visuals + `selectedBlock` without touching `selectedSlotsByVenue` |
+| `guardedWeekNav()` | Fixed | Saves via `saveCurrentWeek()`, suppresses `onBeforeNavigate`, uses `clearVisualSelection()` instead of `deselectBlock()` |
+| `guardedJumpToToday()` | Fixed | Removed redundant `saveCurrentWeek()` inside actionFn |
+| `guardedWeekChange()` | Fixed | Uses same save-before-clear + suppress pattern |
+| `goBack()` | Fixed | Checks `getGlobalTotal() > 0` in addition to `selectedBlock` |
+| `navigateTo()` | Fixed | Same `getGlobalTotal()` check + updated message |
+
+#### `tests/confirm-guards.spec.ts`
+
+| Location | Change | Detail |
+|---|---|---|
+| Week next arrow test | Added | Verifies confirmation popup + confirm navigates |
+| Week prev arrow test | Added | Verifies cancel keeps selection |
+| Week dropdown test | Added | Verifies cancel restores dropdown value |
+| Back button test | Added | Verifies back button shows confirmation for saved selections |
+
+---
+
+## [2026-08-19] Fix subject dropdown lock + week-navigation confirmation guards
+
+Two fixes addressing bugs reported after the dropdown guard feature was added.
+
+### Fix 1 — Subject dropdown disabled when arriving from replacement-home
+
+When visiting `/replacement-arrangement` with URL params (e.g. from `/replacement-home-ui`), the subject dropdown was permanently disabled (`sel.disabled = true`). Removed the disable so the user can change subjects. The existing guard in `onSubjectChange()` handles confirmation when a grid selection exists.
+
+### Fix 2 — Week-navigation confirmation when grid slots are selected
+
+Added confirmation guards to all week-navigation entry points (prev/next arrows, week dropdown, Today button). When `selectedBlock` is active and the user navigates to a different week, a confirmation modal appears. Confirm clears the selection and navigates; Cancel stays on the current week (dropdown value restored if changed).
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| `applyUrlParams()` | Removed | `sel.disabled = true` line removed — subject selector stays editable |
+| `guardedWeekNav()` | Added | Shared guard for week navigation: confirm → `deselectBlock()` + proceed |
+| `guardedPrevWeek()` | Added | Guard wrapper for prev-week arrow |
+| `guardedNextWeek()` | Added | Guard wrapper for next-week arrow |
+| `guardedJumpToToday()` | Added | Guard wrapper for Today button |
+| `guardedWeekChange()` | Added | Guard wrapper for week dropdown; restores select value on cancel |
+| `ui-week-nav` include | Updated | `prevOnclick` → `guardedPrevWeek()`, `nextOnclick` → `guardedNextWeek()`, `selectOnclick` → `guardedWeekChange()` |
+| Today button handler | Updated | Uses `guardedJumpToToday()` |
+
+---
+
+## [2026-08-19] Confirmation guards on dropdown changes when slots are selected
+
+When the user has selected grid slots (`selectedBlock`), changing the **venue**, **subject**, or **original slot to replace** now pops a confirmation modal warning that the selection will be removed. Cancel restores the previous value; Confirm clears the selection and applies the change. No popup when nothing is selected. `Clear ALL` already had its own confirmation — unchanged.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/replacement-arrangement-UIdesign-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| State vars | Added | `revertingChange`, `lastSubject`, `lastSlotIndex`, `slotPickerSlots` for guard tracking + cancel snap-back. |
+| `hideConfirmModal()` | Updated | Resets the Cancel button to default after custom handlers. |
+| `confirmChangeWithSelection()` | Added | Shared guard: skips when no `selectedBlock`; otherwise confirm → `deselectBlock()` + proceed, cancel → cancelFn. |
+| `onVenueChange()` | Updated | Guards via `confirmChangeWithSelection`; cancel re-selects previous venue (suppressed by `revertingChange`); body moved to `applyVenueChange()`. |
+| `onSubjectChange()` | Updated | Guards subject changes; cancel restores `#subjectSelector` to `lastSubject`; body moved to `applySubjectChange()`. |
+| `renderSlotPicker()` | Updated | Stores rendered slots in `slotPickerSlots` for cancel restore. |
+| `selectSlot()` | Updated | Guards re-picks while slots are selected; cancel restores previous pick; body moved to `commitSlotSelection()`. |
+| `DOMContentLoaded` | Updated | Sets `lastSubject` after `applyUrlParams()` (no guard triggers at load). |
+
+#### `tests/confirm-guards.spec.ts`
+
+| Location | Change | Detail |
+|---|---|---|
+| New file | Added | 7 Playwright tests covering venue/subject/slot-trigger guards (confirm + cancel paths), Clear ALL cancel, and no-popup-without-selection. |
+
+---
+
 ## [2026-08-16] Moved `.info-label` from local `<style>` to shared `theme.css`
 
 The `.info-label` class (used for field overlines in the info panel) was defined locally in the page's `<style>` block. Moved to `theme.css` as a shared utility class so other pages can reuse it.
