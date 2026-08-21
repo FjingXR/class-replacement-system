@@ -170,6 +170,80 @@ All use existing `theme.css` tokens. No new variables needed.
 
 ---
 
+### [TASK-004] Staff ID Login — Optional "P" Prefix Support (PENDING)
+
+- **Status:** `pending`
+- **Priority:** `high`
+- **Affected files:**
+  - `resources/views/auth/login-staff.blade.php` — update `idRegex`, `formatHint`, `idPlaceholder`
+  - Login handler (backend) — strip optional `P` prefix before Fortify authentication
+  - `page-changelogs/login-oop-refactor-changelog.md` — record change
+
+**Description:**
+Update the Staff login form validation to accept Staff IDs with an optional "P" prefix (e.g., `P5425` or `5425`). This matches real TARUMT staff ID usage and aligns with FR 2.1 in the FYP report (Ch3 §3.4).
+
+**Changes:**
+
+1. `login-staff.blade.php` — update regex from `^\d+$` to `^P?\d{4}$`, update placeholder to "e.g. P5425 or 5425", update hint to "4 digits, optional 'P' prefix"
+2. Backend — strip optional `P` prefix from `login_id` for staff logins before Fortify authenticates (seeder stores pure digits)
+3. Verify client-side validation for both `P5425` and `5425` formats
+
+**Full plan:** See `staff-id-p-prefix-plan.md`
+
+---
+
+### [TASK-005] Cancel Class — Add Mandatory Reason Field (PENDING)
+
+- **Status:** `pending`
+- **Priority:** `high`
+- **Affected files:**
+  - `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php` — add reason textarea to cancel modal, update JS
+  - `public/css/theme.css` — add `.cancel-reason-input` styles
+  - `page-changelogs/my-timetable-changelog.md` — record change
+
+**Description:**
+Update the Cancel Class confirmation modal on the My Timetable page to require a mandatory reason before cancelling, matching FR 2.16 in the FYP report (Ch3 §3.4). The current modal only has "Are you sure?" → Yes/No with no reason input.
+
+**Changes:**
+
+1. Add `<textarea>` to cancel confirmation modal with min 10 characters validation
+2. Add `validateCancelReason()` JS function (disable button until reason ≥ 10 chars, character counter)
+3. Update `cancelClass()` to reset textarea and focus on open
+4. Update `closeCancelConfirm()` to capture reason
+5. Add `.cancel-reason-input` CSS to `theme.css`
+6. Cancellation notification to affected students — deferred to Sprint 3 (email via queue, same pattern as FR 4.15)
+
+**Full plan:** See `cancel-class-reason-plan.md`
+
+---
+
+### [TASK-006] Student Request History Drop + Upcoming Replacements (PENDING)
+
+- **Status:** `pending`
+- **Priority:** `high`
+- **Affected files:**
+  - `resources/views/ui-design-templates/student-my-timetable-UI-design-template.blade.php` — remove "Request History" nav item
+  - `public/js/mock-data.js` — add `upcomingReplacements` dataset (Sprint 3)
+  - `page-changelogs/student-my-timetable-ui-changelog.md` — record change
+
+**Description:**
+Remove the Full Request History page from the student role (Ch1 says students are "view status only"). Prepare for an Upcoming Replacements feature — implementation approach TBD (separate page OR section/card on student timetable page, decision deferred to Sprint 3).
+
+**Changes:**
+
+1. **Immediate:** Remove `'replacement-history'` nav item from student template `navItems` array (1 line)
+2. **Sprint 3 (TBD):** Implement Upcoming Replacements — either:
+   - **Option A (recommended):** Section/cards on Student My Timetable page — zero extra clicks, reuse `openClassModal` for detail
+   - **Option B:** Separate Upcoming Replacements page — +1 click, more space for filters
+3. **Sprint 3:** Add `upcomingReplacements` mock data to `mock-data.js`
+4. **Sprint 3:** Wire detail modal with primary info (subject, new day/time/venue, lecturer, status)
+
+**Note:** The `/my-request-history-ui` route stays — lecturers and PLs still use it. Only the student nav link is removed.
+
+**Full plan:** See `student-request-history-drop-plan.md`
+
+---
+
 ## Template: New Task
 
 ```markdown

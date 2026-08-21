@@ -70,7 +70,7 @@ A web application that replaces the manual Google-Sheets-based class replacement
 
 ### Replacement flow decisions (user-confirmed 2026-08-01)
 1. **Student counts:** fixed per cohort (see §8) — capacity-filter demos are reproducible.
-2. **Timetable data:** will be **synthesized** (no real sheets provided) — I generate a realistic 14-week dataset for 14 cohorts / 14 staff / 23 rooms, aligned with the MPU-3133 & MPU-3232 use cases; user reviews it.
+2. **Timetable data:** mainly past semester timetable PDFs from TAR UMT Sabah, with self-modifications for prototype needs (room capacities, MPU-3133 & MPU-3232 groupings) — a realistic 14-week dataset for 14 cohorts / 14 staff / 23 rooms; user reviews it.
 3. **Original block release:** after PL approval, the original class block is marked replaced/cancelled and its old time+room become **bookable by others**; the new slot becomes `occupied`.
 4. **PL Master Configuration Panel: DROPPED** — not in FR&NFR; specs V2 mention is superseded by FR&NFR as source of truth.
 5. **Notifications:** implement exactly FR 1.5 (students on timetable updates), 4.15 (PL on submission), 4.16 (proposer on outcome). No cross-lecturer alerts unless requested later.
@@ -316,8 +316,8 @@ Source: `../final/FR&NFR.md` — Chapter 3, §3.4 (verbatim). Each FR is traceab
 ### Venues (23 Block B rooms — NOT yet seeded, need `venues` migration)
 - Tutorial (16): B002, B014–B018, B100–B109 | Lecture Halls (2): B110, B111 | Labs (4): B005, B009–B011 | Cisco Lab (1): B006
 
-### Timetable dataset (TO BE SYNTHESIZED — Sprint 1)
-- No real timetable sheets were provided; I will synthesize a realistic 14-week dataset in `dataset/timetable.md` (modules with session types L/T/P, class blocks per cohort, room assignments, MPU-3133 + MPU-3232 use cases embedded). User reviews before seeding.
+### Timetable dataset (Sprint 1 — based on past PDFs with self-modifications)
+- Mainly past semester timetable PDFs from TAR UMT Sabah, with self-modifications for prototype needs (room capacities, MPU-3133 & MPU-3232 groupings). I will prepare a realistic 14-week dataset in `dataset/timetable.md` (modules with session types L/T/P, class blocks per cohort, room assignments). User reviews before seeding.
 
 ### High-risk use cases (engine validation targets)
 1. **Cross-faculty (MPU-3133 Falsafah dan Isu Semasa):** shared across RAF2, RBU1, RSD3 → must compute unified slot across faculties; venue filter = exclude labs (tutorial rooms + lecture halls allowed, per user decision; conflicts with older Ch1 wording).
