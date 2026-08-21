@@ -1,11 +1,11 @@
 # Knowledge Transfer — New AI Session Handover
 
 > **Source template:** `/Prompt — Transfer Important Context to a New AI Session.md`
-> **Created:** 2026-08-21
-> **Previous HEAD (reverted):** `f3d2554` + `f316278` — discarded via `git reset --hard 83fd365`
-> **User-confirmed wanted HEAD:** `83fd365` — `fix: timetable grid now loads on initial page load (replacement-arrangement)` — reverted via `git reset --hard 83fd365` per user `83fd365e4152669b...`
-> **Actual HEAD now (2026-08-21 18:53 check):** `d2c494d` (`ui: remove week navigation confirmation guards`) — 2 ahead of 83fd365 (`d2c494d` ← `116cbee` ← `83fd365`). `origin/fjing` is at `f316278` (1 ahead of 83fd365, not on local). Branch diverged 2 vs 1.
-> **Branch:** `fjing` — if you truly want exact `83fd365`, run `git reset --hard 83fd365` again.
+> **Created:** 2026-08-21 | **Updated:** 2026-08-21 (rename + commit)
+> **Baseline wanted:** `83fd365` — `fix: timetable grid now loads on initial page load` — reverted via `git reset --hard 83fd365` per user `83fd365e4152669b...`
+> **Previous reverted:** `f3d2554` (block model) + `f316278` (rename) — discarded
+> **Current HEAD (committed, clean):** `8dbef39` — `docs: add knowledge transfer 2026-08-21, FYP briefing, todo plans + regression tests` (parent `d2c494d` ← `116cbee` ← `83fd365`; `origin/fjing` at `f316278`, diverged 3 vs 1)
+> **Branch:** `fjing` — working tree clean
 > **Project root:** `/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system`
 
 ---
@@ -172,13 +172,11 @@
 
 ---
 
-## 11. Unresolved / Needs Confirmation
+## 11. Unresolved / Needs Confirmation (updated 2026-08-21 — committed)
 
-- **Conflicting?** Branch divergence: local `fjing` at `83fd365` (actually `d2c494d` is local HEAD per `git log` — need to confirm: `git log --oneline` shows `d2c494d` as HEAD, but user wanted `83fd365` exact. Current `git status` says diverged 2 vs 1. Clarify if `d2c494d`+`116cbee` should stay or also reset.
-- **Untracked fate:** `FYP-BRIEFING.md`, `tests/ui-regression.spec.ts`, 4 `todo list/*plan.md` — keep/commit or discard?
-- **Modified not staged:** `CodingMAIN.md` + `todo-list.md` — review diff and commit?
-- **Block model future:** User rejected `f3d2554` design — what is the *desired* slot-selection UX? Keep pending until spec provided.
-- **Knowledge file dest:** This file written to `page-changelogs/knowledge files/2026-08-21_Session-Knowledge-Transfer.md` per user `dest folder: .../knowledge files/` — confirm naming OK or rename.
+- **Resolved — committed:** `8dbef39` committed everything (was untracked/modified now clean). Includes `FYP-BRIEFING.md`, `tests/ui-regression.spec.ts`, 4 `todo list/*plan.md`, `CodingMAIN.md` + `todo-list.md` updates, and this knowledge file (renamed to `general_Session_2026-08-21.md` per request).
+- **Branch divergence (still open):** Local `8dbef39` (3 ahead of `83fd365`) vs `origin/fjing` `f316278` (1 ahead of `83fd365`) — diverged 3 vs 1. Push only if user asks (`git push --force-with-lease` or `pull --rebase`).
+- **Block model future:** User rejected `f3d2554` design — desired slot-selection UX still pending spec.
 
 ---
 
