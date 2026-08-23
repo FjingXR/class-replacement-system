@@ -170,25 +170,25 @@ All use existing `theme.css` tokens. No new variables needed.
 
 ---
 
-### [TASK-004] Staff ID Login — Optional "P" Prefix Support (PENDING)
+### [TASK-004] Staff ID Login — Optional "P" Prefix Support (COMPLETED 2026-08-21)
 
-- **Status:** `pending`
+- **Status:** `completed`
 - **Priority:** `high`
 - **Affected files:**
-  - `resources/views/auth/login-staff.blade.php` — update `idRegex`, `formatHint`, `idPlaceholder`
-  - Login handler (backend) — strip optional `P` prefix before Fortify authentication
-  - `page-changelogs/login-oop-refactor-changelog.md` — record change
+  - `resources/views/auth/login-staff.blade.php:10-12` — updated `idRegex` `^\d+$` → `^P?\d{4}$`, `idPlaceholder` `e.g. 6767` → `e.g. P5425 or 5425`, `formatHint` `Numeric staff ID only` → `4 digits, optional "P" prefix`
+  - Login handler (backend) — strip optional `P` prefix before Fortify authentication — **deferred** (frontend-only fix per `staff-id-p-prefix-frontend-fix-plan.md:§7`)
+  - `page-changelogs/login-oop-refactor-changelog.md` — recorded change 2026-08-21 § Fix: Staff ID Optional "P" Prefix
 
 **Description:**
 Update the Staff login form validation to accept Staff IDs with an optional "P" prefix (e.g., `P5425` or `5425`). This matches real TARUMT staff ID usage and aligns with FR 2.1 in the FYP report (Ch3 §3.4).
 
 **Changes:**
 
-1. `login-staff.blade.php` — update regex from `^\d+$` to `^P?\d{4}$`, update placeholder to "e.g. P5425 or 5425", update hint to "4 digits, optional 'P' prefix"
-2. Backend — strip optional `P` prefix from `login_id` for staff logins before Fortify authenticates (seeder stores pure digits)
-3. Verify client-side validation for both `P5425` and `5425` formats
+1. `login-staff.blade.php:10-12` — updated regex `^\d+$` → `^P?\d{4}$`, placeholder `e.g. P5425 or 5425`, hint `4 digits, optional "P" prefix` — verified `P5425`+`5425` enabled, `p5425`/bad lengths disabled
+2. Backend — strip optional `P` prefix from `login_id` for staff logins before Fortify authenticates (seeder stores pure digits) — deferred, see plan §7
+3. Verified client-side validation for both `P5425` and `5425` formats + student control `25RSD0001` unchanged
 
-**Full plan:** See `staff-id-p-prefix-plan.md`
+**Full plan:** See `staff-id-p-prefix-frontend-fix-plan.md` — executed 2026-08-21, cache cleared `pkill -9 php && rm -f storage/framework/views/*.php`
 
 ---
 

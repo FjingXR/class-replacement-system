@@ -85,3 +85,28 @@ Refactored login pages (staff and student) to use shared layout via OOP inherita
 - No console errors on either page
 
 **Note:** Requires clearing view cache (or waiting for OPCache `revalidate_freq`) after editing. Run `rm -rf storage/framework/views/*.php` if changes don't appear.
+
+## Fix: Staff ID Optional "P" Prefix (FR 2.1)
+
+**Date:** 2026-08-21 | **FR:** FR 2.1 (Ch3 §3.4 — "four digits with an optional 'P' prefix, e.g., P5425 or 5425")
+
+**File:** `resources/views/auth/login-staff.blade.php:10-12` — 3 tokens changed, no layout JS change (`layouts/login-template.blade.php:420` `new RegExp(@json($idRegex))` consumes directly)
+
+| Token | Before | After |
+|-------|--------|-------|
+| `idPlaceholder` | `e.g. 6767` | `e.g. P5425 or 5425` |
+| `idRegex` | `^\d+$` (any digit length, no P) | `^P?\d{4}$` (uppercase P optional + exactly 4 digits) |
+| `formatHint` | `Numeric staff ID only` | `4 digits, optional "P" prefix` |
+
+**Rationale:** Before, `P5425` → `idRegex.test()` false → button stayed `disabled` and never submitted, contradicting FR 2.1. Student regex `^\d{2}[A-Za-z]{3}\d{4}$` untouched.
+
+**Verified:**
+- View source: `idRegex` = `^P?\d{4}$`, placeholder `e.g. P5425 or 5425`, hint `4 digits, optional "P" prefix`
+- `new RegExp("^P?\\d{4}$").test("P5425")==true`, `"5425"==true`, `"p5425"==false`, `"542"==false`, `"54255"==false`, `"P542"==false`, `"PP5425"==false`, `" 5425 ".trim()==true`
+- `/login/staff`: `5425`+pw → enabled, `P5425`+pw → enabled, `p5425`/3-/5-digits → disabled, empty pw → disabled
+- `/login/student` control: `25RSD0001` → enabled, `P5425` on student page → disabled (student regex unchanged)
+- No console errors on `DOMContentLoaded`; `validateLogin()` called on `oninput` + `DOMContentLoaded` (`login-template.blade.php:382,396,436`)
+
+**Backend note (deferred):** DB stores `5425` (`dataset/lecturers.md`). Frontend allow alone insufficient for `P5425` login — backend must strip `P` before `Lecturer::where('staff_id')` (see `staff-id-p-prefix-frontend-fix-plan.md:§7`). Not implemented in this frontend-only change.
+
+**Cache:** `pkill -9 php && rm -f storage/framework/views/*.php && php artisan serve --port=8000 &` required per `AGENTS.md:31`.

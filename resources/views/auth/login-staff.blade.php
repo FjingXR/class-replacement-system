@@ -7,9 +7,9 @@
     'btnHoverLight' => '#0066cc',
     'spinnerColorToken' => '--color-on-primary',
     'idLabel' => 'Staff ID',
-    'idPlaceholder' => 'e.g. 6767',
-    'idRegex' => '^\d+$',
-    'formatHint' => 'Numeric staff ID only',
+    'idPlaceholder' => 'e.g. P5425 or 5425',
+    'idRegex' => '^P?\d{4}$',
+    'formatHint' => '4 digits, optional "P" prefix',
     'loginType' => 'staff',
     'roleSwitchHtml' => 'Student? <a href="' . route('login.student') . '">Student Login</a>',
 ])
