@@ -3,7 +3,7 @@
     'pageKey' => 'studentMyTimetable',
     'navItems' => [
         ['key'=>'my-timetable','label'=>'Student My Timetable','href'=>'/student-my-timetable-ui'],
-        ['key'=>'replacement-history','label'=>'Request History','href'=>'/my-request-history-ui'],
+        ['key'=>'upcoming-replacements','label'=>'Upcoming Replacements','href'=>'/upcoming-replacements-ui'],
     ],
     'notifCount' => 3,
 ])

@@ -639,6 +639,45 @@ window.MockData = {
         ],
     },
 
+    // ─────────────────────────────────────────────────────────────────────
+    // §2.12 upcomingReplacements — consumed by the student Upcoming
+    // Replacements page (/upcoming-replacements-ui, stub UI pending — see
+    // page-changelogs/todo list/upcoming-replacements-ui-plan.md).
+    // Rows are keyed to real rsd3g2Base courses + rsd3g2Flags weeks so the
+    // timetable grid and this list stay consistent.
+    //   Original slot: di/start/end in the same 30-min index space as
+    //     rsd3g2Base (hours map in ui-common.js).
+    //   Replacement slot: newDi/newStart/newEnd + display strings;
+    //     null when still awaiting PL approval (`status:'pending'`).
+    //   status: 'replacement' = approved & upcoming (blue,
+    //     .badge-replacement) | 'pending' = awaiting PL (yellow,
+    //     .badge-pending).
+    // Read-only — slice()/spread before mutating.
+    // ─────────────────────────────────────────────────────────────────────
+    upcomingReplacements: [
+        {
+            id: 1, code: 'BMIT7074', name: 'Software Testing', type: 'T',
+            lecturer: 'Dr. Koh Li May', cohort: 'RSD3(S1)G2',
+            week: 1, status: 'replacement', requestedAt: '25-Aug-2026',
+            di: 1, start: 8, end: 11, originalDay: 'Tuesday',  originalTime: '12:00 – 14:00', originalVenue: 'A106',
+            newDi: 3, newStart: 4, newEnd: 7, newDay: 'Thursday', newTime: '10:00 – 12:00', newVenue: 'B005',
+        },
+        {
+            id: 2, code: 'BMIT2233', name: 'Data Structures', type: 'T',
+            lecturer: 'En. Lim Jia Zheng', cohort: 'RSD3(S1)G2',
+            week: 2, status: 'pending', requestedAt: '',
+            di: 4, start: 8, end: 10, originalDay: 'Friday', originalTime: '12:00 – 13:30', originalVenue: 'B103',
+            newDi: null, newStart: null, newEnd: null, newDay: null, newTime: null, newVenue: null,
+        },
+        {
+            id: 3, code: 'BMIT5678', name: 'Database Systems', type: 'L',
+            lecturer: 'En. Lim Jia Zheng', cohort: 'RSD3(S1)G2',
+            week: 7, status: 'replacement', requestedAt: '01-Sep-2026',
+            di: 2, start: 2, end: 5, originalDay: 'Wednesday', originalTime: '09:00 – 12:00', originalVenue: 'B106',
+            newDi: 0, newStart: 12, newEnd: 15, newDay: 'Monday', newTime: '14:00 – 16:00', newVenue: 'B110',
+        },
+    ],
+
 };
 
 // ─────────────────────────────────────────────────────────────────────────

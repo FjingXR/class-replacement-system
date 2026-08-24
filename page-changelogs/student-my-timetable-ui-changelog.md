@@ -1,5 +1,25 @@
 # Changelog — Student My Timetable
 
+## [2026-08-24] Nav swap: Request History → Upcoming Replacements (TASK-006)
+
+Student role drops "Request History" (Ch1 §1.1.4 view-only — status is already
+visible via timetable colors per FR 1.3) and gains "Upcoming Replacements"
+(FR 1.4). The `/my-request-history-ui` route stays for lecturers/PLs.
+
+### Files Changed
+
+#### `resources/views/ui-design-templates/student-my-timetable-UI-design-template.blade.php`
+
+| Location | Change | Detail |
+|---|---|---|
+| Line 6 (`navItems`) | Replaced | `['key'=>'replacement-history', …]` → `['key'=>'upcoming-replacements','label'=>'Upcoming Replacements','href'=>'/upcoming-replacements-ui']` |
+
+New page stub + route + `MockData.upcomingReplacements` dataset recorded in
+`upcoming-replacements-ui-changelog.md`; UI build spec in
+`todo list/upcoming-replacements-ui-plan.md`.
+
+---
+
 ## [2026-08-16] Today button now persists week selection
 
 The "Today" button now saves the current week to `localStorage` (via `WeekNavigator.jumpToToday()` calling `this.save()`), consistent with arrow/dropdown navigation. Previously, clicking Today would jump the view but not persist — a page refresh would revert to the old week.

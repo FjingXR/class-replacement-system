@@ -217,30 +217,28 @@ Update the Cancel Class confirmation modal on the My Timetable page to require a
 
 ---
 
-### [TASK-006] Student Request History Drop + Upcoming Replacements (PENDING)
+### [TASK-006] Student Request History Drop + Upcoming Replacements (PHASE 1 COMPLETED 2026-08-24)
 
-- **Status:** `pending`
+- **Status:** `in_progress` (Phase 1 done; Sprint 3 = UI build per plan doc)
 - **Priority:** `high`
 - **Affected files:**
-  - `resources/views/ui-design-templates/student-my-timetable-UI-design-template.blade.php` — remove "Request History" nav item
-  - `public/js/mock-data.js` — add `upcomingReplacements` dataset (Sprint 3)
-  - `page-changelogs/student-my-timetable-ui-changelog.md` — record change
+  - `resources/views/ui-design-templates/student-my-timetable-UI-design-template.blade.php` — nav item swapped ✅
+  - `routes/web.php` — `/upcoming-replacements-ui` route added ✅
+  - `resources/views/ui-design-templates/upcoming-replacements-UI-design-template.blade.php` — stub page created ✅
+  - `public/js/mock-data.js` — §2.12 `upcomingReplacements` dataset added ✅
+  - `page-changelogs/upcoming-replacements-ui-changelog.md` — created ✅
+  - `page-changelogs/todo list/upcoming-replacements-ui-plan.md` — Implementation Details doc created ✅
 
 **Description:**
-Remove the Full Request History page from the student role (Ch1 says students are "view status only"). Prepare for an Upcoming Replacements feature — implementation approach TBD (separate page OR section/card on student timetable page, decision deferred to Sprint 3).
+Remove the Full Request History page from the student role (Ch1 view-only) and replace the nav item with Upcoming Replacements (FR 1.4).
 
 **Changes:**
+1. **Done (Phase 1):** Nav swap, route, stub page (page header + empty-state placeholder), §2.12 mock data keyed to real rsd3g2Base/Flags rows.
+2. **Sprint 3 (user builds):** Real Upcoming Replacements UI per `upcoming-replacements-ui-plan.md` — card layout (Option A), week filter, openClassModal wiring, status badges blue/yellow.
 
-1. **Immediate:** Remove `'replacement-history'` nav item from student template `navItems` array (1 line)
-2. **Sprint 3 (TBD):** Implement Upcoming Replacements — either:
-   - **Option A (recommended):** Section/cards on Student My Timetable page — zero extra clicks, reuse `openClassModal` for detail
-   - **Option B:** Separate Upcoming Replacements page — +1 click, more space for filters
-3. **Sprint 3:** Add `upcomingReplacements` mock data to `mock-data.js`
-4. **Sprint 3:** Wire detail modal with primary info (subject, new day/time/venue, lecturer, status)
+**Note:** The `/my-request-history-ui` route stays — lecturers and PLs still use it. Only the student nav link was replaced.
 
-**Note:** The `/my-request-history-ui` route stays — lecturers and PLs still use it. Only the student nav link is removed.
-
-**Full plan:** See `student-request-history-drop-plan.md`
+**Full plan:** See `upcoming-replacements-ui-plan.md`
 
 ---
 
