@@ -1,11 +1,11 @@
 # Knowledge Transfer — New AI Session Handover
 
 > **Source template:** `/Prompt — Transfer Important Context to a New AI Session.md`
-> **Created:** 2026-08-21 | **Updated:** 2026-08-21 (rename + commit)
+> **Created:** 2026-08-21 | **Updated:** 2026-08-21 19:00 (rename to general_Session)
 > **Baseline wanted:** `83fd365` — `fix: timetable grid now loads on initial page load` — reverted via `git reset --hard 83fd365` per user `83fd365e4152669b...`
 > **Previous reverted:** `f3d2554` (block model) + `f316278` (rename) — discarded
-> **Current HEAD (committed, clean):** `8dbef39` — `docs: add knowledge transfer 2026-08-21, FYP briefing, todo plans + regression tests` (parent `d2c494d` ← `116cbee` ← `83fd365`; `origin/fjing` at `f316278`, diverged 3 vs 1)
-> **Branch:** `fjing` — working tree clean
+> **Current HEAD (committed, clean):** `a634be2` — `docs: rename knowledge file to general_Session_2026-08-21.md and update HEAD to 8dbef39` (chain `a634be2` ← `8dbef39` ← `d2c494d` ← `116cbee` ← `83fd365`; `origin/fjing` at `f316278`, diverged 4 vs 1)
+> **Branch:** `fjing` — working tree clean at `a634be2`
 > **Project root:** `/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system`
 
 ---
