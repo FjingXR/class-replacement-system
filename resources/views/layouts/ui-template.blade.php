@@ -24,7 +24,9 @@
 
     @if(!isset($hideNav) || !$hideNav)
         @include('partials.ui-nav-bar', ['activeNav' => $activeNav ?? '', 'notifCount' => $notifCount ?? 3, 'navItems' => $navItems ?? null])
+        {{-- LOGOUT MODAL DISABLED — logout now submits the form directly (see ui-nav-bar)
         @include('partials.ui-logout-modal')
+        --}}
     @endif
 
 
@@ -34,7 +36,9 @@
 
     <script src="/js/mock-data.js?v=3"></script>
     <script src="/js/ui-common.js?v=7"></script>
+    {{-- LOGOUT MODAL DISABLED
     <script src="/js/logout-modal.js"></script>
+    --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var pageKey = document.body.dataset.page;
