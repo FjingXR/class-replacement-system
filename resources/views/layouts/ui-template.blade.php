@@ -15,6 +15,15 @@
             // Default is 'dark' from HTML
         })();
     </script>
+    {{-- Anti-FOUC guard: applies until theme.css loads. Extensions that force layout
+         before stylesheets arrive (e.g. MetaMask) would otherwise paint the unstyled
+         nav drawer fully visible at the left edge, then slide it away once CSS lands.
+         theme.css's own `.nav-drawer { display: flex }` overrides this guard on load. --}}
+    <style>
+        html.dark  { background: #0D1B2A; }
+        html.light { background: #F0F3F7; }
+        .nav-drawer { display: none; }
+    </style>
     <link rel="stylesheet" href="/css/theme.css">
     <style>
         @yield('page-styles')

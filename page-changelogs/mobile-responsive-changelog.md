@@ -14,6 +14,7 @@
 |-----------|----------|--------|--------|
 | 2026-08-02 19:40 | Line 5 | Modify | Update viewport meta to include `viewport-fit=cover` for iPhone safe area support |
 | 2026-08-02 19:40 | Line 37 | Modify | Add `initMobileNav()` call in DOMContentLoaded handler |
+| 2026-09-30 13:30 | Lines 18-26 (head, before theme.css link) | Add | Anti-FOUC guard: inline `<style>` setting `html.dark/html.light` background + `.nav-drawer { display: none }`, applied until theme.css loads. Extensions that force layout before stylesheets arrive (e.g. MetaMask content script, confirmed via forced-layout console warning + rAF frame capture) painted the unstyled drawer fully visible at the left edge, then its `transition: transform 0.3s` slid it away (~0.2s "auto open then auto close" flash on every page switch). Guard is overridden by theme.css's own `.nav-drawer { display: flex }` once the stylesheet applies; verified drawer open/close + desktop layout unaffected, and delayed-CSS screencast shows the drawer never paints. |
 
 ### `public/css/theme.css`
 
