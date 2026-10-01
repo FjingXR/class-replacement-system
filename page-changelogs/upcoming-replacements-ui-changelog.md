@@ -31,6 +31,11 @@ Sprint 3 per `todo list/upcoming-replacements-ui-plan.md`.
 - Status vocabulary mirrors timetable legend: `replacement`=approved-upcoming (blue), `pending`=awaiting PL (yellow) — `.badge-replacement` / `.badge-pending`.
 - Pending rows carry null new-slot fields so the UI can show "Awaiting PL approval" without inventing data.
 
+## [2026-10-02] User revision — empty state above summary; summary hidden when empty
+
+- The `ui-empty-state` include moved **above** the summary strip in the DOM.
+- When the view is empty, `#summarySection` (5 cards + hint) is **hidden entirely** — nothing to summarize (house precedent: my-request-history hides its summary bar on empty); it restores on any non-empty view. Verified: Week 7 → empty state shown + summary hidden; Week 10 → summary back + empty state hidden (and positioned above summary in the DOM); 0 console errors.
+
 ## [2026-10-02] User revision — modal slots as data-label/data-value rows
 
 Slot info in the modal is no longer one long string: each fact gets its own definition row, grouped per slot — **Original Slot**: Week 12 / Day Wednesday / Date 14 Oct 2026 / Time 2:00 PM to 4:00 PM / Duration 2 hrs / Venue A104 — and the same block for **New Slot** (pending: single "Awaiting PL approval" row with the muted PL explanation). Modal groups are now Class · Original Slot · New Slot · Status (badge + Requested At/Remarks + past Status Note). Full day names from the row data; time/duration math shared with the list (**Duration rows now "x hours y minutes"** — singular/plural, zero parts omitted: "2 hours", "1 hour 30 minutes"). The transient `.slot-line` chip CSS was removed (unused). Verified: approved modal = 4 groups × (4+6+6+2) rows, pending = (4+6+1+2), 0 console errors.

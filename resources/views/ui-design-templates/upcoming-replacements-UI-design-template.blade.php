@@ -124,7 +124,10 @@
         @include('partials.ui-grid-table', ['wrapperId' => 'upcomingGridWrapper', 'tableId' => 'upcomingTable', 'headId' => 'upcomingHead', 'bodyId' => 'upcomingBody', 'tableClass' => 'timetable data-table'])
         <div id="upcomingList" class="upcoming-list"></div>
 
-        <!-- ─── Summary strip (5 cards: Total / Upcoming / Pending / Past / Hours) ─── -->
+        <!-- ─── Empty state (shown by JS when the filtered list is empty; above the summary) ─── -->
+        @include('partials.ui-empty-state', ['title' => 'No replacements this week', 'text' => 'No upcoming replacement classes for RSD3(S1)G2 in the selected week.'])
+
+        <!-- ─── Summary strip (5 cards: Total / Upcoming / Pending / Past / Hours) — hidden when the view is empty ─── -->
         @include('partials.ui-summary-bar', [ 'cards' => [
             ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total', 'description' => 'Replacement classes affecting <strong>your cohort</strong> in the selected view.'],
             ['class' => 'card-replacement', 'valueId' => 'sumUpcoming', 'label' => 'Upcoming', 'description' => 'Confirmed replacement classes <strong>still ahead</strong> of you — check the New Slot column for when and where.'],
@@ -132,9 +135,6 @@
             ['class' => 'card-hours', 'valueId' => 'sumPast', 'label' => 'Past', 'description' => 'Confirmed replacements that have <strong>already taken place</strong> — enable Show Past to see them.'],
             ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Hours', 'description' => 'Total <strong>hours</strong> of replaced classes in the selected view (each slot = <strong>30 minutes</strong>).'],
         ] ])
-
-        <!-- ─── Empty state (shown by JS when the filtered list is empty) ─── -->
-        @include('partials.ui-empty-state', ['title' => 'No replacements this week', 'text' => 'No upcoming replacement classes for RSD3(S1)G2 in the selected week.'])
 
         <!-- ─── Class detail modal (shared shell for openClassModal) ─── -->
         @include('partials.ui-class-detail-modal')
@@ -247,6 +247,10 @@
 
             const emptyState = document.getElementById('emptyState');
             if (emptyState) emptyState.style.display = visible.length === 0 ? 'flex' : 'none';
+            // Nothing to summarize when the view is empty — hide the whole
+            // summary section (cards + hint), cf. my-request-history
+            const summarySection = document.getElementById('summarySection');
+            if (summarySection) summarySection.style.display = visible.length === 0 ? 'none' : '';
         }
 
         function openReplacementModal(id) {
