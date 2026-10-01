@@ -560,8 +560,28 @@ function computeSummary(events, days) {
  * @param {Array} cfg.extraFields - Additional fields to append before Status
  * @param {string} [cfg.modalId='classModal'] - Modal element ID
  * @param {string} [cfg.title] - Custom title (default: event.code)
+ * @param {Array} [cfg.groups] - Grouped layout: [{ heading, rows: [{ label, value, strong? }] }].
+ *   When present, renders one section per group (tidier for multi-category modals)
+ *   and replaces the flat single-section layout. Additive — omit for the original behavior.
  */
 function openClassModal(cfg) {
+    // ── Grouped layout (additive, §10.0 rule 6 — detail without overwhelm) ──
+    if (cfg.groups) {
+        const bodyHtml = cfg.groups.map(function(g) {
+            return DetailModal.section(g.heading, g.rows.map(function(r) {
+                return DetailModal.row(r.label, r.value, { strong: r.strong });
+            }).join(''));
+        }).join('');
+        DetailModal.render({
+            modalId: cfg.modalId || 'classModal',
+            title: cfg.title || 'Class Details',
+            subtitle: cfg.subtitle || '',
+            timeline: cfg.timeline || null,
+            body: bodyHtml
+        });
+        return;
+    }
+
     const event = cfg.event;
     const di = cfg.dayIndex;
     const days = cfg.days;

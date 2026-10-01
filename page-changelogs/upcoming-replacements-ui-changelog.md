@@ -31,6 +31,24 @@ Sprint 3 per `todo list/upcoming-replacements-ui-plan.md`.
 - Status vocabulary mirrors timetable legend: `replacement`=approved-upcoming (blue), `pending`=awaiting PL (yellow) — `.badge-replacement` / `.badge-pending`.
 - Pending rows carry null new-slot fields so the UI can show "Awaiting PL approval" without inventing data.
 
+## [2026-10-02] User revision — modal slots as data-label/data-value rows
+
+Slot info in the modal is no longer one long string: each fact gets its own definition row, grouped per slot — **Original Slot**: Week 12 / Day Wednesday / Date 14 Oct 2026 / Time 2:00 PM to 4:00 PM / Duration 2 hrs / Venue A104 — and the same block for **New Slot** (pending: single "Awaiting PL approval" row with the muted PL explanation). Modal groups are now Class · Original Slot · New Slot · Status (badge + Requested At/Remarks + past Status Note). Full day names from the row data; time/duration math shared with the list (**Duration rows now "x hours y minutes"** — singular/plural, zero parts omitted: "2 hours", "1 hour 30 minutes"). The transient `.slot-line` chip CSS was removed (unused). Verified: approved modal = 4 groups × (4+6+6+2) rows, pending = (4+6+1+2), 0 console errors.
+
+## [2026-10-02] User revision — modal slot rows as full-width blocks
+
+Long slot strings no longer cram into the narrow label/value column: Original/New Slot rows stack (label above, value below) and the slot renders as a full-width highlighted chip (`.slot-line`, page-scoped CSS using `:has()` so only rows carrying it are affected — other rows keep the standard label/value layout). Pending New Slot keeps the inline muted PL explanation inside the chip. Verified: 2 slot rows stack column-direction, chip spans the modal body width, 0 console errors.
+
+## [2026-10-02] User revision — modal slimmed (no Requested By; Awaiting tooltip)
+
+- **"Requested By" row removed** (the lecturer already appears in the Class group) — the pending-only "Request" group dissolved; "Requested At" moved into the Replacement group. Modals now have exactly 2 sections: Class · Replacement.
+- **"Awaiting PL approval" shows its description inline** (user: a modal should show detail, not hide it behind hover): the value now reads "Awaiting PL approval *— the Programme Leader (PL) has not confirmed this replacement; the new slot is not decided yet*" with the sentence in the shared `detail-value--muted` variant (replaces the previous tooltip attempt).
+- Verified: pending modal = 2 groups / 8 rows (Requested By gone, tooltip live), approved modal unchanged, 0 console errors.
+
+## [2026-10-02] User revision — modal grouped by category
+
+The detail modal on upcoming-replacements-ui showed ~14 flat rows (overwhelming). Added an **additive `cfg.groups` option to the shared `openClassModal`** (one `DetailModal.section` per group; omit → original flat behavior, verified intact on student-my-timetable). The page now renders 3 tidy sections — **Class** (code, name, type, lecturer) · **Replacement** (status badge incl. holiday-Conflict remap parity, Original/New Slot with the new date format via shared `fmtSlot`, Status Note for past rows, Remarks) · **Request** (pending only: Requested At/By + Submitted→Under Review→Awaiting timeline). Dropped: redundant Status Description row; no View Full Request (AD-12 unchanged). `fmtSlot` hoisted to a top-level page helper shared by list + modal. Verified: pending/approved/conflict modals, 3 groups render, 0 console errors.
+
 ## [2026-10-02] User revision — summary cards v2 (Upcoming/Past/Hours replace Lectures/Tutorials)
 
 Lectures/Tutorials cards dropped as low-value; the strip is now **Total · Upcoming · Pending · Past · Hours** (Approved removed — it duplicated Upcoming whenever Show Past is off). Upcoming = confirmed replacements with week ≥ current week (blue); Past = confirmed & already taken (**grey** `card-hours` variant — green read too close to Total); Hours = Σ slot durations of the visible rows (neutral). All still derive from the same visible predicate (AD-11). Verified: Week 10 = 2/0/2/0/3.5 · All+Past = 18/2/9/7/34 · All no-Past = 6/2/4/0/11 · Week 12 = 2/2/0/0/4; 0 console errors.

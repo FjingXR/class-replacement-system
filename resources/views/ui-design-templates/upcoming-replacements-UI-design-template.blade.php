@@ -156,6 +156,17 @@
             } catch (e) { /* storage unavailable — non-fatal */ }
         }
 
+        // ─── Shared slot formatter (list + modal):
+        // ─── Week 14 · Fri, 30 Oct 2026, 12:00 PM to 1:30 PM (1.5 hrs) @ B103
+        function fmtSlot(weekDays, week, di, start, end, time, venue, withWeek) {
+            const d = weekDays[week].days[di];
+            const h = (end - start + 1) * 0.5; // 30-min index space
+            const t12 = time.split('–').map(s => to12h(s.trim())).join(' to ');
+            return (withWeek ? 'Week ' + (week + 1) + ' · ' : '') +
+                d.abbr + ', ' + d.date + ', ' + t12 +
+                ' (' + (h === 1 ? '1 hr' : h + ' hrs') + ') @ ' + venue;
+        }
+
         function renderUpcoming() {
             // AD-2: select values are 1-based strings; dataset weeks are 0-based.
             // 'all' = All Weeks option (page-side addition; shared helpers are
@@ -183,16 +194,6 @@
 
             // ── Desktop table (shared .timetable/.data-table house pattern, cf. my-request-history) ──
             const weekDays = generateWeekData(); // one build per render; rows index into it
-            // Slot formatter (user-specified format):
-            //   Week 14 · Fri, 30 Oct 2026, 12:00 PM to 1:30 PM (1.5 hrs) @ B103
-            const fmtSlot = (week, di, start, end, time, venue, withWeek) => {
-                const d = weekDays[week].days[di];
-                const h = (end - start + 1) * 0.5; // 30-min index space
-                const t12 = time.split('–').map(s => to12h(s.trim())).join(' to ');
-                return (withWeek ? 'Week ' + (week + 1) + ' · ' : '') +
-                    d.abbr + ', ' + d.date + ', ' + t12 +
-                    ' (' + (h === 1 ? '1 hr' : h + ' hrs') + ') @ ' + venue;
-            };
             const head = document.getElementById('upcomingHead');
             const body = document.getElementById('upcomingBody');
             head.innerHTML = '<tr>' +
@@ -203,8 +204,8 @@
                 const tip = r.status === 'replacement'
                     ? 'Confirmed — attend the new slot shown'
                     : 'Awaiting PL approval — the new slot is not confirmed yet';
-                const origSlot = fmtSlot(r.week, r.di, r.start, r.end, r.originalTime, r.originalVenue, true);
-                const newSlot = r.newDay ? fmtSlot(r.week, r.newDi, r.newStart, r.newEnd, r.newTime, r.newVenue, true) : 'Awaiting PL approval';
+                const origSlot = fmtSlot(weekDays, r.week, r.di, r.start, r.end, r.originalTime, r.originalVenue, true);
+                const newSlot = r.newDay ? fmtSlot(weekDays, r.week, r.newDi, r.newStart, r.newEnd, r.newTime, r.newVenue, true) : 'Awaiting PL approval';
                 return '<tr role="button" tabindex="0" data-id="' + r.id + '">' +
                     '<td>' + (i + 1) + '</td>' +
                     '<td class="col-code">' + r.code + ' · ' + r.name + ' (' + r.type + ')</td>' +
@@ -226,8 +227,8 @@
                 const tip = r.status === 'replacement'
                     ? 'Confirmed — attend the new slot shown'
                     : 'Awaiting PL approval — the new slot is not confirmed yet';
-                const origSlot = fmtSlot(r.week, r.di, r.start, r.end, r.originalTime, r.originalVenue, false);
-                const newSlot = r.newDay ? fmtSlot(r.week, r.newDi, r.newStart, r.newEnd, r.newTime, r.newVenue, false) : 'Awaiting PL approval';
+                const origSlot = fmtSlot(weekDays, r.week, r.di, r.start, r.end, r.originalTime, r.originalVenue, false);
+                const newSlot = r.newDay ? fmtSlot(weekDays, r.week, r.newDi, r.newStart, r.newEnd, r.newTime, r.newVenue, false) : 'Awaiting PL approval';
                 return '<div class="upcoming-card' + (past ? ' past' : '') + '" role="button" tabindex="0" data-id="' + r.id + '">' +
                     '<div class="upcoming-card-head">' +
                         '<span class="upcoming-card-wk">' + (r.week + 1) + '</span>' +
@@ -254,32 +255,68 @@
             const pending = r.status === 'pending';
             const flagsTuple = (MockData.cohortTimetable.rsd3g2Flags[r.week] || [])
                 .find(f => f[0] === r.code && f[1] === r.status);
+            const weekDays = generateWeekData();
+            const past = r.week < currentWeekIndex();
 
-            const event = {
-                code: r.code, name: r.name, type: r.type, lecturer: r.lecturer,
-                venue: r.newVenue || r.originalVenue,
-                status: r.status,
-                start: pending ? r.start  : r.newStart,   // REQUIRED (ui-common.js:572)
-                end:   pending ? r.end    : r.newEnd,
-                remarks: r.requestedAt ? ('Requested ' + r.requestedAt) : '',
-                ...(pending ? {
-                    // AD-6: same default the grid fabricates
-                    requestedAt: (flagsTuple && flagsTuple[3]) || '01 Sep 2026, 09:15 AM',
-                    requestedBy: r.lecturer,
-                } : {}),
-                // NOTE: no requestId — AD-12 (prevents the shared modal's "View Full Request" link)
+            // AD-6: same default the grid fabricates
+            const requestedAt = pending ? ((flagsTuple && flagsTuple[3]) || '01 Sep 2026, 09:15 AM') : undefined;
+
+            // Holiday remap — parity with the grid (shared openClassModal behavior):
+            // pending rows whose ORIGINAL day is a holiday show a red Conflict badge.
+            const day = weekDays[r.week].days[pending ? r.di : r.newDi];
+            const conflict = day && day.holiday;
+            const statusBadge = '<span class="badge badge-' + (conflict ? 'conflict' : r.status) + '">' +
+                (conflict ? 'Conflict' : (r.status === 'replacement' ? 'Replacement' : 'Pending')) + '</span>';
+
+            // Slot facts as ONE ROW EACH (data-label / data-value list) — modal-style:
+            //   Week 10 · Day Friday · Date 02 Oct 2026 · Time … · Duration … · Venue …
+            const slotRows = (week, di, start, end, time, venue, fullDay) => {
+                const d = weekDays[week].days[di];
+                // Duration as "x hours y minutes" (30-min grid → minutes are 0 or 30; zero parts omitted)
+                const mins = (end - start + 1) * 30;
+                const hh = Math.floor(mins / 60);
+                const mm = mins % 60;
+                const dur = (hh ? hh + ' hour' + (hh === 1 ? '' : 's') + (mm ? ' ' : '') : '') +
+                            (mm ? mm + ' minutes' : '');
+                return [
+                    { label: 'Week', value: String(week + 1) },
+                    { label: 'Day', value: fullDay },
+                    { label: 'Date', value: d.date },
+                    { label: 'Time', value: time.split('–').map(s => to12h(s.trim())).join(' to ') },
+                    { label: 'Duration', value: dur },
+                    { label: 'Venue', value: venue },
+                ];
             };
 
             openClassModal({
-                event,
-                dayIndex: pending ? r.di : r.newDi,
-                days: generateWeekData()[r.week].days,   // AD-3: array index = 0-based week
                 title: r.code + ' — Replacement',
-                extraFields: [
-                    { label: 'Original Slot', value: r.originalDay + ', ' + r.originalTime + ' · ' + r.originalVenue },
-                    { label: 'New Slot', value: r.newDay ? (r.newDay + ', ' + r.newTime + ' · ' + r.newVenue) : 'Awaiting PL approval' },
-                    ...(r.week < currentWeekIndex() ? [{ label: 'Status Note', value: 'This replacement has already taken place.' }] : []),
+                subtitle: r.name,
+                modalId: 'classModal',
+                // Grouped layout (§10.0 rule 6 — tidy categories instead of a flat wall)
+                groups: [
+                    { heading: 'Class', rows: [
+                        { label: 'Subject Code', value: r.code },
+                        { label: 'Subject Name', value: r.name },
+                        { label: 'Class Type', value: r.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
+                        { label: 'Lecturer', value: r.lecturer },
+                    ]},
+                    { heading: 'Original Slot', rows: slotRows(r.week, r.di, r.start, r.end, r.originalTime, r.originalVenue, r.originalDay) },
+                    { heading: 'New Slot', rows: r.newDay
+                        ? slotRows(r.week, r.newDi, r.newStart, r.newEnd, r.newTime, r.newVenue, r.newDay)
+                        : [{ label: 'Status', value: 'Awaiting PL approval <span class="detail-value--muted">— the Programme Leader (PL) has not confirmed this replacement; the new slot is not decided yet</span>' }] },
+                    { heading: 'Status', rows: [
+                        { label: 'Status', value: statusBadge },
+                        ...(past ? [{ label: 'Status Note', value: 'This replacement has already taken place.' }] : []),
+                        ...(pending ? [{ label: 'Requested At', value: requestedAt }] : []),
+                        ...(r.requestedAt ? [{ label: 'Remarks', value: 'Requested ' + r.requestedAt }] : []),
+                    ]},
                 ],
+                timeline: pending ? [
+                    { label: 'Submitted', time: requestedAt || 'Done', state: 'completed' },
+                    { label: 'Under Review', time: 'In progress', state: 'active', dot: 'dot-warning' },
+                    { label: 'Awaiting Replacement', time: 'Next', state: 'pending' },
+                ] : null,
+                // NOTE: no requestId — AD-12 (no View Full Request on list modals)
             });
         }
 
