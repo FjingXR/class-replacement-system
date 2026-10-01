@@ -1079,6 +1079,15 @@ class TableController {
 
 // ───── Modal helpers ─────
 
+// Shared detail-modal close (promoted from per-page copies, §10.0 rule 7 —
+// the ui-class-detail-modal partial hardcodes onclick="closeModal()").
+// Pages may still define their own closeModal (their later script blocks
+// override this) — new pages only need a copy if they use a different modal id.
+function closeModal() {
+    var m = document.getElementById('classModal');
+    if (m) m.style.display = 'none';
+}
+
 function closeOnEsc(closeFn) {
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeFn();
