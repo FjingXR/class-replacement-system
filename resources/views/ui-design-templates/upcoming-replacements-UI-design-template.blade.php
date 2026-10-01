@@ -11,6 +11,98 @@
 @section('title', 'Upcoming Replacements')
 
 @section('page-styles')
+
+        /* ─── Upcoming list: TABLE on desktop (shared .timetable/.data-table styles),
+               CARDS on mobile only (user revision 2026-10-01) ─── */
+        .upcoming-list {
+            display: none; /* cards are mobile-only */
+        }
+        #upcomingBody tr {
+            cursor: pointer;
+        }
+        #upcomingBody tr:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -2px;
+        }
+        .col-status { white-space: nowrap; }
+        .upcoming-card-wk {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-on-surface-variant);
+            background: var(--color-surface-variant);
+            border-radius: var(--radius-sm);
+            padding: 2px 8px;
+            white-space: nowrap;
+        }
+
+        /* ─── Toolbar: stick Today to the right of the week nav
+               (page-scoped override of the shared space-between distribution) ─── */
+        .toolbar { justify-content: flex-start; }
+
+        .upcoming-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
+        /* hover elevation mirrors theme.css .request-card / cell-hover pattern */
+        .upcoming-card:hover {
+            background: var(--color-surface-variant);
+            box-shadow: var(--shadow-sm);
+        }
+        .upcoming-card:active {
+            transform: scale(0.99);
+        }
+        .upcoming-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .upcoming-card-code {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-on-surface);
+        }
+        .upcoming-card-slots {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: var(--color-on-surface);
+        }
+        .upcoming-card-lect {
+            font-size: 12px;
+            color: var(--color-on-surface-variant);
+        }
+        .slot-arrow {
+            color: var(--color-primary);
+        }
+        .upcoming-card.past {
+            border: 1px solid var(--color-outline);
+            color: var(--color-on-surface-variant);
+        }
+
+        /* ─── Mobile (≤768px): cards replace the table; toolbar stacks via theme.css shared rules ─── */
+        @media (max-width: 768px) {
+            #upcomingGridWrapper {
+                display: none !important;
+            }
+            .upcoming-list {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
+                margin-top: 14px;
+            }
+            /* whole card is the touch target — keep it ≥44px */
+            .upcoming-card {
+                min-height: 44px;
+            }
+        }
 @endsection
 
 @section('content')
@@ -18,26 +110,251 @@
         <!-- ─── Page Header ─── -->
         @include('partials.ui-page-header', ['title' => 'Upcoming Replacements', 'description' => 'Replacement classes confirmed or pending for your cohort.', 'chips' => [['label' => 'RSD3(S1)G2']]])
 
-        <!-- ─── Stub placeholder — replace with the real UI per
-             page-changelogs/todo list/upcoming-replacements-ui-plan.md ─── -->
-        @include('partials.ui-empty-state', ['title' => 'UI design pending', 'text' => 'The Upcoming Replacements interface will appear here once designed (Sprint 3).'])
+        <!-- ─── Toolbar: week navigation + show-past toggle ─── -->
+        <div class="toolbar">
+            @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeekFilter()', 'nextOnclick' => 'nextWeekFilter()', 'selectId' => 'weekFilter', 'selectOnclick' => "weekFilterChanged({onRebuild: renderUpcoming})", 'showTodayBtn' => true])
+            <label class="toggle-wrapper" data-tip="Show replacement classes from weeks that have already passed">
+                <input type="checkbox" id="showPast">
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                <span class="toggle-label">Show Past</span>
+            </label>
+        </div>
 
-    <!-- ═══ Copy Toast ═══ -->
-    <div class="copy-toast" id="copyToast"></div>
+        <!-- ─── Replacement list — desktop: shared table (JS renders rows); mobile: cards ─── -->
+        @include('partials.ui-grid-table', ['wrapperId' => 'upcomingGridWrapper', 'tableId' => 'upcomingTable', 'headId' => 'upcomingHead', 'bodyId' => 'upcomingBody', 'tableClass' => 'timetable data-table'])
+        <div id="upcomingList" class="upcoming-list"></div>
+
+        <!-- ─── Summary strip (5 cards: status + type split, Combo A) ─── -->
+        @include('partials.ui-summary-bar', [ 'cards' => [
+            ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total', 'description' => 'Replacement classes affecting <strong>your cohort</strong> in the selected week.'],
+            ['class' => 'card-approved', 'valueId' => 'sumApproved', 'label' => 'Approved'],
+            ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending', 'description' => 'Replacement requests still <strong>waiting for PL approval</strong> for your cohort.'],
+            ['class' => 'card-replacement', 'valueId' => 'sumLectures', 'label' => 'Lectures', 'description' => 'Replacement classes for <strong>Lecture (L)</strong> sessions in the selected week.'],
+            ['class' => 'card-hours', 'valueId' => 'sumTutorials', 'label' => 'Tutorials', 'description' => 'Replacement classes for <strong>Tutorial (T)</strong> sessions in the selected week.'],
+        ] ])
+
+        <!-- ─── Empty state (shown by JS when the filtered list is empty) ─── -->
+        @include('partials.ui-empty-state', ['title' => 'No replacements this week', 'text' => 'No upcoming replacement classes for RSD3(S1)G2 in the selected week.'])
+
+        <!-- ─── Class detail modal (shared shell for openClassModal) ─── -->
+        @include('partials.ui-class-detail-modal')
 
 @endsection
 
 @section('page-scripts')
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const emptyState = document.getElementById('emptyState');
-            if (emptyState) emptyState.style.display = 'flex';
+        // ─── Top-level functions (inline handler strings run in global scope) ───
 
+        // ─── Persisted view state (house pattern, cf. my-request-history saveFilters/restoreFilters) ───
+        const VIEW_KEY = 'upcoming-replacements-view';
+        function saveView() {
+            try {
+                localStorage.setItem(VIEW_KEY, JSON.stringify({
+                    week: document.getElementById('weekFilter').value,
+                    showPast: document.getElementById('showPast').checked,
+                }));
+            } catch (e) { /* storage unavailable — non-fatal */ }
+        }
+
+        function renderUpcoming() {
+            // AD-2: select values are 1-based strings; dataset weeks are 0-based.
+            // 'all' = All Weeks option (page-side addition; shared helpers are
+            // selectedIndex-based so they stay NaN-safe).
+            const all = document.getElementById('weekFilter').value === 'all';
+            const w0 = all ? null : parseInt(document.getElementById('weekFilter').value, 10) - 1;
+            const cur = currentWeekIndex();
+            const showPast = document.getElementById('showPast').checked;
+
+            // AD-5: MockData is read-only — slice() before filtering
+            const visible = MockData.upcomingReplacements.slice()
+                .filter(r => (all || r.week === w0) && (r.week >= cur || showPast));
+
+            // AD-11: summary counts from the SAME visible predicate
+            document.getElementById('sumTotal').textContent     = visible.length;
+            document.getElementById('sumApproved').textContent  = visible.filter(r => r.status === 'replacement').length;
+            document.getElementById('sumPending').textContent   = visible.filter(r => r.status === 'pending').length;
+            document.getElementById('sumLectures').textContent  = visible.filter(r => r.type === 'L').length;
+            document.getElementById('sumTutorials').textContent = visible.filter(r => r.type === 'T').length;
+
+            visible.sort(all
+                ? (a, b) => (a.week - b.week) || (a.di - b.di) || (a.start - b.start)
+                : (a, b) => (a.di - b.di) || (a.start - b.start));
+
+            // ── Desktop table (shared .timetable/.data-table house pattern, cf. my-request-history) ──
+            const weekDays = generateWeekData(); // one build per render; rows index into it
+            // Slot formatter (user-specified format):
+            //   Week 14 · Fri, 30 Oct 2026, 12:00 PM to 1:30 PM (1.5 hrs) @ B103
+            const fmtSlot = (week, di, start, end, time, venue, withWeek) => {
+                const d = weekDays[week].days[di];
+                const h = (end - start + 1) * 0.5; // 30-min index space
+                const t12 = time.split('–').map(s => to12h(s.trim())).join(' to ');
+                return (withWeek ? 'Week ' + (week + 1) + ' · ' : '') +
+                    d.abbr + ', ' + d.date + ', ' + t12 +
+                    ' (' + (h === 1 ? '1 hr' : h + ' hrs') + ') @ ' + venue;
+            };
+            const head = document.getElementById('upcomingHead');
+            const body = document.getElementById('upcomingBody');
+            head.innerHTML = '<tr>' +
+                ['#', 'Subject', 'Original Slot', 'New Slot', 'Lecturer', 'Status'].map(h => '<th>' + h + '</th>').join('') +
+            '</tr>';
+            body.innerHTML = visible.map((r, i) => {
+                const past = r.week < cur;
+                const tip = r.status === 'replacement'
+                    ? 'Confirmed — attend the new slot shown'
+                    : 'Awaiting PL approval — the new slot is not confirmed yet';
+                const origSlot = fmtSlot(r.week, r.di, r.start, r.end, r.originalTime, r.originalVenue, true);
+                const newSlot = r.newDay ? fmtSlot(r.week, r.newDi, r.newStart, r.newEnd, r.newTime, r.newVenue, true) : 'Awaiting PL approval';
+                return '<tr role="button" tabindex="0" data-id="' + r.id + '">' +
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td class="col-code">' + r.code + ' · ' + r.name + ' (' + r.type + ')</td>' +
+                    '<td>' + origSlot + '</td>' +
+                    '<td>' + newSlot + '</td>' +
+                    '<td>' + r.lecturer + '</td>' +
+                    '<td class="col-status">' +
+                        '<span class="badge badge-' + r.status + '" data-tip="' + tip + '">' + (r.status === 'replacement' ? 'Replacement' : 'Pending') + '</span>' +
+                        (past ? ' <span class="badge badge-past" data-tip="This replacement has already taken place">Past</span>' : '') +
+                    '</td>' +
+                '</tr>';
+            }).join('');
+            document.getElementById('upcomingGridWrapper').style.display = visible.length === 0 ? 'none' : '';
+
+            // ── Mobile cards (same rows, card anatomy; week chip carries the week digit) ──
+            const list = document.getElementById('upcomingList');
+            list.innerHTML = visible.map(r => {
+                const past = r.week < cur;
+                const tip = r.status === 'replacement'
+                    ? 'Confirmed — attend the new slot shown'
+                    : 'Awaiting PL approval — the new slot is not confirmed yet';
+                const origSlot = fmtSlot(r.week, r.di, r.start, r.end, r.originalTime, r.originalVenue, false);
+                const newSlot = r.newDay ? fmtSlot(r.week, r.newDi, r.newStart, r.newEnd, r.newTime, r.newVenue, false) : 'Awaiting PL approval';
+                return '<div class="upcoming-card' + (past ? ' past' : '') + '" role="button" tabindex="0" data-id="' + r.id + '">' +
+                    '<div class="upcoming-card-head">' +
+                        '<span class="upcoming-card-wk">' + (r.week + 1) + '</span>' +
+                        '<span class="upcoming-card-code">' + r.code + ' · ' + r.name + ' (' + r.type + ')</span>' +
+                        '<span class="badge badge-' + r.status + '" data-tip="' + tip + '">' + (r.status === 'replacement' ? 'Replacement' : 'Pending') + '</span>' +
+                        (past ? '<span class="badge badge-past" data-tip="This replacement has already taken place">Past</span>' : '') +
+                    '</div>' +
+                    '<div class="upcoming-card-slots">' +
+                        origSlot +
+                        '<span class="slot-arrow">→</span>' +
+                        newSlot +
+                    '</div>' +
+                    '<div class="upcoming-card-lect">' + r.lecturer + '</div>' +
+                '</div>';
+            }).join('');
+
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) emptyState.style.display = visible.length === 0 ? 'flex' : 'none';
+        }
+
+        function openReplacementModal(id) {
+            const r = MockData.upcomingReplacements.find(x => x.id === id);
+            if (!r) return;
+            const pending = r.status === 'pending';
+            const flagsTuple = (MockData.cohortTimetable.rsd3g2Flags[r.week] || [])
+                .find(f => f[0] === r.code && f[1] === r.status);
+
+            const event = {
+                code: r.code, name: r.name, type: r.type, lecturer: r.lecturer,
+                venue: r.newVenue || r.originalVenue,
+                status: r.status,
+                start: pending ? r.start  : r.newStart,   // REQUIRED (ui-common.js:572)
+                end:   pending ? r.end    : r.newEnd,
+                remarks: r.requestedAt ? ('Requested ' + r.requestedAt) : '',
+                ...(pending ? {
+                    // AD-6: same default the grid fabricates
+                    requestedAt: (flagsTuple && flagsTuple[3]) || '01 Sep 2026, 09:15 AM',
+                    requestedBy: r.lecturer,
+                } : {}),
+                // NOTE: no requestId — AD-12 (prevents the shared modal's "View Full Request" link)
+            };
+
+            openClassModal({
+                event,
+                dayIndex: pending ? r.di : r.newDi,
+                days: generateWeekData()[r.week].days,   // AD-3: array index = 0-based week
+                title: r.code + ' — Replacement',
+                extraFields: [
+                    { label: 'Original Slot', value: r.originalDay + ', ' + r.originalTime + ' · ' + r.originalVenue },
+                    { label: 'New Slot', value: r.newDay ? (r.newDay + ', ' + r.newTime + ' · ' + r.newVenue) : 'Awaiting PL approval' },
+                    ...(r.week < currentWeekIndex() ? [{ label: 'Status Note', value: 'This replacement has already taken place.' }] : []),
+                ],
+            });
+        }
+
+        // ─── Modal close wiring — closeModal() is now the shared global in
+        // ─── ui-common.js (§10.0 rule 7 promote); page keeps only the
+        // ─── overlay/Escape wiring (cf. student-my-timetable).
+        function closeModalOutside(e) {
+            closeOnOverlayClick(e, closeModal);
+        }
+
+        closeOnEsc(closeModal);
+
+        document.addEventListener('DOMContentLoaded', function() {
             const chipEl = document.getElementById('semesterChip');
             if (chipEl) chipEl.textContent = MockData.semester.chipText;
 
             const notifBadge = document.getElementById('notifBadge');
             if (notifBadge) notifBadge.textContent = MockData.studentTimetable.notificationCount;
+
+            // BINDING: page must load on 0-based week 9 ("Week 10"), never "Week 1"
+            populateWeekSelect('weekFilter', { selected: currentWeekIndex() + 1 });
+            // All Weeks option (page-side; prepended AFTER populate so the
+            // value-based selection above still lands on the current week)
+            (function() {
+                const sel = document.getElementById('weekFilter');
+                const opt = document.createElement('option');
+                opt.value = 'all';
+                opt.textContent = 'All Weeks';
+                sel.insertBefore(opt, sel.firstChild);
+            })();
+
+            // Restore persisted view (defaults to the current week on first visit)
+            (function() {
+                let saved = {};
+                try { saved = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}'); } catch (e) { saved = {}; }
+                const sel = document.getElementById('weekFilter');
+                if (saved.week && (saved.week === 'all' || sel.querySelector('option[value="' + saved.week + '"]'))) {
+                    sel.value = saved.week;
+                }
+                if (saved.showPast) document.getElementById('showPast').checked = true;
+            })();
+            updateWeekArrowState();
+
+            document.getElementById('showPast').addEventListener('change', function() {
+                saveView();
+                renderUpcoming();
+            });
+            document.getElementById('weekFilter').addEventListener('change', saveView);
+
+            // AD-10: pages with #weekFilter wire their own today handler
+            // (shared jumpToToday() targets #weekSelect)
+            document.getElementById('todayBtn')?.addEventListener('click', function() {
+                const sel = document.getElementById('weekFilter');
+                sel.value = String(currentWeekIndex() + 1);
+                sel.dispatchEvent(new Event('change'));
+            });
+
+            // Card/row events — delegated so listeners survive re-renders
+            // (cards = mobile container, #upcomingBody rows = desktop table)
+            const openFromEl = function(e, selector) {
+                const el = e.target.closest(selector);
+                if (el) openReplacementModal(Number(el.dataset.id));
+            };
+            ['#upcomingList', '#upcomingBody'].forEach(function(sel) {
+                const root = document.querySelector(sel);
+                root.addEventListener('click', function(e) { openFromEl(e, sel + ' [data-id]'); });
+                root.addEventListener('keydown', function(e) {
+                    if (e.key !== 'Enter' && e.key !== ' ') return;
+                    const el = e.target.closest(sel + ' [data-id]');
+                    if (!el) return;
+                    if (e.key === ' ') e.preventDefault(); // avoid page scroll
+                    openReplacementModal(Number(el.dataset.id));
+                });
+            });
+
+            renderUpcoming();
         });
 
 @endsection
