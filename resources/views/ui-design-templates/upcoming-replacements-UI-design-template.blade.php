@@ -124,13 +124,13 @@
         @include('partials.ui-grid-table', ['wrapperId' => 'upcomingGridWrapper', 'tableId' => 'upcomingTable', 'headId' => 'upcomingHead', 'bodyId' => 'upcomingBody', 'tableClass' => 'timetable data-table'])
         <div id="upcomingList" class="upcoming-list"></div>
 
-        <!-- ─── Summary strip (5 cards: status + type split, Combo A) ─── -->
+        <!-- ─── Summary strip (5 cards: Total / Upcoming / Pending / Past / Hours) ─── -->
         @include('partials.ui-summary-bar', [ 'cards' => [
-            ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total', 'description' => 'Replacement classes affecting <strong>your cohort</strong> in the selected week.'],
-            ['class' => 'card-approved', 'valueId' => 'sumApproved', 'label' => 'Approved'],
+            ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total', 'description' => 'Replacement classes affecting <strong>your cohort</strong> in the selected view.'],
+            ['class' => 'card-replacement', 'valueId' => 'sumUpcoming', 'label' => 'Upcoming', 'description' => 'Confirmed replacement classes <strong>still ahead</strong> of you — check the New Slot column for when and where.'],
             ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending', 'description' => 'Replacement requests still <strong>waiting for PL approval</strong> for your cohort.'],
-            ['class' => 'card-replacement', 'valueId' => 'sumLectures', 'label' => 'Lectures', 'description' => 'Replacement classes for <strong>Lecture (L)</strong> sessions in the selected week.'],
-            ['class' => 'card-hours', 'valueId' => 'sumTutorials', 'label' => 'Tutorials', 'description' => 'Replacement classes for <strong>Tutorial (T)</strong> sessions in the selected week.'],
+            ['class' => 'card-hours', 'valueId' => 'sumPast', 'label' => 'Past', 'description' => 'Confirmed replacements that have <strong>already taken place</strong> — enable Show Past to see them.'],
+            ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Hours', 'description' => 'Total <strong>hours</strong> of replaced classes in the selected view (each slot = <strong>30 minutes</strong>).'],
         ] ])
 
         <!-- ─── Empty state (shown by JS when the filtered list is empty) ─── -->
@@ -170,11 +170,12 @@
                 .filter(r => (all || r.week === w0) && (r.week >= cur || showPast));
 
             // AD-11: summary counts from the SAME visible predicate
-            document.getElementById('sumTotal').textContent     = visible.length;
-            document.getElementById('sumApproved').textContent  = visible.filter(r => r.status === 'replacement').length;
-            document.getElementById('sumPending').textContent   = visible.filter(r => r.status === 'pending').length;
-            document.getElementById('sumLectures').textContent  = visible.filter(r => r.type === 'L').length;
-            document.getElementById('sumTutorials').textContent = visible.filter(r => r.type === 'T').length;
+            // Upcoming = confirmed (replacement) & week >= current; Past = confirmed & already taken
+            document.getElementById('sumTotal').textContent    = visible.length;
+            document.getElementById('sumUpcoming').textContent = visible.filter(r => r.status === 'replacement' && r.week >= cur).length;
+            document.getElementById('sumPending').textContent  = visible.filter(r => r.status === 'pending').length;
+            document.getElementById('sumPast').textContent     = visible.filter(r => r.status === 'replacement' && r.week < cur).length;
+            document.getElementById('sumHours').textContent    = visible.reduce((s, r) => s + (r.end - r.start + 1) * 0.5, 0);
 
             visible.sort(all
                 ? (a, b) => (a.week - b.week) || (a.di - b.di) || (a.start - b.start)

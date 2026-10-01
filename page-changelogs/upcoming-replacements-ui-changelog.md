@@ -31,6 +31,10 @@ Sprint 3 per `todo list/upcoming-replacements-ui-plan.md`.
 - Status vocabulary mirrors timetable legend: `replacement`=approved-upcoming (blue), `pending`=awaiting PL (yellow) — `.badge-replacement` / `.badge-pending`.
 - Pending rows carry null new-slot fields so the UI can show "Awaiting PL approval" without inventing data.
 
+## [2026-10-02] User revision — summary cards v2 (Upcoming/Past/Hours replace Lectures/Tutorials)
+
+Lectures/Tutorials cards dropped as low-value; the strip is now **Total · Upcoming · Pending · Past · Hours** (Approved removed — it duplicated Upcoming whenever Show Past is off). Upcoming = confirmed replacements with week ≥ current week (blue); Past = confirmed & already taken (**grey** `card-hours` variant — green read too close to Total); Hours = Σ slot durations of the visible rows (neutral). All still derive from the same visible predicate (AD-11). Verified: Week 10 = 2/0/2/0/3.5 · All+Past = 18/2/9/7/34 · All no-Past = 6/2/4/0/11 · Week 12 = 2/2/0/0/4; 0 console errors.
+
 ## [2026-10-02] User revision — slot time format
 
 Original/New Slot cells (table + mobile cards) now render as: **`Week 14 · Fri, 30 Oct 2026, 12:00 PM to 1:30 PM (1.5 hrs) @ B103`** — full "Week N" prefix, `Fri,` day comma, 12-hour times joined with "to" (shared `to12h`), computed duration from the 30-min index space (`(end−start+1) × 0.5 hrs`, "1 hr" singular handled), `@ venue`. One shared `fmtSlot` helper serves both table (withWeek=true) and cards (withWeek=false — the card's week chip already carries the week). Verified: pending + approved rows, both duration variants present in data (1.5/2 hrs), 0 console errors.
