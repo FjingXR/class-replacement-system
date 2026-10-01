@@ -264,6 +264,17 @@
     <button class="btn-reject" onclick="bulkReject()">Reject Selected</button>
 </div>
 
+<!-- ─── Empty State (above the summary; summary auto-hides when the view is empty) ─── -->
+<div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+    </div>
+    <h3 id="emptyTitle">No requests found</h3>
+    <p id="emptyText">No requests match your search or filter criteria.</p>
+</div>
+
 @include('partials.ui-summary-bar', ['cards' => [
     ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests',
         'description' => 'Replacement requests <strong>matching your current filters</strong> in the selected period.'],
@@ -276,16 +287,6 @@
     ['class' => 'card-total', 'valueId' => 'summaryReviewed', 'label' => 'Total Reviewed',
         'description' => 'Requests already <strong>decided</strong> (approved, rejected, or completed).']
 ]])
-
-<div class="empty-state" id="emptyState" style="display:none">
-    <div class="empty-icon">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-    </div>
-    <h3 id="emptyTitle">No requests found</h3>
-    <p id="emptyText">No requests match your search or filter criteria.</p>
-</div>
 
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
@@ -625,12 +626,14 @@
                 document.getElementById('emptyState').style.display = '';
                 document.getElementById('gridWrapper').style.display = 'none';
                 document.getElementById('paginationBar').style.display = 'none';
+                syncSummarySection(false);
                 return;
             }
 
             document.getElementById('emptyState').style.display = 'none';
             document.getElementById('gridWrapper').style.display = '';
             document.getElementById('paginationBar').style.display = '';
+            syncSummarySection(true);
 
             let html = '';
             page.forEach((r, i) => {

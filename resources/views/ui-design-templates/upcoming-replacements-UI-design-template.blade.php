@@ -247,10 +247,8 @@
 
             const emptyState = document.getElementById('emptyState');
             if (emptyState) emptyState.style.display = visible.length === 0 ? 'flex' : 'none';
-            // Nothing to summarize when the view is empty — hide the whole
-            // summary section (cards + hint), cf. my-request-history
-            const summarySection = document.getElementById('summarySection');
-            if (summarySection) summarySection.style.display = visible.length === 0 ? 'none' : '';
+            // Nothing to summarize when the view is empty — cf. my-request-history
+            syncSummarySection(visible.length > 0);
         }
 
         function openReplacementModal(id) {

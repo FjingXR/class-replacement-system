@@ -225,6 +225,9 @@
             <button class="btn-bulk-cancel" id="btnBatchCancelRequest" onclick="batchCancelSelected()">Cancel Selected Request(s)</button>
         </div>
 
+        <!-- ─── Empty State (above the summary; summary auto-hides when the view is empty) ─── -->
+        @include('partials.ui-empty-state', ['title' => "You haven't submitted any replacement requests for this semester.", 'text' => 'Submit a replacement request for any conflicted class.', 'ctaLabel' => 'Submit a Replacement Request', 'ctaOnclick' => "window.location.href='/replacement-arrangement?from=my-request-history'"])
+
         <!-- ─── Summary Stat Cards ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
@@ -240,9 +243,6 @@
                     'description' => 'Your requests that were <strong>declined</strong> and need an alternative arrangement.'],
             ]
         ])
-
-        <!-- ─── Empty State ─── -->
-        @include('partials.ui-empty-state', ['title' => "You haven't submitted any replacement requests for this semester.", 'text' => 'Submit a replacement request for any conflicted class.', 'ctaLabel' => 'Submit a Replacement Request', 'ctaOnclick' => "window.location.href='/replacement-arrangement?from=my-request-history'"])
 
     <!-- ═══ View Details Modal ═══ -->
     <div class="modal-overlay" id="modalOverlay">
@@ -462,7 +462,7 @@
                 document.getElementById('emptyCta').style.display = 'inline-block';
                 document.getElementById('gridWrapper').style.display = 'none';
                 document.getElementById('paginationBar').style.display = 'none';
-                document.getElementById('summaryBar').style.display = 'none';
+                syncSummarySection(false);
             } else if (isFilteredEmpty) {
                 document.getElementById('emptyState').style.display = 'flex';
                 document.getElementById('emptyTitle').textContent = 'No replacement requests match your search or filter criteria.';
@@ -470,12 +470,12 @@
                 document.getElementById('emptyCta').style.display = 'none';
                 document.getElementById('gridWrapper').style.display = 'none';
                 document.getElementById('paginationBar').style.display = 'none';
-                document.getElementById('summaryBar').style.display = 'none';
+                syncSummarySection(false);
             } else {
                 document.getElementById('emptyState').style.display = 'none';
                 document.getElementById('gridWrapper').style.display = '';
                 document.getElementById('paginationBar').style.display = 'flex';
-                document.getElementById('summaryBar').style.display = 'grid';
+                syncSummarySection(true);
 
                 pageData.forEach(function(r, i) {
                     const row = document.createElement('tr');

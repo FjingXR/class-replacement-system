@@ -1,5 +1,12 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-10-02] Empty state above summary + summary auto-hides when empty
+
+- The inline empty-state block (previously duplicated markup, below the summary) moved **above** the `ui-summary-bar` include.
+- When the table has no rows on the current page, the whole `#summarySection` (cards + hint) is now **hidden** — no more zero-cards under "No requests found"; it restores on any non-empty view.
+- Uses the new shared `syncSummarySection(visible)` helper in `ui-common.js` (§10.0 rule 7 promotion — same pattern on my-request-history, replacement-home, request-approval, upcoming-replacements).
+- Verified: default view shows summary; "ZZZNOFIND" search shows the empty state and hides the summary; clearing restores both. 0 console errors.
+
 ## [2026-08-16] Replaced hardcoded inline styles with shared utility classes
 
 Refactored 6 hardcoded inline style instances to use shared CSS classes from `theme.css`. Textareas use `.modal-textarea`, labels use `.section-heading-sub`, action buttons use `.action-row`.

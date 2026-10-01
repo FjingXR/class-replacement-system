@@ -1,5 +1,12 @@
 # Changelog — Lecturer My Request History
 
+## [2026-10-02] Empty state above summary + summary auto-hides when empty
+
+- The `ui-empty-state` include moved **above** the summary strip in the DOM.
+- When no requests match (fully empty or filtered-empty), the whole `#summarySection` (cards + hint) is now **hidden** — previously only `#summaryBar` was hidden while the "Stats reflect…" hint stayed visible as clutter.
+- Uses the new shared `syncSummarySection(visible)` helper in `ui-common.js` (§10.0 rule 7 promotion — same pattern now on my-request-history, replacement-home, request-approval, upcoming-replacements).
+- Verified: default view shows summary; "ZZZNOFIND" search shows the empty state and hides the summary; clearing restores both. 0 console errors.
+
 ## [2026-08-16] Replaced hardcoded inline styles with shared utility classes
 
 Refactored 3 hardcoded inline style instances to use shared CSS classes from `theme.css`. Paragraph descriptions use `.page-desc`, title+badge rows use `.kicker` + `.badge-sm`.

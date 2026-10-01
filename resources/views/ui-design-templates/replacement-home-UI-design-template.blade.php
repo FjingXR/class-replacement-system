@@ -179,6 +179,9 @@
             <div class="pagination-controls" id="paginationControls"></div>
         </div>
 
+        <!-- ─── Empty State (above the summary; summary auto-hides when the view is empty) ─── -->
+        @include('partials.ui-empty-state', ['title' => 'No classes currently require replacement arrangements.', 'text' => 'Try adjusting your search or filter criteria.'])
+
         <!-- ─── Summary Dashboard ─── -->
         @include('partials.ui-summary-bar', [
             'cards' => [
@@ -194,9 +197,6 @@
                     'description' => 'Number of <strong>different courses</strong> affected by the conflicts.'],
             ]
         ])
-
-        <!-- ─── Empty State ─── -->
-        @include('partials.ui-empty-state', ['title' => 'No classes currently require replacement arrangements.', 'text' => 'Try adjusting your search or filter criteria.'])
 
         <!-- Keyboard Shortcuts Modal -->
         <div class="modal-overlay" id="keyboardModal">
@@ -418,7 +418,7 @@
             document.getElementById('summaryCourses').textContent = courses.size;
 
             const show = filtered.length > 0;
-            document.getElementById('summaryBar').style.display = show ? 'grid' : 'none';
+            syncSummarySection(show);
         }
 
         function populateWeekDropdown() {

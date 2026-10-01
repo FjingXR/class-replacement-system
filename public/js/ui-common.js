@@ -1118,6 +1118,17 @@ function closeOnOverlayClick(e, closeFn) {
     if (e.target === e.currentTarget) closeFn();
 }
 
+// ───── Summary visibility helper ─────
+
+// Auto-hide the summary section (cards + hint) when a filtered view is empty —
+// there is nothing to summarize (§10.0 rule 7, promoted from
+// upcoming-replacements / my-request-history / replacement-home /
+// request-approval which all follow the same pattern).
+function syncSummarySection(visible) {
+    var s = document.getElementById('summarySection');
+    if (s) s.style.display = visible ? '' : 'none';
+}
+
 class ModalController {
     constructor(modalId, renderFn) {
         this._modalId = modalId;

@@ -31,6 +31,10 @@ Sprint 3 per `todo list/upcoming-replacements-ui-plan.md`.
 - Status vocabulary mirrors timetable legend: `replacement`=approved-upcoming (blue), `pending`=awaiting PL (yellow) — `.badge-replacement` / `.badge-pending`.
 - Pending rows carry null new-slot fields so the UI can show "Awaiting PL approval" without inventing data.
 
+## [2026-10-02] Cross-page refactor — shared `syncSummarySection` helper
+
+The summary auto-hide logic added above was promoted to `ui-common.js` (`syncSummarySection(visible)`, §10.0 rule 7) and is now used by my-request-history, replacement-home and request-approval too; this page's local 2-liner was replaced with the shared call. Behavior unchanged (re-verified: default/empty/restore all pass).
+
 ## [2026-10-02] User revision — empty state above summary; summary hidden when empty
 
 - The `ui-empty-state` include moved **above** the summary strip in the DOM.

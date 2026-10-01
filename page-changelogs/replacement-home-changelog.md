@@ -1,5 +1,12 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-10-02] Empty state above summary + summary auto-hides when empty
+
+- The `ui-empty-state` include moved **above** the "Summary Dashboard" strip in the DOM.
+- When the filtered conflicted-class list is empty, the whole `#summarySection` (5 cards + hint) is now **hidden** — previously only `#summaryBar` was hidden while the hint stayed visible.
+- Uses the new shared `syncSummarySection(visible)` helper in `ui-common.js` (§10.0 rule 7 promotion — same pattern on my-request-history, replacement-home, request-approval, upcoming-replacements).
+- Verified: default view shows summary; "ZZZNOFIND" search shows the empty state and hides the summary; clearing restores both. 0 console errors.
+
 ## [2026-08-16] Replaced hardcoded inline styles with shared utility classes
 
 Refactored keyboard shortcut hint text to use `.hint-text` class from `theme.css`.
