@@ -1,7 +1,8 @@
 # Upcoming Replacements UI — Implementation Details
 
 > **For:** Student-facing Upcoming Replacements page design work (Sprint 3)
-> **Status:** Stub shipped — nav link live, data live, UI pending
+> **Status:** Built & implemented 2026-10-01 — real UI shipped, TASK-006 complete
+> (see `../upcoming-replacements-ui-changelog.md` for the Sprint 3 build entry)
 > **Read first:** `CodingMAIN.md` §10.0 UI rules + `prompts/sdd-propose-ui-page.md`
 > **Related:** TASK-006 in `todo-list.md`, `student-request-history-drop-plan.md`
 
@@ -100,6 +101,16 @@ function openReplacementModal(r) {
 
 If `openClassModal` needs a small extension (e.g. footer button variant), extend the
 shared function with an optional cfg flag — do NOT copy it into the page.
+
+### Plan corrections discovered during the Sprint 3 build (2026-10-01)
+
+1. **Snippet above omitted required `start`/`end`.** The shared modal needs
+   `event.start`/`event.end` (in the `hours[]` index space) to render Start/End
+   Time rows — without them the modal shows no times. The page passes
+   `start: pending ? r.start : r.newStart` / `end: pending ? r.end : r.newEnd`.
+2. **`weekDays()` does not exist.** That call in the §4 snippet is plan
+   pseudocode — the actual UI-common API for the modal's `days` argument is
+   `generateWeekData()[w0].days`.
 
 ---
 

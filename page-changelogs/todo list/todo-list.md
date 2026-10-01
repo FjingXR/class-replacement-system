@@ -217,9 +217,9 @@ Update the Cancel Class confirmation modal on the My Timetable page to require a
 
 ---
 
-### [TASK-006] Student Request History Drop + Upcoming Replacements (PHASE 1 COMPLETED 2026-08-24)
+### [TASK-006] Student Request History Drop + Upcoming Replacements (COMPLETED 2026-10-01)
 
-- **Status:** `in_progress` (Phase 1 done; Sprint 3 = UI build per plan doc)
+- **Status:** `completed` (Phase 1 2026-08-24; Sprint 3 UI built 2026-10-01)
 - **Priority:** `high`
 - **Affected files:**
   - `resources/views/ui-design-templates/student-my-timetable-UI-design-template.blade.php` — nav item swapped ✅
@@ -234,7 +234,7 @@ Remove the Full Request History page from the student role (Ch1 view-only) and r
 
 **Changes:**
 1. **Done (Phase 1):** Nav swap, route, stub page (page header + empty-state placeholder), §2.12 mock data keyed to real rsd3g2Base/Flags rows.
-2. **Sprint 3 (user builds):** Real Upcoming Replacements UI per `upcoming-replacements-ui-plan.md` — card layout (Option A), week filter, openClassModal wiring, status badges blue/yellow.
+2. **Done (Sprint 3, 2026-10-01):** Real Upcoming Replacements UI per `upcoming-replacements-ui-plan.md` — card list (week-filtered, `.upcoming-card*` CSS, ≤768px single column), week filter + today button, show-past toggle with `.badge-past` chips, summary bar, shared `openClassModal` wiring; §2.12 expanded 3 → 18 rows (+ wk7 `originalTime` data fix). All 9 SDD §6 criteria verified in-browser (0 console errors).
 
 **Note:** The `/my-request-history-ui` route stays — lecturers and PLs still use it. Only the student nav link was replaced.
 
