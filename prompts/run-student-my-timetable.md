@@ -12,7 +12,7 @@ Read first (mandatory):
 - page-changelogs/my-timetable-changelog.md — learn house style.
 
 Discuss with me BEFORE you generate the proposal (do not skip):
-1. List the FRs/NFRs that apply to this page (FR 1.2 view timetable, FR 1.4 view-only, FR 1.5 email on updates — but FR 1.5 is backend, defer) and tell me if each one is logical for the mock phase.
+1. List the FRs/NFRs that apply to this page (FR 1.2 view cohort timetable, FR 1.5–1.8 view-only, FR 1.9 email on updates — but FR 1.9 is backend, defer) and tell me if each one is logical for the mock phase.
 2. Confirm the UI design details with me: legend = 4 items (Normal/Replacement/Pending/Conflict), 5 summary cards (Total Classes, Class Hours, Replacements, Pending, Conflicts), view-only modal with Close ✕, week picker, reduced student nav (Dashboard, My Timetable, Replacement History).
 3. Wait for my OK on (1) and (2) before writing the SDD proposal/design/tasks.
 

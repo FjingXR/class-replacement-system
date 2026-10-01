@@ -84,17 +84,17 @@ Read first (mandatory):
 - resources/views/components/desktop-user-menu.blade.php — already has POST logout form.
 
 Discuss with me BEFORE you generate the proposal (do not skip):
-1. FRs/NFRs that apply: FR 1.1 login (done), NFR 2.4 session timeout 30 min (not enforced), FR 4.10 PL role (irrelevant here). Flag that SESSION_LIFETIME=120 in .env vs NFR 2.4 says 30 min — changing now will kill dev sessions. Propose: defer to Sprint 3 hardening, or use dev override.
+1. FRs/NFRs that apply: FR 1.1 login (done), NFR 2.4 + 2.5 role-based session timeout (staff 30 min / student 30 days — not yet enforced), FR 4.14 unauthenticated → login redirect (done via Fortify). Flag that .env SESSION_LIFETIME=1 (testing value) vs NFR 2.4 says 30 min for staff — changing now will kill dev sessions. Propose: defer to Sprint 3 hardening, or use dev override; lifetime must be role-based, not a single global value.
 2. Implementation approach: POST /logout route already provided by Fortify. app/Livewire/Actions/Logout.php already implements the action. dashboard.blade.php + sidebar.blade.php + desktop-user-menu.blade.php already have <form method="POST" action="{{ route('logout') }}">. What's missing: nav bar logout button is a dummy alert. Also: session lifetime config.
 3. Auth/security concerns: logout must invalidate session + regenerate CSRF token (already done in Logout action). Route POST /logout must be POST only (CSRF). Session timeout is config-only.
 
 Feature to implement
 - Name: Logout + Session Timeout
-- FR/NFR refs: NFR 2.4 (session timeout 30 min), implicit FR 1.1 (login exists → logout must work)
+- FR/NFR refs: NFR 2.4/2.5 (role-based session timeout: staff 30 min, student 30 days), implicit FR 1.1 (login exists → logout must work)
 - What changes:
   - resources/views/partials/ui-nav-bar.blade.php — wire logout button to POST /logout
-  - config/session.php — set lifetime = 30 (NFR 2.4)
-  - .env — set SESSION_LIFETIME=30
+  - config/session.php + session lifetime logic — role-based: staff 30 min (NFR 2.4), student 30 days (NFR 2.5); dev override keeps current testing value
+  - .env — SESSION_LIFETIME currently 1 (testing); prod value = 30
 - What already exists:
   - app/Livewire/Actions/Logout.php — already implemented (Auth::logout, session invalidate, regenerate token, redirect /)
   - POST /logout route — provided by Fortify (AuthenticatedSessionController@destroy)

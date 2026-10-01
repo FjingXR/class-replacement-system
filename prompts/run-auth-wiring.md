@@ -19,7 +19,7 @@ Read first (mandatory):
 - app/Livewire/Actions/Logout.php — already implemented (calls Auth::logout, invalidates session, regenerates CSRF token, redirects to /).
 - app/Providers/FortifyServiceProvider.php — custom authenticateUsing callback (queries Student/Lecturer by login_id, checks Hash::check); Fortify::loginView redirects to /login/student; configureRateLimiting set to 5/min.
 - config/fortify.php — Fortify config; 'home' => '/dashboard' (needs role-based redirect — see below).
-- config/session.php — session lifetime config; look for the block comment marked [SESSION TIMEOUT] (line ~36). Currently 'lifetime' => (int) env('SESSION_LIFETIME', 1) — set to 1 min for testing. NFR 2.4 says 30 min for production.
+- config/session.php — session lifetime config; look for the block comment marked [SESSION TIMEOUT] (line ~36). Currently 'lifetime' => (int) env('SESSION_LIFETIME', 1) — set to 1 min for testing. Latest NFR&NFR: NFR 2.4 = 30 min for **staff**, NFR 2.5 = 30 days for **students** (role-based lifetime is now the spec, not a deviation).
 - .env — SESSION_LIFETIME=1 (set for testing).
 - routes/web.php — current routes (login routes, UI mock routes, dashboard with auth middleware).
 - resources/views/partials/ui-nav-bar.blade.php — nav bar with dummy logout button (onclick="alert('Logout')" — needs real form) AND no user profile display (needs name/role info from database).
@@ -31,8 +31,8 @@ Read first (mandatory):
 Discuss with me BEFORE you generate the proposal (do not skip):
 1. List the FRs/NFRs that apply:
    - FR 1.1 login (exists — login pages work, route /login/student and /login/staff, Fortify authenticateUsing queries DB). Login is fully wired to database: Student::where('student_id', $loginId) or Lecturer::where('staff_id', $loginId), then Hash::check($password, $user->password).
-   - NFR 2.4 session timeout — config/session.php already set to 1 min (look for [SESSION TIMEOUT] comment). .env SESSION_LIFETIME=1. For production: change to 30. Comment already in code for easy finding.
-   - Role-based session lifetime: students are view-only (low risk) → 30-day session for better UX. Staff can approve/reject (higher risk) → 30 min session for security. Implementation: override session lifetime per-role in FortifyServiceProvider or middleware (Fortify `home` is a single value, so session lifetime override may need similar approach).
+   - NFR 2.4 + 2.5 session timeout — config/session.php already set to 1 min (look for [SESSION TIMEOUT] comment). .env SESSION_LIFETIME=1. **Spec (updated FR&NFR): staff 30 min (NFR 2.4), students 30 days (NFR 2.5).** Comment already in code for easy finding.
+   - Role-based session lifetime: students view-only (NFR 2.5 → 30-day session, better UX). Staff can approve/reject (NFR 2.4 → 30 min session). **This now matches the FR&NFR exactly — no deviation to justify.** Implementation: override session lifetime per-role in FortifyServiceProvider or middleware (Fortify `home` is a single value, so session lifetime override may need similar approach).
    - Post-login redirect: role-based — student → /student-my-timetable-ui (page does not exist yet, will be created in a separate SDD; for now, redirect will 404 until that page is built), staff → /my-timetable-ui. Fortify 'home' config is a single value, so the redirect needs to be overridden per-role.
    - Nav bar user profile: show Auth::user() name, role, and student_id/staff_id from related model.
    - [A1] Remember me: "Remember me" checkbox on both login forms. Fortify has built-in `remember` feature — just needs checkbox + `'remember' => $request->boolean('remember')` in auth attempt. Frontend design is TBD — use a simple placeholder checkbox for now.
@@ -61,7 +61,7 @@ Discuss with me BEFORE you generate the proposal (do not skip):
 
 Feature to implement
 - Name: Logout + Session Timeout + Login Redirect + User Panel + Remember Me + Session Countdown + Session Indicator + Staff Lockout + (Optional) Auto-Logout
-- FR/NFR refs: NFR 2.4 (session timeout — 1 min for testing, 30 min prod), implicit FR 1.1 (login exists → logout + redirect must work)
+- FR/NFR refs: NFR 2.4/2.5 (role-based session timeout — staff 30 min / student 30 days; 1 min for testing), NFR 3.4 (post-login → own timetable page), implicit FR 1.1 (login exists → logout + redirect must work)
 - What changes:
   - resources/views/partials/ui-nav-bar.blade.php — FIVE changes (user panel already exists at lines 29–45 with hardcoded data):
     (a) Replace hardcoded .user-avatar "KL" with dynamic initials from Auth::user()->name (first letter of first name + first letter of last name, e.g. "Kylian Mbappe" → "KM", "Poong Foo Jing" → "PJ"). No PFP column in users table — always use initials.
