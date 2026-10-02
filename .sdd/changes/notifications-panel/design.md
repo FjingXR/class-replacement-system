@@ -204,3 +204,18 @@ and `/request-approval-ui` (pl role):
 10. Theme toggle → panel dark mode re-verified (tokens-only).
 11. Caught-up via data: write all role ids into `notifications-read-<role>` → caught-up on open.
 12. Console errors 0 throughout; no hardcoded colors in touched files.
+
+---
+
+## 12. Post-apply user revision (2026-10-02) — "Unread only" filter toggle
+
+User request (permanent, after apply): give the tray an explicit **filter control** instead of the
+implicit unread-only render. This *reverses the enforcement scope* of AD-5 (it now describes the
+toggle-ON state only) and un-deletes the round-1 muted-history idea, deliberately, at the user's
+instruction. Recorded here rather than via a new SDD change (single-surface, ≤2h).
+
+| # | Decision | Basis |
+|---|----------|-------|
+| AD-19 | `.notif-head` gains a second row `.notif-filters` hosting one house switch: `.toggle-wrapper` + input `#notifUnreadOnly` (CHECKED by default on every load — tray behavior unchanged for fresh/first paint) + `.toggle-label` "Unread only". **ON = frozen AD-5 behavior byte-for-byte** (unread rows only; caught-up swap at 0). **OFF = all of the role's rows render newest-first (`minutesAgo` ascending — for all 21 seed rows this equals the existing order), read rows muted via `.notif-row--read`**: title weight 400 + `--color-on-surface-variant`, desc/time unchanged; row stays a live deep-link anchor; `markNotifRead` stays idempotent (clicking a muted row navigates, no list change) | user request 2026-10-02 (supersedes round-1 rejection of muted history) |
+| AD-20 | Caught-up swap fires only when filter is **ON** and unread = 0; **OFF mode always shows rows** (muted read data instead). Badge / unread-pill / mark-all visibility keep following the **unread count** (AD-7/AD-8) regardless of view mode — nothing moves in the header when the switch flips. Toggle state is NOT persisted (mock; default ON each load). `#notifUnreadOnly` `change` → re-render with AD-15 scroll-preservation; switch id is null-guarded so pre-partial pages stay safe | pairing AD-19 with D6/AD-7 |
+

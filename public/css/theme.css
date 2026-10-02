@@ -351,6 +351,20 @@ body {
     box-sizing: border-box;
 }
 
+/* T17 — "Unread only" filter row, slim strip under the head (AD-19/AD-20).
+   Toggle switch itself is the globally promoted .toggle-wrapper (theme.css
+   3135) — only sizing context for the panel lives here. */
+.notif-filters {
+    display: flex;
+    align-items: center;
+    padding: 6px 16px;
+    border-bottom: 1px solid var(--color-outline);
+    flex-shrink: 0;
+}
+.notif-filters .toggle-label {
+    font-size: 12px; /* 0.75rem — family convention, fits 360px panel */
+}
+
 #notifMarkAll {
     min-height: 44px;
     padding: 0 10px;
@@ -387,6 +401,12 @@ body {
     transition: background var(--transition);
 }
 .notif-row:hover { background: var(--color-surface-variant); }
+
+/* T17 — muted history row in "all" mode (AD-20): same hover, demoted title. */
+.notif-row--read .notif-row-title {
+    font-weight: 400;
+    color: var(--color-on-surface-variant);
+}
 
 .notif-row-icon {
     width: 36px;

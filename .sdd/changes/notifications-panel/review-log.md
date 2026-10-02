@@ -93,3 +93,14 @@ Skipped by design: single-surface shared-component change (one partial + shared 
 
 
 
+
+## Post-apply user revision — 2026-10-02 (unread-only toggle)
+
+User requested (in-session, explicit) a permanent "Show unread only" toggle for the panel —
+reversing the round-1 rejection of muted history (AD-5's implicit tray). Options presented
+(keep-as-is / permanent / TEMP); user chose **permanent**. Artifacts amended declaratively:
+design.md §12 adds AD-19 (header `.notif-filters` row + house switch `#notifUnreadOnly`, ON =
+frozen AD-5 byte-for-byte, OFF = all rows newest-first with `.notif-row--read` muted history)
+and AD-20 (caught-up swap only in ON mode; header visibility stays unread-count-driven; toggle
+not persisted). tasks.md gains T17/T18 (§6). No reviewer round — user-instructed post-apply
+revision, per house precedent (see upcoming-replacements review-log "Post-apply user revision").

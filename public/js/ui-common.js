@@ -1436,7 +1436,12 @@ function updateNotifHeaderState(count) {
     if (markAll) markAll.style.display = count > 0 ? 'inline-flex' : 'none';
 }
 
-/** AD-5 — render unread rows (anchor links, D4) + caught-up/empty swap. */
+/** AD-5 — render unread rows (anchor links, D4) + caught-up/empty swap.
+ *  T17 — "Unread only" filter (AD-19/AD-20): missing #notifUnreadOnly or
+ *  checked → exactly the old unread-only behavior (unsorted, frozen order).
+ *  Unchecked → all of the role's rows, newest first (minutesAgo ascending,
+ *  sorted on a copy — MockData is read-only). Read rows get .notif-row--read
+ *  (muted); badge/pill/mark-all always follow the unread count. */
 function renderNotifList() {
     const list = document.getElementById('notifList');
     if (!list) return;
@@ -1448,8 +1453,19 @@ function renderNotifList() {
         return n.role === role && !reads.has(n.id);
     });
 
-    list.innerHTML = unread.map(function (n) {
-        return '<a class="notif-row" data-id="' + escHtml(n.id) + '" href="' + escHtml(n.link) + '"'
+    const filterEl = document.getElementById('notifUnreadOnly');
+    const unreadOnly = !filterEl || filterEl.checked;
+    const all = !!filterEl && !filterEl.checked;
+    let rows = unread;
+    if (all) {
+        rows = window.MockData.notifications
+            .filter(function (n) { return n.role === role; })
+            .slice() // MockData read-only (AGENTS.md §4)
+            .sort(function (a, b) { return a.minutesAgo - b.minutesAgo; });
+    }
+
+    list.innerHTML = rows.map(function (n) {
+        return '<a class="notif-row' + (reads.has(n.id) ? ' notif-row--read' : '') + '" data-id="' + escHtml(n.id) + '" href="' + escHtml(n.link) + '"'
             + ' data-tip="' + escHtml(notifAbsTime(n.minutesAgo)) + '" data-tip-pos="left">'
             + '<span class="notif-row-icon notif-tile-' + escHtml(n.type) + '">' + notifGlyph(n.type) + '</span>'
             + '<span class="notif-row-body">'
@@ -1460,11 +1476,12 @@ function renderNotifList() {
             + '</a>';
     }).join('');
 
-    // Caught-up swap: at 0 unread hide the list and reveal #notifEmpty (static
-    // caught-up markup from the partial); at ≥1 the inverse.
+    // Caught-up swap (AD-5): only in unread-only mode at 0 unread. "All" mode
+    // never shows caught-up — it always has rows unless the role has none.
     const empty = document.getElementById('notifEmpty');
-    if (empty) empty.style.display = unread.length === 0 ? 'flex' : 'none';
-    list.style.display = unread.length === 0 ? 'none' : '';
+    const showEmpty = (unreadOnly && unread.length === 0) || rows.length === 0;
+    if (empty) empty.style.display = showEmpty ? 'flex' : 'none';
+    list.style.display = showEmpty ? 'none' : '';
 
     updateNotifHeaderState(unread.length);
 }
@@ -1594,6 +1611,17 @@ function initNotifPanel() {
             renderNotifList();
             list.scrollTop = scrollTop;
         }, true);
+    }
+
+    // T17 — "Unread only" toggle: re-render with scroll preserved (AD-15) and
+    // header state untouched (badge always follows the unread count).
+    const unreadOnlyToggle = document.getElementById('notifUnreadOnly');
+    if (unreadOnlyToggle) {
+        unreadOnlyToggle.addEventListener('change', function () {
+            const scrollTop = list ? list.scrollTop : 0;
+            renderNotifList();
+            if (list) list.scrollTop = scrollTop;
+        });
     }
 
     // Esc closes only while the panel is open (AD-13).

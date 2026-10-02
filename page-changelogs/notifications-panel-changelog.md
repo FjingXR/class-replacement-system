@@ -56,3 +56,21 @@ T9–T14 all pass:
 - [x] Dark + light token render; console 0 errors
 - [x] Hardcoded-color scan clean
 - [x] Lint/types = pre-existing app/-only set
+
+## [2026-10-02 post-apply] "Unread only" filter toggle (design §12, AD-19/AD-20)
+
+User-requested permanent revision: the implicit unread-only tray gains an explicit filter switch.
+**ON (default, every load)** = frozen AD-5 behavior byte-for-byte. **OFF** = all of the role's rows
+render newest-first (`minutesAgo` asc), read rows muted via `.notif-row--read` (weight-400 title in
+`--color-on-surface-variant`; still live deep-link anchors, mark-read idempotent). Caught-up message
+only fires in ON mode; badge/pill/mark-all always follow the unread count. Toggle state not persisted.
+
+| File | Change |
+|---|---|
+| `partials/ui-notifications-panel.blade.php` | `.notif-filters` row with the shared `.toggle-wrapper` switch `#notifUnreadOnly` (checked default, label "Unread only") |
+| `public/css/theme.css` | `.notif-filters` strip + `.notif-row--read` muted variant (tokens only) |
+| `public/js/ui-common.js` | `renderNotifList` filter branch (unsorted frozen order ON / sorted copy OFF — MockData stays read-only), toggle `change` → re-render with AD-15 scroll restore, null-guarded |
+
+Verified: 7 rows/4 muted in OFF mode, badge untouched by the toggle, muted-row click navigates
+without storage change, mark-all in OFF mode mutes all + hides badge but keeps the list, ON-mode
+caught-up intact, no horizontal overflow at 375px, console 0 errors.

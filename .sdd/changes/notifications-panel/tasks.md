@@ -34,3 +34,8 @@
 ## 5. Documentation
 
 - [x] **T16 changelog** — fill `page-changelogs/notifications-panel-changelog.md` (per-file tables: partial, ui-nav-bar, ui-template, theme.css, ui-common.js, mock-data.js, 3 templates; localStorage reset instructions); add cross-reference notes to `upcoming-replacements-ui` and `student-my-timetable` changelogs for the badge-feed deletions. Commit: `docs: notifications-panel changelog`.
+
+## 6. Post-apply user revision (2026-10-02) — unread-only toggle (design §12)
+
+- [x] **T17 filter toggle** — partial: `.notif-filters` row under `.notif-head` with house `.toggle-wrapper` switch `#notifUnreadOnly` (checked default, label "Unread only"); CSS `.notif-row--read` muted variant + `.notif-filters` layout; ui-common: `renderNotifList` branches on the switch (ON = AD-5 unchanged; OFF = all role rows newest-first with muted read rows, mark-read idempotent), `#notifUnreadOnly` change → re-render with AD-15 scroll restore, null-guarded; caught-up swap only when ON & 0 unread (AD-20); header badge/pill/mark-all follow unread count regardless of mode. Commit: `feat: unread-only filter toggle for notifications panel (AD-19/AD-20)`.
+- [x] **T18 re-verify + changelog** — re-run affected §11 checks under the new model (toggle ON: trim + caught-up + badge decrement unchanged; toggle OFF: muted read rows visible, row click navigates without list change, badge untouched); mobile 375 head layout fits; console 0; color scan. Update changelog (toggle + AD-19/20 deviation note). Commit with T17.

@@ -22,6 +22,14 @@
         </div>
     </div>
 
+    <div class="notif-filters">
+        <label class="toggle-wrapper" data-tip="Show only rows you haven't actioned yet">
+            <input type="checkbox" id="notifUnreadOnly" checked>
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Unread only</span>
+        </label>
+    </div>
+
     <div class="notif-list" id="notifList"></div>
 
     <div class="notif-empty" id="notifEmpty" hidden>
