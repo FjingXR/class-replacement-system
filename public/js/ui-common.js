@@ -1526,6 +1526,32 @@ function toggleNotifPanel() {
     else openNotifPanel();
 }
 
+// ───── TEMP — UI testing only, DELETE BEFORE SUBMISSION ─────
+
+/** Console helper: clears all 3 role read keys + reloads → badge back to 2. */
+function resetNotifDemo() {
+    ['student', 'pl', 'lecturer'].forEach(function (r) {
+        localStorage.removeItem(notifReadKey(r));
+    });
+    window.location.reload();
+}
+
+/** One-shot for demo shots: re-mark (or un-mark) a single row, no reload. */
+function notifDevToggle(id) {
+    const role = MockData.notifications.find(function (n) { return n.id === id; })?.role || currentNotifRole();
+    const reads = getNotifReads(role);
+    if (reads.has(id)) reads.delete(id); else reads.add(id);
+    persistNotifReads(role, reads);
+    refreshNotifBadge();
+    if (document.getElementById('notifPanel').classList.contains('open')) renderNotifList();
+}
+
+/** Quick reference of all 12 ids — paste in console: notifIds() */
+function notifIds() {
+    return MockData.notifications.map(function (n) { return n.id + ' (' + n.role + (n.read ? ', seed-read' : '') + ')'; });
+}
+
+
 /**
  * Wire the panel (idempotent). Self-contained DOMContentLoaded hook (AD-7) —
  * the layout's boot chain lives in ui-template.blade.php and may also call
