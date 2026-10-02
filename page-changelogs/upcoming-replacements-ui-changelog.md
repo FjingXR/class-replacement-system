@@ -154,3 +154,7 @@ All 9 proposal §6 criteria pass in-browser:
 - [x] Keyboard accessible (Tab to cards, Enter/Space open modal, Esc closes)
 - [x] Mobile ≤768px renders single-column cards
 - [x] 0 console errors
+
+## Post-2026-10-02 cross-reference
+
+The hardcoded badge feed built with this page (`notifBadge.textContent = … notificationCount`, `'notifCount' => 3`, and the server-side "3" echo) was removed by the `notifications-panel` change — the bell badge is now computed by `refreshNotifBadge()` in `ui-common.js`; see `notifications-panel-changelog.md`.
