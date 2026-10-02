@@ -1269,6 +1269,24 @@ function initWeekKeyboardShortcuts() {
     });
 }
 
+// ───── Mobile Navigation Drawer ─────
+
+function openNavDrawer() {
+    const drawer = document.getElementById('navDrawer');
+    const overlay = document.getElementById('navDrawerOverlay');
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeNavDrawer() {
+    const drawer = document.getElementById('navDrawer');
+    const overlay = document.getElementById('navDrawerOverlay');
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
 function initMobileNav() {
     const hamburger = document.getElementById('navHamburger');
     const drawer = document.getElementById('navDrawer');
@@ -1277,26 +1295,14 @@ function initMobileNav() {
 
     if (!hamburger || !drawer || !overlay) return;
 
-    function openDrawer() {
-        drawer.classList.add('open');
-        overlay.classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeDrawer() {
-        drawer.classList.remove('open');
-        overlay.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-
     function toggleDrawer() {
-        if (drawer.classList.contains('open')) closeDrawer();
-        else openDrawer();
+        if (drawer.classList.contains('open')) closeNavDrawer();
+        else openNavDrawer();
     }
 
     hamburger.addEventListener('click', toggleDrawer);
-    closeBtn.addEventListener('click', closeDrawer);
-    overlay.addEventListener('click', closeDrawer);
+    closeBtn.addEventListener('click', closeNavDrawer);
+    overlay.addEventListener('click', closeNavDrawer);
 
     // Swipe left to close
     let touchStartX = 0;
@@ -1305,12 +1311,12 @@ function initMobileNav() {
     }, { passive: true });
     drawer.addEventListener('touchend', (e) => {
         const diff = touchStartX - e.changedTouches[0].clientX;
-        if (diff > 50) closeDrawer();
+        if (diff > 50) closeNavDrawer();
     }, { passive: true });
 
     // Close on Escape
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+        if (e.key === 'Escape' && drawer.classList.contains('open')) closeNavDrawer();
     });
 }
 
