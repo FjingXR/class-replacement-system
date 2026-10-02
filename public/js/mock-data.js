@@ -863,6 +863,38 @@ window.MockData = {
             desc: 'replacement class Wed 12:00 – 14:00 @ B102',
             minutesAgo: 4320, link: '/upcoming-replacements-ui', read: true,
         },
+
+        // ─── TEMP dummy rows — UI testing only, DELETE BEFORE SUBMISSION ───
+        {
+            id: 'n-tmp-1', role: 'student', type: 'update',
+            title: 'BMIT7071',
+            desc: 'replacement moved to Week 11 Wed 10:00 – 12:00 @ B104',
+            minutesAgo: 5, link: '/upcoming-replacements-ui',
+        },
+        {
+            id: 'n-tmp-2', role: 'student', type: 'update',
+            title: 'BMIT5678',
+            desc: 'replacement class Tue 09:00 – 11:00 @ B201',
+            minutesAgo: 65, link: '/upcoming-replacements-ui',
+        },
+        {
+            id: 'n-tmp-3', role: 'pl', type: 'submitted',
+            title: 'New replacement request',
+            desc: 'BMIT7073 IT Ethics · submitted by En. Lim Jia Zheng',
+            minutesAgo: 45, link: '/request-approval-ui',
+        },
+        {
+            id: 'n-tmp-4', role: 'lecturer', type: 'approved',
+            title: 'Request approved',
+            desc: 'BMIT7074 · replacement to Tue 09:00 – 11:00 @ B201 approved',
+            minutesAgo: 100, link: '/my-request-history-ui', read: true,
+        },
+        {
+            id: 'n-tmp-5', role: 'pl', type: 'awaiting',
+            title: 'Approval still pending',
+            desc: '1 request awaiting approval — BMIT5678, Week 10',
+            minutesAgo: 300, link: '/request-approval-ui', read: true,
+        },
     ],
 
 };
