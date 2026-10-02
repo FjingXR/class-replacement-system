@@ -1272,6 +1272,10 @@ function initWeekKeyboardShortcuts() {
 // ───── Mobile Navigation Drawer ─────
 
 function openNavDrawer() {
+    // AD-12 direction 2: opening the drawer closes the notifications panel.
+    // typeof guard — hoisted drawer code may run before panel definitions
+    // in some load orders (ui-template inline script vs ui-common.js).
+    if (typeof closeNotifPanel === 'function') closeNotifPanel();
     const drawer = document.getElementById('navDrawer');
     const overlay = document.getElementById('navDrawerOverlay');
     drawer.classList.add('open');
@@ -1319,6 +1323,266 @@ function initMobileNav() {
         if (e.key === 'Escape' && drawer.classList.contains('open')) closeNavDrawer();
     });
 }
+
+// ───── Notifications Panel (shared, read-state via localStorage) ─────
+// Consumes window.MockData.notifications (mock-data.js §2.13, read-only) —
+// never mutated at runtime. Unread state persists per role under
+// 'notifications-read-<role>' (AD-4). Marked-read rows drop off the list.
+// All element lookups are guarded: the panel partial (T6) may be absent.
+
+const NOTIF_ROLE_BY_PAGE = { // AD-2 — body[data-page] → panel role
+    studentMyTimetable: 'student',
+    upcomingReplacements: 'student',
+    requestApproval: 'pl',
+};
+
+const NOTIF_GLYPHS = { // 16px lucide-style stroke glyphs (design §5)
+    submitted: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+    awaiting:  '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    approved:  '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+    rejected:  '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+    update:    '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+};
+
+function notifReadKey(role) { // AD-4
+    return 'notifications-read-' + role;
+}
+
+function currentNotifRole() { // AD-2 — fallback 'lecturer' for anything else/missing
+    const pageKey = document.body ? document.body.dataset.page : null;
+    return (pageKey && NOTIF_ROLE_BY_PAGE[pageKey]) || 'lecturer';
+}
+
+/** AD-16 — <1 "just now", <60 "Xm", <1440 "Xh", <2880 "Yesterday", else "Xd". */
+function relTime(minutesAgo) {
+    var m = Number(minutesAgo) || 0;
+    if (m < 1) return 'just now';
+    if (m < 60) return m + 'm ago';
+    if (m < 1440) return Math.floor(m / 60) + 'h ago';
+    if (m < 2880) return 'Yesterday';
+    return Math.floor(m / 1440) + 'd ago';
+}
+
+/** Absolute time for the row tooltip, e.g. "2 Oct, 9:41 AM". */
+function notifAbsTime(minutesAgo) {
+    var d = new Date(Date.now() - minutesAgo * 60000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var hh = d.getHours();
+    const ampm = hh >= 12 ? 'PM' : 'AM';
+    hh = hh === 0 ? 12 : hh > 12 ? hh - 12 : hh;
+    return d.getDate() + ' ' + months[d.getMonth()] + ', ' + hh + ':' + String(d.getMinutes()).padStart(2, '0') + ' ' + ampm;
+}
+
+function notifGlyph(type) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+        + (NOTIF_GLYPHS[type] || NOTIF_GLYPHS.update) + '</svg>';
+}
+
+/** Read id set for a role. Missing key / invalid JSON → empty set (key never reseeded once present). */
+function getNotifReads(role) {
+    try {
+        var raw = localStorage.getItem(notifReadKey(role));
+        if (raw === null) return new Set();
+        var arr = JSON.parse(raw);
+        return Array.isArray(arr) ? new Set(arr) : new Set();
+    } catch (e) {
+        return new Set();
+    }
+}
+
+function persistNotifReads(role, reads) {
+    try {
+        localStorage.setItem(notifReadKey(role), JSON.stringify(Array.from(reads)));
+    } catch (e) { /* storage unavailable — badge just stays volatile */ }
+}
+
+/**
+ * Bell badge refresh (AD-7). Safe on ANY page — on pages without the bell
+ * (e.g. replacement-arrangement) every element lookup is guarded.
+ * Seeds the localStorage key at FIRST PAINT ONLY (AD-8): if the key is absent
+ * it is written once with every `read: true` row id of this role; present keys
+ * (even `[]`) are never reseeded.
+ */
+function refreshNotifBadge() {
+    if (!window.MockData || !window.MockData.notifications) return;
+    const role = currentNotifRole();
+    const key = notifReadKey(role);
+
+    if (localStorage.getItem(key) === null) {
+        const seedIds = window.MockData.notifications
+            .filter(function (n) { return n.role === role && n.read === true; })
+            .map(function (n) { return n.id; });
+        persistNotifReads(role, new Set(seedIds));
+    }
+
+    const reads = getNotifReads(role);
+    updateNotifHeaderState(window.MockData.notifications
+        .filter(function (n) { return n.role === role && !reads.has(n.id); }).length);
+}
+
+/** Header state shared by refreshNotifBadge + every renderNotifList (AD-5). */
+function updateNotifHeaderState(count) {
+    var badge = document.getElementById('notifBadge');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+    var pill = document.getElementById('notifUnreadPill');
+    if (pill) {
+        pill.textContent = count;
+        pill.style.display = count > 0 ? 'inline-flex' : 'none';
+    }
+    var markAll = document.getElementById('notifMarkAll');
+    if (markAll) markAll.style.display = count > 0 ? 'inline-flex' : 'none';
+}
+
+/** AD-5 — render unread rows (anchor links, D4) + caught-up/empty swap. */
+function renderNotifList() {
+    const list = document.getElementById('notifList');
+    if (!list) return;
+    if (!window.MockData || !window.MockData.notifications) return;
+
+    const role = currentNotifRole();
+    const reads = getNotifReads(role);
+    const unread = window.MockData.notifications.filter(function (n) {
+        return n.role === role && !reads.has(n.id);
+    });
+
+    list.innerHTML = unread.map(function (n) {
+        return '<a class="notif-row" data-id="' + escHtml(n.id) + '" href="' + escHtml(n.link) + '"'
+            + ' data-tip="' + escHtml(notifAbsTime(n.minutesAgo)) + '" data-tip-pos="left">'
+            + '<span class="notif-row-icon notif-tile-' + escHtml(n.type) + '">' + notifGlyph(n.type) + '</span>'
+            + '<span class="notif-row-body">'
+            + '<span class="notif-row-title">' + escHtml(n.title) + '</span>'
+            + '<span class="notif-row-desc">' + escHtml(n.desc) + '</span>'
+            + '</span>'
+            + '<span class="notif-row-time">' + escHtml(relTime(n.minutesAgo)) + '</span>'
+            + '</a>';
+    }).join('');
+
+    // Caught-up swap: at 0 unread hide the list and reveal #notifEmpty (static
+    // caught-up markup from the partial); at ≥1 the inverse.
+    const empty = document.getElementById('notifEmpty');
+    if (empty) empty.style.display = unread.length === 0 ? 'flex' : 'none';
+    list.style.display = unread.length === 0 ? 'none' : '';
+
+    updateNotifHeaderState(unread.length);
+}
+
+/** Add one id to the role's read set, persist, refresh the badge. */
+function markNotifRead(id) {
+    if (!window.MockData || !window.MockData.notifications) return;
+    const role = currentNotifRole();
+    const reads = getNotifReads(role);
+    reads.add(id);
+    persistNotifReads(role, reads);
+    refreshNotifBadge();
+}
+
+/** Mark ALL of the role's rows read + refresh badge and list. */
+function markAllNotifsRead() {
+    if (!window.MockData || !window.MockData.notifications) return;
+    const role = currentNotifRole();
+    const reads = getNotifReads(role);
+    window.MockData.notifications.forEach(function (n) {
+        if (n.role === role) reads.add(n.id);
+    });
+    persistNotifReads(role, reads);
+    refreshNotifBadge();
+    renderNotifList();
+}
+
+function openNotifPanel() { // AD-12 direction 1 — drawer never stacks with panel
+    closeNavDrawer();
+    const panel = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifOverlay');
+    const bell = document.querySelector('.notif-btn');
+    if (panel) panel.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    if (bell) bell.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden'; // AD-11 — inline lock, both breakpoints
+    renderNotifList();
+}
+
+function closeNotifPanel() {
+    const panel = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifOverlay');
+    const bell = document.querySelector('.notif-btn');
+    if (panel) panel.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    if (bell) bell.setAttribute('aria-expanded', 'false');
+    // Release the body lock only if the nav drawer isn't open too (AD-11) —
+    // releasing while the drawer holds its own lock would let the body scroll.
+    const drawer = document.getElementById('navDrawer');
+    if (!drawer || !drawer.classList.contains('open')) {
+        document.body.style.overflow = '';
+    }
+}
+
+function toggleNotifPanel() {
+    const panel = document.getElementById('notifPanel');
+    if (!panel) return;
+    if (panel.classList.contains('open')) closeNotifPanel();
+    else openNotifPanel();
+}
+
+/**
+ * Wire the panel (idempotent). Self-contained DOMContentLoaded hook (AD-7) —
+ * the layout's boot chain lives in ui-template.blade.php and may also call
+ * refreshNotifBadge(); both paths are cheap + guarded for missing markup.
+ */
+function initNotifPanel() {
+    if (window.__notifPanelInitialized) return;
+    window.__notifPanelInitialized = true;
+
+    const panel = document.getElementById('notifPanel');
+    const overlay = document.getElementById('notifOverlay');
+
+    // Bell / ✕ / Mark-all: only wire elements the partial does NOT own via
+    // inline onclick (T6) so handlers never double-fire.
+    const bell = document.querySelector('.notif-btn');
+    if (bell && !bell.hasAttribute('onclick')) {
+        bell.addEventListener('click', toggleNotifPanel);
+    }
+    if (overlay) overlay.addEventListener('click', closeNotifPanel); // outside click (AD-13)
+
+    const closeBtn = panel ? panel.querySelector('.notif-close') : null;
+    if (closeBtn && !closeBtn.hasAttribute('onclick')) {
+        closeBtn.addEventListener('click', closeNotifPanel);
+    }
+    const markAll = document.getElementById('notifMarkAll');
+    if (markAll && !markAll.hasAttribute('onclick')) {
+        markAll.addEventListener('click', markAllNotifsRead);
+    }
+
+    // Row click = mark read + re-render + restore scroll, BEFORE the anchor's
+    // native navigation (D4). Capture phase so it runs ahead of default nav;
+    // preventDefault is deliberately omitted (AD-15).
+    const list = document.getElementById('notifList');
+    if (list) {
+        list.addEventListener('click', function (e) {
+            const row = e.target.closest ? e.target.closest('.notif-row') : null;
+            if (!row || !row.getAttribute('data-id')) return;
+            const scrollTop = list.scrollTop;
+            markNotifRead(row.getAttribute('data-id'));
+            renderNotifList();
+            list.scrollTop = scrollTop;
+        }, true);
+    }
+
+    // Esc closes only while the panel is open (AD-13).
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        const p = document.getElementById('notifPanel');
+        if (p && p.classList.contains('open')) closeNotifPanel();
+    });
+
+    refreshNotifBadge();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    initNotifPanel();
+});
 
 // ───── Swipe Gesture ─────
 
