@@ -783,6 +783,90 @@ window.MockData = {
         },
     ],
 
+    // ─────────────────────────────────────────────────────────────────────
+    // §2.13 notifications — mock notifications panel seed (frozen design
+    // §5 of the notifications-panel SDD change). 12 rows, 4 per role
+    // (`pl` / `lecturer` / `student`). Single-string seeds are pre-split
+    // at their first "·" (or "—" for n-pl-4) into title/desc for the
+    // .notif-row-title + .notif-row-desc renderer. `read: true` appears
+    // ONLY on the six pre-seed-read rows; unread rows omit the key.
+    // Read-only — slice()/spread before mutating.
+    // ─────────────────────────────────────────────────────────────────────
+    notifications: [
+        {
+            id: 'n-pl-1', role: 'pl', type: 'submitted',
+            title: 'New replacement request',
+            desc: 'BMIT5678 Database Systems · submitted by En. Lim Jia Zheng',
+            minutesAgo: 25, link: '/request-approval-ui',
+        },
+        {
+            id: 'n-pl-2', role: 'pl', type: 'submitted',
+            title: 'BMIT7075 Mobile App Development',
+            desc: 'submitted by Ms. Lim Pei Shan',
+            minutesAgo: 90, link: '/request-approval-ui', read: true,
+        },
+        {
+            id: 'n-pl-3', role: 'pl', type: 'awaiting',
+            title: 'Approval still pending',
+            desc: '2 requests awaiting your decision this week',
+            minutesAgo: 240, link: '/request-approval-ui',
+        },
+        {
+            id: 'n-pl-4', role: 'pl', type: 'awaiting',
+            title: '1 request awaiting approval',
+            desc: 'BMIT2233, Week 10',
+            minutesAgo: 420, link: '/request-approval-ui', read: true,
+        },
+        {
+            id: 'n-lec-1', role: 'lecturer', type: 'approved',
+            title: 'Request approved',
+            desc: 'BMIT5678 · replacement to Mon 14:00 – 16:00 @ B110 approved',
+            minutesAgo: 12, link: '/my-request-history-ui',
+        },
+        {
+            id: 'n-lec-2', role: 'lecturer', type: 'approved',
+            title: 'BMIT2233',
+            desc: 'replacement to Thu 12:00 – 14:00 @ B103 approved',
+            minutesAgo: 150, link: '/my-request-history-ui', read: true,
+        },
+        {
+            id: 'n-lec-3', role: 'lecturer', type: 'rejected',
+            title: 'Request rejected',
+            desc: 'BMIT7071 Research Methods · PL asked for an alternative slot',
+            minutesAgo: 1440, link: '/my-request-history-ui',
+        },
+        {
+            id: 'n-lec-4', role: 'lecturer', type: 'rejected',
+            title: 'BMIT7073 IT Ethics',
+            desc: 'PL asked for an alternative slot',
+            minutesAgo: 2880, link: '/my-request-history-ui', read: true,
+        },
+        {
+            id: 'n-stu-1', role: 'student', type: 'update',
+            title: 'BMIT5678',
+            desc: 'replacement class Mon 14:00 – 16:00 @ B110',
+            minutesAgo: 30, link: '/upcoming-replacements-ui',
+        },
+        {
+            id: 'n-stu-2', role: 'student', type: 'update',
+            title: 'BMIT2233',
+            desc: 'replacement class Thu 12:00 – 14:00 @ B103',
+            minutesAgo: 120, link: '/upcoming-replacements-ui',
+        },
+        {
+            id: 'n-stu-3', role: 'student', type: 'update',
+            title: 'BMIT7074',
+            desc: 'replacement moved to Thu 10:00 – 12:00 @ B005',
+            minutesAgo: 1560, link: '/upcoming-replacements-ui', read: true,
+        },
+        {
+            id: 'n-stu-4', role: 'student', type: 'update',
+            title: 'BMIT7070',
+            desc: 'replacement class Wed 12:00 – 14:00 @ B102',
+            minutesAgo: 4320, link: '/upcoming-replacements-ui', read: true,
+        },
+    ],
+
 };
 
 // ─────────────────────────────────────────────────────────────────────────
