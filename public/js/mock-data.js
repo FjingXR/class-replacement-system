@@ -895,6 +895,30 @@ window.MockData = {
             desc: '1 request awaiting approval — BMIT5678, Week 10',
             minutesAgo: 300, link: '/request-approval-ui', read: true,
         },
+        {
+            id: 'n-tmp-6', role: 'student', type: 'update',
+            title: 'BMIT2233',
+            desc: 'replacement moved to Thu 08:00 – 10:00 @ B202',
+            minutesAgo: 2, link: '/upcoming-replacements-ui',
+        },
+        {
+            id: 'n-tmp-7', role: 'pl', type: 'submitted',
+            title: 'BMIT7070 Network Programming',
+            desc: 'submitted by Ms. Lim Pei Shan',
+            minutesAgo: 320, link: '/request-approval-ui', read: true,
+        },
+        {
+            id: 'n-tmp-8', role: 'lecturer', type: 'rejected',
+            title: 'Request rejected',
+            desc: 'BMIT5678 · PL asked for an alternative slot',
+            minutesAgo: 700, link: '/my-request-history-ui',
+        },
+        {
+            id: 'n-tmp-10', role: 'lecturer', type: 'approved',
+            title: 'Request approved',
+            desc: 'BMIT7071 · replacement to Fri 14:00 – 16:00 @ B105 approved',
+            minutesAgo: 500, link: '/my-request-history-ui', read: true,
+        },
     ],
 
 };
