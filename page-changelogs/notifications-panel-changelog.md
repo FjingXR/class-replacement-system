@@ -74,3 +74,10 @@ only fires in ON mode; badge/pill/mark-all always follow the unread count. Toggl
 Verified: 7 rows/4 muted in OFF mode, badge untouched by the toggle, muted-row click navigates
 without storage change, mark-all in OFF mode mutes all + hides badge but keeps the list, ON-mode
 caught-up intact, no horizontal overflow at 375px, console 0 errors.
+
+## [2026-10-02 post-apply] Approved tile → success green (user correction)
+
+`.notif-tile-approved` moved `--color-secondary-container` → `--color-success-container` (+ `-on-`),
+matching every other live "Approved" surface (`.badge-normal`, approved summary value). The §10.0
+canonical legend row "Approved → secondary-container" is the stale source — noted as backlog; the
+design §5 table carries the correction inline.

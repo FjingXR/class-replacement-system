@@ -421,7 +421,7 @@ body {
 
 .notif-tile-submitted { background: var(--color-primary-container);   color: var(--color-on-primary-container); }
 .notif-tile-awaiting  { background: var(--color-tertiary-container);  color: var(--color-on-tertiary-container); }
-.notif-tile-approved  { background: var(--color-secondary-container); color: var(--color-on-secondary-container); }
+.notif-tile-approved  { background: var(--color-success-container);  color: var(--color-on-success-container); }
 .notif-tile-rejected  { background: var(--color-error-container);     color: var(--color-on-error-container); }
 .notif-tile-update    { background: var(--color-surface-variant);     color: var(--color-on-surface-variant); }
 

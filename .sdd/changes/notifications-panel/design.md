@@ -99,7 +99,7 @@ Types map to canonical tiles (§10.0(C) containers — **zero new color concepts
 |---|---|---|---|
 | submitted | inbox/arrow | `--color-primary-container / -on-primary-container` | `/request-approval-ui` |
 | awaiting (PL reminder) | clock | `--color-tertiary-container / -on-tertiary-container` | `/request-approval-ui` |
-| approved | check | `--color-secondary-container / -on-secondary-container` | `/my-request-history-ui` |
+| approved | check | `--color-success-container / -on-success-container` **(post-apply revision 2026-10-02: was `--color-secondary-container` per the then-canonical §10.0 row — user corrected to success green, matching every live surface (`.badge-normal`, approved summary card); the §10.0 "Approved" legend row itself still says secondary-container and is known-drift backlog)** | `/my-request-history-ui` |
 | rejected | x | `--color-error-container / -on-error-container` | `/my-request-history-ui` |
 | update | calendar | `--color-surface-variant / -on-surface-variant` | `/upcoming-replacements-ui` |
 
