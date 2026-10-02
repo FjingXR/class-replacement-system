@@ -103,6 +103,9 @@
     </div>
 </div>
 
+{{-- Notifications panel — self-contained (overlay + dialog only) --}}
+@include('partials.ui-notifications-panel')
+
 {{-- ─── Session warning: color the user-panel pill based on session age ───
     MOCK: authStart simulates a login timestamp 25 seconds ago so you see
     red → tertiary → primary transition live without waiting.
