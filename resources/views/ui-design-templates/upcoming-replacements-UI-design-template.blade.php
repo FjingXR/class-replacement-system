@@ -5,7 +5,6 @@
         ['key'=>'my-timetable','label'=>'Student My Timetable','href'=>'/student-my-timetable-ui'],
         ['key'=>'upcoming-replacements','label'=>'Upcoming Replacements','href'=>'/upcoming-replacements-ui'],
     ],
-    'notifCount' => 3,
 ])
 
 @section('title', 'Upcoming Replacements')
@@ -334,9 +333,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const chipEl = document.getElementById('semesterChip');
             if (chipEl) chipEl.textContent = MockData.semester.chipText;
-
-            const notifBadge = document.getElementById('notifBadge');
-            if (notifBadge) notifBadge.textContent = MockData.studentTimetable.notificationCount;
 
             // BINDING: page must load on 0-based week 9 ("Week 10"), never "Week 1"
             populateWeekSelect('weekFilter', { selected: currentWeekIndex() + 1 });

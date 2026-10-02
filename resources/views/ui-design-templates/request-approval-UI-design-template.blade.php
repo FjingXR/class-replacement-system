@@ -1,4 +1,4 @@
-@extends('layouts.ui-template', ['activeNav' => 'request-approval'])
+@extends('layouts.ui-template', ['activeNav' => 'request-approval', 'pageKey' => 'requestApproval'])
 
 @section('title', 'Request Approval')
 

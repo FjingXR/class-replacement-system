@@ -32,7 +32,7 @@
 <body data-page="{{ $pageKey ?? '' }}">
 
     @if(!isset($hideNav) || !$hideNav)
-        @include('partials.ui-nav-bar', ['activeNav' => $activeNav ?? '', 'notifCount' => $notifCount ?? 3, 'navItems' => $navItems ?? null])
+        @include('partials.ui-nav-bar', ['activeNav' => $activeNav ?? '', 'navItems' => $navItems ?? null])
         {{-- LOGOUT MODAL DISABLED — logout now submits the form directly (see ui-nav-bar)
         @include('partials.ui-logout-modal')
         --}}

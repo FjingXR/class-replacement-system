@@ -5,7 +5,6 @@
         ['key'=>'my-timetable','label'=>'Student My Timetable','href'=>'/student-my-timetable-ui'],
         ['key'=>'upcoming-replacements','label'=>'Upcoming Replacements','href'=>'/upcoming-replacements-ui'],
     ],
-    'notifCount' => 3,
 ])
 
 @section('title', 'Student My Timetable')
@@ -204,9 +203,6 @@
 
             const chipEl = document.getElementById('semesterChip');
             if (chipEl) chipEl.textContent = MockData.semester.chipText;
-
-            const notifBadge = document.getElementById('notifBadge');
-            if (notifBadge) notifBadge.textContent = MockData.studentTimetable.notificationCount;
 
             buildWeekOptions();
             buildTimetable();

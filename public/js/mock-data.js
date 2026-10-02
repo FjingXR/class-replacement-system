@@ -486,7 +486,6 @@ window.MockData = {
     // `cancelledFlags` maps 0-indexed week keys to arrays of cancelled
     // course codes. Week 4 cancels ALL 7 events → triggers the empty state;
     // weeks 5–6 cancel 1 event each (partial cancellation).
-    // `notificationCount` drives the nav-badge dot.
     // ─────────────────────────────────────────────────────────────────────
     studentTimetable: {
         activeCohort: 'rsd3s1g2',
@@ -495,7 +494,6 @@ window.MockData = {
             4: ['BMIT8080'],
             5: ['BMIT7073'],
         },
-        notificationCount: 3,
     },
 
     // ─────────────────────────────────────────────────────────────────────
