@@ -1672,19 +1672,9 @@
                     'Unsaved Changes',
                     'You have selections that will be lost if you leave this page. Are you sure you want to leave?',
                     function() {
-                        var savedBlock = selectedBlock ? { ...selectedBlock } : null;
-                        var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
+                        /* Confirmed leave → navigate at once; selections are in-memory
+                           and die with the page (no clearing ceremony / undo toast) */
                         hideConfirmModal();
-                        Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
-                        deselectBlock();
-                        toast.show('Selections cleared.', function() {
-                            Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
-                            if (savedBlock) {
-                                selectedBlock = savedBlock;
-                                const body = document.getElementById('tableBody');
-                                renderMergedBlock(body);
-                            }
-                        });
                         window.location.href = url;
                     }
                 );
@@ -1699,23 +1689,10 @@
                     'Unsaved Changes',
                     'You have selections that will be lost if you leave this page. Are you sure you want to go back?',
                     function() {
+                        /* Confirmed leave → navigate at once; selections are in-memory
+                           and die with the page (no clearing ceremony / 5s undo wait) */
                         hideConfirmModal();
-                        var savedBlock = selectedBlock ? { ...selectedBlock } : null;
-                        var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
-                        Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
-                        deselectBlock();
-                        updateCounter();
-                        var navTimer = setTimeout(function() { BackNavigator.navigate(); }, 5000);
-                        toast.show('Selections cleared.', function() {
-                            clearTimeout(navTimer);
-                            Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
-                            if (savedBlock) {
-                                selectedBlock = savedBlock;
-                                const body = document.getElementById('tableBody');
-                                renderMergedBlock(body);
-                            }
-                            updateCounter();
-                        });
+                        BackNavigator.navigate();
                     }
                 );
             } else {

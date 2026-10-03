@@ -541,3 +541,11 @@ brightness(1.08) + neutral `0 2px 8px rgba(0,0,0,0.15)` shadow + `scale(0.97)` o
 (`rgba(151,230,194,…)` / light `rgba(46,194,126,…)`) left from the old green theme on the now-blue
 primary. The Today chip (container-styled, opacity hover) is intentionally untouched. Verified
 computed hover styles, 0 console errors.
+
+## [2026-10-03] Leave-confirmation navigates immediately
+
+Confirming the "Unsaved Changes" modal (Back button and logo/home paths — goBack/navigateTo) now
+leaves at once: the on-screen clearing, "Selections cleared." undo toast and the 5-second
+navigate-or-undo countdown in goBack are gone. Selections are in-memory and die with the page, so
+the modal itself remains the only guard. Verified modal → immediate navigation on both paths plus
+the no-selection instant back, 0 console errors.
