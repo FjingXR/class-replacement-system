@@ -1673,8 +1673,10 @@
                     'You have selections that will be lost if you leave this page. Are you sure you want to leave?',
                     function() {
                         /* Confirmed leave → navigate at once; selections are in-memory
-                           and die with the page (no clearing ceremony / undo toast) */
+                           and die with the page (no clearing ceremony / undo toast).
+                           allowUnload bypasses the beforeunload guard (no double prompt). */
                         hideConfirmModal();
+                        allowUnload = true;
                         window.location.href = url;
                     }
                 );
@@ -1690,8 +1692,10 @@
                     'You have selections that will be lost if you leave this page. Are you sure you want to go back?',
                     function() {
                         /* Confirmed leave → navigate at once; selections are in-memory
-                           and die with the page (no clearing ceremony / 5s undo wait) */
+                           and die with the page (no clearing ceremony / 5s undo wait).
+                           allowUnload bypasses the beforeunload guard (no double prompt). */
                         hideConfirmModal();
+                        allowUnload = true;
                         BackNavigator.navigate();
                     }
                 );
@@ -1699,6 +1703,19 @@
                 BackNavigator.navigate();
             }
         }
+
+        /* Browser-level guard for the paths the in-page modal can't reach:
+           refresh, close, address-bar navigation and the browser's own
+           back/forward arrows. Browser controls the dialog text ("Changes
+           you made may not be saved") — we only decide whether it appears. */
+        let allowUnload = false;
+        window.addEventListener('beforeunload', function(e) {
+            if (!allowUnload && (selectedBlock || getGlobalTotal() > 0)) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        });
 
         function navigateHome() {
             navigateTo('/');

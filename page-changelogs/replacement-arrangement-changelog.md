@@ -549,3 +549,13 @@ leaves at once: the on-screen clearing, "Selections cleared." undo toast and the
 navigate-or-undo countdown in goBack are gone. Selections are in-memory and die with the page, so
 the modal itself remains the only guard. Verified modal → immediate navigation on both paths plus
 the no-selection instant back, 0 console errors.
+
+## [2026-10-03] Browser-level beforeunload guard
+
+A `beforeunload` handler now warns when leaving with unsaved selections via paths the in-page modal
+cannot reach: refresh, tab close, address-bar navigation and the browser's own back/forward arrows
+(native dialog — browsers force their own generic wording; we only control whether it appears).
+An `allowUnload` flag is set in the goBack/navigateTo confirm callbacks so the confirmed in-page
+leave bypasses the guard (no double prompt). Verified: refresh with selection prompts, accepted
+reload proceeds, no-selection navigation stays silent, in-page confirm navigates with no native
+dialog, 0 console errors.
