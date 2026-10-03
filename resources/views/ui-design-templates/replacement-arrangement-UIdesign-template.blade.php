@@ -219,6 +219,10 @@
             align-items: center;
             flex: 0 0 auto; /* content-sized — leftover space goes to the subject/slot pair */
         }
+        .toolbar-center .venue-dd-trigger {
+            min-width: 0;
+            max-width: 192px; /* ellipsized — funds the single-row width budget */
+        }
 
         /* ── Slot Dropdown (custom) ── */
         .slot-dd {
@@ -1287,12 +1291,18 @@
             // Disable hover on other available cells
             const table = body.closest('.timetable');
             if (table) table.classList.add('has-selection');
+            // Blocked-state hint: green slots explain why they can't be picked (renders above
+            // the cell via the shared data-tip tooltip) until the selection is cleared
+            body.querySelectorAll('.cell-content.cell-available').forEach(c => {
+                c.setAttribute('data-tip', 'Clear your selection first — click it to remove');
+            });
         }
 
         function clearMergedBlock(body) {
             if (!body) body = document.getElementById('tableBody');
             // Remove existing event-block
             body.querySelectorAll('.event-selection').forEach(el => el.remove());
+            body.querySelectorAll('.cell-content[data-tip]').forEach(c => c.removeAttribute('data-tip'));
             // Reset colSpan and display on all cells
             if (selectedBlock) {
                 for (let h = selectedBlock.startHour; h < selectedBlock.endHour; h++) {
@@ -2302,15 +2312,26 @@
                 ranges: false,
                 selected: weekNav.currentWeek,
                 labelFn: function(w, i, isMobile) {
-                    /* Compact on all widths — keeps the single-row toolbar fit
-                       ("W1 · 27 Jul ~ 02 Aug"; year constant within a semester) */
+                    /* Compact on all widths — year dropped (constant within a semester);
+                       the full dated label lives on the select's hover tooltip */
                     const first = w.days[0].date.replace(/ \d{4}$/, '');
                     const last = w.days[w.days.length - 1].date.replace(/ \d{4}$/, '');
-                    return w.label.replace('Week ', 'W') + ' \u00B7 ' + first + ' ~ ' + last;
+                    return w.label + ' \u00B7 ' + first + ' ~ ' + last;
                 }
             });
             /* applyUrlParams AFTER week selector is ready (triggers onVenueChange → buildTimetable) */
             applyUrlParams();
+            /* Full dated label as a data-tip (renders above, shared tooltip system) — the
+               option text is the compact single-row form. Patched onto _updateSelect so
+               arrows/Today keep it current. */
+            const weekSel = document.getElementById('weekSelector');
+            const weekTip = function() {
+                const w = weekData[weekNav.currentWeek];
+                if (w) weekSel.setAttribute('data-tip', w.label + ' \u00B7 ' + w.days[0].date + ' ~ ' + w.days[w.days.length - 1].date);
+            };
+            const _updateSelect = weekNav._updateSelect.bind(weekNav);
+            weekNav._updateSelect = function() { _updateSelect(); weekTip(); };
+            weekTip();
             lastSubject = document.getElementById('subjectSelector').value;
             /* ensure grid always renders on load (applyUrlParams only triggers via venue param) */
             buildTimetable();

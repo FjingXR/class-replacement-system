@@ -482,10 +482,21 @@ swapping to error on hover; `bottom: auto` added to undo the generic `.event-blo
 
 `.toolbar-filters` loses its `flex-basis: 100%` own-row rule — subject select, slot picker, venue
 dropdown, favourite, week nav, Today and print all share one toolbar line at ≥ ~1150px (container
-content box is 1190px). To fit: week labels compact to "W1 · 27 Jul ~ 02 Aug" via the page's
-`labelFn` (year + "Week" dropped — constant within a semester; select 285 → 186px), filters gap
-12 → 8, group gap 16 → 12, subject select caps at 235px, and the slot picker gets 260px so its
-primary info is fully visible — trigger text also compacted to
-"W3 · Aug 17 · 10:00 AM–11:30 AM" (comma/en-dash form, no clipping). Below ~1150px the groups
-still wrap gracefully and ≤768px keeps the stacked layout. Verified 1280 / 1440 / 1024 / 375,
-0 console errors.
+content box is 1190px). To fit: week labels drop the year via the page's `labelFn` ("Week 1 · 27 Jul ~ 02 Aug" — the year
+is constant within a semester; select 285 → 212px) and the full dated label
+("Week 1 · 27 Jul 2026 ~ 02 Aug 2026") shows on hover as a `data-tip` — the shared tooltip renders
+above — kept current by patching `WeekNavigator._updateSelect` so arrows/Today stay in sync.
+Venue trigger caps at 192px (already ellipsis-equipped), filters gap 12 → 8, group gap 16 → 12,
+subject select caps at 235px, and the slot picker gets 260px so its primary info is fully visible —
+trigger text also compacted to "W3 · Aug 17 · 10:00 AM–11:30 AM" (comma/en-dash form, no clipping).
+Below ~1150px the groups still wrap gracefully and ≤768px keeps the stacked layout. Verified
+1280 / 1440 / 1024 / 375, 0 console errors.
+
+## [2026-10-03] Blocked-state tooltip on green slots while a selection exists
+
+After a block is selected, the remaining available (green) cells gain
+`data-tip="Clear your selection first — click it to remove"` — set in `renderMergedBlock`, removed
+in `clearMergedBlock` (both deselect paths route through it). Hovering another green slot now
+explains why it can't be picked, rendered above the cell by the shared tooltip system, instead of
+silent feedback with only the click-time modal. Deselect restores the normal "Select these slots?"
+preview. Verified tooltip above + cleanup, 0 console errors.
