@@ -452,3 +452,6 @@ phrase is wrapped in a new `.tip-action` span — `var(--color-primary)` + bold 
 that show it, and `.sel-summary-tip` drops its `opacity: 0.65` so the accent reads at full strength
 while the "Tip:" prefix stays muted via `--color-on-surface-variant`. Verified dark + light themes,
 0 console errors.
+Follow-up (same day): in dark theme `--color-primary` stays `#004D98` (dark navy — too dim on
+`#1B2838`), so `html.dark .sel-summary-tip .tip-action` now uses the dark palette's bright accent
+token `--color-on-primary-container` (`#6BA3E0`); light theme keeps `--color-primary`.

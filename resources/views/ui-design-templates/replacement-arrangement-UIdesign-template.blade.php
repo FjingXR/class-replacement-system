@@ -615,6 +615,9 @@
             color: var(--color-primary);
             font-weight: 700;
         }
+        html.dark .sel-summary-tip .tip-action {
+            color: var(--color-on-primary-container); /* dark navy primary is too dim on the dark surface */
+        }
 
         @media (max-width: 1024px) {
             .sel-summary-grid {
