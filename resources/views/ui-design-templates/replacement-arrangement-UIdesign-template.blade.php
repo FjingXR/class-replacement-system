@@ -148,13 +148,16 @@
         }
         .toolbar-primary {
             display: flex;
-            flex-direction: column;
-            gap: 4px;
+            flex-direction: row; /* slot picker sits to the right of the subject selector */
+            flex-wrap: wrap; /* drops below the select when the row is too tight */
+            align-items: center;
+            gap: 12px;
             flex: 1;
             min-width: 280px;
         }
         .toolbar-primary .selector-dropdown {
-            width: 100%;
+            flex: 1 1 240px;
+            min-width: 200px;
             max-width: 320px;
         }
         .toolbar-primary .toolbar-subtitle {
@@ -192,17 +195,20 @@
             align-items: center;
             gap: 12px;
             flex-shrink: 0;
+            flex-basis: 100%; /* week nav owns its own row — subject + slot picker stay side by side */
+            justify-content: flex-end;
         }
         .toolbar-center {
             display: flex;
             align-items: center;
-            flex-shrink: 0;
+            flex: 0 0 auto; /* content-sized — leftover space goes to the subject/slot pair */
         }
 
         /* ── Slot Dropdown (custom) ── */
         .slot-dd {
             position: relative;
-            margin-top: 4px;
+            flex: 1 1 200px;
+            max-width: 280px;
         }
         .slot-dd-trigger {
             display: flex;
@@ -218,8 +224,13 @@
             font-weight: 500;
             cursor: pointer;
             transition: border-color 0.15s, box-shadow 0.15s;
-            min-width: 240px;
+            width: 100%;
             text-align: left;
+        }
+        .slot-dd-trigger span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .slot-dd-trigger:hover {
             border-color: var(--color-primary);
@@ -620,12 +631,18 @@
                 width: 100%;
             }
             .toolbar-primary .selector-dropdown {
+                flex-basis: 100%;
+                max-width: 100%;
+            }
+            .slot-dd {
+                flex-basis: 100%;
                 max-width: 100%;
             }
             .toolbar-filters {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 8px;
+                flex-basis: auto; /* column parent — basis would otherwise be height */
             }
             .toolbar-center {
                 flex-direction: column;

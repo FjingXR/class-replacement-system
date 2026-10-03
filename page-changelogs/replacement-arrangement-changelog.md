@@ -432,3 +432,14 @@ Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a prin
 (inline SVG, `.print-btn` in theme.css), right-aligned at the toolbar edge via `margin-left: auto`.
 Enabled stub: click fires the shared `toast.show('Printing is coming soon')` bottom-left toast bar;
 `title="Coming soon"` native tooltip on hover. No JS beyond the one-liner onclick.
+
+## [2026-10-03] Slot picker moved beside the subject selector
+
+`.toolbar-primary` was a column stack (slot picker under the subject select); it is now a row —
+select (`flex: 1 1 240px`, max 320) with the `.slot-dd` picker immediately to its right
+(`flex: 1 1 200px`, max 280, gap 12). `.toolbar-center` stops flex-growing (content-sized) and
+`.toolbar-filters` takes `flex-basis: 100%` + `flex-end`, so the week nav owns its own right-aligned
+row — the single toolbar line could never fit subject + slot + venue + week nav together. Mobile
+(≤768px) keeps the stacked full-width look via `flex-basis` overrides. Trigger span ellipsizes.
+Verified side-by-side at 1280/1440/1024, stacked at 375; picker panel opens as before; 0 console
+errors.
