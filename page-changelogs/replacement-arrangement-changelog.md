@@ -589,3 +589,16 @@ no-subject class on the timetable (toggled in renderTitleSummary). Two pre-exist
 gaps fixed on the way: buildTimetable and applySubjectChange now clearPreview() so an open hover
 preview never survives a rebuild. Verified locked hover/click, unlock -> normal selection, re-lock
 after clearing the subject, 0 console errors.
+
+## [2026-10-03] Booking intent honoured from venue-timetable handoff
+
+The venue-timetable "Book" handoff (?venue&date&time) previously dropped the date/time entirely —
+the user arrived with no reminder of the promised slot. Now: a primary-container intent banner
+("Booking B103 · Tue, 08 Sep 2026 · 10:30 — pick a subject to pre-fill the slots.", dismissible)
+renders above the Conflict Schedule strip, and picking a subject auto-selects the booked block
+(the venue page's Book click already confirmed it) with a toast — falling back to pulsing the
+target cell when the block cannot fit. applyUrlParams now applies venue before subject so the
+auto-select lands on the booked venue's grid, and the resolver jumps weeks if the booked date
+lives outside the restored week. Intent is consumed by any selection or the banner's ×. Verified
+round-trip (banner -> pick -> auto-selected Tue 10:30), code-param landing (fully pre-selected),
+dismiss path and overflow fallback, 0 console errors.

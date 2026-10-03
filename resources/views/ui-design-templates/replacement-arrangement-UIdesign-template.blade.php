@@ -237,6 +237,33 @@
         @media (max-width: 900px) {
             .cs-badge { margin-left: 0; }
         }
+
+        /* ── Booking intent banner (arrival from venue-timetable "Book" action) ── */
+        .booking-intent {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+            border: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+            font-size: 13px;
+            margin: 0 0 10px;
+        }
+        .booking-intent svg { flex-shrink: 0; }
+        .booking-intent strong { font-weight: 600; }
+        .bi-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+        }
         .semester-chip { display: none; }
         .page-header .semester-chip { display: none; }
         .toolbar-filters {
@@ -914,6 +941,8 @@
                 '<strong>Back</strong> — use the back button to return to the conflict list',
             ]
         ])
+
+        <div class="booking-intent-wrap" id="bookingIntent"></div>
 
         <div class="conflict-strip-wrap" id="subjectInfo"></div>
 
@@ -2060,6 +2089,82 @@
             applySubjectChange(code);
         }
 
+        /* ───── Booking intent (arrival from venue-timetable "Book" action) ─────
+           The handoff carries ?venue&date&time — the venue page's "Book" click
+           already confirmed that exact slot, so once a subject exists we
+           auto-select it instead of making the user hunt for it again. */
+        let pendingBookingIntent = null;
+
+        function resolveBookingIntent() {
+            pendingBookingIntent = null;
+            if (!urlParams.date || !urlParams.time) return;
+            const hourIndex = hours.indexOf(urlParams.time);
+            if (hourIndex < 0) return;
+            /* the shared week (localStorage) is usually already right; if the
+               booked date lives in another week, jump to it */
+            let weekIdx = weekNav.currentWeek;
+            let dayIndex = (weekData[weekIdx].days || []).findIndex(function(d) { return d.date === urlParams.date; });
+            if (dayIndex < 0) {
+                for (let w = 0; w < weekData.length && dayIndex < 0; w++) {
+                    const di = (weekData[w].days || []).findIndex(function(d) { return d.date === urlParams.date; });
+                    if (di >= 0) { weekIdx = w; dayIndex = di; }
+                }
+                if (dayIndex >= 0 && weekIdx !== weekNav.currentWeek) weekNav.selectWeek(weekIdx);
+            }
+            if (dayIndex < 0) return;
+            pendingBookingIntent = {
+                dayIndex: dayIndex,
+                hourIndex: hourIndex,
+                venue: urlParams.venue || '',
+                dateStr: urlParams.date,
+                timeStr: urlParams.time,
+                dayAbbr: (weekData[weekIdx].days[dayIndex] || {}).abbr || ''
+            };
+            renderBookingIntent();
+        }
+
+        function renderBookingIntent() {
+            const el = document.getElementById('bookingIntent');
+            if (!el) return;
+            if (!pendingBookingIntent) { el.innerHTML = ''; return; }
+            const i = pendingBookingIntent;
+            el.innerHTML = `<div class="booking-intent">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span><strong>Booking ${i.venue} · ${i.dayAbbr}, ${i.dateStr} · ${i.timeStr}</strong> — ${currentCourse ? 'slots pre-filled — review, then submit.' : 'pick a subject to pre-fill the slots.'}</span>
+                <button class="bi-close" onclick="dismissBookingIntent()" data-tip="Dismiss booking reminder">&times;</button>
+            </div>`;
+        }
+
+        function dismissBookingIntent() {
+            pendingBookingIntent = null;
+            renderBookingIntent();
+        }
+
+        function pulseTargetCell(dayIndex, hourIndex) {
+            const cell = document.querySelector(`#tableBody td[data-day="${dayIndex}"][data-hour="${hourIndex}"] .cell-content`);
+            if (!cell) return;
+            cell.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            cell.classList.remove('attention-pulse');
+            void cell.offsetWidth; /* restart the animation */
+            cell.classList.add('attention-pulse');
+            setTimeout(function() { cell.classList.remove('attention-pulse'); }, 1300);
+        }
+
+        /* Fires once a subject exists (URL auto-pick or user pick): */
+        function consumeBookingIntent() {
+            if (!pendingBookingIntent || !currentCourse) return;
+            const i = pendingBookingIntent;
+            pendingBookingIntent = null;
+            renderBookingIntent();
+            if (canPlaceBlock(i.dayIndex, i.hourIndex)) {
+                selectBlock(i.dayIndex, i.hourIndex);
+                toast.show('Pre-selected from your venue booking — click the block to adjust.');
+            } else {
+                pulseTargetCell(i.dayIndex, i.hourIndex);
+                toast.show('Your booked slot needs manual selection — it is highlighted on the grid.');
+            }
+        }
+
         function applySubjectChange(code) {
             clearPreview(); /* subject state changed — any open hover preview is stale */
             const noteEl = document.getElementById('venueCountNote');
@@ -2085,6 +2190,7 @@
             renderSlotPicker(slots);
             renderTitleSummary();
             buildVenueFilter();
+            consumeBookingIntent();
         }
 
         function buildVenueFilter() {
@@ -2378,15 +2484,20 @@
         }
 
         function applyUrlParams() {
+            /* Booking intent (venue-timetable "Book" handoff): resolve date+time
+               into a grid target first — the shared week is already restored */
+            resolveBookingIntent();
             const sel = document.getElementById('subjectSelector');
-            if (urlParams.code) {
-                sel.value = urlParams.code;
-                onSubjectChange();
-            }
+            /* venue BEFORE subject, so the booking-intent auto-select (fired by
+               the subject pick below) lands on the booked venue's grid */
             if (urlParams.venue) {
                 if (venueDropdown) {
                     venueDropdown.select(urlParams.venue);
                 }
+            }
+            if (urlParams.code) {
+                sel.value = urlParams.code;
+                onSubjectChange();
             }
             
             // Auto-select original slot if day/start/end/originalVenue params provided
