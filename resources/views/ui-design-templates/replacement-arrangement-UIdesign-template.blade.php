@@ -1717,6 +1717,19 @@
             }
         });
 
+        /* bfcache restore (browser back/forward): Chrome resurrects the frozen page
+           exactly as left — selections, undo history AND the allowUnload bypass all
+           survive. The user already confirmed leaving ("selections will be lost"),
+           so re-arm the guard and come back to a clean slate. */
+        window.addEventListener('pageshow', function(e) {
+            if (!e.persisted) return; /* normal load — nothing to do */
+            allowUnload = false;
+            Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
+            deselectBlock();        /* removes merged block + restores green cells */
+            selectionHistory = [];  /* cleared after deselectBlock (it pushes an entry) — stale Ctrl+Z can't resurrect */
+            updateCounter();        /* re-sync counter/summary/footer (also covers the no-block case) */
+        });
+
         function navigateHome() {
             navigateTo('/');
         }

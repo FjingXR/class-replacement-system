@@ -559,3 +559,12 @@ An `allowUnload` flag is set in the goBack/navigateTo confirm callbacks so the c
 leave bypasses the guard (no double prompt). Verified: refresh with selection prompts, accepted
 reload proceeds, no-selection navigation stays silent, in-page confirm navigates with no native
 dialog, 0 console errors.
+
+## [2026-10-03] bfcache restore resets selections + re-arms the unload guard
+
+Chrome's back-forward cache resurrects the frozen page (selections, undo history AND the
+allowUnload bypass) on browser back/forward, contradicting the "selections will be lost" promise.
+A `pageshow` handler (e.persisted) now re-arms the beforeunload guard, wipes selectedSlotsByVenue
+and selectionHistory, and runs deselectBlock + updateCounter — a clean slate on every restore.
+Verified via synthetic persisted-pageshow (4 selected → clean slate, stale Ctrl+Z stays inert) and
+the re-armed refresh guard firing afterwards; real back-nav returns clean, 0 console errors.
