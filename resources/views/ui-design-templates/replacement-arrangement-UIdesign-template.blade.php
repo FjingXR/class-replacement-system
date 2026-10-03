@@ -4,7 +4,25 @@
 
 @section('page-styles')
 
-        .cell-available { --hover-label: 'Select ?'; }
+        /* Hover chip removed — the preview block carries the message instead */
+        .cell-available::after { content: none; }
+        .event-selection-preview .preview-label {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 3px 12px;
+            border-radius: 999px;
+            background: var(--color-tertiary);
+            color: var(--color-on-tertiary);
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .event-selection-preview.preview-fail .preview-label {
+            background: var(--color-error);
+            color: var(--color-on-error);
+        }
 
         .top-bar {
             position: fixed;
@@ -1343,6 +1361,10 @@
             const borderSpacing = parseInt(getComputedStyle(table).borderSpacing) || 0;
             div.style.width = (firstTd.offsetWidth * span + (span - 1) * borderSpacing) + 'px';
             div.style.pointerEvents = 'none';
+            const label = document.createElement('span');
+            label.className = 'preview-label';
+            label.textContent = ok ? 'Select these slots?' : 'Not enough slots';
+            div.appendChild(label);
             if (!ok) firstTd.style.cursor = 'not-allowed';
             table.appendChild(div);
         }

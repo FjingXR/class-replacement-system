@@ -455,3 +455,14 @@ while the "Tip:" prefix stays muted via `--color-on-surface-variant`. Verified d
 Follow-up (same day): in dark theme `--color-primary` stays `#004D98` (dark navy — too dim on
 `#1B2838`), so `html.dark .sel-summary-tip .tip-action` now uses the dark palette's bright accent
 token `--color-on-primary-container` (`#6BA3E0`); light theme keeps `--color-primary`.
+
+## [2026-10-03] Hover preview carries the message; "Select ?" chip removed
+
+The per-cell hover chip (`--hover-label: 'Select ?'`) is gone — `.cell-available::after` is
+suppressed (`content: none`) on this page since the theme renders the chip via an empty-content
+overlay. `previewBlock()` now injects a `.preview-label` span centered across the 4-slot preview
+overlay: "Select these slots?" on `.preview-ok` (yellow) and "Not enough slots" on `.preview-fail`
+(red). The label renders as a solid pill (`--color-tertiary`/`--color-on-tertiary` on OK,
+`--color-error`/`--color-on-error` on fail, padded + rounded) so it stays crisp over the
+translucent preview fill — a darker-fill variant was tried and reverted (fill stays at the shared
+40% `color-mix`). Verified dark + light, 0 console errors. Uncommitted at user request.
