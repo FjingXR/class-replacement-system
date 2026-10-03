@@ -651,3 +651,42 @@ The manual-selection banner now leads with the reason: "Your booked slot (Wed, 0
 13:30) is conflicted — please select an available slot manually." — slot, conflict status and
 action in one sentence (was: "needs manual selection — find … on the grid", which never said WHY).
 Verified banner wording on conflict arrival, 0 console errors.
+
+## [2026-10-03] Navigation bug-fix batch (Playwright round-trip audit)
+
+Six bugs found by testing venue-timetable <-> replacement-arrangement with browser back,
+forward, refresh and the system back button — all fixed and verified:
+
+1. **Subject dropdown contradiction after back/forward** — Chrome's form restoration re-filled
+   the dropdown while the page booted with currentCourse null (grid locked under a filled
+   selector; re-picking the shown subject fired no change event). reconcileSubjectState() now
+   runs on pageshow (+120ms belt & braces): what the dropdown shows is what gets applied.
+2. **Refresh resurrected a deselected block** — the booking auto-select re-fired on every load.
+   discardSelection() (block click, card x, card click, clear selection, change-confirms) now
+   records bookingIntentCancelled (sessionStorage, venue|date|time) and consumeBookingIntent()
+   treats a cancelled booking as spent: no re-select, banner cleared, no toast. Per booking —
+   other bookings still auto-select.
+3. **Booking context lost on system back** — BackNavigator.getBackUrl() now carries code/cohort
+   back to venue-timetable, so the "Booking for:" banner survives the round-trip.
+4. **Stale "Pre-selected..." toast with a dead Undo** — discardSelection() dismisses the toast
+   bar the moment the selection is discarded.
+5. **Week bleed between pages** — WeekNavigator takes a storage key; the arrangement uses
+   'arrangementWeek', venue-timetable 'venueTimetableWeek' (other pages keep the shared
+   'currentWeek'). Browsing the arrangement no longer moves the venue page's week.
+6. (Venue page side) unbookable late slots no longer offer Book — see venue changelog.
+
+Verified: forward-restore reconciliation, deselection remembered across refresh (both with and
+without &code), banner context through system back, toast dismissal, per-page weeks, no-fit
+guard, auto/conflict/sticky-dismissal regressions, refresh-cancel keeping the selection, other
+timetable pages unaffected — 0 console errors throughout.
+
+### Follow-up: cancelled bookings no longer show the banner either
+
+Manual testing flagged an inconsistency: after deselect + refresh, the cancelled booking's
+banner re-appeared promising "pick a subject to pre-fill the slots" — a promise the cancelled
+flag then broke (nothing pre-filled). renderBookingIntent() now treats a cancelled booking like
+a spent intent: no banner at all. The two sticky memories stay distinct: the banner's x only
+silences the reminder (auto-select still fires), while deselecting the block ends the whole
+intent (no banner, no re-select). Re-booking the same slot from the venue page starts fresh
+(see venue changelog). Verified: deselect+refresh leaves no banner and no toast; subject re-pick
+stays silent; x-dismissed bookings still auto-select; same-slot re-book restores both.

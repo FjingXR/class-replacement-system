@@ -261,3 +261,21 @@ off so exactly one button renders per page.
 Venue Timetable renders its own identical hand-placed button (`.print-btn`, inline
 `margin-left:auto`) instead of the partial arg — the page's `showPrint` stays off so exactly one
 button renders per page.
+
+## [2026-10-03] Book offered only when the slot can fit a booking
+
+The venue page advertised "Book" on cells too late in the day for the arrangement page's
+4-slot booking span (e.g. 18:00) — users landed straight into the conflict state. Cells where
+start + BOOK_SPAN (= 4 half-hour slots, matching the arrangement's default MAX_SELECTION) would
+run past day end now carry .cell-no-fit: hover label "Not bookable" + not-allowed cursor, and
+clicking shows an explanatory toast ("A booking needs 120 minutes — not enough time left in the
+day.") instead of the Book tooltip. Fitting cells behave exactly as before. Also: the page's
+week position moved to its own localStorage key ('venueTimetableWeek'), so browsing the
+replacement-arrangement grid no longer jumps this page's week. 0 console errors.
+
+### Follow-up: a fresh Book click resets that booking's sticky memories
+
+If a slot's auto-select was previously discarded (bookingIntentCancelled) or its reminder
+dismissed (bookingIntentDismissed), re-booking the SAME slot from the venue page now clears
+those keys before navigating — a fresh Book click is a fresh intent, so the banner shows and
+the auto-select fires again. Other bookings' memories are untouched.

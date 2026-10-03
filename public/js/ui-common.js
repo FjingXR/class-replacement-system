@@ -125,11 +125,15 @@ function initTodayBtn() {
 }
 
 class WeekNavigator {
-    constructor(semesterData, weekData, selectId) {
+    constructor(semesterData, weekData, selectId, storageKey) {
         this._semester = semesterData;
         this._weekData = weekData;
         this._currentWeek = 0;
         this._selectId = selectId || 'weekSelect';
+        /* per-page week position by default (shared 'currentWeek' made pages
+           overwrite each other's position — e.g. browsing the arrangement grid
+           moved the venue timetable's week) */
+        this._storageKey = storageKey || 'currentWeek';
     }
 
     get currentWeek() {
@@ -202,13 +206,13 @@ class WeekNavigator {
 
     save() {
         try {
-            localStorage.setItem('currentWeek', this._currentWeek);
+            localStorage.setItem(this._storageKey, this._currentWeek);
         } catch (e) { /* ignore */ }
     }
 
     load() {
         try {
-            var saved = localStorage.getItem('currentWeek');
+            var saved = localStorage.getItem(this._storageKey);
             if (saved !== null) {
                 var idx = parseInt(saved, 10);
                 if (!isNaN(idx)) {
@@ -2364,7 +2368,16 @@ class BackNavigator {
     static getBackUrl() {
         var params = new URLSearchParams(window.location.search);
         var from = params.get('from');
-        return BackNavigator.#routes[from] || BackNavigator.getDefault();
+        var url = BackNavigator.#routes[from] || BackNavigator.getDefault();
+        /* keep the booking context alive across the round-trip: the venue page's
+           "Booking for:" banner runs on these params */
+        if (from === 'venue-timetable') {
+            var keep = [];
+            if (params.get('code')) keep.push('code=' + encodeURIComponent(params.get('code')));
+            if (params.get('cohort')) keep.push('cohort=' + encodeURIComponent(params.get('cohort')));
+            if (keep.length) url += '?' + keep.join('&');
+        }
+        return url;
     }
 
     static navigate() {

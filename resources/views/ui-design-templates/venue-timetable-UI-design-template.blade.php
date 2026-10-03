@@ -299,6 +299,8 @@
 
         /* ───── Available slot hover label ───── */
         .cell-available { --hover-label: 'Book ?'; }
+        /* too late in the day for a full booking — hover says so instead */
+        .cell-available.cell-no-fit { --hover-label: 'Not bookable'; cursor: not-allowed; }
 
 
 
@@ -469,7 +471,7 @@
            WEEK NAVIGATION (shared WeekNavigator)
            ════════════════════════════════════════════ */
 
-        const weekNav = new WeekNavigator(MockData.semester, weekData);
+        const weekNav = new WeekNavigator(MockData.semester, weekData, null, 'venueTimetableWeek');
 
         /* ════════════════════════════════════════════
            STATE PERSISTENCE (venue only)
@@ -757,6 +759,8 @@
                         /* Available slot */
                         const div = document.createElement('div');
                         div.className = 'cell-content cell-available';
+                        /* a booking can't fit if it would run past the day end */
+                        if (hi + BOOK_SPAN > hours.length) div.classList.add('cell-no-fit');
                         div.tabIndex = 0;
                         div.dataset.day = di;
                         div.dataset.hour = hi;
@@ -872,7 +876,16 @@
            AVAILABLE SLOT TOOLTIP
            ════════════════════════════════════════════ */
 
+        /* Slots one booking spans on the arrangement page (its default
+           MAX_SELECTION: 4 half-hour slots = 2h). A booking starting too late in
+           the day can't fit — don't offer Book on those cells. */
+        const BOOK_SPAN = 4;
+
         function showAvailableTooltip(ev, di, hi) {
+            if (hi + BOOK_SPAN > hours.length) {
+                toast.show('A booking needs ' + (BOOK_SPAN * 30) + ' minutes — not enough time left in the day.');
+                return;
+            }
             const tooltip = document.getElementById('availableTooltip');
             const dayName = weekData[currentWeek].days[di]?.abbr || '';
             const dateStr = weekData[currentWeek].days[di]?.date || '';
@@ -909,6 +922,13 @@
 
         function bookVenue(venueCode, date, time) {
             hideAvailableTooltip();
+            /* a fresh Book click is a new intent: if THIS slot was previously
+               cancelled (auto-select discarded) or its banner dismissed, start clean */
+            const bookingKey = venueCode + '|' + date + '|' + time;
+            try {
+                if (sessionStorage.getItem('bookingIntentCancelled') === bookingKey) sessionStorage.removeItem('bookingIntentCancelled');
+                if (sessionStorage.getItem('bookingIntentDismissed') === bookingKey) sessionStorage.removeItem('bookingIntentDismissed');
+            } catch (e) {}
             let url = `/replacement-arrangement?venue=${encodeURIComponent(venueCode)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&from=venue-timetable`;
             if (currentCourseCode) url += `&code=${encodeURIComponent(currentCourseCode)}`;
             if (currentCohort) url += `&cohort=${encodeURIComponent(currentCohort)}`;

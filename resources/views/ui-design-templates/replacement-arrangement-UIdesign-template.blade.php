@@ -1127,7 +1127,7 @@
         const venueSlotData = MockData.venueSlots;
 
         let selectedSlotsByVenue = {};
-        var weekNav = new WeekNavigator(MockData.semester, weekData, 'weekSelector');
+        var weekNav = new WeekNavigator(MockData.semester, weekData, 'weekSelector', 'arrangementWeek');
         weekNav.onBeforeNavigate = function() { saveCurrentWeek(); };
         let currentVenue = 'B103';
         let venueDropdown = null;
@@ -1280,7 +1280,7 @@
                 card.dataset.venue = b.venue;
                 card.dataset.week = b.weekIdx;
                 card.innerHTML = `
-                    <button class="card-remove" onclick="deselectBlock()" data-tip="Remove this selection" aria-label="Remove">×</button>
+                    <button class="card-remove" onclick="discardSelection()" data-tip="Remove this selection" aria-label="Remove">×</button>
                     <div class="card-venue">${b.venue}</div>
                     <div class="card-day">${b.weekLabel} · ${b.day.abbr}</div>
                     <div class="card-date">${b.day.date}</div>
@@ -1389,7 +1389,7 @@
             const startStr = hours[selectedBlock.startHour];
             const endStr = add30min(hours[selectedBlock.endHour - 1]);
             div.innerHTML = `<span class="ev-time-label">${to12h(startStr)} – ${to12h(endStr)}</span>`;
-            div.addEventListener('click', () => deselectBlock());
+            div.addEventListener('click', () => discardSelection());
             firstTd.appendChild(div);
             // Disable hover on other available cells
             const table = body.closest('.timetable');
@@ -1555,7 +1555,7 @@
             }
             // If clicking inside the current block, deselect it
             if (selectedBlock && di === selectedBlock.day && hi >= selectedBlock.startHour && hi < selectedBlock.endHour) {
-                deselectBlock();
+                discardSelection();
                 return;
             }
             // Otherwise try to place a new block starting at this cell
@@ -1576,7 +1576,7 @@
         }
 
         function clearSelection() {
-            deselectBlock();
+            discardSelection();
         }
 
         function onVenueChange() {
@@ -1670,7 +1670,7 @@
                 'You have selected slots on the grid. Changing the <strong>' + actionLabel + '</strong> will remove them. Continue?',
                 function() {
                     hideConfirmModal();
-                    deselectBlock();
+                    discardSelection();
                     proceedFn();
                 }
             );
@@ -1817,8 +1817,22 @@
            exactly as left — selections, undo history AND the allowUnload bypass all
            survive. The user already confirmed leaving ("selections will be lost"),
            so re-arm the guard and come back to a clean slate. */
+        /* Chrome re-fills form controls on back/forward reloads: the subject dropdown
+           can DISPLAY a value the page's JS never applied (currentCourse still null),
+           leaving the grid locked under a filled selector. Reconcile so what is shown
+           is what is applied. Runs on every load — restoration precedes pageshow. */
+        function reconcileSubjectState() {
+            const sel = document.getElementById('subjectSelector');
+            if (sel && sel.value && !currentCourse) onSubjectChange();
+        }
+
         window.addEventListener('pageshow', function(e) {
-            if (!e.persisted) return; /* normal load — nothing to do */
+            reconcileSubjectState();
+            if (!e.persisted) {
+                /* belt & braces: form-restoration timing varies — re-check shortly */
+                setTimeout(reconcileSubjectState, 120);
+                return; /* normal load — nothing else to do */
+            }
             allowUnload = false;
             Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
             deselectBlock();        /* removes merged block + restores green cells */
@@ -2104,13 +2118,19 @@
         let pendingBookingIntent = null;
         let intentBannerSuppressed = false; /* sticky ×: reminder stays dismissed for this booking */
         let intentNeedsManual = false;      /* booked slot can't be auto-selected (overflow/unavailable) */
+        let intentCancelled = false;        /* user discarded the auto-select — reload must not resurrect it */
 
         function intentKey(i) { return i.venue + '|' + i.dateStr + '|' + i.timeStr; }
+
+        function bookingKeyFromParams() {
+            return (urlParams.venue || '') + '|' + (urlParams.date || '') + '|' + (urlParams.time || '');
+        }
 
         function resolveBookingIntent() {
             pendingBookingIntent = null;
             intentBannerSuppressed = false;
             intentNeedsManual = false;
+            intentCancelled = false;
             if (!urlParams.date || !urlParams.time) return;
             const hourIndex = hours.indexOf(urlParams.time);
             if (hourIndex < 0) return;
@@ -2138,13 +2158,17 @@
                navigation (sessionStorage) — the auto-select feature still works */
             try { intentBannerSuppressed = sessionStorage.getItem('bookingIntentDismissed') === intentKey(pendingBookingIntent); }
             catch (e) { intentBannerSuppressed = false; }
+            /* a discarded auto-select also stays discarded for the SAME booking:
+               the user explicitly removed the block, so reloads don't resurrect it */
+            try { intentCancelled = sessionStorage.getItem('bookingIntentCancelled') === intentKey(pendingBookingIntent); }
+            catch (e) { intentCancelled = false; }
             renderBookingIntent();
         }
 
         function renderBookingIntent() {
             const el = document.getElementById('bookingIntent');
             if (!el) return;
-            if (!pendingBookingIntent || intentBannerSuppressed) { el.innerHTML = ''; return; }
+            if (!pendingBookingIntent || intentBannerSuppressed || intentCancelled) { el.innerHTML = ''; return; }
             const i = pendingBookingIntent;
             /* conflict case: the slot can't be auto-selected — error-toned notice */
             if (intentNeedsManual) {
@@ -2195,9 +2219,32 @@
             renderBookingIntent();
         }
 
+        /* The user explicitly discarded a selection — remember it for THIS booking
+           (sessionStorage, same key family as the banner dismissal) so a reload of
+           the same URL doesn't silently re-select the block they removed. */
+        function markBookingCancelled() {
+            if (!urlParams.date || !urlParams.time) return;
+            try { sessionStorage.setItem('bookingIntentCancelled', bookingKeyFromParams()); } catch (e) {}
+        }
+
+        /* Explicit user discard of the current block: kill the (now stale)
+           "Pre-selected…" toast, remember the booking as handled, then deselect. */
+        function discardSelection() {
+            toast.dismiss();
+            markBookingCancelled();
+            deselectBlock();
+        }
+
         /* Fires once a subject exists (URL auto-pick or user pick): */
         function consumeBookingIntent() {
             if (!pendingBookingIntent || !currentCourse) return;
+            if (intentCancelled) {
+                /* the user already discarded this booking's auto-select — the intent
+                   is spent: clear the banner, select nothing, stay quiet */
+                pendingBookingIntent = null;
+                renderBookingIntent();
+                return;
+            }
             const i = pendingBookingIntent;
             if (intentNeedsManual || !canPlaceBlock(i.dayIndex, i.hourIndex)) {
                 intentNeedsManual = true;
