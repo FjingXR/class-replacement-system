@@ -164,3 +164,9 @@ Page uses `ui-page-header`, `ui-week-nav`, `ui-grid-table`, `ui-empty-state`, `u
 ## Post-2026-10-02 cross-reference
 
 The badge feed added with this page's build (`$notifCount` with server default `3` on the nav bar, `MockData.studentTimetable.notificationCount`, and the page's `notifBadge.textContent` echo) was removed by the `notifications-panel` change — the bell badge is now computed by `refreshNotifBadge()` in `ui-common.js`; see `notifications-panel-changelog.md`.
+
+## [2026-10-03] Disabled print icon on the week-nav toolbar
+
+Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a disabled printer
+icon-button (inline SVG, `.print-btn` in theme.css): `disabled` + `aria-disabled`, cancel cursor,
+no hover feedback / tooltip (stub for post-mock printing scope). No JS, no backend.

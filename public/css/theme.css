@@ -1584,6 +1584,28 @@ html.dark .filter-select {
     background: transparent;
     color: var(--color-on-surface-variant);
 }
+/* ── Print action (disabled stub — printing is post-mock scope) ── */
+.print-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: transparent;
+    color: var(--color-on-surface-variant);
+    cursor: var(--cursor-cancel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+}
+.print-btn:disabled {
+    opacity: 0.35;
+    cursor: var(--cursor-cancel);
+}
+.print-btn:disabled:hover {
+    background: transparent;
+    color: var(--color-on-surface-variant);
+}
 /* ── Week Nav: arrows + week-select stay together ── */
 .week-nav {
     display: flex;

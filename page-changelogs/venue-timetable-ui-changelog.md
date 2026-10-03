@@ -246,3 +246,9 @@ Added an expandable guide block with page-specific workflow instructions.
 | 2026-08-13 | `public/css/theme.css` (shared) | CSS tooltip + legend refactor | Added `[data-tip]` CSS tooltip system (above element, inverse-surface bg, arrow, opacity transition). Legend bar: `flex-direction: column`, hint moved to top-left above swatches. Legend swatches use container tokens matching cell backgrounds. Legend bar has `background: var(--color-surface)` for consistent rendering. |
 | 2026-08-14 | `buildTimetable()` | OOP refactor | Hand-built `<table>` replaced with shared `buildTimetableGrid({cellRender})` from ui-common.js. cellRender handles holiday/Sunday (cell-ph/cell-sun), event/occupied (cell-pending/cell-occupied), available cells + booking tooltip + mobile available cards. |
 | 2026-08-14 | `prevWeek/nextWeek/selectWeek`, today btn | WeekNavigator delegation | Local nav logic replaced with `weekNav.prevWeek()/nextWeek()/selectWeek()` + `currentWeek` re-sync. Today button now uses `weekNav.initTodayBtn()` (class jumpToToday) + persist listener. |
+
+## [2026-10-03] Disabled print icon on the week-nav toolbar
+
+Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a disabled printer
+icon-button (inline SVG, `.print-btn` in theme.css): `disabled` + `aria-disabled`, cancel cursor,
+no hover feedback / tooltip (stub for post-mock printing scope). No JS, no backend.

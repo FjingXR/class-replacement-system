@@ -63,7 +63,7 @@
             <select id="cohortSelect" onchange="onCohortChange()" disabled>
                 <option value="">Select Cohort</option>
             </select>
-            @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelect', 'selectOnclick' => 'selectWeek(this.value)', 'disabled' => true])
+            @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelect', 'selectOnclick' => 'selectWeek(this.value)', 'disabled' => true, 'showPrint' => true])
         </div>
 
         <!-- ─── Grid Wrapper ─── -->
