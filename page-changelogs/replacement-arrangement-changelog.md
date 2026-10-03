@@ -443,3 +443,12 @@ row — the single toolbar line could never fit subject + slot + venue + week na
 (≤768px) keeps the stacked full-width look via `flex-basis` overrides. Trigger span ellipsizes.
 Verified side-by-side at 1280/1440/1024, stacked at 375; picker panel opens as before; 0 console
 errors.
+
+## [2026-10-03] Max-selection tip gains a "click to remove" hint
+
+At `MAX_SELECTION` the summary tip now reads "Tip: Maximum selection reached. Click the selected
+block to remove it." (previously the remove hint vanished exactly when it was needed). The action
+phrase is wrapped in a new `.tip-action` span — `var(--color-primary)` + bold — in both branches
+that show it, and `.sel-summary-tip` drops its `opacity: 0.65` so the accent reads at full strength
+while the "Tip:" prefix stays muted via `--color-on-surface-variant`. Verified dark + light themes,
+0 console errors.

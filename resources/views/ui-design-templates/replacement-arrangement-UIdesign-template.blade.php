@@ -610,7 +610,10 @@
             font-size: 12px;
             color: var(--color-on-surface-variant);
             text-align: center;
-            opacity: 0.65;
+        }
+        .sel-summary-tip .tip-action {
+            color: var(--color-primary);
+            font-weight: 700;
         }
 
         @media (max-width: 1024px) {
@@ -1177,9 +1180,9 @@
 
             const tip = document.getElementById('summaryTip');
             if (getGlobalTotal() >= MAX_SELECTION) {
-                tip.textContent = 'Tip: Maximum selection reached.';
+                tip.innerHTML = 'Tip: Maximum selection reached. <span class="tip-action">Click the selected block to remove it.</span>';
             } else if (allBlocks.length > 0) {
-                tip.textContent = 'Tip: Click the selected block to remove it.';
+                tip.innerHTML = 'Tip: <span class="tip-action">Click the selected block to remove it.</span>';
             } else {
                 tip.textContent = 'Tip: Click an available (green) time slot to begin.';
             }
