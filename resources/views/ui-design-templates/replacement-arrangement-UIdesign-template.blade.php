@@ -441,14 +441,16 @@
         .btn-primary {
             background: var(--color-primary);
             color: var(--color-on-primary);
-            box-shadow: 0 2px 8px rgba(151, 230, 194, 0.2);
+            transition: transform 0.15s, filter 0.15s, box-shadow var(--transition);
         }
+        /* Hover/active mirror the shared .btn-action design (replacement-home) */
         .btn-primary:hover {
-            box-shadow: 0 4px 16px rgba(151, 230, 194, 0.3);
-            filter: brightness(1.05);
+            filter: brightness(1.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
-        .light .btn-primary { box-shadow: 0 2px 8px rgba(46, 194, 126, 0.2); }
-        .light .btn-primary:hover { box-shadow: 0 4px 16px rgba(46, 194, 126, 0.3); }
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
 
         /* ── When block is selected, disable hover on other cells ── */
         .has-selection .cell-available { cursor: var(--cursor-cancel) !important; }

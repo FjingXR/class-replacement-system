@@ -532,3 +532,12 @@ Both footer buttons are wrapped in `.btn-tip` spans carrying state-aware `data-t
 a time slot first" / "Clear all your selected slots". Disabled controls swallow mouse events, so
 the tips live on the wrapper spans with `.btn-tip .btn:disabled { pointer-events: none }` letting
 hover pass through; the shared tooltip renders above. Verified all four states, 0 console errors.
+
+## [2026-10-03] Primary buttons adopt the shared .btn-action hover
+
+`.btn-primary` (Submit Request + modal Confirm) now mirrors replacement-home's `.btn-action` hover:
+brightness(1.08) + neutral `0 2px 8px rgba(0,0,0,0.15)` shadow + `scale(0.97)` on active, with
+`transform/filter/box-shadow` transitions. Also removes the stale green rgba shadows
+(`rgba(151,230,194,…)` / light `rgba(46,194,126,…)`) left from the old green theme on the now-blue
+primary. The Today chip (container-styled, opacity hover) is intentionally untouched. Verified
+computed hover styles, 0 console errors.
