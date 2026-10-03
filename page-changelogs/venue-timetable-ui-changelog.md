@@ -279,3 +279,16 @@ If a slot's auto-select was previously discarded (bookingIntentCancelled) or its
 dismissed (bookingIntentDismissed), re-booking the SAME slot from the venue page now clears
 those keys before navigating — a fresh Book click is a fresh intent, so the banner shows and
 the auto-select fires again. Other bookings' memories are untouched.
+
+## [2026-10-03] Round-2 fixes: Class Details on desktop + tooltip staleness + keyboard
+
+1. **Class Details modal was unreachable on desktop**: occupied/pending cells had no click
+   listener (openModal was wired only to the mobile cards). Desktop cells now open the modal
+   (cursor pointer, focusable, aria-label), keyboard focus tracked.
+2. **Book tooltip went stale across week/venue switches**: the tooltip survived grid rebuilds
+   still offering the old date/venue. buildTimetable now dismisses it on every rebuild.
+3. **Keyboard B shortcut needed arrow-key navigation first**: clicking or focusing a cell now
+   sets the tracked cell, so B works after click/Tab too.
+
+Verified: occupied/pending modals on desktop, tooltip dismissal on week + venue change,
+B-after-click, plus the venue-side regression set — 0 console errors.

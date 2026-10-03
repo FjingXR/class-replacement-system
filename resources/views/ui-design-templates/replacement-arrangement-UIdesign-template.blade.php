@@ -1129,6 +1129,8 @@
         let selectedSlotsByVenue = {};
         var weekNav = new WeekNavigator(MockData.semester, weekData, 'weekSelector', 'arrangementWeek');
         weekNav.onBeforeNavigate = function() { saveCurrentWeek(); };
+        /* restore-after-week-jump already happens inside buildTimetable()
+           (loadCurrentWeek) — no after-navigate hook needed here */
         let currentVenue = 'B103';
         let venueDropdown = null;
         let selectedBlock = null;          // { day, startHour, endHour } or null
@@ -1187,20 +1189,24 @@
         }
 
         function updateCounter() {
+            /* multi-week model: the counter and button states reflect ALL saved
+               selections, not just the week on screen */
+            const total = getGlobalTotal();
             const el = document.getElementById('selCount');
-            if (el) el.textContent = selectedBlock ? (selectedBlock.endHour - selectedBlock.startHour) : 0;
+            if (el) el.textContent = total;
+            const has = total > 0;
             const btn = document.querySelector('.btn-primary');
-            if (btn) btn.disabled = !selectedBlock;
+            if (btn) btn.disabled = !has;
             const clearBtn = document.getElementById('clearAllBtn');
-            if (clearBtn) clearBtn.disabled = !selectedBlock;
+            if (clearBtn) clearBtn.disabled = !has;
             /* Footer button tooltips — state-aware (buttons render above via the shared
                data-tip system; the wrapper span keeps hover alive while disabled) */
             const submitTip = document.getElementById('submitTip');
-            if (submitTip) submitTip.setAttribute('data-tip', selectedBlock
+            if (submitTip) submitTip.setAttribute('data-tip', has
                 ? 'Send your replacement request for approval'
                 : 'Select a time slot first to enable submission');
             const clearTip = document.getElementById('clearTip');
-            if (clearTip) clearTip.setAttribute('data-tip', selectedBlock
+            if (clearTip) clearTip.setAttribute('data-tip', has
                 ? 'Clear all your selected slots'
                 : 'Nothing to clear yet — select a time slot first');
             updateSelectionSummary();
@@ -1436,10 +1442,20 @@
         function selectBlock(day, startHour) {
             if (selectedBlock) {
                 showAlertModal('Clear current selection', 'You already have a selected block. Clear it first before selecting a new one.');
-                return;
+                return false;
             }
             const span = MAX_SELECTION;
-            if (!canPlaceBlock(day, startHour)) return;
+            if (!canPlaceBlock(day, startHour)) {
+                toast.show(startHour + span > hours.length
+                    ? 'Not enough time left in the day for a ' + (span * 30) + '-minute selection.'
+                    : 'That slot is no longer available.');
+                return false;
+            }
+            /* multi-week budget: MAX_SELECTION slots in total across every week */
+            if (getGlobalTotal() + span > MAX_SELECTION) {
+                toast.show('You\u2019ve reached the ' + MAX_SELECTION + '-slot maximum \u2014 clear another week\u2019s selection first.');
+                return false;
+            }
             /* a real (manual) selection completes the booking — drop the intent banner */
             if (pendingBookingIntent) { pendingBookingIntent = null; renderBookingIntent(); }
             selectedBlock = { day, startHour, endHour: startHour + span };
@@ -1450,6 +1466,7 @@
             selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = { day, startHour, endHour: startHour + span };
             pushHistory({ action: 'select', block: { ...selectedBlock } });
             updateCounter();
+            return true;
         }
 
         let previewRange = null;
@@ -1708,20 +1725,28 @@
         }
 
         function proceed() {
-            if (!selectedBlock) {
+            if (getGlobalTotal() === 0) {
                 showConfirmModal('No Selection', 'Please select at least one timeslot before proceeding.', null);
                 return;
             }
-            const days = weekData[weekNav.currentWeek].days;
-            const weekLabel = weekData[weekNav.currentWeek].label;
-            const day = days[selectedBlock.day];
-            const startStr = hours[selectedBlock.startHour];
-            const endStr = add30min(hours[selectedBlock.endHour - 1]);
-            const slotCount = selectedBlock.endHour - selectedBlock.startHour;
-            const listHtml = `<div style="padding:3px 0;font-size:13px;">${currentVenue} · (${weekLabel}) ${day.abbr}, ${day.date} — ${to12h(startStr)} ~ ${to12h(endStr)} · ${slotCount} slots</div>`;
+            /* multi-week model: summarize EVERY saved selection, not just the week on screen */
+            const shortDayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const rows = [];
+            for (const venue in selectedSlotsByVenue) {
+                for (const week in selectedSlotsByVenue[venue]) {
+                    const block = selectedSlotsByVenue[venue][week];
+                    if (!block) continue;
+                    const dayData = weekData[week].days[block.day];
+                    const startStr = hours[block.startHour];
+                    const endStr = add30min(hours[block.endHour - 1]);
+                    const slotCount = block.endHour - block.startHour;
+                    rows.push(`<div style="padding:3px 0;font-size:13px;">${venue} · (${weekData[week].label}) ${shortDayNames[block.day]}, ${dayData.date} — ${to12h(startStr)} ~ ${to12h(endStr)} · ${slotCount} slots</div>`);
+                }
+            }
+            const listHtml = rows.join('');
             showConfirmModal(
                 'Confirm Your Selection',
-                `<div style="margin-bottom:12px;font-weight:500;">You are about to submit a replacement request for the following block:</div>
+                `<div style="margin-bottom:12px;font-weight:500;">You are about to submit a replacement request for the following ${rows.length > 1 ? rows.length + ' blocks' : 'block'}:</div>
                  <div style="border:1px solid var(--color-outline);border-radius:var(--radius-sm);padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
                 function() {
                     hideConfirmModal();
@@ -2149,6 +2174,7 @@
             pendingBookingIntent = {
                 dayIndex: dayIndex,
                 hourIndex: hourIndex,
+                weekIndex: weekIdx,
                 venue: urlParams.venue || '',
                 dateStr: urlParams.date,
                 timeStr: urlParams.time,
@@ -2238,6 +2264,10 @@
         /* Fires once a subject exists (URL auto-pick or user pick): */
         function consumeBookingIntent() {
             if (!pendingBookingIntent || !currentCourse) return;
+            const i = pendingBookingIntent;
+            const venueNow = currentVenue.code || currentVenue;
+            const onBookedGrid = weekNav.currentWeek === i.weekIndex && venueNow === i.venue;
+
             if (intentCancelled) {
                 /* the user already discarded this booking's auto-select — the intent
                    is spent: clear the banner, select nothing, stay quiet */
@@ -2245,16 +2275,44 @@
                 renderBookingIntent();
                 return;
             }
-            const i = pendingBookingIntent;
-            if (intentNeedsManual || !canPlaceBlock(i.dayIndex, i.hourIndex)) {
-                intentNeedsManual = true;
-                renderBookingIntent(); /* arrival already toasted + pulsed; banner guides manual selection */
+
+            /* an identical selection (restored from per-week memory) already fulfils it */
+            if (selectedBlock && onBookedGrid && selectedBlock.day === i.dayIndex && selectedBlock.startHour === i.hourIndex) {
+                pendingBookingIntent = null;
+                renderBookingIntent();
                 return;
             }
+
+            /* browsed away from the booking's week/venue before picking a subject?
+               the booking owns the context — snap the grid back (per-week memory
+               keeps any selection made elsewhere); skipped while a selection is
+               active so nothing is discarded behind the user's back */
+            if (!onBookedGrid && !selectedBlock) {
+                if (weekNav.currentWeek !== i.weekIndex) weekNav.selectWeek(i.weekIndex);
+                if ((currentVenue.code || currentVenue) !== i.venue) venueDropdown.select(i.venue);
+            }
+
+            if (selectedBlock) {
+                /* a different selection is in the way — guide manually instead of
+                   dropping a jarring "clear first" modal mid-flow */
+                intentNeedsManual = true;
+                pulseTargetCell(i.dayIndex, i.hourIndex);
+                renderBookingIntent();
+                return;
+            }
+
+            if (intentNeedsManual || !canPlaceBlock(i.dayIndex, i.hourIndex)) {
+                intentNeedsManual = true;
+                pulseTargetCell(i.dayIndex, i.hourIndex);
+                renderBookingIntent();
+                return;
+            }
+
             pendingBookingIntent = null;
             renderBookingIntent();
-            selectBlock(i.dayIndex, i.hourIndex);
-            toast.show('Pre-selected from your venue booking — click the block to adjust.');
+            if (selectBlock(i.dayIndex, i.hourIndex)) {
+                toast.show('Pre-selected from your venue booking — click the block to adjust.');
+            }
         }
 
         function applySubjectChange(code) {

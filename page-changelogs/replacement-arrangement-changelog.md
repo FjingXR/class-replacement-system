@@ -690,3 +690,34 @@ silences the reminder (auto-select still fires), while deselecting the block end
 intent (no banner, no re-select). Re-booking the same slot from the venue page starts fresh
 (see venue changelog). Verified: deselect+refresh leaves no banner and no toast; subject re-pick
 stays silent; x-dismissed bookings still auto-select; same-slot re-book restores both.
+
+## [2026-10-03] Round-2 navigation fixes (multi-week model + intent snap-back)
+
+Full Playwright sweep of both pages surfaced 9 more issues; fixed per product decisions
+(multi-week selection capped at 4 total slots; booking intent snaps the grid back):
+
+1. **Grid built from the STALE week** (root cause, pre-existing): WeekNavigator ran
+   _updateSelect AFTER _buildTimetable, and the arrangement's getDays() reads the selector —
+   arrow/programmatic week jumps rendered the PREVIOUS week's dates (and holiday placeholders)
+   under the new week's label. Selector now syncs BEFORE the build.
+2. **Booking intent landed on the browsed week/venue**: the intent now carries its weekIndex;
+   at consume time the grid snaps back to the booked venue + week before auto-selecting
+   (skipped while a selection is active — nothing is discarded behind the user's back; an
+   identical restored selection quietly fulfils the intent).
+3. **MAX_SELECTION bypass across weeks**: per-week memory let users stack unlimited blocks.
+   selectBlock now enforces the 4-slot TOTAL budget with a clear toast, and returns
+   success/failure so the auto-select stays quiet when refused.
+4. **Submit summarized only the on-screen week**: proceed() now lists EVERY saved block across
+   weeks/venues in the confirmation ("…following N blocks"), and the No-Selection guard uses
+   the global total.
+5. **Submit/Clear-ALL disabled with a live selection on another week**: updateCounter() now
+   drives counter + button states + tooltips from the global total.
+6. **Unfittable cell click was a silent no-op**: now toasts "Not enough time left in the day
+   for a 120-minute selection." (hover preview already warned).
+7. Week round-trip selection loss was this same stale-grid bug in disguise (the restore call
+   inside buildTimetable was reading a wrong-week grid); no extra hook needed — an
+   onAfterNavigate double-call was removed again.
+
+Verified: snap-back (week + venue), cap + toast, cross-week submit summary, round-trip restore,
+submit/clear enablement, unfittable toast, my-timetable unaffected, plus the full regression set
+(auto/conflict/sticky-cancelled intent flows, refresh-cancel, Escape closes) — 0 console errors.

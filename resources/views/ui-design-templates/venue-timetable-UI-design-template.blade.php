@@ -301,6 +301,8 @@
         .cell-available { --hover-label: 'Book ?'; }
         /* too late in the day for a full booking — hover says so instead */
         .cell-available.cell-no-fit { --hover-label: 'Not bookable'; cursor: not-allowed; }
+        /* booked classes open their details on click */
+        .cell-content.cell-has-details { cursor: pointer; }
 
 
 
@@ -698,6 +700,8 @@
            ════════════════════════════════════════════ */
 
         function buildTimetable() {
+            /* the grid is about to be replaced — a live Book tooltip would go stale */
+            hideAvailableTooltip();
             currentWeek = weekNav.currentWeek;
             document.getElementById('hintText').style.display = 'none';
             document.getElementById('emptyState').style.display = 'none';
@@ -740,6 +744,13 @@
                         } else {
                             div.classList.add('cell-occupied');
                         }
+                        /* booked classes open their detail modal on desktop too */
+                        div.classList.add('cell-has-details');
+                        div.tabIndex = 0;
+                        div.setAttribute('role', 'button');
+                        div.setAttribute('aria-label', `View class details: ${e.code} ${hours[hi]}`);
+                        div.addEventListener('click', function() { openModal(e, di); });
+                        div.addEventListener('focus', function() { focusedCell = div; });
 
                         td.appendChild(div);
 
@@ -768,8 +779,10 @@
                         div.setAttribute('aria-label', `Available slot: ${days[di].abbr} ${hours[hi]}`);
 
                         div.addEventListener('click', function(ev) {
+                            focusedCell = div;
                             showAvailableTooltip(ev, di, hi);
                         });
+                        div.addEventListener('focus', function() { focusedCell = div; });
                         td.appendChild(div);
 
                         /* mobile available card */

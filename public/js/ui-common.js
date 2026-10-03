@@ -150,8 +150,8 @@ class WeekNavigator {
 
     jumpToToday() {
         this._currentWeek = this._currentWeekIndex();
-        this._buildTimetable();
         this._updateSelect();
+        this._buildTimetable();
         this._updateSubtitle();
         this._updateProgress();
         this._scrollToGrid();
@@ -162,8 +162,8 @@ class WeekNavigator {
         if (this._currentWeek > 0) {
             this._beforeNavigate();
             this._currentWeek--;
-            this._buildTimetable();
             this._updateSelect();
+            this._buildTimetable();
             this._updateSubtitle();
             this._updateProgress();
             this._updateArrows();
@@ -175,8 +175,8 @@ class WeekNavigator {
         if (this._currentWeek < this._semester.weeks - 1) {
             this._beforeNavigate();
             this._currentWeek++;
-            this._buildTimetable();
             this._updateSelect();
+            this._buildTimetable();
             this._updateSubtitle();
             this._updateProgress();
             this._updateArrows();
@@ -187,8 +187,8 @@ class WeekNavigator {
     selectWeek(index) {
         this._beforeNavigate();
         this._currentWeek = index;
-        this._buildTimetable();
         this._updateSelect();
+        this._buildTimetable();
         this._updateSubtitle();
         this._updateProgress();
         this._updateArrows();
