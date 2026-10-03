@@ -161,7 +161,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 16px;
+            gap: 12px;
             flex-wrap: wrap;
         }
         .toolbar-primary {
@@ -174,9 +174,9 @@
             min-width: 280px;
         }
         .toolbar-primary .selector-dropdown {
-            flex: 1 1 240px;
-            min-width: 200px;
-            max-width: 320px;
+            flex: 1 1 220px;
+            min-width: 0;
+            max-width: 235px;
         }
         .toolbar-primary .toolbar-subtitle {
             font-size: 14px;
@@ -211,10 +211,8 @@
         .toolbar-filters {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             flex-shrink: 0;
-            flex-basis: 100%; /* week nav owns its own row — subject + slot picker stay side by side */
-            justify-content: flex-end;
         }
         .toolbar-center {
             display: flex;
@@ -225,8 +223,8 @@
         /* ── Slot Dropdown (custom) ── */
         .slot-dd {
             position: relative;
-            flex: 1 1 200px;
-            max-width: 280px;
+            flex: 1 1 180px;
+            max-width: 260px;
         }
         .slot-dd-trigger {
             display: flex;
@@ -2127,7 +2125,7 @@
             const endStr = to12h(hours[slot.end + 1] || add30min(hours[slot.end]));
             const dateParts = slot.date.split(' ');
             const shortDate = dateParts[1] + ' ' + dateParts[0];
-            triggerText.textContent = 'W' + slot.week + ' · ' + shortDate + ', ' + startStr + ' - ' + endStr;
+            triggerText.textContent = 'W' + slot.week + ' · ' + shortDate + ' · ' + startStr + '–' + endStr;
 
             // Update selected state in panel
             document.querySelectorAll('.slot-dd-item').forEach(item => {
@@ -2304,14 +2302,11 @@
                 ranges: false,
                 selected: weekNav.currentWeek,
                 labelFn: function(w, i, isMobile) {
-                    const first = w.days[0].date;
-                    const last = w.days[w.days.length - 1].date;
-                    if (isMobile) {
-                        const shortFirst = first.replace(/ \d{4}$/, '');
-                        const shortLast = last.replace(/ \d{4}$/, '');
-                        return w.label + ' \u00B7 ' + shortFirst + ' ~ ' + shortLast;
-                    }
-                    return w.label + ' \u00B7 ' + first + ' ~ ' + last;
+                    /* Compact on all widths — keeps the single-row toolbar fit
+                       ("W1 · 27 Jul ~ 02 Aug"; year constant within a semester) */
+                    const first = w.days[0].date.replace(/ \d{4}$/, '');
+                    const last = w.days[w.days.length - 1].date.replace(/ \d{4}$/, '');
+                    return w.label.replace('Week ', 'W') + ' \u00B7 ' + first + ' ~ ' + last;
                 }
             });
             /* applyUrlParams AFTER week selector is ready (triggers onVenueChange → buildTimetable) */

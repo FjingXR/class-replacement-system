@@ -477,3 +477,15 @@ danger pill — "Remove these slots?" (`--color-error`/`--color-on-error`), with
 swapping to error on hover; `bottom: auto` added to undo the generic `.event-block::after` tooltip's
 `bottom: 100%` (was squashing the pill to a 6px sliver). Summary card "×" gains a shared
 `data-tip="Remove this selection"` tooltip. Verified dark + light, 0 console errors.
+
+## [2026-10-03] Toolbar groups on a single row
+
+`.toolbar-filters` loses its `flex-basis: 100%` own-row rule — subject select, slot picker, venue
+dropdown, favourite, week nav, Today and print all share one toolbar line at ≥ ~1150px (container
+content box is 1190px). To fit: week labels compact to "W1 · 27 Jul ~ 02 Aug" via the page's
+`labelFn` (year + "Week" dropped — constant within a semester; select 285 → 186px), filters gap
+12 → 8, group gap 16 → 12, subject select caps at 235px, and the slot picker gets 260px so its
+primary info is fully visible — trigger text also compacted to
+"W3 · Aug 17 · 10:00 AM–11:30 AM" (comma/en-dash form, no clipping). Below ~1150px the groups
+still wrap gracefully and ≤768px keeps the stacked layout. Verified 1280 / 1440 / 1024 / 375,
+0 console errors.
