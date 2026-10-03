@@ -264,6 +264,12 @@
             padding: 2px 6px;
             border-radius: var(--radius-sm);
         }
+        /* conflict variant: booked slot can't be auto-selected */
+        .booking-intent-manual {
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+            border-color: color-mix(in srgb, var(--color-error) 35%, transparent);
+        }
         .semester-chip { display: none; }
         .page-header .semester-chip { display: none; }
         .toolbar-filters {
@@ -1434,6 +1440,8 @@
             }
             const span = MAX_SELECTION;
             if (!canPlaceBlock(day, startHour)) return;
+            /* a real (manual) selection completes the booking — drop the intent banner */
+            if (pendingBookingIntent) { pendingBookingIntent = null; renderBookingIntent(); }
             selectedBlock = { day, startHour, endHour: startHour + span };
             previewRange = null;
             const body = document.getElementById('tableBody');
@@ -2094,9 +2102,15 @@
            already confirmed that exact slot, so once a subject exists we
            auto-select it instead of making the user hunt for it again. */
         let pendingBookingIntent = null;
+        let intentBannerSuppressed = false; /* sticky ×: reminder stays dismissed for this booking */
+        let intentNeedsManual = false;      /* booked slot can't be auto-selected (overflow/unavailable) */
+
+        function intentKey(i) { return i.venue + '|' + i.dateStr + '|' + i.timeStr; }
 
         function resolveBookingIntent() {
             pendingBookingIntent = null;
+            intentBannerSuppressed = false;
+            intentNeedsManual = false;
             if (!urlParams.date || !urlParams.time) return;
             const hourIndex = hours.indexOf(urlParams.time);
             if (hourIndex < 0) return;
@@ -2120,23 +2134,40 @@
                 timeStr: urlParams.time,
                 dayAbbr: (weekData[weekIdx].days[dayIndex] || {}).abbr || ''
             };
+            /* a dismissed reminder stays dismissed for the SAME booking across
+               navigation (sessionStorage) — the auto-select feature still works */
+            try { intentBannerSuppressed = sessionStorage.getItem('bookingIntentDismissed') === intentKey(pendingBookingIntent); }
+            catch (e) { intentBannerSuppressed = false; }
             renderBookingIntent();
         }
 
         function renderBookingIntent() {
             const el = document.getElementById('bookingIntent');
             if (!el) return;
-            if (!pendingBookingIntent) { el.innerHTML = ''; return; }
+            if (!pendingBookingIntent || intentBannerSuppressed) { el.innerHTML = ''; return; }
             const i = pendingBookingIntent;
+            /* conflict case: the slot can't be auto-selected — error-toned notice */
+            if (intentNeedsManual) {
+                el.innerHTML = `<div class="booking-intent booking-intent-manual">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span><strong>Your booked slot (${i.dayAbbr}, ${i.dateStr} · ${i.timeStr}) is conflicted</strong> — please select an available slot manually.</span>
+                    <button class="bi-close" onclick="dismissBookingIntent()" data-tip="Dismiss booking reminder">&times;</button>
+                </div>`;
+                return;
+            }
+            const msg = currentCourse ? 'slots pre-filled — review, then submit.' : 'pick a subject to pre-fill the slots.';
             el.innerHTML = `<div class="booking-intent">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <span><strong>Booking ${i.venue} · ${i.dayAbbr}, ${i.dateStr} · ${i.timeStr}</strong> — ${currentCourse ? 'slots pre-filled — review, then submit.' : 'pick a subject to pre-fill the slots.'}</span>
+                <span><strong>Booking ${i.venue} · ${i.dayAbbr}, ${i.dateStr} · ${i.timeStr}</strong> — ${msg}</span>
                 <button class="bi-close" onclick="dismissBookingIntent()" data-tip="Dismiss booking reminder">&times;</button>
             </div>`;
         }
 
         function dismissBookingIntent() {
-            pendingBookingIntent = null;
+            if (pendingBookingIntent) {
+                try { sessionStorage.setItem('bookingIntentDismissed', intentKey(pendingBookingIntent)); } catch (e) {}
+            }
+            intentBannerSuppressed = true;
             renderBookingIntent();
         }
 
@@ -2150,19 +2181,33 @@
             setTimeout(function() { cell.classList.remove('attention-pulse'); }, 1300);
         }
 
+        /* Whether the booked slot can be auto-selected is known once the grid sits
+           on the booked venue — evaluated at the end of applyUrlParams, i.e. on
+           arrival and before any user interaction. If it can't fit, the user is
+           told immediately instead of after picking a subject. */
+        function evaluateBookingFit() {
+            if (!pendingBookingIntent) return;
+            const i = pendingBookingIntent;
+            intentNeedsManual = !canPlaceBlock(i.dayIndex, i.hourIndex);
+            if (intentNeedsManual) {
+                pulseTargetCell(i.dayIndex, i.hourIndex); /* the banner names the slot in words — no toast needed */
+            }
+            renderBookingIntent();
+        }
+
         /* Fires once a subject exists (URL auto-pick or user pick): */
         function consumeBookingIntent() {
             if (!pendingBookingIntent || !currentCourse) return;
             const i = pendingBookingIntent;
+            if (intentNeedsManual || !canPlaceBlock(i.dayIndex, i.hourIndex)) {
+                intentNeedsManual = true;
+                renderBookingIntent(); /* arrival already toasted + pulsed; banner guides manual selection */
+                return;
+            }
             pendingBookingIntent = null;
             renderBookingIntent();
-            if (canPlaceBlock(i.dayIndex, i.hourIndex)) {
-                selectBlock(i.dayIndex, i.hourIndex);
-                toast.show('Pre-selected from your venue booking — click the block to adjust.');
-            } else {
-                pulseTargetCell(i.dayIndex, i.hourIndex);
-                toast.show('Your booked slot needs manual selection — it is highlighted on the grid.');
-            }
+            selectBlock(i.dayIndex, i.hourIndex);
+            toast.show('Pre-selected from your venue booking — click the block to adjust.');
         }
 
         function applySubjectChange(code) {
@@ -2513,6 +2558,7 @@
                     selectSlot(matchingSlot, slotIndex);
                 }
             }
+            evaluateBookingFit();
         }
 
         document.addEventListener('DOMContentLoaded', function() {

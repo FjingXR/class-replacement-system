@@ -602,3 +602,52 @@ auto-select lands on the booked venue's grid, and the resolver jumps weeks if th
 lives outside the restored week. Intent is consumed by any selection or the banner's ×. Verified
 round-trip (banner -> pick -> auto-selected Tue 10:30), code-param landing (fully pre-selected),
 dismiss path and overflow fallback, 0 console errors.
+
+## [2026-10-03] Sticky booking-intent dismissal
+
+Dismissing the booking-intent banner now sticks across navigation: the x records the booking's key
+(venue|date|time) in sessionStorage and re-arrivals at the same booking keep the banner suppressed.
+The reminder is suppressed, not the feature — the auto-select on subject pick still fires for a
+dismissed booking. A different booking (different slot) shows its banner normally; the flag is
+per-tab and clears with the session. Returning without dismissing still shows the banner (the
+booking remains pending — the URL is the source of truth). Verified: dismiss -> leave -> return
+stays suppressed with auto-select intact, different booking re-shows, 0 console errors.
+
+## [2026-10-03] Manual-selection fallback announced on arrival
+
+When the booked slot cannot be auto-selected (overflow past day end / unavailable), the toast
+"Your booked slot needs manual selection — it is highlighted on the grid." now fires on ARRIVAL
+(before any subject choice) instead of after picking a subject. evaluateBookingFit() runs at the
+end of applyUrlParams — the grid is already on the booked venue, so the fit-check is valid and the
+pulse lands on the final grid. The banner copy gains a manual variant ("pick a subject, then
+select the highlighted slot manually" -> "select the highlighted slot on the grid." after the
+subject pick) and now clears on the real manual selection (selectBlock hook) instead of the
+subject pick. Auto-select flow unchanged. Verified arrival toast/banner/pulse, post-subject copy
+update without auto-select, manual completion clearing the banner, and the auto path regression,
+0 console errors.
+
+## [2026-10-03] Conflict case: error-toned intent banner
+
+When the booked slot cannot be auto-selected (conflict/overflow), the intent banner no longer reads
+as a calm instruction ("select the highlighted slot on the grid.") — it becomes an error-toned
+notice (.booking-intent-manual: --color-error-container / --color-on-error-container, warning icon)
+reading exactly "Your booked slot needs manual selection — it is highlighted on the grid.", paired
+with the arrival toast and the pulsed cell. The banner persists (pre- and post-subject pick) until
+a real manual selection or the dismiss x. Auto-select flow keeps its primary-container banner.
+Verified text/colors, persistence across the subject pick, manual-completion clearing, 0 console
+errors.
+
+## [2026-10-03] Manual-selection banner: concrete slot pointer, toast removed
+
+The conflict banner's ambiguous "it is highlighted on the grid." now names the slot outright:
+"Your booked slot needs manual selection — find Wed, 09 Sep 2026 · 13:30 on the grid." The
+arrival toast for this case is removed entirely — the persistent banner + cell pulse carry the
+message (toast was redundant). Auto-select flow unchanged. Verified banner wording, empty toast
+bar on manual arrival, auto path regression, 0 console errors.
+
+## [2026-10-03] Conflict banner states the conflict outright
+
+The manual-selection banner now leads with the reason: "Your booked slot (Wed, 09 Sep 2026 ·
+13:30) is conflicted — please select an available slot manually." — slot, conflict status and
+action in one sentence (was: "needs manual selection — find … on the grid", which never said WHY).
+Verified banner wording on conflict arrival, 0 console errors.
