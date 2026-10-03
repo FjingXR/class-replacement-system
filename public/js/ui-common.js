@@ -1466,13 +1466,13 @@ function renderNotifList() {
 
     list.innerHTML = rows.map(function (n) {
         return '<a class="notif-row' + (reads.has(n.id) ? ' notif-row--read' : '') + '" data-id="' + escHtml(n.id) + '" href="' + escHtml(n.link) + '"'
-            + ' data-tip="' + escHtml(notifAbsTime(n.minutesAgo)) + '" data-tip-pos="left">'
+            + ' data-tip="' + escHtml(n.title + ' — ' + n.desc) + '" aria-label="' + escHtml(n.title + ' — ' + n.desc) + '">'
             + '<span class="notif-row-icon notif-tile-' + escHtml(n.type) + '">' + notifGlyph(n.type) + '</span>'
             + '<span class="notif-row-body">'
             + '<span class="notif-row-title">' + escHtml(n.title) + '</span>'
             + '<span class="notif-row-desc">' + escHtml(n.desc) + '</span>'
             + '</span>'
-            + '<span class="notif-row-time">' + escHtml(relTime(n.minutesAgo)) + '</span>'
+            + '<span class="notif-row-time" data-tip="' + escHtml(notifAbsTime(n.minutesAgo)) + '" data-tip-pos="left">' + escHtml(relTime(n.minutesAgo)) + '</span>'
             + '</a>';
     }).join('');
 

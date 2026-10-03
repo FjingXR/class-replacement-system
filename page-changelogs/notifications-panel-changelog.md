@@ -81,3 +81,11 @@ caught-up intact, no horizontal overflow at 375px, console 0 errors.
 matching every other live "Approved" surface (`.badge-normal`, approved summary value). The §10.0
 canonical legend row "Approved → secondary-container" is the stale source — noted as backlog; the
 design §5 table carries the correction inline.
+
+## [2026-10-03 post-apply] Row hover tooltip = full message (AD-21)
+
+Rows clip long titles/descs to one line in the 360px panel; hovering a row now shows the **full
+text message** (`title — desc`) in the house tooltip, and the absolute datetime tooltip moved onto
+the `.notif-row-time` span (design §3's original placement). Nested data-tips resolve via the
+global `closest('[data-tip]')` mechanism — hover anywhere on the row = message, hover the time =
+date/time. Rows also gained `aria-label` = full message.
