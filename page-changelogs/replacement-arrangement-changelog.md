@@ -568,3 +568,13 @@ A `pageshow` handler (e.persisted) now re-arms the beforeunload guard, wipes sel
 and selectionHistory, and runs deselectBlock + updateCounter — a clean slate on every restore.
 Verified via synthetic persisted-pageshow (4 selected → clean slate, stale Ctrl+Z stays inert) and
 the re-armed refresh guard firing afterwards; real back-nav returns clean, 0 console errors.
+
+## [2026-10-03] Conflict Schedule context strip
+
+The plain four-line Conflict Schedule text block becomes an icon-led context strip, repositioned
+below "How to use this page" and above the toolbar: an error-tinted warning chip ("Conflict
+Schedule"), then book/clock/users icon segments for Subject (code emphasised), Time Slot and
+Cohorts, with a right-anchored primary-container badge for Total Students (data-tip "Total
+students"). Empty states keep the muted "Not selected" + step hints; dead .course-label-center and
+.title-* rules removed. Wraps to 2 lines at 1024/768, stacks cleanly at 375; verified dark + light,
+0 console errors.

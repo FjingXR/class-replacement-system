@@ -183,28 +183,59 @@
             font-weight: 500;
             color: var(--color-on-surface);
         }
-        .course-label-center {
-            width: 100%;
-            margin: 0 0 12px;
+        /* ── Conflict Schedule context strip (icon-led segments) ── */
+        .conflict-strip-wrap { width: 100%; margin: 0 0 12px; }
+        .conflict-strip {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 14px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-md);
+            padding: 7px 12px;
         }
-        .title-row {
-            font-size: 14px;
-            line-height: 1.7;
+        .cs-head {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 5px 11px 5px 8px;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+        }
+        .cs-head svg { flex-shrink: 0; }
+        .cs-seg {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            min-width: 0;
+            font-size: 13px;
             color: var(--color-on-surface);
         }
-        .title-label {
-            font-weight: 600;
-            color: var(--color-on-bg);
-        }
-        .title-not-selected {
-            color: var(--color-on-surface-variant);
-            font-style: italic;
-        }
-        .title-hint {
+        .cs-seg svg { flex-shrink: 0; color: var(--color-on-surface-variant); }
+        .cs-val { min-width: 0; }
+        .cs-val strong { color: var(--color-on-bg); font-weight: 600; }
+        .cs-none { color: var(--color-on-surface-variant); font-style: italic; }
+        .cs-hint { font-size: 12px; margin-left: 4px; font-style: normal; }
+        .cs-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: auto;
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
             font-size: 12px;
-            color: var(--color-on-surface-variant);
-            font-style: normal;
-            margin-left: 4px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+        @media (max-width: 900px) {
+            .cs-badge { margin-left: 0; }
         }
         .semester-chip { display: none; }
         .page-header .semester-chip { display: none; }
@@ -864,8 +895,6 @@
 
     @include('partials.ui-page-header', [])
 
-    <div class="course-label-center" id="subjectInfo"></div>
-
         @include('partials.ui-guide-block', [
             'guideTitle' => 'How to use this page',
             'guideItems' => [
@@ -876,6 +905,8 @@
                 '<strong>Back</strong> — use the back button to return to the conflict list',
             ]
         ])
+
+        <div class="conflict-strip-wrap" id="subjectInfo"></div>
 
         <div class="toolbar toolbar-restructure">
             <div class="toolbar-primary">
@@ -1935,12 +1966,34 @@
                 }
             }
 
-            el.innerHTML = `<div class="title-subtitle">Conflict Schedule</div>
-                <div class="title-row"><span class="title-label">Subject:</span> ${subjectLine ? subjectLine : '<span class="title-not-selected">Not selected</span>' + (!hasSubject ? '<span class="title-hint">— Select a Subject first</span>' : '')}</div>
-                <div class="title-row"><span class="title-label">Time Slot:</span> ${slotLine ? slotLine : '<span class="title-not-selected">Not selected</span>' + (!hasSlot ? '<span class="title-hint">— Then pick a Conflict Slot</span>' : '')}</div>
-                <div class="title-row"><span class="title-label">Cohorts:</span> ${cohortsLine ? cohortsLine : '<span class="title-not-selected">Not selected</span>'}</div>
-                <div class="title-row"><span class="title-label">Total Students:</span> ${totalLine ? totalLine : '0'}</div>
-            `;
+            el.innerHTML = `<div class="conflict-strip">
+                <div class="cs-head">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    Conflict Schedule
+                </div>
+                <div class="cs-seg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    ${subjectLine
+                        ? `<span class="cs-val"><strong>${currentCourse.code}</strong> — ${currentCourse.name} (${currentCourse.type})</span>`
+                        : `<span class="cs-val cs-none">Not selected${!hasSubject ? '<span class="cs-hint">— Select a Subject first</span>' : ''}</span>`}
+                </div>
+                <div class="cs-seg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    ${slotLine
+                        ? `<span class="cs-val">${slotLine}</span>`
+                        : `<span class="cs-val cs-none">Not selected${!hasSlot ? '<span class="cs-hint">— Then pick a Conflict Slot</span>' : ''}</span>`}
+                </div>
+                <div class="cs-seg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    ${cohortsLine
+                        ? `<span class="cs-val">${cohortsLine}</span>`
+                        : `<span class="cs-val cs-none">Not selected</span>`}
+                </div>
+                <div class="cs-badge" data-tip="Total students">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    ${totalLine ? totalLine : '0'}
+                </div>
+            </div>`;
         }
 
         function buildSubjectDropdown() {
