@@ -251,4 +251,9 @@ Added an expandable guide block with page-specific workflow instructions.
 
 Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a disabled printer
 icon-button (inline SVG, `.print-btn` in theme.css): `disabled` + `aria-disabled`, cancel cursor,
-no hover feedback / tooltip (stub for post-mock printing scope). No JS, no backend.
+no hover styling, `title="Coming soon"`, right-aligned at the toolbar edge via `margin-left: auto`
+(stub for post-mock printing scope). No JS, no backend.
+
+Venue Timetable renders its own identical hand-placed button (`.print-btn`, inline
+`margin-left:auto`) instead of the partial arg — the page's `showPrint` stays off so exactly one
+button renders per page.

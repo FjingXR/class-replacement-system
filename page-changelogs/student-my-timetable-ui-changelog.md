@@ -169,4 +169,5 @@ The badge feed added with this page's build (`$notifCount` with server default `
 
 Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a disabled printer
 icon-button (inline SVG, `.print-btn` in theme.css): `disabled` + `aria-disabled`, cancel cursor,
-no hover feedback / tooltip (stub for post-mock printing scope). No JS, no backend.
+no hover styling, `title="Coming soon"`, right-aligned at the toolbar edge via `margin-left: auto`
+(stub for post-mock printing scope). No JS, no backend.
