@@ -466,3 +466,14 @@ overlay: "Select these slots?" on `.preview-ok` (yellow) and "Not enough slots" 
 `--color-error`/`--color-on-error` on fail, padded + rounded) so it stays crisp over the
 translucent preview fill — a darker-fill variant was tried and reverted (fill stays at the shared
 40% `color-mix`). Verified dark + light, 0 console errors. Uncommitted at user request.
+
+## [2026-10-03] Selected-block remove hint redesigned
+
+The old "Click Me to Remove Slots" text was dead code — it lived on `.cell-selected .sel-text`
+(elements never created, hidden under the block overlay anyway). Now: the selected block shows its
+time range at rest (`.ev-time-label`, e.g. "8:00 AM – 10:00 AM"), and on hover/focus theme.css's
+`.event-block.event-selection::after` (previously a bare transparent "REMOVE?") becomes a solid red
+danger pill — "Remove these slots?" (`--color-error`/`--color-on-error`), with the block border
+swapping to error on hover; `bottom: auto` added to undo the generic `.event-block::after` tooltip's
+`bottom: 100%` (was squashing the pill to a 6px sliver). Summary card "×" gains a shared
+`data-tip="Remove this selection"` tooltip. Verified dark + light, 0 console errors.

@@ -347,25 +347,21 @@
             box-shadow: inset 0 0 0 1px var(--color-primary);
             cursor: pointer;
         }
-        .cell-selected .sel-text {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--color-on-primary-container);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            line-height: 1.2;
-            text-align: center;
-            pointer-events: none;
+        /* Selected block: time range at rest; hover/focus shows the theme's
+           danger pill (theme.css .event-block.event-selection::after) */
+        .event-selection .ev-time-label {
             display: flex;
             align-items: center;
             justify-content: center;
+            height: 100%;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            color: var(--color-on-primary-container);
+            transition: opacity 0.15s;
         }
-        .cell-selected .sel-text::before {
-            content: "";
-        }
-        .cell-selected:hover .sel-text::before {
-            content: "Click Me to Remove Slots";
-        }
+        .event-selection:hover .ev-time-label,
+        .event-selection:focus-visible .ev-time-label { opacity: 0; }
 
         .cell-time-label { display: none; }
 
@@ -1179,7 +1175,7 @@
                 card.dataset.venue = b.venue;
                 card.dataset.week = b.weekIdx;
                 card.innerHTML = `
-                    <button class="card-remove" onclick="deselectBlock()" aria-label="Remove">×</button>
+                    <button class="card-remove" onclick="deselectBlock()" data-tip="Remove this selection" aria-label="Remove">×</button>
                     <div class="card-venue">${b.venue}</div>
                     <div class="card-day">${b.weekLabel} · ${b.day.abbr}</div>
                     <div class="card-date">${b.day.date}</div>
@@ -1285,6 +1281,9 @@
             const div = document.createElement('div');
             div.className = 'event-block event-selection';
             div.setAttribute('tabindex', '0');
+            const startStr = hours[selectedBlock.startHour];
+            const endStr = add30min(hours[selectedBlock.endHour - 1]);
+            div.innerHTML = `<span class="ev-time-label">${to12h(startStr)} – ${to12h(endStr)}</span>`;
             div.addEventListener('click', () => deselectBlock());
             firstTd.appendChild(div);
             // Disable hover on other available cells
