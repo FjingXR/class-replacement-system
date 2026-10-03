@@ -247,6 +247,9 @@
                 gap: 8px;
                 padding: 8px 0;
             }
+            /* the card list is the mobile booking surface — the desktop grid
+               cannot fit a phone viewport */
+            body[data-page='venueTimetable'] #timetable { display: none; }
             .venue-event-card {
                 background: var(--color-surface);
                 border: 1px solid var(--color-outline);
@@ -749,6 +752,8 @@
                         div.tabIndex = 0;
                         div.setAttribute('role', 'button');
                         div.setAttribute('aria-label', `View class details: ${e.code} ${hours[hi]}`);
+                        div._evt = e;
+                        div._di = di;
                         div.addEventListener('click', function() { openModal(e, di); });
                         div.addEventListener('focus', function() { focusedCell = div; });
 
@@ -795,6 +800,16 @@
                         document.getElementById('mobileCardList').appendChild(mobileCard);
                     }
                 }
+            });
+
+            /* mobile: the card list IS the booking surface — reveal it after a
+               rebuild (the builder hides it first to clear stale cards) */
+            const mcl = document.getElementById('mobileCardList');
+            if (mcl) mcl.style.display = (mcl.children.length && window.matchMedia('(max-width: 768px)').matches) ? '' : 'none';
+            /* keep it honest across viewport resizes (no rebuild needed) */
+            window.addEventListener('resize', function() {
+                const mcl = document.getElementById('mobileCardList');
+                if (mcl) mcl.style.display = (mcl.children.length && window.matchMedia('(max-width: 768px)').matches) ? '' : 'none';
             });
 
             updateSummaries(weekEvents);
@@ -968,13 +983,13 @@
                 return;
             }
 
-            /* Arrow navigation on grid */
+            /* Arrow navigation on grid (available AND booked cells are focusable) */
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
                 const active = document.activeElement;
-                if (!active || !active.classList.contains('cell-available')) return;
+                if (!active || !active.classList.contains('cell-content') || active.tabIndex !== 0) return;
 
                 e.preventDefault();
-                const cells = Array.from(document.querySelectorAll('.cell-available'));
+                const cells = Array.from(document.querySelectorAll('.cell-content[tabindex="0"]'));
                 const idx = cells.indexOf(active);
                 if (idx === -1) return;
 
@@ -984,7 +999,11 @@
                 else if (e.key === 'ArrowDown') next = Math.min(idx + 7, cells.length - 1);
                 else if (e.key === 'ArrowUp') next = Math.max(idx - 7, 0);
                 else if (e.key === 'Enter') {
-                    showAvailableTooltip(null, parseInt(active.dataset.day), parseInt(active.dataset.hour));
+                    /* booked cells open their details; available cells the Book tooltip */
+                    if (active._evt) openModal(active._evt, active._di);
+                    else if (active.classList.contains('cell-available')) {
+                        showAvailableTooltip(null, parseInt(active.dataset.day), parseInt(active.dataset.hour));
+                    }
                     return;
                 }
 

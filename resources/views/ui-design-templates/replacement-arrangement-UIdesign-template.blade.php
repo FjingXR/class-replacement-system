@@ -1237,26 +1237,29 @@
         }
 
         function updateSelectionSummary() {
-            const currWeek = weekNav.currentWeek;
+            /* multi-week model: the panel lists EVERY saved selection (any week),
+               matching the Submit dialog and the enabled Submit button */
             const allBlocks = [];
             Object.keys(selectedSlotsByVenue).forEach(venueKey => {
                 const venueData = selectedSlotsByVenue[venueKey];
                 if (!venueData) return;
-                const block = venueData[currWeek];
-                if (block) {
-                    const days = weekData[currWeek].days;
+                Object.keys(venueData).forEach(weekKey => {
+                    const block = venueData[weekKey];
+                    if (!block) return;
+                    const days = weekData[weekKey].days;
                     allBlocks.push({
                         venue: venueKey,
-                        weekIdx: currWeek,
-                        weekLabel: weekData[currWeek].label,
+                        weekIdx: parseInt(weekKey, 10),
+                        weekLabel: weekData[weekKey].label,
                         day: days[block.day],
                         dayIdx: block.day,
                         startHour: block.startHour,
                         endHour: block.endHour,
                         slotCount: block.endHour - block.startHour
                     });
-                }
+                });
             });
+            allBlocks.sort((a, b) => a.weekIdx - b.weekIdx || a.dayIdx - b.dayIdx || a.startHour - b.startHour);
 
             const grid = document.getElementById('summaryGrid');
 
@@ -1286,7 +1289,7 @@
                 card.dataset.venue = b.venue;
                 card.dataset.week = b.weekIdx;
                 card.innerHTML = `
-                    <button class="card-remove" onclick="discardSelection()" data-tip="Remove this selection" aria-label="Remove">×</button>
+                    <button class="card-remove" onclick="removeSavedBlock('${b.venue}', ${b.weekIdx})" data-tip="Remove this selection" aria-label="Remove">×</button>
                     <div class="card-venue">${b.venue}</div>
                     <div class="card-day">${b.weekLabel} · ${b.day.abbr}</div>
                     <div class="card-date">${b.day.date}</div>
@@ -1395,7 +1398,7 @@
             const startStr = hours[selectedBlock.startHour];
             const endStr = add30min(hours[selectedBlock.endHour - 1]);
             div.innerHTML = `<span class="ev-time-label">${to12h(startStr)} – ${to12h(endStr)}</span>`;
-            div.addEventListener('click', () => discardSelection());
+            div.addEventListener('click', () => userDeselectSelectedBlock());
             firstTd.appendChild(div);
             // Disable hover on other available cells
             const table = body.closest('.timetable');
@@ -1457,7 +1460,7 @@
                 return false;
             }
             /* a real (manual) selection completes the booking — drop the intent banner */
-            if (pendingBookingIntent) { pendingBookingIntent = null; renderBookingIntent(); }
+            if (pendingBookingIntent) { pendingBookingIntent = null; bookingIntentMemory = null; renderBookingIntent(); }
             selectedBlock = { day, startHour, endHour: startHour + span };
             previewRange = null;
             const body = document.getElementById('tableBody');
@@ -1687,6 +1690,13 @@
                 'You have selected slots on the grid. Changing the <strong>' + actionLabel + '</strong> will remove them. Continue?',
                 function() {
                     hideConfirmModal();
+                    /* the change must not spend the booking: if the block being
+                       cleared IS the booking's pre-fill, re-arm the intent so the
+                       next subject application re-selects it */
+                    if (bookingIntentMemory && intentMatchesBlock(
+                            currentVenue.code || currentVenue, weekNav.currentWeek, selectedBlock)) {
+                        pendingBookingIntent = { ...bookingIntentMemory };
+                    }
                     discardSelection();
                     proceedFn();
                 }
@@ -1766,20 +1776,27 @@
         function clearAll() {
             showConfirmModal(
                 'Clear All Selections',
-                'Are you sure you want to clear all selections across <strong>ALL</strong> weeks? This action cannot be undone.',
+                'Are you sure you want to clear all selections across <strong>ALL</strong> weeks? You can undo this from the toast that appears.',
                 function() {
                     hideConfirmModal();
                     var savedBlock = selectedBlock ? { ...selectedBlock } : null;
                     var savedSlots = JSON.parse(JSON.stringify(selectedSlotsByVenue));
+                    var savedVenue = currentVenue.code || currentVenue;
+                    var savedWeek = weekNav.currentWeek;
                     Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
                     deselectBlock();
                     updateCounter();
                     toast.show('All selections cleared.', function() {
                         Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
-                        if (savedBlock) {
+                        /* only re-render when the view hasn't moved since the clear —
+                           restoring a foreign week's block onto the current grid
+                           would bake it into the wrong week on the next navigation */
+                        if (savedBlock && savedVenue === (currentVenue.code || currentVenue) && savedWeek === weekNav.currentWeek) {
                             selectedBlock = savedBlock;
                             const body = document.getElementById('tableBody');
                             renderMergedBlock(body);
+                        } else {
+                            selectedBlock = null;
                         }
                         updateCounter();
                     });
@@ -2143,6 +2160,8 @@
         let pendingBookingIntent = null;
         let intentBannerSuppressed = false; /* sticky ×: reminder stays dismissed for this booking */
         let intentNeedsManual = false;      /* booked slot can't be auto-selected (overflow/unavailable) */
+        let bookingIntentMemory = null;     /* persistent copy of the booking — survives the one-shot
+                                               consume so subject/venue changes can re-arm it */
         let intentCancelled = false;        /* user discarded the auto-select — reload must not resurrect it */
 
         function intentKey(i) { return i.venue + '|' + i.dateStr + '|' + i.timeStr; }
@@ -2180,6 +2199,7 @@
                 timeStr: urlParams.time,
                 dayAbbr: (weekData[weekIdx].days[dayIndex] || {}).abbr || ''
             };
+            bookingIntentMemory = { ...pendingBookingIntent };
             /* a dismissed reminder stays dismissed for the SAME booking across
                navigation (sessionStorage) — the auto-select feature still works */
             try { intentBannerSuppressed = sessionStorage.getItem('bookingIntentDismissed') === intentKey(pendingBookingIntent); }
@@ -2249,6 +2269,7 @@
            (sessionStorage, same key family as the banner dismissal) so a reload of
            the same URL doesn't silently re-select the block they removed. */
         function markBookingCancelled() {
+            bookingIntentMemory = null; /* the booking is spent — changes must not re-arm it */
             if (!urlParams.date || !urlParams.time) return;
             try { sessionStorage.setItem('bookingIntentCancelled', bookingKeyFromParams()); } catch (e) {}
         }
@@ -2257,8 +2278,43 @@
            "Pre-selected…" toast, remember the booking as handled, then deselect. */
         function discardSelection() {
             toast.dismiss();
-            markBookingCancelled();
             deselectBlock();
+        }
+
+        /* the intent is only spent when the user explicitly removes THE booked
+           block (clicking it / its summary card) — subject or venue changes keep
+           the booking alive for the next subject pick */
+        function intentMatchesBlock(venueKey, weekKey, block) {
+            /* the live intent is usually already consumed at check time —
+               compare against the persistent booking memory as fallback */
+            const i = pendingBookingIntent || bookingIntentMemory;
+            if (!i || !block) return false;
+            return i.venue === venueKey && i.weekIndex === parseInt(weekKey, 10)
+                && i.dayIndex === block.day && i.hourIndex === block.startHour;
+        }
+
+        function userDeselectSelectedBlock() {
+            const block = selectedBlock ? { ...selectedBlock } : null;
+            const venueKey = currentVenue.code || currentVenue;
+            const weekKey = weekNav.currentWeek;
+            discardSelection();
+            if (intentMatchesBlock(venueKey, weekKey, block)) markBookingCancelled();
+        }
+
+        /* summary-card × — remove one saved block (any week/venue) */
+        function removeSavedBlock(venueKey, weekKey) {
+            const data = selectedSlotsByVenue[venueKey];
+            if (!data || !data[weekKey]) return;
+            const removed = { ...data[weekKey] };
+            const isCurrentView = venueKey === (currentVenue.code || currentVenue)
+                && parseInt(weekKey, 10) === weekNav.currentWeek;
+            if (isCurrentView && selectedBlock) {
+                discardSelection();
+            } else {
+                data[weekKey] = null;
+                updateCounter();
+            }
+            if (intentMatchesBlock(venueKey, weekKey, removed)) markBookingCancelled();
         }
 
         /* Fires once a subject exists (URL auto-pick or user pick): */
@@ -2634,6 +2690,13 @@
         }
 
         function applyUrlParams() {
+            /* a hand-typed/tampered venue param must not render a phantom venue:
+               ignore it — and the booking that named it — and load the default */
+            if (urlParams.venue && !MockData.venues.some(v => v.code === urlParams.venue)) {
+                urlParams.venue = null;
+                urlParams.date = null;
+                urlParams.time = null;
+            }
             /* Booking intent (venue-timetable "Book" handoff): resolve date+time
                into a grid target first — the shared week is already restored */
             resolveBookingIntent();

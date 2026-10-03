@@ -721,3 +721,31 @@ Full Playwright sweep of both pages surfaced 9 more issues; fixed per product de
 Verified: snap-back (week + venue), cap + toast, cross-week submit summary, round-trip restore,
 submit/clear enablement, unfittable toast, my-timetable unaffected, plus the full regression set
 (auto/conflict/sticky-cancelled intent flows, refresh-cancel, Escape closes) — 0 console errors.
+
+## [2026-10-03] Round-3 fixes: summary panel, booking intent lifecycle, Clear-ALL undo, URL hardening
+
+Third Playwright sweep (multi-week seams + never-audited paths) found 7 issues; fixed per
+product decisions (panel lists all weeks; intent survives changes; invalid venue param falls back):
+
+1. **Selection summary ignored other weeks**: the panel showed "No time slots selected." while
+   Submit was enabled for another week's block (infoTotal contradicted the panel). It now lists
+   EVERY saved selection across weeks/venues (sorted week → day), matching the Submit dialog;
+   each card's × removes that block via the new removeSavedBlock().
+2. **Booking intent died on subject/venue changes**: the change-confirm's discard silently marked
+   the booking cancelled (sticky flag) — re-picking gave no banner and no pre-fill. The intent is
+   now only spent by explicitly removing THE booked block (clicking it or its summary card, via
+   intentMatchesBlock); a persistent bookingIntentMemory re-arms the intent in the change-confirm
+   so the next subject application re-selects the booked slot automatically (snap-back included).
+3. **Clear ALL's Undo corrupted state across weeks**: undo after navigating re-rendered the old
+   block onto the WRONG week and the next navigation baked it into both weeks (8/4 slots). The
+   undo now only re-renders when the view hasn't moved since the clear; the modal copy no longer
+   claims "cannot be undone".
+4. **Phantom venue from URL**: ?venue=ZZZ99 rendered a non-existent venue (submittable!). Invalid
+   venue params are now dropped (default venue, no banner, booking intent dropped with it).
+   (Bad date/time params already degraded gracefully.)
+5. Minor: dead selCount reference left as-is (element doesn't exist in markup).
+
+Verified: cross-week summary + per-card remove, intent-through-changes (subject AND venue,
+including the auto re-select), explicit-deselect still cancels, undo guard (same-week restore +
+no cross-week corruption), venue fallback, plus the full regression set (arrival auto-select,
+conflict banner, sticky ×/cancelled memory, refresh-cancel, submit enablement) — 0 console errors.

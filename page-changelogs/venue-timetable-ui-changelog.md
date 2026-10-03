@@ -292,3 +292,18 @@ the auto-select fires again. Other bookings' memories are untouched.
 
 Verified: occupied/pending modals on desktop, tooltip dismissal on week + venue change,
 B-after-click, plus the venue-side regression set — 0 console errors.
+
+## [2026-10-03] Round-3 fixes: mobile card list finally visible + keyboard reaches booked cells
+
+1. **Mobile card list was built but never shown**: buildTimetable hid #mobileCardList and nothing
+   re-showed it — 100+ cards (booked classes AND bookable slots) were dead markup at phone widths
+   while the 7×22 desktop grid squeezed into 356px with no scroll. The list now reveals after
+   every rebuild when cards exist (media-query aware), #timetable hides on ≤768px via
+   body[data-page] scoped CSS, and a resize listener keeps both honest without a rebuild.
+2. **Keyboard dead-end on booked cells**: occupied/pending cells are focusable (round 2) but
+   arrows/Enter did nothing on them. Arrow navigation now walks ALL focusable cells; Enter on a
+   booked cell opens its Class Details modal (Enter on available cells still opens the Book
+   tooltip; B stays available-only).
+
+Verified: card list on mobile (B103 booked cards + B002 bookable cards), week change re-render,
+desktop unaffected, Enter/arrow/B keyboard paths, resize both directions — 0 console errors.
