@@ -486,7 +486,13 @@ content box is 1190px). To fit: week labels drop the year via the page's `labelF
 is constant within a semester; select 285 → 212px) and the full dated label
 ("Week 1 · 27 Jul 2026 ~ 02 Aug 2026") shows on hover as a `data-tip` — the shared tooltip renders
 above — kept current by patching `WeekNavigator._updateSelect` so arrows/Today stay in sync.
-Venue trigger caps at 192px (already ellipsis-equipped), filters gap 12 → 8, group gap 16 → 12,
+Venue trigger caps at 204px (its natural width — full label + arrow visible; longer venue names
+ellipsize but a `data-tip` synced via MutationObserver shows the full label above the trigger on
+hover), `.toolbar-center` gains `gap: 8px`
+(the venue trigger + favourite star had none — reclaimed via group gap 16 → 10 and filters gap
+12 → 6 so the row still fits), subject select caps at 235px, and the slot picker gets 260px so its
+primary info is fully visible — trigger text also compacted to "W3 · Aug 17 · 10:00 AM–11:30 AM"
+(comma/en-dash form, no clipping).
 subject select caps at 235px, and the slot picker gets 260px so its primary info is fully visible —
 trigger text also compacted to "W3 · Aug 17 · 10:00 AM–11:30 AM" (comma/en-dash form, no clipping).
 Below ~1150px the groups still wrap gracefully and ≤768px keeps the stacked layout. Verified
@@ -500,3 +506,29 @@ in `clearMergedBlock` (both deselect paths route through it). Hovering another g
 explains why it can't be picked, rendered above the cell by the shared tooltip system, instead of
 silent feedback with only the click-time modal. Deselect restores the normal "Select these slots?"
 preview. Verified tooltip above + cleanup, 0 console errors.
+
+## [2026-10-03] Summary tip dedupe + success-colored hint
+
+The "Click an available (green) time slot to begin." sentence appeared twice in the empty state —
+once in `.sel-summary-empty` and again in `#summaryTip` below it. Removed the empty-state paragraph
+("No time slots selected." remains; the tip line is the single home for the instruction). The
+phrase "available (green)" is now wrapped in a `.tip-success` span (`--color-success` + bold;
+`--color-on-success-container` in dark via the same html.dark override pattern as `.tip-action`)
+so the referenced colour is obvious in both themes. Verified dark + light, 0 console errors.
+
+## [2026-10-03] Subject selector hover tooltip
+
+`#subjectSelector` gains a `data-tip` (shared tooltip, renders above): before a subject is picked it
+reads "Select a subject first to trigger the timeslots selector"; after, it mirrors the selected
+option's full text ("BMIT6767 — Object-Oriented Programming") — the single-row select ellipsizes
+long names, so the tooltip carries the complete info. Synced on init (after applyUrlParams) and on
+change. Verified placeholder → picked → hover above, 0 console errors.
+
+## [2026-10-03] Footer button tooltips (Submit Request / Clear ALL)
+
+Both footer buttons are wrapped in `.btn-tip` spans carrying state-aware `data-tip`s, synced in
+`updateCounter`: Submit Request — "Select a time slot first to enable submission" when disabled /
+"Send your replacement request for approval" when armed; Clear ALL — "Nothing to clear yet — select
+a time slot first" / "Clear all your selected slots". Disabled controls swallow mouse events, so
+the tips live on the wrapper spans with `.btn-tip .btn:disabled { pointer-events: none }` letting
+hover pass through; the shared tooltip renders above. Verified all four states, 0 console errors.

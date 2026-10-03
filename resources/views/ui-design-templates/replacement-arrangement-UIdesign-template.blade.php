@@ -161,7 +161,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
         .toolbar-primary {
@@ -211,17 +211,18 @@
         .toolbar-filters {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
         .toolbar-center {
             display: flex;
             align-items: center;
+            gap: 8px; /* venue trigger + favourite need breathing room */
             flex: 0 0 auto; /* content-sized — leftover space goes to the subject/slot pair */
         }
         .toolbar-center .venue-dd-trigger {
             min-width: 0;
-            max-width: 192px; /* ellipsized — funds the single-row width budget */
+            max-width: 204px; /* natural width of the widest current label + arrow */
         }
 
         /* ── Slot Dropdown (custom) ── */
@@ -454,6 +455,11 @@
         .has-selection .cell-available:hover { filter: none; box-shadow: none; }
         .has-selection .cell-available:hover::after { opacity: 0 !important; }
 
+        /* Footer button tooltips — the wrapper span keeps hover alive while the
+           inner button is disabled (disabled controls swallow mouse events) */
+        .btn-tip { display: inline-flex; cursor: var(--cursor-cancel); }
+        .btn-tip .btn:disabled { pointer-events: none; }
+
         .btn-primary:disabled {
             opacity: 0.35;
             cursor: var(--cursor-cancel);
@@ -633,6 +639,13 @@
         }
         html.dark .sel-summary-tip .tip-action {
             color: var(--color-on-primary-container); /* dark navy primary is too dim on the dark surface */
+        }
+        .sel-summary-tip .tip-success {
+            color: var(--color-success);
+            font-weight: 700;
+        }
+        html.dark .sel-summary-tip .tip-success {
+            color: var(--color-on-success-container); /* dark green success is too dim on the dark surface */
         }
 
         @media (max-width: 1024px) {
@@ -940,7 +953,6 @@
                     <line x1="10" y1="16" x2="14" y2="16"/>
                 </svg>
                 <p>No time slots selected.</p>
-                <p>Click an available (green) time slot to begin.</p>
             </div>
             <div class="sel-summary-grid" id="summaryGrid"></div>
             <div class="sel-summary-info" id="summaryInfo">
@@ -959,7 +971,7 @@
                     </div>
                 </div>
             </div>
-            <div class="sel-summary-tip" id="summaryTip">Tip: Click an available (green) time slot to begin.</div>
+            <div class="sel-summary-tip" id="summaryTip">Tip: Click an <span class="tip-success">available (green)</span> time slot to begin.</div>
         </div>
 
         <div class="footer-area">
@@ -975,20 +987,24 @@
                     Clear this Page
                 </button>
                 --}}
-                <button class="btn btn-danger" id="clearAllBtn" disabled onclick="clearAll()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    </svg>
-                    Clear ALL
-                </button>
-                <button class="btn btn-primary" onclick="proceed()">
-                    Submit Request
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
-                    </svg>
-                </button>
+                <span class="btn-tip" id="clearTip" data-tip="Nothing to clear yet — select a time slot first">
+                    <button class="btn btn-danger" id="clearAllBtn" disabled onclick="clearAll()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Clear ALL
+                    </button>
+                </span>
+                <span class="btn-tip" id="submitTip" data-tip="Select a time slot first to enable submission">
+                    <button class="btn btn-primary" onclick="proceed()">
+                        Submit Request
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <polyline points="12 5 19 12 12 19"/>
+                        </svg>
+                    </button>
+                </span>
             </div>
         </div>
 
@@ -1100,6 +1116,16 @@
             if (btn) btn.disabled = !selectedBlock;
             const clearBtn = document.getElementById('clearAllBtn');
             if (clearBtn) clearBtn.disabled = !selectedBlock;
+            /* Footer button tooltips — state-aware (buttons render above via the shared
+               data-tip system; the wrapper span keeps hover alive while disabled) */
+            const submitTip = document.getElementById('submitTip');
+            if (submitTip) submitTip.setAttribute('data-tip', selectedBlock
+                ? 'Send your replacement request for approval'
+                : 'Select a time slot first to enable submission');
+            const clearTip = document.getElementById('clearTip');
+            if (clearTip) clearTip.setAttribute('data-tip', selectedBlock
+                ? 'Clear all your selected slots'
+                : 'Nothing to clear yet — select a time slot first');
             updateSelectionSummary();
             updateSelectionProgress();
             updateSummaryStats();
@@ -1158,7 +1184,7 @@
                 grid.style.display = 'none';
                 grid.innerHTML = '';
                 document.getElementById('summaryInfo').style.display = 'none';
-                document.getElementById('summaryTip').textContent = 'Tip: Click an available (green) time slot to begin.';
+                document.getElementById('summaryTip').innerHTML = 'Tip: Click an <span class="tip-success">available (green)</span> time slot to begin.';
                 return;
             }
 
@@ -1203,7 +1229,7 @@
             } else if (allBlocks.length > 0) {
                 tip.innerHTML = 'Tip: <span class="tip-action">Click the selected block to remove it.</span>';
             } else {
-                tip.textContent = 'Tip: Click an available (green) time slot to begin.';
+                tip.innerHTML = 'Tip: Click an <span class="tip-success">available (green)</span> time slot to begin.';
             }
         }
 
@@ -2303,6 +2329,14 @@
                     onSelect: function(code) { onVenueChange(); }
                 }
             );
+            /* Full venue label as a data-tip (renders above) — the trigger ellipsizes at the
+               single-row width cap; kept current for every trigger text change */
+            const venueTrigger = document.querySelector('#buildingSelectorDropdown .venue-dd-trigger');
+            const syncVenueTip = function() {
+                venueTrigger.setAttribute('data-tip', venueTrigger.textContent.replace(/\s*▾\s*$/, '').trim());
+            };
+            new MutationObserver(syncVenueTip).observe(venueTrigger, { childList: true, characterData: true, subtree: true });
+            syncVenueTip();
             updateFavStar();
             document.getElementById('favStar').addEventListener('click', toggleFavourite);
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
@@ -2321,6 +2355,16 @@
             });
             /* applyUrlParams AFTER week selector is ready (triggers onVenueChange → buildTimetable) */
             applyUrlParams();
+            /* Subject tooltip: guides the first pick, then mirrors the full subject info
+               (the single-row select ellipsizes long names) */
+            const subjectSel = document.getElementById('subjectSelector');
+            const syncSubjectTip = function() {
+                subjectSel.setAttribute('data-tip', subjectSel.value
+                    ? subjectSel.options[subjectSel.selectedIndex].text
+                    : 'Select a subject first to trigger the timeslots selector');
+            };
+            subjectSel.addEventListener('change', syncSubjectTip);
+            syncSubjectTip();
             /* Full dated label as a data-tip (renders above, shared tooltip system) — the
                option text is the compact single-row form. Patched onto _updateSelect so
                arrows/Today keep it current. */
