@@ -578,3 +578,14 @@ Cohorts, with a right-anchored primary-container badge for Total Students (data-
 students"). Empty states keep the muted "Not selected" + step hints; dead .course-label-center and
 .title-* rules removed. Wraps to 2 lines at 1024/768, stacks cleanly at 375; verified dark + light,
 0 console errors.
+
+## [2026-10-03] Grid locked until a subject is picked
+
+Clicking an available cell with no subject no longer selects: toggleCell shows the toast "Select a
+subject first to trigger the timeslots selector" (same copy as the subject tooltip) and pulses the
+subject dropdown (attention-pulse ring) to point the user at the fix. The hover preview becomes a
+preview-fail pill reading "Pick a subject first", and free cells read not-allowed via a
+no-subject class on the timetable (toggled in renderTitleSummary). Two pre-existing stale-preview
+gaps fixed on the way: buildTimetable and applySubjectChange now clearPreview() so an open hover
+preview never survives a rebuild. Verified locked hover/click, unlock -> normal selection, re-lock
+after clearing the subject, 0 console errors.

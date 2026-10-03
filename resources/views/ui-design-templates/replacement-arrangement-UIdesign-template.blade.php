@@ -488,6 +488,15 @@
         .has-selection .cell-available:hover { filter: none; box-shadow: none; }
         .has-selection .cell-available:hover::after { opacity: 0 !important; }
 
+        /* Grid locked until a subject is picked — free cells read as not-allowed */
+        .timetable.no-subject .cell-available { cursor: var(--cursor-cancel); }
+        .attention-pulse { animation: attention-pulse 1.2s ease-out 1; }
+        @keyframes attention-pulse {
+            0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 45%, transparent); }
+            70%  { box-shadow: 0 0 0 8px color-mix(in srgb, var(--color-primary) 0%, transparent); }
+            100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 0%, transparent); }
+        }
+
         /* Footer button tooltips — the wrapper span keeps hover alive while the
            inner button is disabled (disabled controls swallow mouse events) */
         .btn-tip { display: inline-flex; cursor: var(--cursor-cancel); }
@@ -1413,7 +1422,8 @@
             if (selectedBlock) return;
             const span = MAX_SELECTION;
             const body = document.getElementById('tableBody');
-            const ok = canPlaceBlock(day, startHour);
+            const noSubject = !currentCourse; /* locked grid: preview explains instead of inviting */
+            const ok = !noSubject && canPlaceBlock(day, startHour);
             previewRange = { day, startHour, endHour: startHour + span };
             const firstTd = body.querySelector(`td[data-day="${day}"][data-hour="${startHour}"]`);
             if (!firstTd) return;
@@ -1429,7 +1439,7 @@
             div.style.pointerEvents = 'none';
             const label = document.createElement('span');
             label.className = 'preview-label';
-            label.textContent = ok ? 'Select these slots?' : 'Not enough slots';
+            label.textContent = ok ? 'Select these slots?' : (noSubject ? 'Pick a subject first' : 'Not enough slots');
             div.appendChild(label);
             if (!ok) firstTd.style.cursor = 'not-allowed';
             table.appendChild(div);
@@ -1445,6 +1455,7 @@
         }
 
         function buildTimetable() {
+            clearPreview(); /* a rebuild invalidates any open hover preview */
             const days = getDays();
 
             buildTimetableGrid({
@@ -1499,6 +1510,12 @@
         }
 
         function toggleCell(di, hi, el) {
+            // Grid locked until a subject is picked: guide instead of selecting
+            if (!currentCourse) {
+                toast.show('Select a subject first to trigger the timeslots selector');
+                pulseSubjectSelector();
+                return;
+            }
             // If clicking inside the current block, deselect it
             if (selectedBlock && di === selectedBlock.day && hi >= selectedBlock.startHour && hi < selectedBlock.endHour) {
                 deselectBlock();
@@ -1508,6 +1525,17 @@
             if (el.classList.contains('cell-available')) {
                 selectBlock(di, hi);
             }
+        }
+
+        /* Draw the eye to the subject dropdown (used when a locked grid cell is clicked) */
+        function pulseSubjectSelector() {
+            const sel = document.getElementById('subjectSelector');
+            if (!sel) return;
+            sel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            sel.classList.remove('attention-pulse');
+            void sel.offsetWidth; /* restart the animation */
+            sel.classList.add('attention-pulse');
+            setTimeout(function() { sel.classList.remove('attention-pulse'); }, 1300);
         }
 
         function clearSelection() {
@@ -1934,6 +1962,10 @@
             const hasSubject = !!currentCourse;
             const hasSlot = !!selectedOriginalSlot;
 
+            /* Grid lock affordance: free cells read as not-allowed until a subject is picked */
+            const timetableEl = document.getElementById('timetable');
+            if (timetableEl) timetableEl.classList.toggle('no-subject', !hasSubject);
+
             // Line 1: Subject
             const subjectLine = hasSubject
                 ? currentCourse.code + ' — ' + currentCourse.name + ' (' + currentCourse.type + ')'
@@ -2029,6 +2061,7 @@
         }
 
         function applySubjectChange(code) {
+            clearPreview(); /* subject state changed — any open hover preview is stale */
             const noteEl = document.getElementById('venueCountNote');
 
             if (!code) {
