@@ -1584,7 +1584,7 @@ html.dark .filter-select {
     background: transparent;
     color: var(--color-on-surface-variant);
 }
-/* ── Print action (disabled stub — printing is post-mock scope) ── */
+/* ── Print action (enabled stub — click shows the shared "coming soon" toast) ── */
 .print-btn {
     width: 32px;
     height: 32px;
@@ -1592,19 +1592,15 @@ html.dark .filter-select {
     border: none;
     background: transparent;
     color: var(--color-on-surface-variant);
-    cursor: var(--cursor-cancel);
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-left: auto; /* rightmost slot of the toolbar row */
 }
-.print-btn:disabled {
-    opacity: 0.35;
-    cursor: var(--cursor-cancel);
-}
-.print-btn:disabled:hover {
-    background: transparent;
-    color: var(--color-on-surface-variant);
+.print-btn:hover {
+    background: var(--color-primary-container);
+    color: var(--color-primary);
 }
 /* ── Week Nav: arrows + week-select stay together ── */
 .week-nav {

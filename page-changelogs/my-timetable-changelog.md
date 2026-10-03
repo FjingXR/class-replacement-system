@@ -298,7 +298,7 @@ Added an expandable guide block with page-specific workflow instructions.
 
 ## [2026-10-03] Disabled print icon on the week-nav toolbar
 
-Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a disabled printer
-icon-button (inline SVG, `.print-btn` in theme.css): `disabled` + `aria-disabled`, cancel cursor,
-no hover styling, `title="Coming soon"`, right-aligned at the toolbar edge via `margin-left: auto`
-(stub for post-mock printing scope). No JS, no backend.
+Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a printer icon-button
+(inline SVG, `.print-btn` in theme.css), right-aligned at the toolbar edge via `margin-left: auto`.
+Enabled stub: click fires the shared `toast.show('Printing is coming soon')` bottom-left toast bar;
+`title="Coming soon"` native tooltip on hover. No JS beyond the one-liner onclick.
