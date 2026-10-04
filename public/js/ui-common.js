@@ -84,6 +84,92 @@ function generateWeekData() {
     return arr;
 }
 
+// ───── Lead-Time Rule (3 working days) ─────
+/**
+ * The first selectable date under the lead-time rule: the 3rd working day
+ * from the MockData.mockNow anchor (Mon-Fri, skipping the page's holiday
+ * flags). A slot on this date IS selectable (>= 3, per the agreed boundary).
+ * @param {Array} weekData — page week data (days carry .date 'DD Mon YYYY' + .holiday)
+ * @returns {Date}
+ */
+function leadTimeCutoff(weekData) {
+    const today = new Date(getTodayMs());
+    const holidays = new Set();
+    (weekData || []).forEach(function(w) {
+        (w.days || []).forEach(function(d) { if (d.holiday) holidays.add(d.date); });
+    });
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const wd = new Date(today);
+    let count = 0;
+    while (count < 3) {
+        wd.setDate(wd.getDate() + 1);
+        const dow = wd.getDay();
+        if (dow === 0 || dow === 6) continue; /* weekend */
+        if (holidays.has(String(wd.getDate()).padStart(2, '0') + ' ' + months[wd.getMonth()] + ' ' + wd.getFullYear())) continue;
+        count++;
+    }
+    return wd;
+}
+
+/**
+ * True when a slot may NOT be selected: it lies in the past or fewer than
+ * 3 working days from the MockData.mockNow anchor.
+ * @param {Array}  weekData — page week data (days carry .date 'DD Mon YYYY' + .holiday)
+ * @param {number} weekIdx
+ * @param {number} dayIdx
+ * @returns {boolean} true = the cell renders read-only
+ */
+function isSlotTooSoon(weekData, weekIdx, dayIdx) {
+    const day = weekData && weekData[weekIdx] && weekData[weekIdx].days && weekData[weekIdx].days[dayIdx];
+    if (!day) return false;
+    const slot = new Date(day.date);
+    slot.setHours(0, 0, 0, 0);
+    const today = new Date(getTodayMs());
+    if (slot <= today) return true; /* past, or today itself */
+    return slot < leadTimeCutoff(weekData);
+}
+
+/**
+ * Renders the contextual lead-time banner: visible only while the viewed
+ * week contains blocked days (past / inside the 3-working-day window).
+ * Same banner family as the booking-intent notice, neutral info tone.
+ * @param {string} elId
+ * @param {Array}  weekData
+ * @param {number} weekIdx — the week currently on screen
+ */
+function renderLeadTimeNote(elId, weekData, weekIdx) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const week = weekData && weekData[weekIdx];
+    const blocked = [];
+    let fullyPast = true;
+    if (week) {
+        const today = new Date(getTodayMs());
+        week.days.forEach(function(d, dIdx) {
+            if (isSlotTooSoon(weekData, weekIdx, dIdx)) blocked.push(dIdx);
+            const dt = new Date(d.date);
+            dt.setHours(0, 0, 0, 0);
+            if (dt >= today) fullyPast = false;
+        });
+    }
+    if (!blocked.length) { el.innerHTML = ''; el.style.display = 'none'; return; }
+    const cutoff = leadTimeCutoff(weekData);
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const dateStr = days[cutoff.getDay()] + ', ' + String(cutoff.getDate()).padStart(2, '0') + ' ' + months[cutoff.getMonth()] + ' ' + cutoff.getFullYear();
+    /* copy: a fully-past week reads differently from the current one */
+    const lead = fullyPast
+        ? 'This week has already passed'
+        : 'This week is within 3 working days of today';
+    const copy = fullyPast || blocked.length >= 5
+        ? lead + ' \u2014 bookable from <strong>' + dateStr + '</strong> onward.'
+        : 'Some slots this week are too soon \u2014 bookable from <strong>' + dateStr + '</strong> onward.';
+    el.className = 'lead-time-note';
+    el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
+        + '<span>' + copy + '</span>';
+    el.style.display = '';
+}
+
 function updateWeekSubtitle() {
     const el = document.getElementById('weekSubtitle');
     if (el) {
@@ -1765,9 +1851,11 @@ class DateHelper {
     }
 
     static getTodayMs() {
-        var t = new Date();
-        t.setHours(0, 0, 0, 0);
-        return t.getTime();
+        /* anchored to MockData.mockNow (the fixed demo "today") when present —
+           see the comment in mock-data.js for why this is not the real clock */
+        var src = (window.MockData && MockData.mockNow) ? new Date(MockData.mockNow) : new Date();
+        src.setHours(0, 0, 0, 0);
+        return src.getTime();
     }
 }
 

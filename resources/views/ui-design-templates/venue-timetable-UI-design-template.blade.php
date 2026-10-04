@@ -386,6 +386,9 @@
             <span>Click any green slot to book this venue</span>
         </div>
 
+        <!-- ─── Lead-Time Notice (contextual: shown while the viewed week is blocked) ─── -->
+        <div class="lead-time-note" id="leadTimeNote" style="display:none"></div>
+
         <!-- ─── Grid Wrapper ─── -->
         @include('partials.ui-grid-table')
 
@@ -397,7 +400,7 @@
             'items' => [
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Unavailable', 'tip' => 'Cannot book — slot is booked, Sunday, or public holiday'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Unavailable', 'tip' => 'Cannot book — slot is booked, Sunday, public holiday, or less than 3 working days away'],
             ]
         ])
 
@@ -776,6 +779,12 @@
                             div.classList.add('cell-occupied');
                         }
                         td.appendChild(div);
+                    } else if (isSlotTooSoon(weekData, currentWeek, di)) {
+                        /* lead-time rule: inside the 3-working-day window —
+                           rendered read-only (no Book tooltip, no keyboard) */
+                        const div = document.createElement('div');
+                        div.className = 'cell-content cell-too-soon';
+                        td.appendChild(div);
                     } else {
                         /* Available slot */
                         const div = document.createElement('div');
@@ -816,6 +825,9 @@
                 const mcl = document.getElementById('mobileCardList');
                 if (mcl) mcl.style.display = (mcl.children.length && window.matchMedia('(max-width: 768px)').matches) ? '' : 'none';
             });
+
+            /* lead-time banner (contextual: shown while the viewed week is blocked) */
+            renderLeadTimeNote('leadTimeNote', weekData, currentWeek);
 
             updateSummaries(weekEvents);
         }
@@ -858,14 +870,17 @@
             let occupied = 0;
             let pending = 0;
             let available = 0;
+            let tooSoon = 0;
             if (currentVenue) {
                 occupied = document.querySelectorAll('.timetable .cell-content.cell-occupied').length;
                 pending = document.querySelectorAll('.timetable .cell-content.cell-pending').length;
                 available = document.querySelectorAll('.timetable .cell-content.cell-available').length;
+                tooSoon = document.querySelectorAll('.timetable .cell-content.cell-too-soon').length;
             }
             const sunday = document.querySelectorAll('.timetable .cell-content.cell-sun').length;
             const ph = document.querySelectorAll('.timetable .cell-content.cell-ph').length;
-            const unavailable = occupied + sunday + ph;
+            /* unavailable = booked + Sunday + holiday + lead-time blackout */
+            const unavailable = occupied + sunday + ph + tooSoon;
 
             document.getElementById('sumTotal').textContent = available + pending + unavailable;
             document.getElementById('sumAvailable').textContent = available;

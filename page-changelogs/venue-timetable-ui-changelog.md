@@ -322,3 +322,27 @@ desktop unaffected, Enter/arrow/B keyboard paths, resize both directions — 0 c
 
 Verified star sync across venue switches, favourites cap tooltip, B-after-rebuild, and the
 regression set — 0 console errors.
+
+## [2026-10-04] Lead-time rule: venue booking blocked < 3 working days out
+
+Same rule as the arrangement page (shared `isSlotTooSoon`, MOCK_NOW anchor — see that page's
+changelog entry): otherwise-free cells inside the 3-working-day window (and past days) render
+read-only (`cell-too-soon`, hover "Min. 3 working days ahead") — **no Book tooltip, no
+keyboard, no mobile bookable card**. Booked/pending classes still render normally, including in
+past weeks (read-only browsing of history stays intact).
+
+The summary bar counts too-soon cells as Unavailable (Unavailable = booked + Sunday + holiday +
+too soon) so Total stays consistent; the legend tooltip documents the new reason.
+
+Verified: Week 11 Mon/Tue blocked + Wed–Sat bookable, booked classes visible inside blocked
+days, past weeks read-only with classes shown, summary arithmetic, no tooltip on too-soon
+cells, mobile card list reduced to informational cards — 0 console errors.
+
+**Follow-up:** the lead-time rule is announced in the UI — a notice under the venue header
+("Bookable from Wednesday, 07 Oct 2026 onward — replacement requests need at least 3 working
+days' notice."), date computed from MOCK_NOW + holidays via the shared
+`leadTimeCutoff()`/`renderLeadTimeNote()` helpers.
+
+**Rework:** the lead-time notice moved above the grid and became a contextual banner (booking-
+banner family, neutral info tone) — shown while the viewed week has blocked days, hidden on
+fully open weeks, copy adapts (passed week / current week / partially blocked).

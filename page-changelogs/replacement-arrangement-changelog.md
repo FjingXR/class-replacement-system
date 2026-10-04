@@ -788,3 +788,42 @@ Fourth Playwright sweep (undo system, keyboard model, URL params, favourites) �
 
 Verified: all of the above plus the regression set (arrival auto-select, conflict banner,
 sticky ×, cancelled memory, refresh-cancel, cap, submit enablement, my-timetable) — 0 errors.
+
+## [2026-10-04] Lead-time rule: slots must be ≥ 3 working days from today
+
+New business rule (N13): replacement slots inside the 3-working-day blackout cannot be
+selected — approvals need runway. Boundary agreed: a slot ON the 3rd working day IS selectable.
+
+- Shared helper `isSlotTooSoon(weekData, week, day)` in ui-common: past days and days < 3
+  working days from the anchor are read-only; working days = Mon–Fri, skipping the page's
+  holiday flags (the boundary shifts automatically if a holiday is added ahead).
+- **MOCK_NOW anchor (demo stability)**: `MockData.mockNow` (Sun 4 Oct 2026) drives
+  DateHelper.getTodayMs() — the Today button, the week-generation `today` flags and this rule
+  all derive from it, so the demo behaves identically whenever it is presented (a real clock
+  would progressively push every week into the blackout until nothing is selectable — the
+  semester data ends 1 Nov). The anchor is commented in mock-data.js.
+- Too-soon cells render read-only (`cell-too-soon`, hover "Min. 3 working days ahead") —
+  occupied/pending classes still render normally inside past/too-soon weeks.
+- Click/keyboard attempts toast "Slots must be at least 3 working days from today."
+- Booking-intent banners distinguish the reason: "…is within 3 working days — please pick a
+  later slot manually." (vs the conflict copy).
+- Ctrl+Z re-select re-validates — a slot that slipped into the window can't be resurrected.
+
+Verified: Today anchor (Week 10, 04 Oct flag), current week fully read-only, Week 11
+Mon/Tue blocked + Wed–Sat selectable, past classes still visible, future bookings unaffected,
+too-soon banner, keyboard refusal — 0 console errors.
+
+**Follow-up:** the blackout is now announced in the UI — a lead-time notice above the grid
+("Bookable from Wednesday, 07 Oct 2026 onward — replacement requests need at least 3 working
+days' notice."), date computed from MOCK_NOW + the holiday calendar via the new shared
+`leadTimeCutoff()`/`renderLeadTimeNote()`. Also fixed: the cutoff's holiday lookup built
+unpadded date keys (`5 Oct 2026`) while generateWeekData emits padded ones (`05 Oct 2026`) —
+holidays inside the counting window were silently skipped; the cutoff now shifts correctly
+(verified: a Mon holiday moves the boundary Wed→Thu).
+
+**Rework:** the lead-time notice is now a contextual banner in the booking-banner family
+(neutral info tone, calendar icon) instead of a floating italic hint line. It renders only
+while the viewed week contains blocked days — "This week is within 3 working days of today —
+bookable from Wednesday, 07 Oct 2026 onward." on the current week, "This week has already
+passed — …" on past weeks, "Some slots this week are too soon — …" on partially blocked ones —
+and auto-hides on fully open weeks.

@@ -43,6 +43,18 @@ window.MockData = {
     })(),
 
     // ─────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────
+    // §2.2c  mockNow — fixed "today" anchor for demo stability.
+    // DateHelper.getTodayMs() (and therefore the Today button, the week
+    // generation's `today` flags and the 3-working-day lead-time rule)
+    // derives from THIS date, not the real clock: a real clock would
+    // progressively push every week into the lead-time blackout until
+    // nothing is selectable. Sun 4 Oct 2026 = the last day of Week 9 in
+    // the current semester data — update together with
+    // `semester.startDate` / `semester.weeks` if the demo window moves.
+    // ─────────────────────────────────────────────────────────────────────
+    mockNow: new Date(2026, 9, 4),
+
     // §2.2  holidays — declarative; CONSUMED BY CohortTimetable + Student My Timetable.
     // MyTimetable has no holiday render path today (explicit non-goal).
     // Replacement-arrangement's holiday stays embedded inside `arrangementWeeks`

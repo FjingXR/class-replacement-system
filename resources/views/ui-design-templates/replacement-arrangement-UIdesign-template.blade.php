@@ -954,6 +954,9 @@
 
         <div class="booking-intent-wrap" id="bookingIntent"></div>
 
+        <!-- ─── Lead-Time Notice (bookings open ≥ 3 working days out) ─── -->
+        <div class="hint-text" id="leadTimeNote" style="display:none"></div>
+
         <div class="conflict-strip-wrap" id="subjectInfo"></div>
 
         <div class="toolbar toolbar-restructure">
@@ -1542,12 +1545,18 @@
                             div.className += ' cell-pending';
                         } else if (cellData[2] === 4) {
                             div.className += ' cell-reserved';
+                        } else if (isSlotTooSoon(weekData, weekNav.currentWeek, di)) {
+                            /* lead-time rule: inside the 3-working-day window — read-only */
+                            div.className += ' cell-too-soon';
                         } else {
                             div.className += ' cell-available';
                             div.addEventListener('click', () => toggleCell(di, hi, div));
                             div.addEventListener('mouseenter', () => previewBlock(di, hi, div));
                             div.addEventListener('mouseleave', () => clearPreview());
                         }
+                    } else if (isSlotTooSoon(weekData, weekNav.currentWeek, di)) {
+                        /* lead-time rule: inside the 3-working-day window — read-only */
+                        div.className += ' cell-too-soon';
                     } else {
                         div.className += ' cell-available';
                         div.addEventListener('click', () => toggleCell(di, hi, div));
@@ -1566,6 +1575,7 @@
 
             loadCurrentWeek();
             updateCounter();
+            renderLeadTimeNote('leadTimeNote', weekData, weekNav.currentWeek);
             weekNav._updateArrows();
         }
 
@@ -1578,6 +1588,11 @@
             if (!currentCourse) {
                 toast.show('Select a subject first to trigger the timeslots selector');
                 pulseSubjectSelector();
+                return;
+            }
+            // Lead-time rule: too-soon cells are read-only
+            if (el.classList.contains('cell-too-soon')) {
+                toast.show('Slots must be at least 3 working days from today.');
                 return;
             }
             // If clicking inside the current block, deselect it
@@ -1957,6 +1972,12 @@
                 // restoring a foreign week's block onto the current grid would
                 // bake it into the wrong week on the next navigation
                 if (!selectedBlock) {
+                    /* lead-time rule: a slot that has slipped inside the
+                       3-working-day window can no longer be resurrected */
+                    if (isSlotTooSoon(weekData, last.week, last.block.day)) {
+                        toast.show('That slot is now within 3 working days of today — it can no longer be selected.');
+                        return;
+                    }
                     if (!selectedSlotsByVenue[last.venue]) selectedSlotsByVenue[last.venue] = {};
                     selectedSlotsByVenue[last.venue][last.week] = { ...last.block };
                     if (last.venue === venueNow && last.week === weekNav.currentWeek) {
@@ -2211,6 +2232,7 @@
         let pendingBookingIntent = null;
         let intentBannerSuppressed = false; /* sticky ×: reminder stays dismissed for this booking */
         let intentNeedsManual = false;      /* booked slot can't be auto-selected (overflow/unavailable) */
+        let intentTooSoon = false;          /* ...specifically because it's inside the 3-working-day window */
         let bookingIntentMemory = null;     /* persistent copy of the booking — survives the one-shot
                                                consume so subject/venue changes can re-arm it */
         let intentCancelled = false;        /* user discarded the auto-select — reload must not resurrect it */
@@ -2225,6 +2247,7 @@
             pendingBookingIntent = null;
             intentBannerSuppressed = false;
             intentNeedsManual = false;
+            intentTooSoon = false;
             intentCancelled = false;
             if (!urlParams.date || !urlParams.time) return;
             const hourIndex = hours.indexOf(urlParams.time);
@@ -2269,9 +2292,12 @@
             const i = pendingBookingIntent;
             /* conflict case: the slot can't be auto-selected — error-toned notice */
             if (intentNeedsManual) {
+                const reason = intentTooSoon
+                    ? 'is within 3 working days — please pick a later slot manually.'
+                    : 'is conflicted — please select an available slot manually.';
                 el.innerHTML = `<div class="booking-intent booking-intent-manual">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    <span><strong>Your booked slot (${i.dayAbbr}, ${i.dateStr} · ${i.timeStr}) is conflicted</strong> — please select an available slot manually.</span>
+                    <span><strong>Your booked slot (${i.dayAbbr}, ${i.dateStr} · ${i.timeStr}) ${reason}</strong>
                     <button class="bi-close" onclick="dismissBookingIntent()" data-tip="Dismiss booking reminder">&times;</button>
                 </div>`;
                 return;
@@ -2310,6 +2336,7 @@
             if (!pendingBookingIntent) return;
             const i = pendingBookingIntent;
             intentNeedsManual = !canPlaceBlock(i.dayIndex, i.hourIndex);
+            intentTooSoon = intentNeedsManual && isSlotTooSoon(weekData, i.weekIndex, i.dayIndex);
             if (intentNeedsManual) {
                 pulseTargetCell(i.dayIndex, i.hourIndex); /* the banner names the slot in words — no toast needed */
             }
