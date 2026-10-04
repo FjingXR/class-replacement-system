@@ -2167,6 +2167,7 @@ function weekFilterChanged(opts) {
 
 function prevWeekFilter() {
     const sel = document.getElementById('weekFilter');
+    if (!sel) return; /* page has no week filter — its own keyboard nav applies */
     if (sel.selectedIndex > 0) {
         sel.selectedIndex--;
         sel.dispatchEvent(new Event('change'));
@@ -2175,6 +2176,7 @@ function prevWeekFilter() {
 
 function nextWeekFilter() {
     const sel = document.getElementById('weekFilter');
+    if (!sel) return;
     if (sel.selectedIndex < sel.options.length - 1) {
         sel.selectedIndex++;
         sel.dispatchEvent(new Event('change'));
@@ -2499,11 +2501,22 @@ class VenueDropdown {
     /* ── Public API ─────────────────────────────────────────── */
 
     select(code) {
+        /* unknown/stale code (e.g. a favourite left over from older mock data):
+           ignore instead of selecting into a phantom venue */
+        if (!this.venues.some(v => v.code === code)) return;
         this.selectedCode = code;
         this._updateTrigger();
         this._updateActive();
         this._close();
         this.onSelect(code);
+    }
+
+    /**
+     * Venues that survive the active filter (or all venues when unfiltered) —
+     * used by Ctrl+1/2/3 venue switching and the "fits N students" note.
+     */
+    getFiltered() {
+        return this.filter ? this.venues.filter(this.filter) : this.venues.slice();
     }
 
     getSelected() {

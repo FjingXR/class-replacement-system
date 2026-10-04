@@ -749,3 +749,42 @@ Verified: cross-week summary + per-card remove, intent-through-changes (subject 
 including the auto re-select), explicit-deselect still cancels, undo guard (same-week restore +
 no cross-week corruption), venue fallback, plus the full regression set (arrival auto-select,
 conflict banner, sticky ×/cancelled memory, refresh-cancel, submit enablement) — 0 console errors.
+
+## [2026-10-04] Round-4 fixes: undo integrity, keyboard model, duration clamp, submit toast
+
+Fourth Playwright sweep (undo system, keyboard model, URL params, favourites) — 12 issues:
+
+1. **Ctrl+Z migrated selections across weeks/venues**: undo of a deselect re-rendered the block
+   onto the CURRENT grid and wrote it to the CURRENT week — deselect on Week 7, navigate, undo →
+   the booking block silently became a Week-3 selection. History entries now carry venue+week;
+   the undo restores into the ORIGINAL slot and re-renders only when the view still matches.
+2. **Grid keys hijacked form controls**: with the subject <select> focused, arrows moved the grid
+   focus ring and SPACE placed a grid block (the select could not be operated by keyboard).
+   handleKeyDown now yields to select/input/textarea (Escape still blurs).
+3. **?duration= URL param unvalidated**: duration=8 produced an 8-hour/16-slot block and a
+   16-slot budget. The span now derives from the duration clamped to 0.5–4h (BLOCK_SPAN,
+   decoupled from the budget), and the multi-week budget = max(4, span) — a 1-hour class can
+   now book two 1-hour blocks; absurd durations can't balloon the cap.
+4. **Submission toast never showed** (long-standing): proceed()'s callback declared a local
+   `const toast = buildSubmissionToastMessage()` that shadowed the toast manager — every submit
+   threw `toast.show is not a function` after clearing state. Renamed; the "✓ Submitted —
+   Pending Approval" toast with the View → link now renders.
+5. **Help overlay advertised dead shortcuts**: [ / ] (week nav) and Ctrl+1/2/3 (venue switch)
+   were documented but unimplemented. Both now work (Ctrl+N picks the Nth venue of the filtered
+   list via the new VenueDropdown.getFiltered()).
+6. **Ctrl+Z after submit resurrected the submitted selection** (double-submit risk) — submit now
+   clears the selection history.
+7. **Booking intent lost on venue change**: the venue path used its own confirm (no re-arm), so
+   changing venue silently killed the booking. The venue confirm now re-arms the intent AFTER
+   applying (the user's venue choice sticks; the banner re-appears: "…will pre-fill when you
+   next pick a subject."), and the next subject pick snaps back + re-selects. The subject path
+   keeps its immediate re-select. Banner copy updated for the armed state.
+8. **Focus ring left the viewport** when arrowing down a tall grid — focusCell now
+   scrollIntoView(nearest).
+9. **Help overlay ignored backdrop clicks** (modals close on backdrop; help didn't).
+10. **Arrangement grid clipped on mobile**: the 7×22 table squeezed into 356px with
+    overflow hidden. ≤768px the grid now scrolls horizontally (min-width 820px).
+11. Misc: dead selCount reference noted (harmless); segment-toggle CSS has no markup (harmless).
+
+Verified: all of the above plus the regression set (arrival auto-select, conflict banner,
+sticky ×, cancelled memory, refresh-cancel, cap, submit enablement, my-timetable) — 0 errors.

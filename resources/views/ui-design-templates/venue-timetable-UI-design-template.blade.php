@@ -582,8 +582,11 @@
             const code = venueDropdown ? venueDropdown.getSelected() : null;
             if (!code) return;
 
-            currentVenue = MockData.venues.find(v => v.code === code);
-            if (!currentVenue) return;
+            /* resolve first — an unknown/stale code must not clobber the
+               currently selected venue */
+            const venueObj = MockData.venues.find(v => v.code === code);
+            if (!venueObj) return;
+            currentVenue = venueObj;
 
             /* update favourite star */
             updateFavStar();
@@ -703,8 +706,10 @@
            ════════════════════════════════════════════ */
 
         function buildTimetable() {
-            /* the grid is about to be replaced — a live Book tooltip would go stale */
+            /* the grid is about to be replaced — a live Book tooltip would go
+               stale, and so would the tracked keyboard cell */
             hideAvailableTooltip();
+            focusedCell = null;
             currentWeek = weekNav.currentWeek;
             document.getElementById('hintText').style.display = 'none';
             document.getElementById('emptyState').style.display = 'none';

@@ -730,6 +730,10 @@
         }
 
         @media (max-width: 768px) {
+            /* the 7×22 grid cannot squeeze into a phone viewport — scroll it
+               instead of clipping (selection needs the real grid) */
+            .grid-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .grid-scroll table { min-width: 820px; }
             .top-title { font-size: 16px; }
             .top-logo { height: 26px; }
             .toolbar-restructure {
@@ -1099,7 +1103,7 @@
         </div>
     </div>
 
-<div class="help-overlay" id="helpOverlay">
+<div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)hideHelp()">
     <div class="help-card">
         <h3>Keyboard Shortcuts</h3>
         <div class="shortcut-row"><span>Navigate grid</span><span class="shortcut-key">↑ ↓ ← →</span></div>
@@ -1122,6 +1126,9 @@
         // Max selectable slots — derived from the original class duration passed via
         // URL (duration in hours × 2 = 30-min slots), defaulting to 4 slots (2 hours).
         let MAX_SELECTION = 4;
+        /* the size of ONE block (slots) — derived from the original class
+           duration via URL; the multi-week BUDGET stays MAX_SELECTION */
+        let BLOCK_SPAN = 4;
 
         const weekData = generateWeekData();
         const venueSlotData = MockData.venueSlots;
@@ -1335,7 +1342,7 @@
                     }
                 }
             }
-            pushHistory({ action: 'deselect', block: { ...selectedBlock } });
+            pushHistory({ action: 'deselect', block: { ...selectedBlock }, venue: currentVenue.code || currentVenue, week: weekNav.currentWeek });
             selectedBlock = null;
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
             selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = null;
@@ -1434,7 +1441,7 @@
         }
 
         function canPlaceBlock(day, startHour) {
-            const span = MAX_SELECTION;
+            const span = BLOCK_SPAN;
             if (startHour + span > hours.length) return false;
             for (let h = startHour; h < startHour + span; h++) {
                 if (!isCellAvailable(day, h)) return false;
@@ -1447,7 +1454,7 @@
                 showAlertModal('Clear current selection', 'You already have a selected block. Clear it first before selecting a new one.');
                 return false;
             }
-            const span = MAX_SELECTION;
+            const span = BLOCK_SPAN;
             if (!canPlaceBlock(day, startHour)) {
                 toast.show(startHour + span > hours.length
                     ? 'Not enough time left in the day for a ' + (span * 30) + '-minute selection.'
@@ -1467,7 +1474,7 @@
             renderMergedBlock(body);
             if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
             selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = { day, startHour, endHour: startHour + span };
-            pushHistory({ action: 'select', block: { ...selectedBlock } });
+            pushHistory({ action: 'select', block: { ...selectedBlock }, venue: currentVenue.code || currentVenue, week: weekNav.currentWeek });
             updateCounter();
             return true;
         }
@@ -1477,7 +1484,7 @@
         function previewBlock(day, startHour, el) {
             clearPreview();
             if (selectedBlock) return;
-            const span = MAX_SELECTION;
+            const span = BLOCK_SPAN;
             const body = document.getElementById('tableBody');
             const noSubject = !currentCourse; /* locked grid: preview explains instead of inviting */
             const ok = !noSubject && canPlaceBlock(day, startHour);
@@ -1608,8 +1615,16 @@
                     'You have selected slots on the grid. Changing the <strong>venue</strong> will clear them. Continue?',
                     function() {
                         hideConfirmModal();
+                        /* keep the booking armed for the next subject pick —
+                           capture BEFORE the discard clears the block */
+                        const rearm = bookingIntentMemory && intentMatchesBlock(
+                            currentVenue.code || currentVenue, weekNav.currentWeek, selectedBlock);
                         deselectBlock();
                         applyVenueChange(newVenue);
+                        if (rearm) {
+                            pendingBookingIntent = { ...bookingIntentMemory };
+                            renderBookingIntent();
+                        }
                     }
                 );
                 // Cancel path: snap the dropdown back to the current venue
@@ -1696,6 +1711,8 @@
                     if (bookingIntentMemory && intentMatchesBlock(
                             currentVenue.code || currentVenue, weekNav.currentWeek, selectedBlock)) {
                         pendingBookingIntent = { ...bookingIntentMemory };
+                        /* signal that the booking is armed again (N5) */
+                        renderBookingIntent();
                     }
                     discardSelection();
                     proceedFn();
@@ -1764,11 +1781,13 @@
                     if (selectedOriginalSlot) {
                         setRecentSlot(selectedOriginalSlot);
                     }
-                    const toast = buildSubmissionToastMessage();
+                    const sub = buildSubmissionToastMessage();
                     deselectBlock();
                     Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
+                    /* the request is sent — Ctrl+Z must not resurrect its slots */
+                    selectionHistory.length = 0;
                     updateCounter();
-                    toast.show(toast.message, null, 5000, 'View \u2192', '/my-request-history-ui', toast.details);
+                    toast.show(sub.message, null, 5000, 'View \u2192', '/my-request-history-ui', sub.details);
                 }
             );
         }
@@ -1922,19 +1941,28 @@
             if (selectionHistory.length === 0) return;
             const last = selectionHistory.pop();
             const body = document.getElementById('tableBody');
+            const venueNow = currentVenue.code || currentVenue;
 
             if (last.action === 'select') {
-                // Undo a block selection → deselect it
-                if (selectedBlock && selectedBlock.day === last.block.day && selectedBlock.startHour === last.block.startHour) {
+                // Undo a block selection → deselect it, but only if the view is
+                // still where the selection happened — otherwise the wrong
+                // week's/venue's block would be removed
+                if (selectedBlock && last.venue === venueNow && last.week === weekNav.currentWeek
+                    && selectedBlock.day === last.block.day && selectedBlock.startHour === last.block.startHour) {
                     deselectBlock();
                 }
             } else if (last.action === 'deselect') {
-                // Undo a block deselect → re-select it
+                // Undo a block deselect → re-select it into its ORIGINAL
+                // week/venue; re-render only when the view still matches —
+                // restoring a foreign week's block onto the current grid would
+                // bake it into the wrong week on the next navigation
                 if (!selectedBlock) {
-                    selectedBlock = { ...last.block };
-                    renderMergedBlock(body);
-                    if (!selectedSlotsByVenue[currentVenue]) selectedSlotsByVenue[currentVenue] = {};
-                    selectedSlotsByVenue[currentVenue][weekNav.currentWeek] = { day: selectedBlock.day, startHour: selectedBlock.startHour, endHour: selectedBlock.endHour };
+                    if (!selectedSlotsByVenue[last.venue]) selectedSlotsByVenue[last.venue] = {};
+                    selectedSlotsByVenue[last.venue][last.week] = { ...last.block };
+                    if (last.venue === venueNow && last.week === weekNav.currentWeek) {
+                        selectedBlock = { ...last.block };
+                        renderMergedBlock(body);
+                    }
                 }
             }
             updateCounter();
@@ -1948,6 +1976,8 @@
             if (td) {
                 const cellDiv = td.querySelector('.cell-content');
                 if (cellDiv) cellDiv.classList.add('cell-focused');
+                /* keep the ring visible while arrowing through a tall grid */
+                td.scrollIntoView({ block: 'nearest' });
             }
             focusedCell = { day: day, hour: hour };
         }
@@ -1981,6 +2011,14 @@
             const help = document.getElementById('helpOverlay');
             if (help && help.classList.contains('active')) {
                 if (e.key === 'Escape') hideHelp();
+                return;
+            }
+
+            /* let form controls keep their native keys — the grid must not
+               hijack arrows/space/enter from the subject or week selects */
+            const tag = ((e.target && e.target.tagName) || '').toLowerCase();
+            if (tag === 'select' || tag === 'input' || tag === 'textarea') {
+                if (e.key === 'Escape') e.target.blur();
                 return;
             }
 
@@ -2024,6 +2062,14 @@
                 case 'Escape':
                     unfocusCell();
                     break;
+                case '[':
+                    e.preventDefault();
+                    weekNav.prevWeek();
+                    break;
+                case ']':
+                    e.preventDefault();
+                    weekNav.nextWeek();
+                    break;
                 case '?':
                     showHelp();
                     break;
@@ -2039,7 +2085,12 @@
                 case '3':
                     if (e.ctrlKey || e.metaKey) {
                         e.preventDefault();
-                        /* Ctrl+1-9 to select venue by index — handled by VenueDropdown internally */
+                        /* switch to the Nth venue of the (filtered) dropdown list */
+                        if (venueDropdown && typeof venueDropdown.getFiltered === 'function') {
+                            const list = venueDropdown.getFiltered();
+                            const v = list[parseInt(e.key, 10) - 1];
+                            if (v) venueDropdown.select(v.code);
+                        }
                     }
                     break;
             }
@@ -2225,7 +2276,7 @@
                 </div>`;
                 return;
             }
-            const msg = currentCourse ? 'slots pre-filled — review, then submit.' : 'pick a subject to pre-fill the slots.';
+            const msg = currentCourse ? 'will pre-fill when you next pick a subject.' : 'pick a subject to pre-fill the slots.';
             el.innerHTML = `<div class="booking-intent">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 <span><strong>Booking ${i.venue} · ${i.dayAbbr}, ${i.dateStr} · ${i.timeStr}</strong> — ${msg}</span>
@@ -2731,11 +2782,13 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             readUrlParams();
-            // If the original class duration was passed in (hours), cap the selection
-            // at that many 30-min slots so the replacement matches the class length.
+            // If the original class duration was passed in (hours), size the block
+            // span from it — clamped to 0.5–4h; the multi-week BUDGET stays at
+            // least the approved 4 slots so a shorter class can still book twice.
             if (urlParams.duration && !isNaN(parseFloat(urlParams.duration))) {
-                const hrs = parseFloat(urlParams.duration);
-                if (hrs > 0) MAX_SELECTION = Math.round(hrs * 2);
+                const hrs = Math.min(Math.max(parseFloat(urlParams.duration), 0.5), 4);
+                BLOCK_SPAN = Math.round(hrs * 2);
+                MAX_SELECTION = Math.max(MAX_SELECTION, BLOCK_SPAN);
             }
             buildSubjectDropdown();
             renderTitleSummary();

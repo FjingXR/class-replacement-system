@@ -307,3 +307,18 @@ B-after-click, plus the venue-side regression set — 0 console errors.
 
 Verified: card list on mobile (B103 booked cards + B002 bookable cards), week change re-render,
 desktop unaffected, Enter/arrow/B keyboard paths, resize both directions — 0 console errors.
+
+## [2026-10-04] Round-4 fixes: stale keyboard cell + venue guard
+
+1. **B shortcut used a detached cell**: focusedCell survived grid rebuilds — B after a week/venue
+   switch opened the Book tooltip from the old cell. buildTimetable now clears it (mirroring the
+   tooltip dismissal).
+2. **Unknown venue codes could clobber the selection**: onVenueChange assigned
+   `currentVenue = MockData.venues.find(...)` BEFORE its guard — a stale favourite code left
+   currentVenue undefined (trigger stale, page half-broken). VenueDropdown.select() now validates
+   against the master list (ignores unknown codes), and onVenueChange resolves into a temp before
+   committing. (Not user-reachable in the mock — the panel only lists real venues — hardening.)
+3. Shared: week-filter keyboard fallback ([ / ]) no longer crashes on pages without #weekFilter.
+
+Verified star sync across venue switches, favourites cap tooltip, B-after-rebuild, and the
+regression set — 0 console errors.
