@@ -2162,7 +2162,7 @@ html.dark .semester-bar select:not(.week-select) {
     margin: 0 0 10px;
 }
 .lead-time-note svg { flex-shrink: 0; }
-.lead-time-note strong { font-weight: 600; }
+.lead-time-note strong { font-weight: 600; color: var(--color-success); }
 .cell-ph:hover { filter: brightness(1.2); z-index: 5; cursor: var(--cursor-cancel); }
 
 /* ── Sunday/offday hover label ──────────────────────────────── */

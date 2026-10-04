@@ -346,3 +346,6 @@ days' notice."), date computed from MOCK_NOW + holidays via the shared
 **Rework:** the lead-time notice moved above the grid and became a contextual banner (booking-
 banner family, neutral info tone) — shown while the viewed week has blocked days, hidden on
 fully open weeks, copy adapts (passed week / current week / partially blocked).
+
+**Tweak:** the lead-time banner's date ("Wednesday, 07 Oct 2026") uses the success/green
+token so the opening date reads as the focal point.

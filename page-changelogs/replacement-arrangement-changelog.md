@@ -827,3 +827,6 @@ while the viewed week contains blocked days — "This week is within 3 working d
 bookable from Wednesday, 07 Oct 2026 onward." on the current week, "This week has already
 passed — …" on past weeks, "Some slots this week are too soon — …" on partially blocked ones —
 and auto-hides on fully open weeks.
+
+**Tweak:** the lead-time banner's date ("Wednesday, 07 Oct 2026") uses the success/green
+token so the opening date reads as the focal point.
