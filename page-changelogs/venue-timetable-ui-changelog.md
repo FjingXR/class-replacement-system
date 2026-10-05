@@ -374,3 +374,10 @@ blackout boundary becomes Thu 08 Oct on both pages.
 **Tweak (label parity):** the venue's week select drops its custom labelFn and uses the shared
 default — "Week 10 · 28 Sep 2026 ~ 04 Oct 2026" (· separator, both years) — now identical in
 format to the arrangement's selector. Nothing else changes.
+
+**Tweak (summary cards commented out):** the four summary cards (Total Slots / Available /
+Pending / Unavailable) are Blade-commented on this page — the grid already shows the same
+state colour-coded and the legend explains it, so the counts added little value to the booking
+journey. The shared `ui-summary-bar` partial is untouched (8 other pages use it); the include
+is restored by uncommenting, and `updateSummaries()` is null-guarded + keeps its counting so
+the page runs without the cards.

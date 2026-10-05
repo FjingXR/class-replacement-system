@@ -404,8 +404,11 @@
             ]
         ])
 
-        <!-- ─── Summary Bar ─── -->
-        @include('partials.ui-summary-bar', [
+        {{-- ─── Summary Bar — commented out: the four counts (Total/Available/Pending/Unavailable)
+             add little value for the booking journey (the grid already shows the same state
+             colour-coded; the legend explains it). Restore by uncommenting; the
+             updateSummaries() writers are null-guarded so the page runs without it. --}}
+        {{-- @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots',
                     'description' => 'All time slots shown for <strong>this venue</strong> in the selected week.'],
@@ -416,7 +419,7 @@
                 ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable',
                     'description' => '<strong>Cannot book</strong> — booked class, Sunday, or public holiday.'],
             ]
-        ])
+        ]) --}}
 
         <!-- ─── Empty State ─── -->
         @include('partials.ui-empty-state', ['title' => 'Select a venue', 'text' => 'Choose a venue from the dropdown to view its weekly schedule.'])
@@ -857,6 +860,10 @@
            ════════════════════════════════════════════ */
 
         function updateSummaries(events) {
+            /* The four summary cards are commented out on this page (venue-only
+               cleanup) — exit early when they're absent so the rebuild never
+               touches a null node. The counting stays for a painless restore. */
+            if (!document.getElementById('sumTotal')) return;
             /* Count exactly what the grid renders (same cells), so the stats
                always match the timetable — including overlapping bookings that
                share the same hour slot.
