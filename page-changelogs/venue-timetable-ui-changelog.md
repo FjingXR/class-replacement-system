@@ -363,3 +363,10 @@ list and "Today" — it's the browsing/history page, so no change applies here.
 **Note (no visible change):** the "Book from" grid chip is opt-in (cfg.bookableBadge) — only
 the replacement-arrangement page renders it; this page keeps its full week list + "Today"
 button (id todayBtn, unchanged).
+
+**Note (no visible change):** the BOOKINGS OPEN badge (success-green) remains opt-in on the
+replacement-arrangement page; this page keeps its today-badge (primary) and full week list.
+
+**Note (shared anchor move):** `MockData.mockNow` → Mon 5 Oct 2026 — the venue's current week
+is now Week 10 (05 Oct ~ 11 Oct) with the TODAY badge on the Mon column; the lead-time
+blackout boundary becomes Thu 08 Oct on both pages.

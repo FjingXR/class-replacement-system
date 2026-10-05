@@ -881,3 +881,18 @@ other pages). The action button loses its inline chip and keeps the clean calend
 (same geometry as Today/OFF/Public Holiday: block, margin-top 2px, 1px 6px, radius-sm, 10px/700,
 uppercase, letter-spacing 0.3px; solid primary like the today-badge pair) and the text is
 "BOOKINGS OPEN" — clearer than the ambiguous "Book from".
+
+**Tweak (color semantic):** the "BOOKINGS OPEN" badge is now success-green — the actionable/
+bookable color, matching the banner's green opening date and the boundary-day flash — while
+solid primary stays on the today-badge (current-day marker; already in the shared grid builder,
+renders on the venue and on the arrangement whenever the anchor sits mid-week in a visible week).
+
+**Demo anchor move:** `MockData.mockNow` → Mon 5 Oct 2026 (first day of Week 10) — one line in
+mock-data.js, everything derives. Landing week is now Week 11 (05 Oct ~ 11 Oct) with Mon-Wed
+read-only and **Thu 08 Oct** bookable; the TODAY badge (primary) and the BOOKINGS OPEN badge
+(success) show together in the same grid, and the banner reads "bookable from Thursday,
+08 Oct 2026 onward".
+
+**Tweak:** the "Earliest bookable" button now uses the success-container tone (`.today-btn-earliest`
+in theme.css) — completing the green bookable thread: button → banner date → BOOKINGS OPEN badge
+→ boundary-day flash. The default Today button stays primary-container (venue/timetables).
