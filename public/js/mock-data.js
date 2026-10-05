@@ -52,6 +52,12 @@ window.MockData = {
     // nothing is selectable. Sun 4 Oct 2026 = the last day of Week 9 in
     // the current semester data — update together with
     // `semester.startDate` / `semester.weeks` if the demo window moves.
+    //
+    // TODO(backend): when the real system lands, DELETE this anchor —
+    // DateHelper.getTodayMs() already falls back to the real clock
+    // (`new Date()`) whenever mockNow is absent, so removing this one
+    // line switches the whole app to the live date/today with no other
+    // code changes.
     // ─────────────────────────────────────────────────────────────────────
     mockNow: new Date(2026, 9, 4),
 

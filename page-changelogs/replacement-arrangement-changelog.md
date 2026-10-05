@@ -830,3 +830,8 @@ and auto-hides on fully open weeks.
 
 **Tweak:** the lead-time banner's date ("Wednesday, 07 Oct 2026") uses the success/green
 token so the opening date reads as the focal point.
+
+**Fix ("Today" accuracy):** the two week-index helpers in `ui-common.js` (`currentWeekIndex`
+/ `WeekNavigator._currentWeekIndex`) still derived "today" from the REAL clock, so the Today
+button jumped a week past the demo anchor while the grid highlight followed `MockData.mockNow`
+— now both read the mock anchor like everything else.

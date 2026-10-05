@@ -469,12 +469,6 @@
 
         const weekData = generateWeekData();
 
-        function getTodayMs() {
-            const d = new Date();
-            d.setHours(0, 0, 0, 0);
-            return d.getTime();
-        }
-
         /* ════════════════════════════════════════════
            WEEK NAVIGATION (shared WeekNavigator)
            ════════════════════════════════════════════ */

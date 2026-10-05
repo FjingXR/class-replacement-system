@@ -33,7 +33,7 @@ function updateWeekArrows(prevDisabled, nextDisabled) {
 function currentWeekIndex() {
     const parts = MockData.semester.startDate.split('-');
     const semesterStart = new Date(parts[0], parts[1] - 1, parts[2]);
-    const today = new Date();
+    const today = new Date(getTodayMs());
     today.setHours(0, 0, 0, 0);
     const idx = Math.floor((today - semesterStart) / 86400000 / 7);
     return Math.max(0, Math.min(MockData.semester.weeks - 1, idx));
@@ -351,7 +351,7 @@ class WeekNavigator {
     _currentWeekIndex() {
         var parts = this._semester.startDate.split('-');
         var semesterStart = new Date(parts[0], parts[1] - 1, parts[2]);
-        var today = new Date();
+        var today = new Date(getTodayMs());
         today.setHours(0, 0, 0, 0);
         var idx = Math.floor((today - semesterStart) / 86400000 / 7);
         return Math.max(0, Math.min(this._semester.weeks - 1, idx));
@@ -1851,8 +1851,9 @@ class DateHelper {
     }
 
     static getTodayMs() {
-        /* anchored to MockData.mockNow (the fixed demo "today") when present —
-           see the comment in mock-data.js for why this is not the real clock */
+        /* anchored to MockData.mockNow (the fixed demo "today") when present,
+           falling back to the real clock once that anchor is deleted —
+           TODO(backend) note sits in mock-data.js mockNow; both stay in sync. */
         var src = (window.MockData && MockData.mockNow) ? new Date(MockData.mockNow) : new Date();
         src.setHours(0, 0, 0, 0);
         return src.getTime();

@@ -349,3 +349,8 @@ fully open weeks, copy adapts (passed week / current week / partially blocked).
 
 **Tweak:** the lead-time banner's date ("Wednesday, 07 Oct 2026") uses the success/green
 token so the opening date reads as the focal point.
+
+**Fix ("Today" consistency):** the venue template's local `getTodayMs()` shadow (pre-refactor
+leftover) was deleted — it silently overrode the shared mock-anchored helper, making this page
+read the REAL clock while the arrangement read `MockData.mockNow`. Both pages now use the one
+shared anchor.
