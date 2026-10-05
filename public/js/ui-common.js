@@ -81,6 +81,11 @@ function generateWeekData() {
         }
         arr.push({ label: `Week ${w}`, range: `${fmt(mon)} ~ ${fmt(sun)}`, rangeShort: `${fmtShort(mon)} ~ ${fmtShort(sun)}`, days });
     }
+    /* mark the semester's earliest bookable day (the lead-time boundary) —
+       grid builders render the "Bookings open" chip in its time-col when the
+       page opts in (cfg.bookableBadge) */
+    const fb = firstBookableDay(arr);
+    if (fb) arr[fb.week].days[fb.day].firstBookable = true;
     return arr;
 }
 
@@ -127,6 +132,86 @@ function isSlotTooSoon(weekData, weekIdx, dayIdx) {
     const today = new Date(getTodayMs());
     if (slot <= today) return true; /* past, or today itself */
     return slot < leadTimeCutoff(weekData);
+}
+
+/**
+ * A week is BOOKABLE when at least one day can host a replacement request:
+ * not Sunday, not a holiday, and not too-soon (past / inside the
+ * 3-working-day window). Drives the arrangement page's hidden-unbookable
+ * weeks rule and its "Earliest bookable" destination — one source of truth
+ * with isSlotTooSoon so they can never drift apart.
+ * @param {Array}  weekData
+ * @param {number} weekIdx
+ * @returns {boolean} true = at least one selectable slot exists that week
+ */
+function weekHasBookableSlot(weekData, weekIdx) {
+    const week = weekData && weekData[weekIdx];
+    if (!week) return false;
+    for (var d = 0; d < week.days.length; d++) {
+        const day = week.days[d];
+        if (day.sunday || day.abbr === 'Sun' || day.holiday) continue;
+        if (isSlotTooSoon(weekData, weekIdx, d)) continue;
+        return true;
+    }
+    return false;
+}
+
+/**
+ * The earliest bookable day in a given week (first day that can host a
+ * request) — i.e. the lead-time boundary day for that week.
+ * @param {Array}  weekData
+ * @param {number} weekIdx
+ * @returns {number} day index, or -1 when the week has no bookable day
+ */
+function firstBookableDayIn(weekData, weekIdx) {
+    const week = weekData && weekData[weekIdx];
+    if (!week) return -1;
+    for (var d = 0; d < week.days.length; d++) {
+        const day = week.days[d];
+        if (day.sunday || day.abbr === 'Sun' || day.holiday) continue;
+        if (isSlotTooSoon(weekData, weekIdx, d)) continue;
+        return d;
+    }
+    return -1;
+}
+
+/**
+ * The earliest bookable day across the whole semester — the "Earliest
+ * bookable" destination: { week, day } indexes, or null when no week is
+ * bookable at all (end-of-semester edge; pages must guard).
+ * @param {Array} weekData
+ * @returns {{week:number, day:number}|null}
+ */
+function firstBookableDay(weekData) {
+    if (!weekData) return null;
+    for (var w = 0; w < weekData.length; w++) {
+        const d = firstBookableDayIn(weekData, w);
+        if (d >= 0) return { week: w, day: d };
+    }
+    return null;
+}
+
+/**
+ * Pulses the earliest bookable day row so the arrangement page's
+ * "Earliest bookable" action lands on the exact origin (the lead-time
+ * boundary day), not just somewhere in the week. Day rows carry
+ * tr[data-dayIndex]; the pulse uses the shared success token.
+ * @param {Array}  weekData
+ * @param {number} weekIdx — the week on screen (must hold a bookable day)
+ */
+function flashEarliestBookableDay(weekData, weekIdx) {
+    const body = document.getElementById('tableBody');
+    const dayIdx = firstBookableDayIn(weekData, weekIdx);
+    if (!body || dayIdx < 0) return;
+    const rows = body.querySelectorAll('tr[data-dayIndex="' + dayIdx + '"]');
+    rows.forEach(function(r) {
+        r.classList.remove('bookable-flash');
+        void r.offsetWidth; /* restart the animation on repeat clicks */
+        r.classList.add('bookable-flash');
+    });
+    setTimeout(function() {
+        rows.forEach(function(r) { r.classList.remove('bookable-flash'); });
+    }, 1300);
 }
 
 /**
@@ -211,7 +296,7 @@ function initTodayBtn() {
 }
 
 class WeekNavigator {
-    constructor(semesterData, weekData, selectId, storageKey) {
+    constructor(semesterData, weekData, selectId, storageKey, weekFilter) {
         this._semester = semesterData;
         this._weekData = weekData;
         this._currentWeek = 0;
@@ -220,6 +305,11 @@ class WeekNavigator {
            overwrite each other's position — e.g. browsing the arrangement grid
            moved the venue timetable's week) */
         this._storageKey = storageKey || 'currentWeek';
+        /* optional visibility filter (page-supplied): when present, weeks
+           failing it (e.g. no bookable slot) are skipped in navigation and
+           resolved away on load/select; null = every week is navigable
+           (venue-timetable keeps its full list — it's a browsing/history page) */
+        this._weekFilter = weekFilter || null;
     }
 
     get currentWeek() {
@@ -245,9 +335,10 @@ class WeekNavigator {
     }
 
     prevWeek() {
-        if (this._currentWeek > 0) {
+        const target = this._resolveStep(this._currentWeek - 1, -1);
+        if (target >= 0 && target < this._currentWeek) {
             this._beforeNavigate();
-            this._currentWeek--;
+            this._currentWeek = target;
             this._updateSelect();
             this._buildTimetable();
             this._updateSubtitle();
@@ -258,9 +349,10 @@ class WeekNavigator {
     }
 
     nextWeek() {
-        if (this._currentWeek < this._semester.weeks - 1) {
+        const target = this._resolveStep(this._currentWeek + 1, 1);
+        if (target >= 0 && target > this._currentWeek) {
             this._beforeNavigate();
-            this._currentWeek++;
+            this._currentWeek = target;
             this._updateSelect();
             this._buildTimetable();
             this._updateSubtitle();
@@ -271,6 +363,11 @@ class WeekNavigator {
     }
 
     selectWeek(index) {
+        if (this._weekFilter && !this._weekFilter(index)) {
+            const resolved = this._resolveStep(index, 1);
+            if (resolved < 0) return; /* nothing visible — stay put */
+            index = resolved;
+        }
         this._beforeNavigate();
         this._currentWeek = index;
         this._updateSelect();
@@ -279,6 +376,50 @@ class WeekNavigator {
         this._updateProgress();
         this._updateArrows();
         this.save();
+    }
+
+    /**
+     * Steps from `from` in direction `dir` (-1 back / +1 forward) until a
+     * week passes the visibility filter; -1 when none does. Without a
+     * filter this is the identity (`from` itself), so unfiltered pages
+     * behave exactly as before.
+     */
+    _resolveStep(from, dir) {
+        var i = from;
+        var max = this._semester.weeks - 1;
+        while (i >= 0 && i <= max) {
+            if (!this._weekFilter || this._weekFilter(i)) return i;
+            i += dir;
+        }
+        return -1;
+    }
+
+    /** First visible (weekFilter-passing) week index, or -1 when none. */
+    firstVisibleWeek() {
+        return this._resolveStep(0, 1);
+    }
+
+    /**
+     * "Earliest bookable" destination: jump to the first week that can host
+     * a request and flash its boundary day. Falls back to real "today" when
+     * no week is bookable at all (end-of-semester edge — grid renders
+     * read-only rather than the dropdown going empty).
+     */
+    jumpToEarliestBookable() {
+        var target = this.firstVisibleWeek();
+        if (target < 0) return this.jumpToToday();
+        if (target !== this._currentWeek) {
+            this._beforeNavigate();
+            this._currentWeek = target;
+            this._updateSelect();
+            this._buildTimetable();
+            this._updateSubtitle();
+            this._updateProgress();
+            this._updateArrows();
+            this._scrollToGrid();
+            this.save();
+        }
+        if (typeof this.flashEarliestBookable === 'function') this.flashEarliestBookable();
     }
 
     onWeekChange() {
@@ -306,6 +447,12 @@ class WeekNavigator {
                 }
             }
         } catch (e) { /* ignore */ }
+        /* snap to a visible week when the saved one is hidden now (e.g. a
+           stored week that no longer holds a bookable slot) */
+        if (this._weekFilter && !this._weekFilter(this._currentWeek)) {
+            var fv = this.firstVisibleWeek();
+            if (fv >= 0) this._currentWeek = fv;
+        }
     }
 
     initKeyboard() {
@@ -363,7 +510,16 @@ class WeekNavigator {
 
     _updateSelect() {
         var sel = document.getElementById(this._selectId);
-        if (sel) sel.selectedIndex = this._currentWeek;
+        if (!sel) return;
+        /* with a filter the options are a subset — match by value, not position */
+        if (this._weekFilter) {
+            var v = String(this._currentWeek);
+            for (var o = 0; o < sel.options.length; o++) {
+                if (sel.options[o].value === v) { sel.selectedIndex = o; return; }
+            }
+            return;
+        }
+        sel.selectedIndex = this._currentWeek;
     }
 
     _updateSubtitle() {
@@ -391,6 +547,12 @@ class WeekNavigator {
     _updateArrows() {
         var prev = document.querySelector('.week-arrow[aria-label="Previous week"]');
         var next = document.querySelector('.week-arrow[aria-label="Next week"]');
+        /* with a filter, arrow ends = the visible set's edges */
+        if (this._weekFilter) {
+            if (prev) prev.disabled = this._resolveStep(this._currentWeek - 1, -1) < 0;
+            if (next) next.disabled = this._resolveStep(this._currentWeek + 1, 1) < 0;
+            return;
+        }
         if (prev) prev.disabled = this._currentWeek <= 0;
         if (next) next.disabled = this._currentWeek >= this._semester.weeks - 1;
     }
@@ -496,6 +658,12 @@ function buildTimetableGrid(cfg) {
         if (day.holiday || day.sunday) dayColClass += ' offday';
         dayTd.className = dayColClass;
         dayTd.innerHTML = HtmlBuilder.dayHeader(day);
+        /* "Bookings open" chip: the semester's earliest bookable day, when the
+           page opts in (cfg.bookableBadge) — data-driven via generateWeekData's
+           firstBookable flag, so it tracks the anchor and never hardcodes */
+        if (cfg.bookableBadge && day.firstBookable) {
+            dayTd.insertAdjacentHTML('beforeend', '<span class="bookable-badge">Bookings open</span>');
+        }
         tr.appendChild(dayTd);
 
         if (cfg.cellRender) {
@@ -2389,11 +2557,20 @@ function populateWeekSelect(selectId, cfg) {
     let html = '';
     if (cfg.includeAll) html += '<option value="all">All Weeks</option>';
 
-    source.forEach(function(w, i) {
-        const value = useRanges ? w.value : i;
+    /* optional visibility filter (weekData path only): only weeks passing it
+       become options, keeping ABSOLUTE week numbers as values so saved
+       positions, URL params and cross-page references stay meaningful */
+    const filter = (cfg.weekFilter && !useRanges) ? cfg.weekFilter : null;
+    const list = filter
+        ? source.map(function(w, i) { return { w: w, i: i }; }).filter(function(x) { return filter(x.i); })
+        : source;
+
+    list.forEach(function(x, i) {
+        const w = list === source ? x : x.w;
+        const value = useRanges ? w.value : (list === source ? i : x.i);
         let label;
         if (cfg.labelFn) {
-            label = cfg.labelFn(w, i, isMobile, useRanges);
+            label = cfg.labelFn(w, value, isMobile, useRanges);
         } else if (useRanges) {
             label = isMobile ? (w.labelShort || w.label) : w.label;
         } else {

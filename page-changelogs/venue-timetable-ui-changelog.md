@@ -354,3 +354,12 @@ token so the opening date reads as the focal point.
 leftover) was deleted — it silently overrode the shared mock-anchored helper, making this page
 read the REAL clock while the arrangement read `MockData.mockNow`. Both pages now use the one
 shared anchor.
+
+**Note (no visible change):** the shared `ui-today-btn` partial and `WeekNavigator` gained an
+"earliest bookable" variant used by the replacement-arrangement page (where unbookable weeks
+are hidden and "Today" would point off the visible range). The venue page keeps its full week
+list and "Today" — it's the browsing/history page, so no change applies here.
+
+**Note (no visible change):** the "Book from" grid chip is opt-in (cfg.bookableBadge) — only
+the replacement-arrangement page renders it; this page keeps its full week list + "Today"
+button (id todayBtn, unchanged).

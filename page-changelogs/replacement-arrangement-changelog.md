@@ -835,3 +835,49 @@ token so the opening date reads as the focal point.
 / `WeekNavigator._currentWeekIndex`) still derived "today" from the REAL clock, so the Today
 button jumped a week past the demo anchor while the grid highlight followed `MockData.mockNow`
 — now both read the mock anchor like everything else.
+
+**Feature: hide unbookable whole weeks + "Earliest bookable" replaces "Today"**
+
+The week selector now shows ONLY weeks that hold at least one bookable slot — a week is
+bookable when it has a day that is not Sunday / not a holiday / not too-soon (past or inside
+the 3-working-day blackout). With the demo anchor that means weeks 1–10 vanish; the page opens
+on Wed 7 Oct selectable. The rule is per-week and computed, never hard-coded:
+
+- a mid-semester all-holiday week would hide too (non-prefix rule — proven in harness);
+  when the demo anchor moves (e.g. a Friday), the current week legitimately hides and the
+  landing becomes the next week with its boundary day selectable (Fri 9 Oct anchor → Week 12,
+  Wed 14 Oct onward)
+- option values stay absolute week numbers, so saved positions / URL params remain meaningful;
+  a saved or selected week that is now hidden snaps forward to the first visible one
+- "Today" becomes "Earliest bookable" (calendar-chevrons icon): jumps to the first bookable
+  week, scrolls to the grid, and pulses the lead-time boundary day row (success-toned flash);
+  its data-tip is computed at init — "Jump to the earliest bookable slot — Wednesday,
+  07 Oct 2026 (Week 11)"
+- `[/`/]` keyboard and the week arrows clamp to the visible set; at the last bookable week the
+  next arrow disables
+- end-of-semester guard: if NO week is bookable at all, the action falls back to today's
+  (read-only) grid instead of an empty selector
+- the Selection Summary panel is unaffected — it lists actual selections (which can only live
+  in bookable weeks), not the week list
+- shared internals: `weekHasBookableSlot()` / `firstBookableDay()` / `firstBookableDayIn()` /
+  `flashEarliestBookableDay()` in ui-common (single source with `isSlotTooSoon`);
+  WeekNavigator takes an optional `weekFilter` (hidden weeks are skipped in prev/next and
+  resolved on load/select); `populateWeekSelect` accepts `cfg.weekFilter`; the shared
+  `ui-today-btn` partial gains label/tip/icon variant params (default back-compat = "Today")
+
+**Tweak:** the "Earliest bookable" button now carries a solid primary-blue pill badge with the
+opening date ("Wed 07 Oct", sentence case) — computed at init, never hardcoded; shared
+`ui-today-btn` partial and `.today-btn .today-badge` in theme.css.
+
+**Rework (badge placement + naming):** the primary-blue badge moved OFF the button into the
+grid — the earliest bookable day's time-col now carries a solid-primary "Book from" chip under
+the date (data-driven: generateWeekData marks the day `firstBookable`, the shared grid builder
+renders it when the page opts in with cfg.bookableBadge, so it neither hardcodes nor appears on
+other pages). The action button loses its inline chip and keeps the clean calendar-arrow
+"Earliest bookable" + dated tooltip; its id is renamed todayBtn → earliestBtn (the default
+"Today" id is unchanged for the venue/timetable pages).
+
+**Tweak (badge family + wording):** `.bookable-badge` now mirrors the day-badge family exactly
+(same geometry as Today/OFF/Public Holiday: block, margin-top 2px, 1px 6px, radius-sm, 10px/700,
+uppercase, letter-spacing 0.3px; solid primary like the today-badge pair) and the text is
+"BOOKINGS OPEN" — clearer than the ambiguous "Book from".

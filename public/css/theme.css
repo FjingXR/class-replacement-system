@@ -2163,6 +2163,32 @@ html.dark .semester-bar select:not(.week-select) {
 }
 .lead-time-note svg { flex-shrink: 0; }
 .lead-time-note strong { font-weight: 600; color: var(--color-success); }
+
+/* ── Earliest-bookable flash (the jump lands on the boundary day row) ── */
+@keyframes bookable-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    45% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success) 45%, transparent); }
+}
+tr.bookable-flash > td { animation: bookable-pulse 1.15s ease-in-out 1; }
+
+/* ── Bookable badge ("Bookings open" on the earliest bookable day) ──
+   Same geometry as the Today/OFF/Holiday badge family; solid primary
+   matches the today-badge pair (both mark an actionable date) */
+.bookable-badge {
+    display: block;
+    margin-top: 2px;
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+}
 .cell-ph:hover { filter: brightness(1.2); z-index: 5; cursor: var(--cursor-cancel); }
 
 /* ── Sunday/offday hover label ──────────────────────────────── */

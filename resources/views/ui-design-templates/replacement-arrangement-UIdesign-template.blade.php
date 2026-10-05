@@ -980,7 +980,7 @@
                 <button class="fav-btn" id="favStar" data-tip="Add to Favourites">&#9734;</button>
             </div>
             <div class="toolbar-filters">
-                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.selectWeek(parseInt(this.value, 10))', 'showTodayBtn' => true, 'showPrint' => true])
+                @include('partials.ui-week-nav', ['prevOnclick' => 'weekNav.prevWeek()', 'nextOnclick' => 'weekNav.nextWeek()', 'selectId' => 'weekSelector', 'selectOnclick' => 'weekNav.selectWeek(parseInt(this.value, 10))', 'showTodayBtn' => true, 'showPrint' => true, 'todayLabel' => 'Earliest bookable', 'todayTip' => 'Jump to the earliest bookable slot', 'todayIcon' => 'earliest'])
             </div>
         </div>
 
@@ -1137,8 +1137,13 @@
         const venueSlotData = MockData.venueSlots;
 
         let selectedSlotsByVenue = {};
-        var weekNav = new WeekNavigator(MockData.semester, weekData, 'weekSelector', 'arrangementWeek');
+        var weekNav = new WeekNavigator(MockData.semester, weekData, 'weekSelector', 'arrangementWeek',
+            /* hide the unbookable weeks (no bookable slot: past/current/holiday
+               weeks are skipped — the selector lists absolute week numbers) */
+            function(i) { return weekHasBookableSlot(weekData, i); });
         weekNav.onBeforeNavigate = function() { saveCurrentWeek(); };
+        /* the "Earliest bookable" action flashes the lead-time boundary day */
+        weekNav.flashEarliestBookable = function() { flashEarliestBookableDay(weekData, weekNav.currentWeek); };
         /* restore-after-week-jump already happens inside buildTimetable()
            (loadCurrentWeek) — no after-navigate hook needed here */
         let currentVenue = 'B103';
@@ -1528,6 +1533,7 @@
             buildTimetableGrid({
                 events: [],
                 days: days,
+                bookableBadge: true,
                 cellRender: function(td, di, hi, day) {
                     const div = document.createElement('div');
                     div.className = 'cell-content';
@@ -2845,6 +2851,9 @@
             populateWeekSelect('weekSelector', {
                 ranges: false,
                 selected: weekNav.currentWeek,
+                /* unbookable weeks (no bookable slot) are hidden from the list —
+                   WeekNavigator's weekFilter keeps navigation consistent */
+                weekFilter: function(i) { return weekHasBookableSlot(weekData, i); },
                 labelFn: function(w, i, isMobile) {
                     /* Compact on all widths — year dropped (constant within a semester);
                        the full dated label lives on the select's hover tooltip */
@@ -2853,6 +2862,15 @@
                     return w.label + ' \u00B7 ' + first + ' ~ ' + last;
                 }
             });
+            /* dated tooltip on the "Earliest bookable" action (computed, not hardcoded);
+               the boundary day's chip lives in the grid time-col (cfg.bookableBadge) */
+            const earliest = firstBookableDay(weekData);
+            const earliestBtn = document.getElementById('earliestBtn');
+            if (earliestBtn && earliest) {
+                const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                const edate = weekData[earliest.week].days[earliest.day];
+                earliestBtn.setAttribute('data-tip', 'Jump to the earliest bookable slot \u2014 ' + dayNames[earliest.day] + ', ' + edate.date + ' (Week ' + (earliest.week + 1) + ')');
+            }
             /* applyUrlParams AFTER week selector is ready (triggers onVenueChange → buildTimetable) */
             applyUrlParams();
             /* Subject tooltip: guides the first pick, then mirrors the full subject info
@@ -2883,15 +2901,14 @@
             document.addEventListener('keydown', handleKeyDown);
             initWeekKeyboardShortcuts();
 
-            document.getElementById('todayBtn')?.addEventListener('click', function() {
+            document.getElementById('earliestBtn')?.addEventListener('click', function() {
                 try {
                     saveCurrentWeek();
-                    weekNav.jumpToToday();
-                    weekNav.save();
+                    weekNav.jumpToEarliestBookable();
                     var sel = document.getElementById('weekSelector');
                     if (sel) sel.value = weekNav.currentWeek;
                 } catch (err) {
-                    window.__todayBtnError = err.message + ' | ' + (err.stack || '').split('\n').slice(0,3).join(' ');
+                    window.__earliestBtnError = err.message + ' | ' + (err.stack || '').split('\n').slice(0,3).join(' ');
                 }
             });
         });
