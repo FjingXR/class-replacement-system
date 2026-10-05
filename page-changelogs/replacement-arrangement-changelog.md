@@ -896,3 +896,13 @@ read-only and **Thu 08 Oct** bookable; the TODAY badge (primary) and the BOOKING
 **Tweak:** the "Earliest bookable" button now uses the success-container tone (`.today-btn-earliest`
 in theme.css) — completing the green bookable thread: button → banner date → BOOKINGS OPEN badge
 → boundary-day flash. The default Today button stays primary-container (venue/timetables).
+
+**Tweak (full week label in the selector):** the week select now shows the full
+"Week N · 05 Oct 2026 ~ 11 Oct 2026" (shared default labels — the hand-rolled compact labelFn
+and the redundant hover-tooltip patch are gone). Space is made without moving the neighbours:
+toolbar gaps 10→8 / venue-star gap 8→6, subject select cap 235→225, slot picker cap 260→240,
+venue trigger cap 204→200 (longer names ellipsize; the data-tip carries the full name) — and on
+769–1200px the whole week-nav group wraps to its own right-aligned line BEFORE the neighbours
+get squeezed (the print button's "rightmost slot" auto-margin is neutralised on the wrapped
+line so the group packs together). Mobile keeps the compact "Week N · 05 Oct ~ 11 Oct" and the
+stacked layout; verified at 1440 / 1100 / 768 — 0 console errors.

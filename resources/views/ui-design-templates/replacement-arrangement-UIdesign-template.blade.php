@@ -161,7 +161,7 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         .toolbar-primary {
@@ -176,7 +176,7 @@
         .toolbar-primary .selector-dropdown {
             flex: 1 1 220px;
             min-width: 0;
-            max-width: 235px;
+            max-width: 225px; /* subject label ellipsizes before the week select does */
         }
         .toolbar-primary .toolbar-subtitle {
             font-size: 14px;
@@ -278,22 +278,33 @@
             gap: 6px;
             flex-shrink: 0;
         }
+        @media (min-width: 769px) and (max-width: 1200px) {
+            /* the week-nav group wraps to its own right-aligned line BEFORE the
+               subject/venue pair gets squeezed by the wider full-label select */
+            .toolbar-filters {
+                flex: 1 0 100%;
+                justify-content: flex-end;
+            }
+            /* pack the group together on the wrapped line (the auto margin's
+               "rightmost slot" pattern only applies to the single-row layout) */
+            .toolbar-filters .print-btn { margin-left: 0; }
+        }
         .toolbar-center {
             display: flex;
             align-items: center;
-            gap: 8px; /* venue trigger + favourite need breathing room */
+            gap: 6px; /* venue trigger + favourite need breathing room */
             flex: 0 0 auto; /* content-sized — leftover space goes to the subject/slot pair */
         }
         .toolbar-center .venue-dd-trigger {
             min-width: 0;
-            max-width: 204px; /* natural width of the widest current label + arrow */
+            max-width: 200px; /* widest current label + arrow; longer names ellipsize (tip carries the full name) */
         }
 
         /* ── Slot Dropdown (custom) ── */
         .slot-dd {
             position: relative;
             flex: 1 1 180px;
-            max-width: 260px;
+            max-width: 240px;
         }
         .slot-dd-trigger {
             display: flex;
@@ -2853,14 +2864,9 @@
                 selected: weekNav.currentWeek,
                 /* unbookable weeks (no bookable slot) are hidden from the list —
                    WeekNavigator's weekFilter keeps navigation consistent */
-                weekFilter: function(i) { return weekHasBookableSlot(weekData, i); },
-                labelFn: function(w, i, isMobile) {
-                    /* Compact on all widths — year dropped (constant within a semester);
-                       the full dated label lives on the select's hover tooltip */
-                    const first = w.days[0].date.replace(/ \d{4}$/, '');
-                    const last = w.days[w.days.length - 1].date.replace(/ \d{4}$/, '');
-                    return w.label + ' \u00B7 ' + first + ' ~ ' + last;
-                }
+                weekFilter: function(i) { return weekHasBookableSlot(weekData, i); }
+                /* labels = shared default: full "Week N · DD Mon YYYY ~ DD Mon YYYY"
+                   on desktop (matches the venue page), compact on mobile */
             });
             /* dated tooltip on the "Earliest bookable" action (computed, not hardcoded);
                the boundary day's chip lives in the grid time-col (cfg.bookableBadge) */
@@ -2883,17 +2889,6 @@
             };
             subjectSel.addEventListener('change', syncSubjectTip);
             syncSubjectTip();
-            /* Full dated label as a data-tip (renders above, shared tooltip system) — the
-               option text is the compact single-row form. Patched onto _updateSelect so
-               arrows/Today keep it current. */
-            const weekSel = document.getElementById('weekSelector');
-            const weekTip = function() {
-                const w = weekData[weekNav.currentWeek];
-                if (w) weekSel.setAttribute('data-tip', w.label + ' \u00B7 ' + w.days[0].date + ' ~ ' + w.days[w.days.length - 1].date);
-            };
-            const _updateSelect = weekNav._updateSelect.bind(weekNav);
-            weekNav._updateSelect = function() { _updateSelect(); weekTip(); };
-            weekTip();
             lastSubject = document.getElementById('subjectSelector').value;
             /* ensure grid always renders on load (applyUrlParams only triggers via venue param) */
             buildTimetable();

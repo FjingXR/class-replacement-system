@@ -525,8 +525,9 @@
             /* week dropdown */
             const weekSelect = document.getElementById('weekSelect');
             populateWeekSelect(weekSelect.id || 'weekSelect', {
-                ranges: false,
-                labelFn: function(w) { return w.label + ' — ' + w.range; }
+                ranges: false
+                /* labels = shared default ("Week N · DD Mon YYYY ~ DD Mon YYYY"),
+                   matching the arrangement page's week select */
             });
 
             /* default to today, then weekNav.load overrides if saved */

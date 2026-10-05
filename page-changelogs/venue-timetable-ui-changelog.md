@@ -370,3 +370,7 @@ replacement-arrangement page; this page keeps its today-badge (primary) and full
 **Note (shared anchor move):** `MockData.mockNow` → Mon 5 Oct 2026 — the venue's current week
 is now Week 10 (05 Oct ~ 11 Oct) with the TODAY badge on the Mon column; the lead-time
 blackout boundary becomes Thu 08 Oct on both pages.
+
+**Tweak (label parity):** the venue's week select drops its custom labelFn and uses the shared
+default — "Week 10 · 28 Sep 2026 ~ 04 Oct 2026" (· separator, both years) — now identical in
+format to the arrangement's selector. Nothing else changes.
