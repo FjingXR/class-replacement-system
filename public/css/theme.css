@@ -1621,10 +1621,12 @@ html.dark .filter-select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239EAAB8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
     min-width: 180px;
+    height: 36px;
+    padding: 0 32px 0 12px;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 .week-select:hover {
@@ -1639,8 +1641,11 @@ html.dark .filter-select {
     background: var(--color-surface);
     color: var(--color-on-surface);
 }
-html.dark .week-select {
-    color-scheme: dark;
+.light .week-select {
+    color-scheme: light;
+    /* light theme: same chevron; stroke mirrors --color-on-surface-variant
+       (light: #5A6978) — SVG data-URIs cannot use var() */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235A6978' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 .semester-bar select:not(.week-select) {
     font-family: inherit;
@@ -1655,7 +1660,7 @@ html.dark .week-select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236BA3E0' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 8px center;
     min-width: 160px;
@@ -1663,6 +1668,10 @@ html.dark .week-select {
 .semester-bar select:not(.week-select) option {
     background: var(--color-surface);
     color: var(--color-on-surface);
+}
+.light .semester-bar select:not(.week-select) {
+    color-scheme: light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23003366' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 html.dark .semester-bar select:not(.week-select) {
     color-scheme: dark;
@@ -2242,13 +2251,13 @@ tr.bookable-flash > td { animation: bookable-pulse 1.15s ease-in-out 1; }
     gap: 6px;
     min-width: 240px;
     height: 36px;
-    padding: 0 12px;
+    padding: 0 24px 0 12px;
     border: 1px solid var(--color-outline);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md); /* same as the week-select family */
     background: var(--color-surface);
     color: var(--color-on-surface);
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px; /* the week-select family typography */
+    font-weight: 600;
     cursor: pointer;
     transition: border-color 0.15s, box-shadow 0.15s;
     text-align: left;
@@ -2258,6 +2267,18 @@ tr.bookable-flash > td { animation: bookable-pulse 1.15s ease-in-out 1; }
 }
 .venue-dd-trigger:hover {
     border-color: var(--color-outline-strong);
+}
+/* the chevron is the shared dropdown arrow (same 10x6 stroke-1.5 shape as the
+   native selects'; currentColor = theme-adaptive, token-safe) */
+.venue-dd-trigger .venue-dd-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0; /* lets the label shrink inside the capped trigger */
+}
+.venue-dd-trigger .dd-arrow {
+    flex-shrink: 0; /* the arrow stays put while the label ellipsizes */
+    color: var(--color-on-surface-variant);
 }
 .venue-dd.open .venue-dd-trigger {
     border-color: var(--color-primary);

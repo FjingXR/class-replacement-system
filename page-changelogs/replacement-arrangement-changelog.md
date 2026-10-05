@@ -906,3 +906,9 @@ venue trigger cap 204→200 (longer names ellipsize; the data-tip carries the fu
 get squeezed (the print button's "rightmost slot" auto-margin is neutralised on the wrapped
 line so the group packs together). Mobile keeps the compact "Week N · 05 Oct ~ 11 Oct" and the
 stacked layout; verified at 1440 / 1100 / 768 — 0 console errors.
+
+**Tweak (dropdown arrow consistency):** same shared-chevron + week-select-family typographic
+alignment as the venue page: the subject select (selector-dropdown) and the slot picker
+trigger join the family (13px/600, 36px, radius-md, the shared chevron); venue trigger cap
+settles at 216px so "B103 — Tutorial (35 seats)" fits whole. Verified in BOTH themes — the
+chevron mirrors --color-on-surface-variant per theme (dark #9EAAB8 / light #5A6978).

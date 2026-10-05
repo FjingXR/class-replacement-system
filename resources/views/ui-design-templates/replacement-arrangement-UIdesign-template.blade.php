@@ -110,8 +110,9 @@
         }
 
         .selector-dropdown {
-            padding: 6px 32px 6px 12px;
-            border-radius: var(--radius-sm);
+            height: 36px;
+            padding: 0 32px 0 12px;
+            border-radius: var(--radius-md); /* the week-select family */
             border: 1px solid var(--color-outline);
             background: var(--color-surface);
             color: var(--color-on-surface);
@@ -124,9 +125,12 @@
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%233d5a48' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239EAAB8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 10px center;
+        }
+        .light .selector-dropdown {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235A6978' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
         }
         .selector-dropdown:hover { border-color: var(--color-primary); }
         .selector-dropdown:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 0, 77, 152), 0.15); }
@@ -297,7 +301,7 @@
         }
         .toolbar-center .venue-dd-trigger {
             min-width: 0;
-            max-width: 200px; /* widest current label + arrow; longer names ellipsize (tip carries the full name) */
+            max-width: 216px; /* widest current label + arrow; longer names ellipsize (tip carries the full name) */
         }
 
         /* ── Slot Dropdown (custom) ── */
@@ -310,14 +314,15 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 14px;
+            height: 36px;
+            padding: 0 12px;
             border: 1px solid var(--color-outline);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-md); /* the week-select family */
             background: var(--color-surface);
             color: var(--color-on-surface);
             font-family: inherit;
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: border-color 0.15s, box-shadow 0.15s;
             width: 100%;
@@ -980,7 +985,7 @@
                 <div class="slot-dd" id="slotPicker" style="display:none;">
                     <button class="slot-dd-trigger" type="button" id="slotTrigger" onclick="toggleSlotPanel()">
                         <span id="slotTriggerText">Select a slot to replace</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>
                     </button>
                     <div class="slot-dd-panel" id="slotPanel"></div>
                     <div class="slot-dd-tooltip" id="slotTooltip"></div>

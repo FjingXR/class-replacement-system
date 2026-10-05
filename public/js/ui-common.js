@@ -3217,14 +3217,20 @@ class VenueDropdown {
     /* ── Helpers ────────────────────────────────────────────── */
 
     _updateTrigger() {
+        /* the chevron is a separate svg (same shared arrow as the week-select);
+           only the label span receives text */
+        const label = this.trigger.querySelector('.venue-dd-label');
         if (!this.selectedCode) {
-            this.trigger.textContent = 'Select a venue ▾';
+            if (label) label.textContent = 'Select a venue';
+            else this.trigger.textContent = 'Select a venue';
             return;
         }
         const v = this.venues.find(x => x.code === this.selectedCode);
         if (v) {
             const typeLabel = v.type === 'LectureHall' ? 'Lecture Hall' : v.type;
-            this.trigger.textContent = v.code + ' — ' + typeLabel + ' (' + v.capacity + ' seats) ▾';
+            const text = v.code + ' \u2014 ' + typeLabel + ' (' + v.capacity + ' seats)';
+            if (label) label.textContent = text;
+            else this.trigger.textContent = text; /* legacy markup fallback */
         }
     }
 

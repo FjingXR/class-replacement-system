@@ -381,3 +381,12 @@ state colour-coded and the legend explains it, so the counts added little value 
 journey. The shared `ui-summary-bar` partial is untouched (8 other pages use it); the include
 is restored by uncommenting, and `updateSummaries()` is null-guarded + keeps its counting so
 the page runs without the cards.
+
+**Tweak (dropdown arrow consistency):** the venue dropdown trigger now uses the SAME design as
+the week-select family — the label and the chevron are split (label span + shared 10×6
+stroke-1.5 chevron SVG, currentColor/token-toned), so the filled "▾" text glyph is gone;
+typography aligned to the week select (13px/600, height 36px, radius-md — was 14px/500,
+radius-sm). The old stale-green arrow hex (#3d5a48, an orphan of a previous palette) is
+replaced across ALL selects by per-theme strokes mirroring the tokens
+(dark/on-surface-variant #9EAAB8, light #5A6978; semester-bar selects mirror
+on-primary-container #6BA3E0 / #003366) since SVG data-URIs cannot use var().
