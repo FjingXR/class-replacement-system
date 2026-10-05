@@ -89,3 +89,16 @@ text message** (`title — desc`) in the house tooltip, and the absolute datetim
 the `.notif-row-time` span (design §3's original placement). Nested data-tips resolve via the
 global `closest('[data-tip]')` mechanism — hover anywhere on the row = message, hover the time =
 date/time. Rows also gained `aria-label` = full message.
+
+**Post-verify fixes (from `.sdd/changes/notifications-panel` verification report, 2026-10-05):**
+
+1. **D-1 (blocking) — AD-9 desktop list cap implemented:** `.notif-list` gains
+   `max-height: 380px` on desktop (design.md D7's frozen number, over the proposal's "~420px")
+   so rows stay reachable on a short viewport; the ≤768 mobile branch reverts it (`none`) —
+   that mode scrolls the whole sheet per design.md:152. Verified live: with overflowing probe
+   rows the list scrolls its full 504px range and the last row lands exactly on the panel's
+   bottom edge; mobile recomputes panel cap `calc(100dvh - 56px)` with no inner cap.
+2. **Suggestion 2 upgraded to fix — `.notif-close` styled:** it had no CSS at all and rendered
+   the UA-default outset button in the panel header. Now mirrors the established
+   `.modal-close` family (30×30, radius-sm, 1px outline border, on-surface-variant ✕, hover
+   surface-variant / outline-strong) — same-name-same-color per §10.0.

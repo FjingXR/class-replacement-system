@@ -1,7 +1,7 @@
 ---
 name: notifications-panel
 created: 2026-10-02
-status: proposing
+status: applied
 ---
 # Proposal — notifications-panel
 
