@@ -225,7 +225,7 @@ test.describe('Venue Timetable UI', () => {
     if (count > 0) {
       await expect(eventBlocks.first()).toBeVisible();
       const text = await eventBlocks.first().textContent();
-      expect(text).toMatch(/BMIT\d+/);
+      expect(text).toMatch(/[A-Z]{2,4}-\d{4}|[A-Z]{4}\d{4}/);
     }
   });
 
@@ -247,29 +247,28 @@ test.describe('Venue Timetable UI', () => {
     await expect(items).toHaveCount(4);
   });
 
-  test('TC35 — legend shows Available, Replacement, Pending, Conflict', async ({ page }) => {
+  test('TC35 — legend shows Available, Your Classes, Others\' Classes, Pending', async ({ page }) => {
     const items = page.locator('.legend-bar .legend-item');
     await expect(items.nth(0)).toContainText('Available');
-    await expect(items.nth(1)).toContainText('Replacement');
-    await expect(items.nth(2)).toContainText('Pending');
-    await expect(items.nth(3)).toContainText('Conflict');
+    await expect(items.nth(1)).toContainText('Your Classes');
+    await expect(items.nth(2)).toContainText("Others' Classes");
+    await expect(items.nth(3)).toContainText('Pending');
   });
 
   // ════════════════════════════════════════════
   // 10. SUMMARY CARDS
   // ════════════════════════════════════════════
 
-  test('TC36 — summary bar has 5 cards', async ({ page }) => {
+  test('TC36 — summary bar has 4 cards', async ({ page }) => {
     const cards = page.locator('.summary-bar .summary-card');
-    await expect(cards).toHaveCount(5);
+    await expect(cards).toHaveCount(4);
   });
 
-  test('TC37 — summary cards show Total, Available, Replacement, Pending, Conflict', async ({ page }) => {
+  test('TC37 — summary cards show Total, Available, Pending, Unavailable', async ({ page }) => {
     await expect(page.locator('#sumTotal')).toBeVisible();
     await expect(page.locator('#sumAvailable')).toBeVisible();
-    await expect(page.locator('#sumReplacement')).toBeVisible();
     await expect(page.locator('#sumPending')).toBeVisible();
-    await expect(page.locator('#sumConflict')).toBeVisible();
+    await expect(page.locator('#sumUnavailable')).toBeVisible();
   });
 
   test('TC38 — summary values are numeric', async ({ page }) => {
@@ -294,7 +293,8 @@ test.describe('Venue Timetable UI', () => {
     const eventBlock = page.locator('#tableBody .event-block').first();
     if (await eventBlock.count() > 0) {
       await eventBlock.click();
-      await expect(page.locator('#mdlCourse')).not.toHaveText('—');
+      const codeRow = page.locator('#eventModal .detail-row:has-text("Subject Code")');
+      await expect(codeRow).toContainText(/[A-Z]{2,4}-\d{4}|[A-Z]{4}\d{4}/);
     }
   });
 
@@ -302,8 +302,11 @@ test.describe('Venue Timetable UI', () => {
     const eventBlock = page.locator('#tableBody .event-block').first();
     if (await eventBlock.count() > 0) {
       await eventBlock.click();
-      const venue = await page.locator('#mdlVenue').textContent();
-      expect(venue).toMatch(/\w+ — \w+ \(\d+ seats\)/);
+      // Venue-row locator: ":has-text(\"Venue\")" is ambiguous (the Status
+      // Description row's value contains the word "venue"); only the Venue
+      // row contains "(N seats)" — blade openModal L924.
+      const venueRow = page.locator('#eventModal .detail-row', { hasText: /\(\d+ seats\)/ });
+      await expect(venueRow).toContainText(/[A-Z]\d{3}/);
     }
   });
 
@@ -461,7 +464,7 @@ test.describe('Venue Timetable UI', () => {
   test('TC58 — mobile: summary cards exist', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     const cards = page.locator('.summary-bar .summary-card');
-    await expect(cards).toHaveCount(5);
+    await expect(cards).toHaveCount(4);
   });
 
   // ════════════════════════════════════════════

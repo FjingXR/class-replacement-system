@@ -394,7 +394,7 @@
         <!-- ─── Booking Hint ─── -->
         <div class="booking-hint" id="bookingHint" style="display:none">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <span>Click any green slot to book this venue</span>
+            <span>Click any green empty slot to book this venue</span>
         </div>
 
         <!-- ─── Lead-Time Notice (contextual: shown while the viewed week is blocked) ─── -->
@@ -409,17 +409,16 @@
         <!-- ─── Legend Bar ─── -->
         @include('partials.ui-legend-bar', [
             'items' => [
-                ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue'],
-                ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Unavailable', 'tip' => 'Cannot book — slot is booked, Sunday, public holiday, or less than 3 working days away'],
+                ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue (Sunday, holiday and lead-time slots can\'t be booked)'],
+                ['color' => 'var(--color-primary-container)', 'label' => 'Your Classes', 'tip' => 'Your sessions in this venue, incl. replacement sessions'],
+                ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Other lecturers\' sessions — these are filled blocks, empty green cells are bookable'],
+                ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting PL approval — others\' pending requests show grey'],
             ]
         ])
 
-        {{-- ─── Summary Bar — commented out: the four counts (Total/Available/Pending/Unavailable)
-             add little value for the booking journey (the grid already shows the same state
-             colour-coded; the legend explains it). Restore by uncommenting; the
-             updateSummaries() writers are null-guarded so the page runs without it. --}}
-        {{-- @include('partials.ui-summary-bar', [
+        {{-- ─── Summary Bar — restored (venue-event-blocks §5). Counts stay
+             grid-equivalent via the span-weighted updateSummaries() below. --}}
+        @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots',
                     'description' => 'All time slots shown for <strong>this venue</strong> in the selected week.'],
@@ -430,7 +429,7 @@
                 ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable',
                     'description' => '<strong>Cannot book</strong> — booked class, Sunday, or public holiday.'],
             ]
-        ]) --}}
+        ])
 
         <!-- ─── Empty State ─── -->
         @include('partials.ui-empty-state', ['title' => 'Select a venue', 'text' => 'Choose a venue from the dropdown to view its weekly schedule.'])
@@ -772,37 +771,38 @@
                     } else if (info && info.event) {
                         const e = info.event;
                         const div = document.createElement('div');
-                        div.className = 'cell-content';
-                        if (e.status === 'pending') {
-                            div.classList.add('cell-pending');
-                        } else {
-                            div.classList.add('cell-occupied');
-                        }
-                        /* booked classes open their detail modal on desktop too */
-                        div.classList.add('cell-has-details');
-                        div.tabIndex = 0;
+                        div.className = 'event-block span-' + info.span;   // span = e.end - e.start + 1 (half-hours)
+                        div.setAttribute('tabindex', '0');
                         div.setAttribute('role', 'button');
                         div.setAttribute('aria-label', `View class details: ${e.code} ${hours[hi]}`);
-                        div._evt = e;
-                        div._di = di;
-                        div.addEventListener('click', function() { openModal(e, di); });
-                        div.addEventListener('focus', function() { focusedCell = div; });
-
-                        td.appendChild(div);
-
-                        /* mobile card */
-                        mobileSlotDayHeader(di);
-                        const card = createEventCard(e, di);
-                        document.getElementById('mobileCardList').appendChild(card);
-                    } else if (info && info.occupied) {
-                        const div = document.createElement('div');
-                        div.className = 'cell-content';
-                        if (info.status === 'pending') {
-                            div.classList.add('cell-pending');
+                        div._evt = e; div._di = di; div.__eventData = e;   // parity with default builder
+                        div.dataset.name  = e.name  || '';
+                        div.dataset.venue = e.venue || '';
+                        div.dataset.tip2  = e.lecturer || '—';             // `.event-block::after` tooltip: "name · lecturer"
+                        var isMine = e.lecturer === MockData.currentUser.name;
+                        if (e.status === 'pending') {
+                            div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
                         } else {
-                            div.classList.add('cell-occupied');
+                            div.classList.add(isMine ? 'event-mine' : 'event-others');
                         }
+                        const startTime = to12h(hours[e.start]);
+                        const endTime   = to12h(hours[e.end + 1] || add30min(hours[e.end]));
+                        div.innerHTML =
+                            '<span class="ev-code">' + e.code + '(' + e.type + ')</span>' +
+                            '<span class="ev-venue">' + e.venue + '</span>' +
+                            '<span class="ev-time">' + startTime + ' - ' + endTime + '</span>' +
+                            buildReplacementNote(e, {
+                                checkOwnership: function (ev) { return ev.lecturer === MockData.currentUser.name; }
+                            });
+                        div.addEventListener('click', function () { openModal(e, di); });
+                        div.addEventListener('focus', function () { focusedCell = div; });
                         td.appendChild(div);
+                        if (info.span > 1) td.colSpan = info.span;   // parity: builder sets it only when span > 1
+                        // mobile booked card — UNCHANGED
+                        mobileSlotDayHeader(di);
+                        document.getElementById('mobileCardList').appendChild(createEventCard(e, di));
+                    } else if (info && info.occupied) {
+                        td.style.display = 'none';                          // continuation consumed by head's colSpan
                     } else if (isSlotTooSoon(weekData, currentWeek, di)) {
                         /* lead-time rule: inside the 3-working-day window —
                            rendered read-only (no Book tooltip, no keyboard) */
@@ -887,33 +887,30 @@
            ════════════════════════════════════════════ */
 
         function updateSummaries(events) {
-            /* The four summary cards are commented out on this page (venue-only
-               cleanup) — exit early when they're absent so the rebuild never
-               touches a null node. The counting stays for a painless restore. */
+            /* The four summary cards are restored on this page (design §5).
+               Null-guard kept so the rebuild never touches a missing node. */
             if (!document.getElementById('sumTotal')) return;
-            /* Count exactly what the grid renders (same cells), so the stats
-               always match the timetable — including overlapping bookings that
-               share the same hour slot.
-               Unavailable = Occupied + Sunday + Public Holiday (all 'cannot book').
-               Falls back to 0 when no venue selected. */
-            let occupied = 0;
-            let pending = 0;
-            let available = 0;
-            let tooSoon = 0;
-            if (currentVenue) {
-                occupied = document.querySelectorAll('.timetable .cell-content.cell-occupied').length;
-                pending = document.querySelectorAll('.timetable .cell-content.cell-pending').length;
+            let occupied = 0, pending = 0, available = 0, tooSoon = 0;
+            if (currentVenue && events) {
                 available = document.querySelectorAll('.timetable .cell-content.cell-available').length;
-                tooSoon = document.querySelectorAll('.timetable .cell-content.cell-too-soon').length;
+                tooSoon   = document.querySelectorAll('.timetable .cell-content.cell-too-soon').length;
+                const days = weekData[currentWeek].days;
+                const heads = {};                              // last-write-wins = grid slotMap semantics
+                events.forEach(function (e) {
+                    if (days[e.di] && (days[e.di].sunday || days[e.di].holiday)) return;  // non-offday only
+                    heads[e.di + ':' + e.start] = e;           // iterate weekEvents order — LAST wins
+                });
+                Object.keys(heads).forEach(function (k) {
+                    const e = heads[k], span = e.end - e.start + 1;
+                    if (e.status === 'pending') pending += span; else occupied += span;
+                });
             }
             const sunday = document.querySelectorAll('.timetable .cell-content.cell-sun').length;
-            const ph = document.querySelectorAll('.timetable .cell-content.cell-ph').length;
-            /* unavailable = booked + Sunday + holiday + lead-time blackout */
+            const ph     = document.querySelectorAll('.timetable .cell-content.cell-ph').length;
             const unavailable = occupied + sunday + ph + tooSoon;
-
             document.getElementById('sumTotal').textContent = available + pending + unavailable;
-            document.getElementById('sumAvailable').textContent = available;
-            document.getElementById('sumPending').textContent = pending;
+            document.getElementById('sumAvailable').textContent   = available;
+            document.getElementById('sumPending').textContent     = pending;
             document.getElementById('sumUnavailable').textContent = unavailable;
         }
 
@@ -1035,10 +1032,10 @@
             /* Arrow navigation on grid (available AND booked cells are focusable) */
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
                 const active = document.activeElement;
-                if (!active || !active.classList.contains('cell-content') || active.tabIndex !== 0) return;
+                if (!active || !(active.classList.contains('cell-content') || active.classList.contains('event-block')) || active.tabIndex !== 0) return;
 
                 e.preventDefault();
-                const cells = Array.from(document.querySelectorAll('.cell-content[tabindex="0"]'));
+                const cells = Array.from(document.querySelectorAll('.cell-content[tabindex="0"], .event-block[tabindex="0"]'));
                 const idx = cells.indexOf(active);
                 if (idx === -1) return;
 

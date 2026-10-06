@@ -410,3 +410,42 @@ promoted to ui-common (3 sites on this page = the duplication threshold): histor
    → `var(--color-on-primary)` — the live pass on this page in the sweep skipped the token
    scan; the static grep across all 9 templates caught them. Zero visual change (on-primary
    = white on primary in both themes).
+
+### Postscript — venue-event-blocks (2026-10-07, SDD change `venue-event-blocks`)
+
+**Booked/pending classes now render as cohort-style merged event blocks** (this page was the
+last timetable surface still drawing one flat red square per half-hour). Only the
+occupied-state branches of this page's `cellRender` changed — booking branches
+(available / too-soon / Sunday / holiday) are untouched:
+
+1. **Event blocks** — head half-hour emits `div.event-block span-{N}` (span = half-hours,
+   `td.colSpan` when span > 1; continuation half-hours hidden). Mine/others ± pending
+   classes via `e.lecturer === MockData.currentUser.name` (same pairing as Cohort);
+   `ev-code`/`ev-venue`/`ev-time` content, `.event-block::after` tooltip
+   (`name · lecturer`), click/Enter → the existing Booked-Class detail modal. Mobile
+   booked-card emission unchanged (runs from the rewritten head branch).
+2. **Keyboard parity** — the venue keydown roving now accepts `.event-block[tabindex="0"]`
+   alongside `.cell-content[tabindex="0"]`; Enter on a block opens the modal; `B` shortcut
+   stays available-cells-only.
+3. **Legend 4 items** — Available / Your Classes / Others' Classes / Pending (was 3 items).
+   Accepted trade-off (documented in the proposal): Available cells and Others' Classes
+   blocks share `--color-success-container`; the legend tips + the reworded booking hint
+   disambiguate.
+4. **Booking hint copy** — "Click any green **empty** slot to book this venue" (the old line
+   became literally false once green event blocks render).
+5. **Summary cards restored** (were commented out) — Total Slots / Available / Pending /
+   Unavailable, counted span-weighted from the week's deduped event heads
+   (`<di>:<start>` last-write-wins = grid slotMap semantics, non-offday guard) so the
+   cards always match what the grid renders. Default view (B002, current week):
+   154 / 66 / 0 / 88.
+6. **Tests** — `tests/venue-timetable.spec.ts`: TC32/TC40 generic subject-code regex;
+   TC35 new legend labels; TC36/TC58 4 cards; TC37 new ids; TC41 venue-row locator
+   disambiguated (`hasText: /\(\d+ seats\)/` — `:has-text("Venue")` also matched the
+   Status Description row); TC39/TC42–44 went live unchanged. Suite: 36 → 45 passing; the
+   16 remaining failures are pre-existing macos-ui-refactor staleness (native
+   `#venueSelect`, venue-type filter, print button) — out of scope here, tracked for a
+   follow-up change.
+
+No shared files touched (`theme.css`, `ui-common.js`, `mock-data.js`, partials). Block
+builder duplicated a 2nd time (cohort = 1st) — promote-to-shared deferred to a 3rd
+occurrence per house rule.
