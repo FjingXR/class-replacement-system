@@ -80,3 +80,12 @@
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
 | 2026-07-29 | Lines 15–29 | Updated routes | Added `$activeNav` to all 4 UI routes: `/replacement-home-ui` → `'replacement-arrangement'`, `/my-timetable-ui` → `'my-timetable'`, `/my-request-history-ui` → `'replacement-history'`, `/replacement-arrangement` → `'replacement-arrangement'`. No `->name()` added (routes unreferenced by `route()` helpers) |
+
+### Postscript — sweep-fixes-round-2 (2026-10-06, F-5 + shared CSS)
+
+**F-5 — legend hint copy is device-aware** (shared partial fix, benefits all 5 consumer
+pages): `partials/ui-legend-bar.blade.php` hint ships two spans —
+"Hover a colour to learn more" (pointer devices, unchanged) / "Tap a colour to learn more"
+(touch) — swapped purely in CSS by `@media (hover: none)` in `theme.css`
+(`.hint-touch { display: none }` default + swap inside the media block). No JS, tokens
+untouched. Desktop branch verified live; the media rule verified present in the served CSS.

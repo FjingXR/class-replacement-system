@@ -51,7 +51,7 @@
         /* ───── Booking Banner ───── */
         .booking-banner {
             background: var(--color-primary);
-            color: #fff;
+            color: var(--color-on-primary);
             padding: 10px 16px;
             border-radius: var(--radius-sm);
             font-size: 14px;
@@ -286,13 +286,23 @@
             }
             .venue-available-card {
                 background: var(--color-primary);
-                color: #fff;
+                color: var(--color-on-primary);
                 border-radius: var(--radius-sm);
                 padding: 12px;
                 cursor: pointer;
                 text-align: center;
                 font-weight: 600;
             }
+            /* F-6 (round-2): day separator above each day's run of slot cards */
+            .m-slot-day {
+                font-size: 11px;
+                font-style: italic;
+                color: var(--color-on-surface-variant);
+                opacity: 0.7;
+                margin: 10px 2px 2px;
+                padding-left: 2px;
+            }
+            .m-slot-day:first-child { margin-top: 0; }
             .summary-bar {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -727,6 +737,20 @@
 
             const weekEvents = getVenueEvents(currentVenue.code, currentWeek);
 
+            /* F-6 (round-2): the mobile slot list is long (every 30-min
+               bookable start = one card) — group the cards under a small day
+               header, re-emitted with each builder pass so week/venue swaps
+               stay consistent (list itself is cleared above). */
+            let lastSlotDay = null;
+            function mobileSlotDayHeader(di) {
+                if (di === lastSlotDay) return;
+                lastSlotDay = di;
+                const hd = document.createElement('div');
+                hd.className = 'm-slot-day';
+                hd.textContent = days[di].abbr + ' · ' + days[di].date;
+                document.getElementById('mobileCardList').appendChild(hd);
+            }
+
             if (weekEvents.length === 0) {
                 /* No classes booked — show hint */
                 document.getElementById('hintText').style.display = 'flex';
@@ -766,6 +790,7 @@
                         td.appendChild(div);
 
                         /* mobile card */
+                        mobileSlotDayHeader(di);
                         const card = createEventCard(e, di);
                         document.getElementById('mobileCardList').appendChild(card);
                     } else if (info && info.occupied) {
@@ -803,6 +828,7 @@
                         td.appendChild(div);
 
                         /* mobile available card */
+                        mobileSlotDayHeader(di);
                         const mobileCard = document.createElement('div');
                         mobileCard.className = 'venue-available-card';
                         mobileCard.textContent = `${days[di].abbr} ${hours[hi]}`;

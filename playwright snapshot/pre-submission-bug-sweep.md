@@ -177,10 +177,12 @@
 | F-10 | ✅ | my-request-history | Downgraded: datasets share zero rows (no contradiction); explicit requester contract shipped |
 | F-11 | ✅ | my-timetable (+cohort+student) | Fixed: per-page keys + legacy migration + keyless default namespacing in WeekNavigator |
 | F-12 | ✅ | shell | Documented as the §10.0 sanctioned FOUC exception (zero code change) |
-| F-5 | 💡 | venue + cohort | "Hover a colour…" legend on touch surfaces |
-| F-6 | 💡 | venue-timetable | 63 stacked bookable-slot cards on mobile |
-| F-8 | 💡 | arrangement | 2 h selection span vs 1.5 h class duration — confirm intended quantum |
-| F-9 | 💡 | arrangement | Available cells lack role/tabIndex/aria-label (venue grid has them) |
+| F-5 | 💡 | venue + cohort | ~~"Hover a colour…" legend on touch surfaces~~ ✅ fixed (round 2): dual copy in the shared partial + `(hover: none)` CSS swap |
+| F-6 | 💡 | venue-timetable | ~~63 stacked bookable-slot cards on mobile~~ ✅ fixed (round 2): day-grouped `.m-slot-day` headers |
+| F-8 | 💡 | arrangement | ~~2 h selection span vs 1.5 h class duration~~ ✅ fixed (round 2): BLOCK_SPAN re-derives from the picked conflict slot (inclusive-end +1); URL branch keeps initial authority |
+| F-9 | 💡 | arrangement | ~~Available cells lack role/tabIndex/aria-label~~ ✅ fixed (round 2): `setupAvailableCell()` = venue parity + Enter/Space + focus preview |
+
+**Bonus (round 2):** static token scan across all 9 templates (sweep's live pass skipped venue) → venue `color:#fff` ×2 fixed to `var(--color-on-primary)`.
 
 **Zero 🔴 blocking findings.** Sweep covered: 9 pages × (dark 1440 + light + 768 mobile), console logs, token audit, interaction click-throughs (approve, cancel, submit, book, filters, cascades), and cross-page consistency. No fixes applied — report only.
 

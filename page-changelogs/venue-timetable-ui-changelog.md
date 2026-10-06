@@ -398,3 +398,15 @@ promoted to ui-common (3 sites on this page = the duplication threshold): histor
 (:660), event card (:846), modal Status row (:914) now print
 "Normal" / "Replacement" / "Pending" (Title case §10.0 vocabulary) while the
 `badge-*` CSS keys stay raw-enum — zero visual/color change, text only.
+
+### Postscript — sweep-fixes-round-2 (2026-10-06, F-6 + token fix)
+
+1. **F-6 — mobile slot list grouped by day**: the builder emits an italic `.m-slot-day`
+   header ("Thu · 08 Oct 2026") before each day's run of cards (event cards AND bookable
+   cards), so the 60+ button wall becomes day-sectioned. Headers re-emit with every
+   builder pass (verified Week 11 → 5 headers, Week 12 → 6 fresh, no duplicates/stale),
+   card flow unchanged (click → Book tooltip → arrangement).
+2. **Token fix (static scan T9):** `color: #fff` ×2 (booking banner, `.venue-available-card`)
+   → `var(--color-on-primary)` — the live pass on this page in the sweep skipped the token
+   scan; the static grep across all 9 templates caught them. Zero visual change (on-primary
+   = white on primary in both themes).

@@ -8,7 +8,7 @@
 @endphp
 
 <div class="legend-bar">
-    <span class="legend-hint">Hover a colour to learn more</span>
+    <span class="legend-hint" aria-hidden="true"><span class="hint-hover">Hover a colour to learn more</span><span class="hint-touch">Tap a colour to learn more</span></span>
     <div class="legend-items">
         @foreach($items as $item)
             <div class="legend-item" @if(!empty($item['tip'])) data-tip="{{ $item['tip'] }}" @endif>

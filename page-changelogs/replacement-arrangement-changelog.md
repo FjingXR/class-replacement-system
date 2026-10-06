@@ -912,3 +912,18 @@ alignment as the venue page: the subject select (selector-dropdown) and the slot
 trigger join the family (13px/600, 36px, radius-md, the shared chevron); venue trigger cap
 settles at 216px so "B103 — Tutorial (35 seats)" fits whole. Verified in BOTH themes — the
 chevron mirrors --color-on-surface-variant per theme (dark #9EAAB8 / light #5A6978).
+
+### Postscript — sweep-fixes-round-2 (2026-10-06, F-8 + F-9)
+
+1. **F-8 — BLOCK_SPAN now re-derives from the picked conflict slot** (`commitSlotSelection`,
+   clamped 0.5–4 h = ≤8 slots): the venue-arrival path (subject + slot picked on this page)
+   sizes the booking block from the slot's real duration — a 1.5 h class yields a
+   "10:00 AM ~ 11:30 AM · **3 slots**" block/confirm (was a stuck 2-slot default). The URL
+   `&duration=` branch keeps initial authority; both use the same clamp family. Note:
+   `slot.end` is INCLUSIVE (span = `end − start + 1`) — caught via live verify (first cut
+   produced 2 slots).
+2. **F-9 — bookable cells now carry the venue grid's a11y contract** (new local
+   `setupAvailableCell()` used by both `.cell-available` branches): `role="button"`,
+   `tabIndex=0`, `aria-label="Available slot: Thu 11:00"`, **Enter/Space toggle the block**
+   (verified live: Enter selects the 3-slot block, second Enter deselects), focus/blur give
+   keyboard users the same block preview mouse users get on hover.

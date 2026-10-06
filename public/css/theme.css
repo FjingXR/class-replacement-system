@@ -1273,6 +1273,12 @@ html.dark .filter-select {
 .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
 .legend-swatch { width: 14px; height: 14px; border-radius: var(--radius-sm); flex-shrink: 0; }
 .legend-hint { font-size: 11px; color: var(--color-on-surface-variant); opacity: 0.5; font-style: italic; }
+.legend-hint .hint-touch { display: none; }
+/* touch devices tap instead of hover (F-5, ui-legend-bar dual copy) */
+@media (hover: none) {
+    .legend-hint .hint-hover { display: none; }
+    .legend-hint .hint-touch { display: inline; }
+}
 
 /* ── Summary card colors (macOS accent style) ────────────── */
 .summary-card.card-total .summary-value    { color: var(--color-success); }

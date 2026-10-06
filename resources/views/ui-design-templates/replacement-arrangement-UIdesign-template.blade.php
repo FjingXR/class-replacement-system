@@ -1546,6 +1546,23 @@
             clearPreview(); /* a rebuild invalidates any open hover preview */
             const days = getDays();
 
+            /* F-9 (round-2): venue-parity accessible bookable cell — focusable,
+               announced, keyboard-operable; keyboard focus gets the same block
+               preview mouse users get on hover. */
+            function setupAvailableCell(div, di, hi) {
+                div.tabIndex = 0;
+                div.setAttribute('role', 'button');
+                div.setAttribute('aria-label', 'Available slot: ' + days[di].abbr + ' ' + hours[hi]);
+                div.addEventListener('click', () => toggleCell(di, hi, div));
+                div.addEventListener('mouseenter', () => previewBlock(di, hi, div));
+                div.addEventListener('mouseleave', () => clearPreview());
+                div.addEventListener('focus', () => previewBlock(di, hi, div));
+                div.addEventListener('blur', () => clearPreview());
+                div.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCell(di, hi, div); }
+                });
+            }
+
             buildTimetableGrid({
                 events: [],
                 days: days,
@@ -1572,18 +1589,14 @@
                             div.className += ' cell-too-soon';
                         } else {
                             div.className += ' cell-available';
-                            div.addEventListener('click', () => toggleCell(di, hi, div));
-                            div.addEventListener('mouseenter', () => previewBlock(di, hi, div));
-                            div.addEventListener('mouseleave', () => clearPreview());
+                            setupAvailableCell(div, di, hi);
                         }
                     } else if (isSlotTooSoon(weekData, weekNav.currentWeek, di)) {
                         /* lead-time rule: inside the 3-working-day window — read-only */
                         div.className += ' cell-too-soon';
                     } else {
                         div.className += ' cell-available';
-                        div.addEventListener('click', () => toggleCell(di, hi, div));
-                        div.addEventListener('mouseenter', () => previewBlock(di, hi, div));
-                        div.addEventListener('mouseleave', () => clearPreview());
+                        setupAvailableCell(div, di, hi);
                     }
 
                     const timeLabel = document.createElement('span');
@@ -2662,6 +2675,17 @@
         }
 
         function commitSlotSelection(slot, index) {
+            /* F-8 (round-2): the block size follows the picked conflict slot's
+               duration — same clamp family as the URL branch (0.5–4 h → ≤8
+               slots; slot indices are 30-min units) so a venue-arrival pick
+               (subject + slot chosen on this page) sizes the block exactly
+               like a home-path entry with &duration=. URL branch keeps
+               INITIAL authority; MAX_SELECTION floor stays ≥ BLOCK_SPAN. */
+            const slotSpan = Math.min(Math.max(slot.end - slot.start + 1, 1), 8);
+            if (slotSpan !== BLOCK_SPAN) {
+                BLOCK_SPAN = slotSpan;
+                MAX_SELECTION = Math.max(MAX_SELECTION, BLOCK_SPAN);
+            }
             selectedOriginalSlot = slot;
             const triggerText = document.getElementById('slotTriggerText');
             const startStr = to12h(hours[slot.start]);
