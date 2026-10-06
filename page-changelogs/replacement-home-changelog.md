@@ -270,3 +270,18 @@ Days Left derives from the date — the header is the affordance users think in)
 Venue sorts alphabetically, grouping the same rooms. Students / Cohort(s) /
 Conflict Reason stay non-sortable (cohorts = multi-value like My Request History;
 Conflict Reason already has a dedicated filter dropdown).
+
+### Postscript — copy-fix-overdue (2026-10-06)
+
+**Overdue Status Description corrected** (user catch): the detail modal said
+"a replacement can no longer be arranged automatically" — false, the Overdue row's
+Arrange button works and the arrangement page books the passed class into any
+upcoming week (the 3-working-day rule applies to the chosen *slot*, not the passed
+class date). New copy: "Class date has passed — you can still arrange a replacement
+in any upcoming week". Supersedes the round-1 F-1 wording.
+
+**Addendum (2026-10-06, user ask):** the Overdue label now carries the day count —
+shared `daysLeftLabel()` (ui-common) renders **"Overdue (N days ago)"** with singular
+handling, so the table cell, card view and detail modal all show it; `.col-urgency`
+widened 100→150px to fit without wrapping. Diff computed against the `mockNow` anchor
+like every other lead-time value.

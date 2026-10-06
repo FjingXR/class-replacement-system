@@ -8,7 +8,7 @@
         /* ───── Column Widths ───── */
         .col-original { width: 200px; }
         .col-original { white-space: normal; }
-        .col-urgency { width: 100px; }
+        .col-urgency { width: 150px; } /* fits "Overdue (12 days ago)" without wrapping */
         .col-venue { width: 70px; }
         .col-cohort { width: 130px; }
         .col-reason { width: 140px; vertical-align: middle; }
@@ -477,7 +477,7 @@
                 subtitle: c.code + ' · ' + c.name + ' (' + typeLabel + ')',
                 body: DetailModal.section('Replacement Details',
                     DetailModal.row('Status', '<span class="urgency-badge ' + urgencyCls + '">' + daysLeftLabel(daysLeftVal) + '</span>') +
-                    DetailModal.row('Status Description', daysLeftVal < 0 ? 'Class date has passed — a replacement can no longer be arranged automatically' : daysLeftVal <= 3 ? 'Urgent — arrange a replacement soon' : daysLeftVal <= 7 ? 'Approaching — plan a replacement' : 'Within normal lead time') +
+                    DetailModal.row('Status Description', daysLeftVal < 0 ? 'Class date has passed — you can still arrange a replacement in any upcoming week' : daysLeftVal <= 3 ? 'Urgent — arrange a replacement soon' : daysLeftVal <= 7 ? 'Approaching — plan a replacement' : 'Within normal lead time') +
                     DetailModal.row('Conflict Reason', '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>') +
                     DetailModal.row('Subject Code', c.code, { strong: true }) +
                     DetailModal.row('Subject Name', c.name) +

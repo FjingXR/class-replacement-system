@@ -2081,7 +2081,13 @@ class DateHelper {
    Urgency classes reuse the table vocabulary (urgency-high/mid/low — the only
    defined CSS); overdue renders in the same red as imminent (error semantics). */
 function daysLeftLabel(days) {
-    if (days < 0) return 'Overdue';
+    /* overdue carries the day count (user ask, 2026-10-06): the diff is
+       against the MockData.mockNow anchor, same as every other lead-time
+       computation — flips to real "today" at the go-live switch */
+    if (days < 0) {
+        const n = Math.abs(days);
+        return 'Overdue (' + n + (n === 1 ? ' day' : ' days') + ' ago)';
+    }
     if (days === 0) return 'Today';
     if (days === 1) return '1 day left';
     return days + ' days left';
