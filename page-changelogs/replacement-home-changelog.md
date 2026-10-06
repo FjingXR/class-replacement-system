@@ -241,3 +241,20 @@ Migrated inline `computeWeek()` to `getWeekNumber()`, `weekRangeLabel()` to `Dat
 | 2026-08-13 | Lines 214–225 | macOS modal button order | Reordered quick-view modal footer: Close button moved before Arrange Replacement button — matches macOS dismiss-left / action-right convention. |
 | 2026-08-13 | `public/js/mock-data.js` | Week filter fix | Semester `startDate` shifted from `2026-06-15` to `2026-07-27` so mock data dates (relative to today) fall in filterable weeks. `parseDate` in `ui-common.js` fixed: `.split("-")` → `.split(" ")` to match space-separated date format. |
 | 2026-08-15 | `<th>` headers | Header hover tooltips | Switched from native `title` to JS `initHeaderTooltips()` with a fixed-position tooltip div — tooltips appear above headers, avoids `overflow:hidden` clipping on `.grid-wrapper`. |
+
+### Postscript — sweep-fixes-round-1 (2026-10-06, F-1)
+
+**Negative days-left fixed across all three surfaces** (pre-submission sweep F-1):
+
+1. `daysLeft()` now runs on the shared demo anchor `DateHelper.getTodayMs()` (was the raw
+   browser clock — diverged from the lead-time pages; same one-line go-live pattern).
+2. New shared `daysLeftLabel()` (ui-common, 3rd-duplication promo): `<0 → "Overdue"`,
+   `0 → "Today"`, singular "1 day left", else "N days left" — rendered by the table
+   DAYS LEFT cell, the mobile `.rc-footer` card, and the quick-view modal Status row
+   (user decision: label Overdue and KEEP the row + button; the arrangement page's
+   lead-time banner explains why no weeks are selectable).
+3. Modal Status Description gains the negative branch: "Class date has passed — a
+   replacement can no longer be arranged automatically" (was "Urgent — arrange soon" for
+   −31 days). Modal urgency classes unified onto the defined vocabulary
+   (`urgencyClass()` → urgency-high/mid/low); the undefined `.urgency-urgent/warning/normal`
+   dead classes are gone. User decision noted in `.sdd/changes/sweep-fixes-round-1`.

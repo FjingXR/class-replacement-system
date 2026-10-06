@@ -379,6 +379,7 @@ These ten rules are **non-negotiable** for every page and every future change:
 1. **Colors must be consistent across all pages.**
    - ALL colors come from the CSS custom-property token set in `public/css/theme.css` (`--color-bg`, `--color-surface`, `--color-primary`/`secondary`/`tertiary`/`error` + their `-container`/`-on-*` variants, defined once for dark + once for light).
    - **NEVER hardcode hex/rgb/rgba** in a page's `@section('page-styles')`. Use `var(--color-...)`. If a new color is needed, add the token to `theme.css` once.
+   - **Sole sanctioned exception (FOUC guard)** — the shared layout's pre-theme paint in `resources/views/layouts/ui-template.blade.php`: `html.dark { background: #0D1B2A; }` / `html.light { background: #F0F3F7; }`. These literals run before `theme.css` loads so a dark-mode reload never flashes white; `var(--color-...)` cannot be used here (the token file isn't parsed yet). If the theme's background token ever changes, update BOTH literals together (grep `html.dark`). No other hardcoded color is permitted — sanctions end here.
    - Slot-grid colors are fixed token-mapped: Green=`--color-secondary`, Red=`--color-error`, Yellow=`--color-tertiary`, Grey=`--color-outline-strong`, Blue=`--color-primary`. Status badges use the same mapping on every page.
 
 2. **Use the same name + same color for the same meaning everywhere.**

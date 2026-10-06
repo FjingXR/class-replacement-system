@@ -90,3 +90,36 @@
 | 2026-08-01 | `partials/ui-nav-bar.blade.php`, `routes/web.php`, `student-my-timetable-UI-design-template.blade.php` | Nav label dedupe (OOP) | The `navItems` array was duplicated in 3 places with an inconsistent label: shared nav partial default said `Replacement History`, but `routes/web.php` hardcoded a duplicate with `Request History` for `/my-request-history-ui` (student page had its own copy too). Dropped the route override (falls back to the shared partial default) and unified all labels to `Request History` — single source of truth. Verified: nav shows `Request History` on both `/my-request-history-ui` and `/replacement-home-ui`, 0 console errors |
 | 2026-08-01 | `partials/ui-nav-bar.blade.php` & `public/css/theme.css` | Theme-toggle left tooltip | Added `data-tip="Switch between light & dark mode" data-tip-pos="left"` to the theme-toggle button. New CSS variant `[data-tip][data-tip-pos="left"]` positions the tooltip to the LEFT of the element (vertically centered, arrow pointing right) instead of above — this keeps it inside the `.top-bar`'s 56px height so it isn't clipped by `overflow: hidden` (the reason the earlier above-positioned logout tooltip was invisible). Reuses the shared CSS tooltip system |
 | 2026-08-01 | `partials/ui-nav-bar.blade.php` | Nav order | Reordered shared nav items (left→right): My Timetable, Cohort Timetables, **Venue Timetable** (was last, now 3rd), Replacement Arrangement, Request History, **Request Approval** (was 4th, now last/6th). Applies to the shared default for all staff pages |
+
+### Postscript — sweep-fixes-round-1 (2026-10-06)
+
+**Promoted to shared (ui-common.js):**
+1. `daysLeftLabel(days)` — days-left display contract (Overdue/Today/singular/plural) used by
+   replacement-home's table cell, `replacementHomeCard` footer, and quick-view modal
+   (3rd-duplication promo). `replacementHomeRow`'s cell switched too.
+2. `StatusText.label(status)` — status enum → Title-case §10.0 vocabulary (map + safe
+   capitalise fallback); 3 venue-timetable sites consume it; CSS `badge-*` keys unchanged.
+3. `populateWeekSelect` — cfg registry + one debounced resize listener that re-populates
+   week selects when the viewport crosses the ≤768 breakpoint (labels full ↔ compact,
+   selection preserved). Mirrors the venue mobileCardList resize precedent; all pages
+   get it with no page-side code.
+4. `WeekNavigator` default storage key `currentWeek` → `weekNav-<selectId>` (namespaced);
+   `load()` gains a one-time legacy-key migration (adopt `currentWeek` value, retire key).
+   Explicit keys now passed by my-timetable / cohort / student-my-timetable pages.
+
+**mock-data.js:** §2.9 `requests` rows gain `requester` (derived in one place at the aliasing
+block, rows copied per read-only convention) — makes the implicit persona-ownership an
+explicit contract (F-10); my-request-history filters by it (no-op until the API lands).
+
+### Postscript 2 — sweep-fixes-round-1 (2026-10-06, F-2)
+
+**ui-common.js notifications section reworked to per-user mailbox (pre-wire):**
+`notifUserId()` + `notifReadKey()` (user-keyed) + `notifMailboxRows()` recipient filter;
+`getNotifReads`/`persistNotifReads` de-rolled (no role arg); `refreshNotifBadge` seeds the
+user store once from data `read:true` + retired per-role keys (union migration) and counts
+the whole mailbox; `markAllNotifsRead` = whole-mailbox semantics; `renderNotifList` no
+longer drives the header (list = category view only); TEMP console helpers updated to the
+user store (still TEMP — delete before submission, together with the `n-tmp-*` rows).
+
+**mock-data.js:** `notifications` rows gain `recipientId` (persona's staffId), derived in
+one place after the literal — §2.13 contract comment added (backend day: drop the block).

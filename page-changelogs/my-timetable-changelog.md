@@ -302,3 +302,13 @@ Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a prin
 (inline SVG, `.print-btn` in theme.css), right-aligned at the toolbar edge via `margin-left: auto`.
 Enabled stub: click fires the shared `toast.show('Printing is coming soon')` bottom-left toast bar;
 `title="Coming soon"` native tooltip on hover. No JS beyond the one-liner onclick.
+
+### Postscript — sweep-fixes-round-1 (2026-10-06, F-11)
+
+**Week persistence key namespaced.** WeekNavigator's generic `currentWeek` default was a
+cross-page overwrite hazard (my-timetable / cohort / student all defaulted to it). Now:
+each page passes an explicit key — this page saves to `myTimetableWeek`, cohort-timetable
+to `cohortTimetableWeek`, student-my-timetable to `studentTimetableWeek`; any keyless
+WeekNavigator derives `weekNav-<selectId>`. One-time migration in `load()` adopts a legacy
+`currentWeek` value on first visit then retires the old key (verified live: legacy value
+inherited, old key gone; default week math unchanged).

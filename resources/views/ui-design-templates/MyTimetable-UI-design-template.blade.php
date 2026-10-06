@@ -258,7 +258,7 @@
         let currentWeek = currentWeekIndex();
         let currentModalEvent = null;
 
-        const weekNav = new WeekNavigator(MockData.semester, weekData);
+        const weekNav = new WeekNavigator(MockData.semester, weekData, null, 'myTimetableWeek');
         weekNav._currentWeek = currentWeek;
 
         /* ───── Week persistence: keep the user's chosen week across refresh ───── */

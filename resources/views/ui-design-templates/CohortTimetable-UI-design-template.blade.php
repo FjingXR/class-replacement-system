@@ -156,7 +156,7 @@
         let currentWeek = currentWeekIndex();
         let selectedCohortId = null;
 
-        const weekNav = new WeekNavigator(MockData.semester, weekData);
+        const weekNav = new WeekNavigator(MockData.semester, weekData, null, 'cohortTimetableWeek');
         weekNav._currentWeek = currentWeek;
 
         /* ════════════════════════════════════════════

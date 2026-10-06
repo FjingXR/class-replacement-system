@@ -301,10 +301,11 @@ class WeekNavigator {
         this._weekData = weekData;
         this._currentWeek = 0;
         this._selectId = selectId || 'weekSelect';
-        /* per-page week position by default (shared 'currentWeek' made pages
-           overwrite each other's position — e.g. browsing the arrangement grid
-           moved the venue timetable's week) */
-        this._storageKey = storageKey || 'currentWeek';
+        /* namespaced by default (sweep-fixes-round-1, F-11): pages that don't
+           pass a key get one derived from their select id, so sibling pages
+           can't overwrite each other's saved position anymore (the old
+           shared-collision note below). Explicit keys win when passed. */
+        this._storageKey = storageKey || ('weekNav-' + (this._selectId || 'weekSelect'));
         /* optional visibility filter (page-supplied): when present, weeks
            failing it (e.g. no bookable slot) are skipped in navigation and
            resolved away on load/select; null = every week is navigable
@@ -439,7 +440,19 @@ class WeekNavigator {
 
     load() {
         try {
+            /* one-time legacy migration (F-11): pages that used to share the
+               generic 'currentWeek' key adopt it once, then it is retired —
+               first visited page inherits the old position, later pages fall
+               through to today. Harmless because demo week picks don't persist. */
             var saved = localStorage.getItem(this._storageKey);
+            if (saved === null) {
+                var legacy = localStorage.getItem('currentWeek');
+                if (legacy !== null) {
+                    localStorage.setItem(this._storageKey, legacy);
+                    localStorage.removeItem('currentWeek');
+                    saved = legacy;
+                }
+            }
             if (saved !== null) {
                 var idx = parseInt(saved, 10);
                 if (!isNaN(idx)) {
@@ -1584,9 +1597,12 @@ function initMobileNav() {
 
 // ───── Notifications Panel (shared, read-state via localStorage) ─────
 // Consumes window.MockData.notifications (mock-data.js §2.13, read-only) —
-// never mutated at runtime. Unread state persists per role under
-// 'notifications-read-<role>' (AD-4). Marked-read rows drop off the list.
-// All element lookups are guarded: the panel partial (T6) may be absent.
+// never mutated at runtime. UNREAD STATE IS PER USER (F-2 pre-wire): one
+// mailbox per logged-in user under 'notifications-read-user-<staffId>' — the
+// backend day this store moves to the server (user_id natural key) and rows
+// arrive already recipient-scoped. The row's `role` is only the CATEGORY the
+// panel views by page context (AD-2); the badge/pill always count the whole
+// mailbox. All element lookups are guarded: the panel partial (T6) may be absent.
 
 const NOTIF_ROLE_BY_PAGE = { // AD-2 — body[data-page] → panel role
     studentMyTimetable: 'student',
@@ -1602,8 +1618,23 @@ const NOTIF_GLYPHS = { // 16px lucide-style stroke glyphs (design §5)
     update:    '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
 };
 
-function notifReadKey(role) { // AD-4
-    return 'notifications-read-' + role;
+function notifUserId() { // F-2 pre-wire — mailbox owner (backend: auth user id)
+    return (window.MockData && MockData.currentUser && MockData.currentUser.staffId) || 'demo';
+}
+
+function notifReadKey() { // per-USER mailbox (was per-role: 'notifications-read-<role>')
+    return 'notifications-read-user-' + notifUserId();
+}
+
+/** The user's mailbox: rows addressed to the current user. Mock phase: every
+ *  row carries recipientId = the persona (derived in mock-data.js §2.13); the
+ *  backend day the API returns only the user's own rows, so this becomes a
+ *  no-op guard. */
+function notifMailboxRows() {
+    var uid = notifUserId();
+    return window.MockData.notifications.filter(function(n) {
+        return !n.recipientId || n.recipientId === uid;
+    });
 }
 
 function currentNotifRole() { // AD-2 — fallback 'lecturer' for anything else/missing
@@ -1636,10 +1667,10 @@ function notifGlyph(type) {
         + (NOTIF_GLYPHS[type] || NOTIF_GLYPHS.update) + '</svg>';
 }
 
-/** Read id set for a role. Missing key / invalid JSON → empty set (key never reseeded once present). */
-function getNotifReads(role) {
+/** Read id set for the user's mailbox. Missing key / invalid JSON → empty set (key never reseeded once present). */
+function getNotifReads() {
     try {
-        var raw = localStorage.getItem(notifReadKey(role));
+        var raw = localStorage.getItem(notifReadKey());
         if (raw === null) return new Set();
         var arr = JSON.parse(raw);
         return Array.isArray(arr) ? new Set(arr) : new Set();
@@ -1648,9 +1679,9 @@ function getNotifReads(role) {
     }
 }
 
-function persistNotifReads(role, reads) {
+function persistNotifReads(reads) {
     try {
-        localStorage.setItem(notifReadKey(role), JSON.stringify(Array.from(reads)));
+        localStorage.setItem(notifReadKey(), JSON.stringify(Array.from(reads)));
     } catch (e) { /* storage unavailable — badge just stays volatile */ }
 }
 
@@ -1658,27 +1689,38 @@ function persistNotifReads(role, reads) {
  * Bell badge refresh (AD-7). Safe on ANY page — on pages without the bell
  * (e.g. replacement-arrangement) every element lookup is guarded.
  * Seeds the localStorage key at FIRST PAINT ONLY (AD-8): if the key is absent
- * it is written once with every `read: true` row id of this role; present keys
- * (even `[]`) are never reseeded.
+ * it is written once with every pre-seen (`read: true`) row of the WHOLE
+ * mailbox plus anything already marked read under the retired per-role store
+ * (F-2 legacy migration — old keys are consumed and removed); present keys
+ * (even `[]`) are never reseeded. Badge/pill count = mailbox unread TOTAL,
+ * regardless of which category the page views.
  */
 function refreshNotifBadge() {
     if (!window.MockData || !window.MockData.notifications) return;
-    const role = currentNotifRole();
-    const key = notifReadKey(role);
+    const key = notifReadKey();
 
     if (localStorage.getItem(key) === null) {
-        const seedIds = window.MockData.notifications
-            .filter(function (n) { return n.role === role && n.read === true; })
-            .map(function (n) { return n.id; });
-        persistNotifReads(role, new Set(seedIds));
+        const seed = new Set(window.MockData.notifications
+            .filter(function (n) { return n.read === true; })
+            .map(function (n) { return n.id; }));
+        try {
+            ['student', 'pl', 'lecturer'].forEach(function (r) {
+                var raw = localStorage.getItem('notifications-read-' + r);
+                if (raw) JSON.parse(raw).forEach(function (id) { seed.add(id); });
+                localStorage.removeItem('notifications-read-' + r);
+            });
+        } catch (e) { /* ignore malformed legacy stores */ }
+        persistNotifReads(seed);
     }
 
-    const reads = getNotifReads(role);
-    updateNotifHeaderState(window.MockData.notifications
-        .filter(function (n) { return n.role === role && !reads.has(n.id); }).length);
+    const reads = getNotifReads();
+    updateNotifHeaderState(notifMailboxRows()
+        .filter(function (n) { return !reads.has(n.id); }).length);
 }
 
-/** Header state shared by refreshNotifBadge + every renderNotifList (AD-5). */
+/** Header state shared by refreshNotifBadge + panel opens (AD-5):
+ *  ONE count — the user's mailbox unread TOTAL (badge + pill + mark-all all
+ *  follow it; the panel's per-category list no longer drives the header). */
 function updateNotifHeaderState(count) {
     var badge = document.getElementById('notifBadge');
     if (badge) {
@@ -1705,9 +1747,9 @@ function renderNotifList() {
     if (!list) return;
     if (!window.MockData || !window.MockData.notifications) return;
 
-    const role = currentNotifRole();
-    const reads = getNotifReads(role);
-    const unread = window.MockData.notifications.filter(function (n) {
+    const role = currentNotifRole();             /* AD-2 — view category only */
+    const reads = getNotifReads();               /* per-user mailbox store */
+    const unread = notifMailboxRows().filter(function (n) {
         return n.role === role && !reads.has(n.id);
     });
 
@@ -1716,7 +1758,7 @@ function renderNotifList() {
     const all = !!filterEl && !filterEl.checked;
     let rows = unread;
     if (all) {
-        rows = window.MockData.notifications
+        rows = notifMailboxRows()
             .filter(function (n) { return n.role === role; })
             .slice() // MockData read-only (AGENTS.md §4)
             .sort(function (a, b) { return a.minutesAgo - b.minutesAgo; });
@@ -1735,47 +1777,46 @@ function renderNotifList() {
     }).join('');
 
     // Caught-up swap (AD-5): only in unread-only mode at 0 unread. "All" mode
-    // never shows caught-up — it always has rows unless the role has none.
+    // never shows caught-up — it always has rows unless the category has none.
+    // NOTE: the header (badge/pill/mark-all) is NOT resynced here — it counts
+    // the whole mailbox (F-2); the list is only the viewed category.
     const empty = document.getElementById('notifEmpty');
     const showEmpty = (unreadOnly && unread.length === 0) || rows.length === 0;
     if (empty) empty.style.display = showEmpty ? 'flex' : 'none';
     list.style.display = showEmpty ? 'none' : '';
-
-    updateNotifHeaderState(unread.length);
 }
 
-/** Add one id to the role's read set, persist, refresh the badge. */
+/** Add one id to the user's mailbox read set, persist, refresh the badge. */
 function markNotifRead(id) {
     if (!window.MockData || !window.MockData.notifications) return;
-    const role = currentNotifRole();
-    const reads = getNotifReads(role);
+    const reads = getNotifReads();
     reads.add(id);
-    persistNotifReads(role, reads);
+    persistNotifReads(reads);
     refreshNotifBadge();
 }
 
-/** Mark ALL of the role's rows read + refresh badge and list. */
+/** Mark the WHOLE mailbox read (backend semantics: every unread row of this
+ *  user, all categories) + refresh badge and list. */
 function markAllNotifsRead() {
     if (!window.MockData || !window.MockData.notifications) return;
-    const role = currentNotifRole();
-    const reads = getNotifReads(role);
+    const reads = getNotifReads();
     window.MockData.notifications.forEach(function (n) {
-        if (n.role === role) reads.add(n.id);
+        reads.add(n.id);
     });
-    persistNotifReads(role, reads);
+    persistNotifReads(reads);
     refreshNotifBadge();
     renderNotifList();
 }
 
 function openNotifPanel() { // AD-12 direction 1 — drawer never stacks with panel
-    closeNavDrawer();
-    const panel = document.getElementById('notifPanel');
+    closeNavDrawer();    const panel = document.getElementById('notifPanel');
     const overlay = document.getElementById('notifOverlay');
     const bell = document.querySelector('.notif-btn');
     if (panel) panel.classList.add('open');
     if (overlay) overlay.classList.add('open');
     if (bell) bell.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden'; // AD-11 — inline lock, both breakpoints
+    refreshNotifBadge(); // header state follows the mailbox (F-2 pre-wire)
     renderNotifList();
 }
 
@@ -1803,20 +1844,22 @@ function toggleNotifPanel() {
 
 // ───── TEMP — UI testing only, DELETE BEFORE SUBMISSION ─────
 
-/** Console helper: clears all 3 role read keys + reloads → badge back to 2. */
+/** Console helper: clears the user read key (incl. legacy per-role stores) + reloads. */
 function resetNotifDemo() {
-    ['student', 'pl', 'lecturer'].forEach(function (r) {
-        localStorage.removeItem(notifReadKey(r));
-    });
+    try {
+        localStorage.removeItem(notifReadKey());
+        ['student', 'pl', 'lecturer'].forEach(function (r) {
+            localStorage.removeItem('notifications-read-' + r);
+        });
+    } catch (e) { /* ignore */ }
     window.location.reload();
 }
 
 /** One-shot for demo shots: re-mark (or un-mark) a single row, no reload. */
 function notifDevToggle(id) {
-    const role = MockData.notifications.find(function (n) { return n.id === id; })?.role || currentNotifRole();
-    const reads = getNotifReads(role);
+    const reads = getNotifReads();
     if (reads.has(id)) reads.delete(id); else reads.add(id);
-    persistNotifReads(role, reads);
+    persistNotifReads(reads);
     refreshNotifBadge();
     if (document.getElementById('notifPanel').classList.contains('open')) renderNotifList();
 }
@@ -2028,6 +2071,34 @@ class DateHelper {
     }
 }
 
+// ───── Days-left display contract (replacement-home surfaces: table cell,
+// mobile card footer, quick-view modal Status row — 3rd-duplication promo) ─────
+
+/* daysLeft → label: <0 "Overdue" · 0 "Today" · 1 "1 day left" · else "N days left".
+   Urgency classes reuse the table vocabulary (urgency-high/mid/low — the only
+   defined CSS); overdue renders in the same red as imminent (error semantics). */
+function daysLeftLabel(days) {
+    if (days < 0) return 'Overdue';
+    if (days === 0) return 'Today';
+    if (days === 1) return '1 day left';
+    return days + ' days left';
+}
+
+/* Status enum → display label (§10.0: same name for the same meaning).
+   Some datasets store lowercase enums ('normal') vs Title-case ('Pending') —
+   this renders ONE Title-case vocabulary everywhere. CSS badge classes stay
+   keyed by the raw enum (badge-normal etc.), so visuals are untouched. */
+const StatusText = {
+    map: { normal: 'Normal', replacement: 'Replacement', pending: 'Pending',
+           approved: 'Approved', rejected: 'Rejected', conflict: 'Conflict' },
+    label(status) {
+        var s = String(status);
+        var hit = this.map[s.toLowerCase()];
+        if (hit) return hit;
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+};
+
 // ───── Backward-compatible global aliases (delegate to DateHelper) ─────
 
 function to12h(t) { return DateHelper.to12h(t); }
@@ -2143,7 +2214,7 @@ class HtmlBuilder {
             { html: opts.index, cls: 'col-no' },
             { html: '<span class="cell-code">' + c.code + '</span><span class="cell-name">' + c.name + ' <span class="cell-type-label">(' + typeLabel + ')</span></span>', cls: 'col-code' },
             { html: opts.formatClassBlock(c), cls: 'col-original' },
-            { html: '<span class="' + urgencyCls + '">' + days + ' days</span>', cls: 'col-urgency' },
+            { html: '<span class="' + urgencyCls + '">' + daysLeftLabel(days) + '</span>', cls: 'col-urgency' },
             { html: c.venue, cls: 'col-venue' },
             { html: String(c.totalStudents), cls: 'col-students' },
             { html: c.cohorts.join('<br>'), cls: 'col-cohort' },
@@ -2166,7 +2237,7 @@ class HtmlBuilder {
             DateHelper.to12h(c.timeStart) + ' – ' + DateHelper.to12h(c.timeEnd) + ' · ' + c.venue +
             '</div>' +
             '<div class="rc-footer">' +
-            '<span class="' + urgencyCls + '">' + days + ' days left</span>' +
+            '<span class="' + urgencyCls + '">' + daysLeftLabel(days) + '</span>' +
             '<span>' + c.cohorts.join(', ') + '</span>' +
             '</div>';
     }
@@ -2553,6 +2624,31 @@ function populateWeekSelect(selectId, cfg) {
     const isMobile = window.innerWidth <= 768;
     const useRanges = cfg.ranges !== false; // default: weekRanges (string "1".."14")
     const source = useRanges ? weekRanges : weekData;
+
+    /* remember this select's cfg so a runtime breakpoint-crossing (768) can
+       re-format labels (full ↔ compact) without a reload — same spirit as the
+       venue mobileCardList resize hook. Re-runs preserve the selection. */
+    populateWeekSelect._registry = populateWeekSelect._registry || {};
+    populateWeekSelect._registry[selectId] = cfg;
+    populateWeekSelect._mobileState = populateWeekSelect._mobileState || {};
+    populateWeekSelect._mobileState[selectId] = isMobile;
+    if (!populateWeekSelect._resizeWired) {
+        populateWeekSelect._resizeWired = true;
+        var _pwTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(_pwTimer);
+            _pwTimer = setTimeout(function() {
+                var mobileNow = window.innerWidth <= 768;
+                Object.keys(populateWeekSelect._registry).forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (!el || populateWeekSelect._mobileState[id] === mobileNow) return;
+                    var preserve = el.value;
+                    populateWeekSelect(id, populateWeekSelect._registry[id]);
+                    el.value = preserve; /* cfg.selected may be stale after re-populate */
+                });
+            }, 200);
+        });
+    }
 
     let html = '';
     if (cfg.includeAll) html += '<option value="all">All Weeks</option>';

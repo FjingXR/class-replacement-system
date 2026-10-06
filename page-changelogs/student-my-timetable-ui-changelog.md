@@ -171,3 +171,9 @@ Shared `ui-week-nav` gained an opt-in `'showPrint' => true` arg rendering a prin
 (inline SVG, `.print-btn` in theme.css), right-aligned at the toolbar edge via `margin-left: auto`.
 Enabled stub: click fires the shared `toast.show('Printing is coming soon')` bottom-left toast bar;
 `title="Coming soon"` native tooltip on hover. No JS beyond the one-liner onclick.
+
+### Postscript — sweep-fixes-round-1 (2026-10-06, F-11)
+
+Week persistence key namespaced to `studentTimetableWeek` (was the shared generic
+`currentWeek` — pages silently overwrote each other's saved week). Legacy-value migration
+handled once in `WeekNavigator.load()`; shared sorting/labels untouched.

@@ -119,7 +119,7 @@
 
         let currentWeek = currentWeekIndex();
 
-        const weekNav = new WeekNavigator(MockData.semester, weekData);
+        const weekNav = new WeekNavigator(MockData.semester, weekData, null, 'studentTimetableWeek');
         weekNav._currentWeek = currentWeek;
 
         const WEEK_KEY = 'studentMyTimetableWeek';

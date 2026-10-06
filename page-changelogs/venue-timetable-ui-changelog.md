@@ -390,3 +390,11 @@ radius-sm). The old stale-green arrow hex (#3d5a48, an orphan of a previous pale
 replaced across ALL selects by per-theme strokes mirroring the tokens
 (dark/on-surface-variant #9EAAB8, light #5A6978; semester-bar selects mirror
 on-primary-container #6BA3E0 / #003366) since SVG data-URIs cannot use var().
+
+### Postscript — sweep-fixes-round-1 (2026-10-06, F-4)
+
+**Status badges no longer leak raw lowercase enums.** New shared `StatusText.label()`
+promoted to ui-common (3 sites on this page = the duplication threshold): history card
+(:660), event card (:846), modal Status row (:914) now print
+"Normal" / "Replacement" / "Pending" (Title case §10.0 vocabulary) while the
+`badge-*` CSS keys stay raw-enum — zero visual/color change, text only.

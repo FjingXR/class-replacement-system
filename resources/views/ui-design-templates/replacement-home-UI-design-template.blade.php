@@ -272,7 +272,10 @@
         }
 
         function daysLeft(iso) {
-            const now = new Date();
+            /* one clock with the rest of the app: the shared demo anchor
+               (DateHelper.getTodayMs) — not the raw browser date (which
+               diverged from the lead-time pages during the mock phase). */
+            const now = new Date(getTodayMs());
             now.setHours(0, 0, 0, 0);
             const target = new Date(iso + 'T00:00:00');
             return Math.ceil((target - now) / (1000 * 60 * 60 * 24));
@@ -454,7 +457,7 @@
             qvCurrent = c;
 
             var daysLeftVal = daysLeft(c.date);
-            var urgencyCls = daysLeftVal <= 3 ? 'urgency-urgent' : daysLeftVal <= 7 ? 'urgency-warning' : 'urgency-normal';
+            var urgencyCls = urgencyClass(daysLeftVal); /* single vocabulary: table's urgency-high/mid/low */
             var wn = getWeekNumber(c.date);
             var weekTag = wn ? ' (Week ' + wn + ')' : '';
             var typeLabel = c.type === 'L' ? 'Lecture' : 'Tutorial';
@@ -464,8 +467,8 @@
                 title: 'Replacement Details',
                 subtitle: c.code + ' · ' + c.name + ' (' + typeLabel + ')',
                 body: DetailModal.section('Replacement Details',
-                    DetailModal.row('Status', '<span class="urgency-badge ' + urgencyCls + '">' + daysLeftVal + ' days left</span>') +
-                    DetailModal.row('Status Description', daysLeftVal <= 3 ? 'Urgent — arrange a replacement soon' : daysLeftVal <= 7 ? 'Approaching — plan a replacement' : 'Within normal lead time') +
+                    DetailModal.row('Status', '<span class="urgency-badge ' + urgencyCls + '">' + daysLeftLabel(daysLeftVal) + '</span>') +
+                    DetailModal.row('Status Description', daysLeftVal < 0 ? 'Class date has passed — a replacement can no longer be arranged automatically' : daysLeftVal <= 3 ? 'Urgent — arrange a replacement soon' : daysLeftVal <= 7 ? 'Approaching — plan a replacement' : 'Within normal lead time') +
                     DetailModal.row('Conflict Reason', '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>') +
                     DetailModal.row('Subject Code', c.code, { strong: true }) +
                     DetailModal.row('Subject Name', c.name) +

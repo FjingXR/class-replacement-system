@@ -657,7 +657,7 @@
                         <span class="history-code">${e.code}</span>
                         <span>${e.cohort || ''}</span>
                         <span>${start} – ${end}</span>
-                        <span class="history-status badge badge-${e.status}">${e.status}</span>
+                        <span class="history-status badge badge-${e.status}">${StatusText.label(e.status)}</span>
                     `;
                     panel.appendChild(row);
                 });
@@ -843,7 +843,7 @@
             card.innerHTML = `
                 <div class="venue-event-header">
                     <span class="venue-event-code">${e.code}</span>
-                    <span class="venue-event-status ${statusClass}">${e.status}</span>
+                    <span class="venue-event-status ${statusClass}">${StatusText.label(e.status)}</span>
                 </div>
                 <div class="venue-event-body">
                     <div class="venue-event-row"><span class="venue-event-label">Cohort</span><span class="venue-event-value">${e.cohort}</span></div>
@@ -911,7 +911,7 @@
                     DetailModal.row('Cohort', e.cohort || '—') +
                     DetailModal.row('Start Time', startTime, { strong: true }) +
                     DetailModal.row('End Time', endTime) +
-                    DetailModal.row('Status', '<span class="badge badge-' + e.status + '">' + e.status + '</span>') +
+                    DetailModal.row('Status', '<span class="badge badge-' + e.status + '">' + StatusText.label(e.status) + '</span>') +
                     DetailModal.row('Status Description', e.status === 'pending' ? 'Replacement request awaiting approval' : 'Class booked for this venue') +
                     DetailModal.row('Remarks', e.remarks || '—')
                 )

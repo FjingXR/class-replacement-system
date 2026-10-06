@@ -467,3 +467,14 @@ SDD change request applied. Bug fix: `openModal(index)` now delegates to `openMo
 | 2026-08-13 | `public/js/mock-data.js` | Week filter fix | Semester `startDate` shifted from `2026-06-15` to `2026-07-27` so mock data dates (relative to today) fall in filterable weeks. `parseDate` in `ui-common.js` fixed: `.split("-")` → `.split(" ")` to match space-separated date format. |
 | 2026-08-15 | `<th>` headers | Header hover tooltips | Switched from native `title` to JS `initHeaderTooltips()` with a fixed-position tooltip div — tooltips appear above headers, avoids `overflow:hidden` clipping on `.grid-wrapper`. |
 | 2026-08-15 | Week filter | Fix infinite recursion | Removed local `function weekFilterChanged(value)` override — its declaration was hoisted and shadowed the shared function in ui-common.js, causing `_sharedWeekFilterChanged = window.weekFilterChanged` to capture itself → stack overflow. Now uses shared `weekFilterChanged()` directly. |
+
+### Postscript — sweep-fixes-round-1 (2026-10-06, F-10)
+
+**Owner scoping made explicit.** Sweep join showed `MockData.requests` and the approval
+page's `approvalRequests` share zero rows — the history set was implicitly persona-scoped
+by construction (no examiner-facing contradiction after all; report downgraded 🟡→💡).
+Contract made explicit: `MockData.requests` rows gain a `requester` field (derived in one
+place at the mock-data aliasing block, rows copied per the read-only convention; backend
+day = API returns ownership-scoped rows, drop the derivation) + a one-line page filter
+`requester === MockData.currentUser.name` (no-op today, protects the page the moment
+extra requesters appear). Counts unchanged (17 of 20 with Exclude Completed).

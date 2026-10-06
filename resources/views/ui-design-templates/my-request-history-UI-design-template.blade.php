@@ -307,7 +307,13 @@
 
 @section('page-scripts')
         initHeaderTooltips();
-        let mockRequests = MockData.requests;
+        /* Owner scoping — sweep-fixes-round-1 (F-10). CE mock phase: every row
+           already carries the persona's requester; backend day this single
+           line becomes irrelevant (API scopes WHERE requester_id = auth:id)
+           and protects the page the moment extra requesters exist. */
+        let mockRequests = MockData.requests.filter(function(r) {
+            return !r.requester || r.requester === MockData.currentUser.name;
+        });
 
         const pageState = { currentPage: 1 };
         let rowsPerPage = parseInt(localStorage.getItem('mrh-rows-per-page')) || 10;

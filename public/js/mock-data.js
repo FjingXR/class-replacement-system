@@ -1530,3 +1530,25 @@ const URGENCY_REFERENCE_DATE = new Date();
 // ─────────────────────────────────────────────────────────────────────────
 window.MockData.approvalRequests = approvalRequests;
 window.MockData.urgencyReferenceDate = URGENCY_REFERENCE_DATE;
+
+/* §2.9 requester contract — sweep-fixes-round-1 (F-10). `requests` rows are
+   the CURRENT persona's own submissions (my-request-history renders them as
+   "my requests"; the approval-page dataset is separate — zero row overlap,
+   verified in the sweep). requester is derived here, in one place, instead
+   of 20 inline literals; rows are copied (read-only convention). Backend day
+   the API returns ownership-scoped rows with their real requester identity
+   — drop this block and let my-request-history's
+   `requester === MockData.currentUser.name` filter (kept for exactly that
+   transition) scope the payload. */
+window.MockData.requests = window.MockData.requests.map(function(r) {
+    return Object.assign({}, r, { requester: MockData.currentUser.name });
+});
+
+/* §2.13 recipient contract — sweep-fixes-round-1 (F-2 pre-wire). Every mock
+   notification belongs to the logged-in persona's ONE mailbox (they demo all
+   three role categories); `role` stays the category, `recipientId` is the
+   mailbox owner. Read-state is keyed per user (ui-common). Backend day the
+   API returns the user's own rows with real recipient ids — drop this block. */
+window.MockData.notifications = window.MockData.notifications.map(function(n) {
+    return Object.assign({}, n, { recipientId: MockData.currentUser.staffId });
+});

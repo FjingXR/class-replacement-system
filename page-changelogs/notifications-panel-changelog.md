@@ -102,3 +102,22 @@ date/time. Rows also gained `aria-label` = full message.
    the UA-default outset button in the panel header. Now mirrors the established
    `.modal-close` family (30×30, radius-sm, 1px outline border, on-surface-variant ✕, hover
    surface-variant / outline-strong) — same-name-same-color per §10.0.
+
+### Postscript — sweep-fixes-round-1 (2026-10-06, F-2 pre-wire + F-12 closure)
+
+1. **F-2 pre-wired to per-user mailbox semantics (user decision: backend-ready):** the badge
+   now gives one number per logged-in user — `recipientId` derived onto every mock row
+   (one-place map at the mock-data aliasing block, rows copied per the read-only convention;
+   backend day = the API returns the user's own rows, drop the block); the per-role read
+   store (`notifications-read-<role>`) is retired in favour of ONE user store
+   (`notifications-read-user-<staffId>`), migrated at first paint by union (seed = the 10
+   data `read:true` rows; legacy contribution verified equal), old keys removed.
+   Badge/pill/mark-all follow the **mailbox unread total**; the panel LIST stays
+   category-scoped by page context (AD-2 frozen, kept); mark-all = the whole user mailbox
+   (backend semantics); panel open resyncs the header. AD-4/AD-8 comments updated.
+   Verified live: badge 11 on lecturer AND student pages (drift gone), mark-one-read → 10
+   with pill synced, reseed deterministic on fresh store, 0 console errors.
+2. **F-12 (user decision: document as exception):** `CodingMAIN.md` §10.0 rule 1 now
+   sanctions the layout's pre-theme paint literals (`html.dark/html.light` background in
+   `ui-template.blade.php`) as the sole FOUC-guard exception, with an update-both note.
+   Zero code change.
