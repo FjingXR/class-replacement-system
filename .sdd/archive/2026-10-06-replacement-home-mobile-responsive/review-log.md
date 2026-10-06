@@ -52,3 +52,15 @@
  - (none)
 
 ### ✅ PASS — tasks.md is frozen.
+
+## Archive Note — 2026-10-06
+
+### ⚪ Superseded by shared CSS (promote-on-3rd-duplication)
+- The 27 tasks were never executed page-locally; the same goals landed as GLOBAL rules instead:
+  - **M1/M3 modal bottom sheets** → `public/css/theme.css:2743` `@media (max-width: 768px)` full-screen bottom-sheet modal: `align-items: flex-end`, top-corner radius, full-width stacked actions, 48px min-height, safe-area padding. Applies to ALL modals incl. Quick View + Keyboard Shortcuts — no per-page `.sheet-handle`/`sheetUp` markup needed.
+  - **M4 toolbar mobile layout** → `public/css/theme.css:1245` `.toolbar { flex-direction: column; align-items: stretch; }` + `.toolbar-left/.toolbar-right` width rules.
+  - **48px touch targets** → modal-actions min-height + `@media (hover: none)` block.
+- Per-page implementation rejected in favour of the shared pattern (the duplication rule chose the design).
+
+### 🔴 Outstanding
+- (none)

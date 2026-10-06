@@ -8,7 +8,7 @@
 - [x] replacement-home: Add `&from=replacement-home` to navigation URL (L420)
 - [x] my-request-history: Add `?from=my-request-history` to CTA URL (L436)
 - [x] venue-timetable: Add `&from=venue-timetable` to navigation URL (L1413)
-- [ ] Test each source page navigates correctly
+- [x] Test each source page navigates correctly
 
 ## Task 3: Update replacement-arrangement back button
 - [x] Replace hardcoded `/replacement-home-ui` with `BackNavigator.navigate()` in `goBack()` (L1499)

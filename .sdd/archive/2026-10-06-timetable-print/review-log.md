@@ -47,3 +47,13 @@
 
 ### 🟡 Addressed
 - Task 9 line number inconsistency (line ~49 vs ~449) — cosmetic, won't cause rework
+
+## Archive Note — 2026-10-06
+
+### ⏸ Deferred by decision (user call, 2026-10-06)
+- `.print-btn` screen styles SHIPPED (`public/css/theme.css:1620` + hover); `@media print` / `@page` were **never implemented** (grep confirms absent).
+- Git trail of the deliberate deferral: `70defe1` (disabled print icon on all timetable pages) → `4120dec` (right-aligned + "Coming soon" title) → `822c7c7` (enabled: click shows "coming soon" toast).
+- Disposition: **deferred** — if real printing is ever required, revive as a NEW change (proposal for `@media print` blocks + landscape `@page` per the original design.md).
+
+### 🔴 Outstanding
+- (none)

@@ -1,6 +1,6 @@
 name: replacement-home-mobile-responsive
 created: 2026-08-03
-status: frozen
+status: superseded
 scope: single-page
 page: replacement-home-UI-design-template.blade.php
 features:
