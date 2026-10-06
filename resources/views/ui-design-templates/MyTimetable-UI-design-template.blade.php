@@ -1,4 +1,5 @@
-@extends('layouts.ui-template', ['activeNav' => 'my-timetable', 'pageKey' => 'myTimetable'])
+@extends('layouts.ui-template', [
+        'homeUrl' => '/my-timetable-ui','activeNav' => 'my-timetable', 'pageKey' => 'myTimetable'])
 
 @section('title', 'My Timetable')
 

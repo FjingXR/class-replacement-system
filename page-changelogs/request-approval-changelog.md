@@ -606,3 +606,17 @@ New Blade template for Programme Leader replacement request review. 11-column ta
 | 2026-08-13 | `public/js/mock-data.js` + `@section(page-scripts)` | Week filter fix | Semester `startDate` shifted from `2026-06-15` to `2026-07-27` so mock data dates (relative to today) fall in filterable weeks. `parseDate` in `ui-common.js` fixed: `.split("-")` → `.split(" ")` to match space-separated date format. Week dropdown `opt.value = i` → `opt.value = w.value`. |
 | 2026-08-15 | `<th>` headers | Header hover tooltips | Switched from native `title` to JS `initHeaderTooltips()` with a fixed-position tooltip div — tooltips appear above headers, avoids `overflow:hidden` clipping on `.grid-wrapper`. |
 | 2026-08-15 | Week filter | Fix infinite recursion | Renamed local override to `onWeekFilterChange()` to avoid hoisted `function weekFilterChanged` shadowing the shared function. Updated `selectOnclick` and filter-chip remove button to call `onWeekFilterChange()`. |
+
+### Postscript — sweep-fixes-round-3 (2026-10-06, header refactor)
+
+Sortable header machinery consolidated onto the shared `makeSortableHeader` /
+`compareBy` helpers (ui-common.js) — my-request-history already used them; this
+page's string-html `renderHeader` + local `toggleSort` were the last duplicates.
+Markup output is the same columns/tips; the one intended change: sort arrows now
+render as the styled `span.sort-arrow` (history page's look) instead of plain text.
+Logo click now lands on My Timetable (homeUrl param) instead of the welcome view.
+
+**Extension (same round, 2026-10-06):** three previously display-only columns are now
+sortable — **Lecturer** (sorted by resolved lecturer *name*, not the stored id),
+**Course Code & Name**, **Students** (numeric). `Cohorts`-style multi-value and the
+Actions column stay non-sortable by design.

@@ -1,4 +1,5 @@
-@extends('layouts.ui-template', ['activeNav' => 'replacement-arrangement', 'pageKey' => 'replacementHome'])
+@extends('layouts.ui-template', [
+        'homeUrl' => '/my-timetable-ui','activeNav' => 'replacement-arrangement', 'pageKey' => 'replacementHome'])
 
 @section('title', 'Replacement Arrangement — Class Replacement System')
 
@@ -315,6 +316,14 @@
                     } else if (sortState.field === 'code') {
                         va = a.code;
                         vb = b.code;
+                    } else if (sortState.field === 'daysLeft') {
+                        /* R-4b (round-3): computed urgency — numeric, so Overdue
+                           (negative) sorts before future classes ascending */
+                        va = daysLeft(a.date);
+                        vb = daysLeft(b.date);
+                    } else if (sortState.field === 'venue') {
+                        va = a.venue;
+                        vb = b.venue;
                     }
                     return compareBy(sortState, va, vb);
                 });
@@ -335,8 +344,8 @@
                 { label: '#', cls: 'col-no', sortable: false, tip: 'Row number' },
                 { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'code', tip: 'Course affected by the conflict' },
                 { label: 'Original Class', cls: 'col-original', sortable: true, field: 'date', tip: 'Original class session with a conflict' },
-                { label: 'Days Left', cls: 'col-urgency', sortable: false, tip: 'Days remaining before the original class' },
-                { label: 'Venue', cls: 'col-venue', sortable: false, tip: 'Assigned venue for the class' },
+                { label: 'Days Left', cls: 'col-urgency', sortable: true, field: 'daysLeft', tip: 'Days remaining before the original class — ascending puts Overdue/most urgent first' },
+                { label: 'Venue', cls: 'col-venue', sortable: true, field: 'venue', tip: 'Assigned venue for the class' },
                 { label: 'Students', cls: 'col-students', sortable: false, tip: 'Number of enrolled students' },
                 { label: 'Cohort(s)', cls: 'col-cohort', sortable: false, tip: 'Affected student cohorts' },
                 { label: 'Conflict Reason', cls: 'col-reason', sortable: false, tip: 'Why the scheduling conflict exists' },

@@ -258,3 +258,15 @@ Migrated inline `computeWeek()` to `getWeekNumber()`, `weekRangeLabel()` to `Dat
    −31 days). Modal urgency classes unified onto the defined vocabulary
    (`urgencyClass()` → urgency-high/mid/low); the undefined `.urgency-urgent/warning/normal`
    dead classes are gone. User decision noted in `.sdd/changes/sweep-fixes-round-1`.
+
+### Postscript — sweep-fixes-round-3 (2026-10-06, sortable Days Left + Venue)
+
+**Days Left** and **Venue** columns are now sortable (user request) via the shared
+`makeSortableHeader` house pattern: Days Left sorts on the computed urgency value —
+ascending = Overdue/most-urgent first, descending = nearest-to-today first (this
+page's conflicted classes are all past-dated in the demo dataset, so both directions
+order within the Overdue block; ordering is identical to Original Class since
+Days Left derives from the date — the header is the affordance users think in).
+Venue sorts alphabetically, grouping the same rooms. Students / Cohort(s) /
+Conflict Reason stay non-sortable (cohorts = multi-value like My Request History;
+Conflict Reason already has a dedicated filter dropdown).

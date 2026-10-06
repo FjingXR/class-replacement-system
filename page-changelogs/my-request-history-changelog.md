@@ -478,3 +478,15 @@ place at the mock-data aliasing block, rows copied per the read-only convention;
 day = API returns ownership-scoped rows, drop the derivation) + a one-line page filter
 `requester === MockData.currentUser.name` (no-op today, protects the page the moment
 extra requesters appear). Counts unchanged (17 of 20 with Exclude Completed).
+
+### Postscript — sweep-fixes-round-3 (2026-10-06, audit no-op)
+
+Audited as part of the sortable-table consolidation: this page was already on the
+shared `makeSortableHeader`/`compareBy` helpers — no code change. Logo click now
+lands on My Timetable (homeUrl param).
+
+**Extension (same round, 2026-10-06):** four previously display-only columns are now
+sortable — **Requested Replacement** (date, then time), **Requested Venue**,
+**Students** (numeric), **Status** (process order Pending → Approved → Rejected →
+Completed, not alphabetical). **Cohort(s) stays non-sortable on purpose:** rows can
+carry several cohorts, so a sort key would be misleading; its header tip says so.

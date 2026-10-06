@@ -18,7 +18,10 @@ function toggleTheme() {
 }
 
 function navigateHome() {
-    window.location.href = '/';
+    /* R-3 (round-3): logo goes to the page's role home (staff → My Timetable,
+       student → Student My Timetable); pages without a homeUrl land on the
+       welcome view. The layout emits window.PAGE_HOME. */
+    window.location.href = window.PAGE_HOME || '/';
 }
 
 function updateWeekArrows(prevDisabled, nextDisabled) {
@@ -1393,7 +1396,7 @@ function closeOnOverlayClick(e, closeFn) {
 
 // Auto-hide the summary section (cards + hint) when a filtered view is empty —
 // there is nothing to summarize (§10.0 rule 7, promoted from
-// upcoming-replacements / my-request-history / replacement-home /
+// replacement-history / my-request-history / replacement-home /
 // request-approval which all follow the same pattern).
 function syncSummarySection(visible) {
     var s = document.getElementById('summarySection');
@@ -1606,7 +1609,7 @@ function initMobileNav() {
 
 const NOTIF_ROLE_BY_PAGE = { // AD-2 — body[data-page] → panel role
     studentMyTimetable: 'student',
-    upcomingReplacements: 'student',
+    replacementHistory: 'student',
     requestApproval: 'pl',
 };
 

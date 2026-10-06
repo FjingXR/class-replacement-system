@@ -1,4 +1,5 @@
-@extends('layouts.ui-template', ['activeNav' => 'cohort-timetables', 'pageKey' => 'cohortTimetable'])
+@extends('layouts.ui-template', [
+        'homeUrl' => '/my-timetable-ui','activeNav' => 'cohort-timetables', 'pageKey' => 'cohortTimetable'])
 
 @section('title', 'Cohort Timetable — Class Replacement System')
 

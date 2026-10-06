@@ -89,3 +89,10 @@ pages): `partials/ui-legend-bar.blade.php` hint ships two spans —
 (touch) — swapped purely in CSS by `@media (hover: none)` in `theme.css`
 (`.hint-touch { display: none }` default + swap inside the media block). No JS, tokens
 untouched. Desktop branch verified live; the media rule verified present in the served CSS.
+
+### Postscript — sweep-fixes-round-3 (2026-10-06, layout homeUrl)
+
+`layouts/ui-template.blade.php` accepts an optional `homeUrl` extends-param and emits
+`<script>window.PAGE_HOME=…</script>` after the shared includes; `navigateHome()`
+(ui-common) uses it with the welcome view as fallback. All 9 template pages declare
+their role home (staff → `/my-timetable-ui`, student pages → `/student-my-timetable-ui`).

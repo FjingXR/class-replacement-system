@@ -123,3 +123,16 @@ user store (still TEMP — delete before submission, together with the `n-tmp-*`
 
 **mock-data.js:** `notifications` rows gain `recipientId` (persona's staffId), derived in
 one place after the literal — §2.13 contract comment added (backend day: drop the block).
+
+### Postscript — sweep-fixes-round-3 (2026-10-06, shared sort + rename)
+
+1. `navigateHome()` (ui-common) reads `window.PAGE_HOME` (role home) with `'/'`
+   fallback; arrangement's page-local shadow was updated to the same rule.
+2. `NOTIF_ROLE_BY_PAGE` key `upcomingReplacements` → `replacementHistory`;
+   §10.0 comment refs updated.
+3. mock-data §2.12 base renamed `MockData.replacementHistory` (consumers:
+   replacement-history page) and 7 notification deep-links point at
+   `/replacement-history-ui`.
+4. Sortable-header consolidation recorded in request-approval's postscript — the
+   shared `makeSortableHeader`/`compareBy` are now the single implementation
+   across all three data tables (student table included).

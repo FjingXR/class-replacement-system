@@ -1,4 +1,5 @@
-@extends('layouts.ui-template', ['activeNav' => 'replacement-arrangement', 'hideNav' => true, 'pageKey' => 'replacementArrangement'])
+@extends('layouts.ui-template', [
+        'homeUrl' => '/my-timetable-ui','activeNav' => 'replacement-arrangement', 'hideNav' => true, 'pageKey' => 'replacementArrangement'])
 
 @section('title', 'Replacement Arrangement — Class Replacement System')
 
@@ -1952,7 +1953,8 @@
         });
 
         function navigateHome() {
-            navigateTo('/');
+            /* R-3 (round-3): same role-home rule as the shell — was hardcoded '/' */
+            navigateTo(window.PAGE_HOME || '/');
         }
 
         function updateSelectionProgress() {

@@ -45,6 +45,9 @@
 
     <script src="/js/mock-data.js?v=3"></script>
     <script src="/js/ui-common.js?v=7"></script>
+    {{-- R-3 (round-3): role-aware logo target — each page declares its home;
+         navigateHome() reads this, falling back to the welcome view --}}
+    <script>window.PAGE_HOME = '{{ $homeUrl ?? '/' }}';</script>
     {{-- LOGOUT MODAL DISABLED
     <script src="/js/logout-modal.js"></script>
     --}}

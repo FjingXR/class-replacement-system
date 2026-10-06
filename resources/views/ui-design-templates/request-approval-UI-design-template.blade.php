@@ -1,4 +1,5 @@
-@extends('layouts.ui-template', ['activeNav' => 'request-approval', 'pageKey' => 'requestApproval'])
+@extends('layouts.ui-template', [
+        'homeUrl' => '/my-timetable-ui','activeNav' => 'request-approval', 'pageKey' => 'requestApproval'])
 
 @section('title', 'Request Approval')
 
@@ -479,11 +480,11 @@
         const columns = [
             { label: '#', sortable: false, tip: 'Row number' },
             { label: 'Requested Timestamp', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested. Age colour: green ≤1 day, amber 2–3 days, red 4+ days' },
-            { label: 'Lecturer', sortable: false, tip: 'Lecturer who submitted the request' },
-            { label: 'Course Code & Name', sortable: false, tip: 'Course affected by the conflict' },
+            { label: 'Lecturer', sortable: true, field: 'lecturer', tip: 'Lecturer who submitted the request — sorted by name' },
+            { label: 'Course Code & Name', sortable: true, field: 'courseCode', tip: 'Course affected by the conflict' },
             { label: 'Original Class', sortable: true, field: 'classDate', tip: 'Original class the request refers to — its state varies (still upcoming, replaced, cancelled, holiday, etc.)' },
             { label: 'Proposed Replacement', sortable: true, field: 'replacementDate', tip: 'Proposed new date, time, and venue' },
-            { label: 'Students', sortable: false, tip: 'Number of students enrolled' },
+            { label: 'Students', sortable: true, field: 'totalStudents', tip: 'Number of students enrolled' },
             { label: 'Urgency', sortable: true, field: 'urgencyDays', tip: 'Days until the original class: ≤3 days = Urgent (red), 4+ days = Normal' },
             { label: 'Status', sortable: true, field: 'status', tip: 'Current approval status' },
             { label: 'Actions', sortable: false, tip: 'Approve or reject this request' }
@@ -493,35 +494,27 @@
         let currentFiltered = [];
 
         // ── Render table header ──
+        // Shared house helper (cf. my-request-history) — flip + re-render live
+        // in makeSortableHeader; this callback adds the page's own side effects.
         function renderHeader() {
             const thead = document.getElementById('tableHead');
-            let html = '<tr><th class="col-checkbox"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>';
-            columns.forEach((col, i) => {
-                const tip = col.tip ? ' data-tip="' + col.tip + '"' : '';
-                if (col.sortable) {
-                    const arrow = sortState.field === col.field ? (sortState.dir === 'asc' ? ' ▲' : ' ▼') : '';
-                    html += '<th class="sortable"' + tip + ' onclick="toggleSort(\'' + col.field + '\')">' + col.label + arrow + '</th>';
-                } else {
-                    html += '<th' + tip + '>' + col.label + '</th>';
-                }
+            thead.innerHTML = '';
+            const tr = document.createElement('tr');
+            const thCheck = document.createElement('th');
+            thCheck.className = 'col-checkbox';
+            thCheck.innerHTML = '<input type="checkbox" id="selectAll" onchange="toggleSelectAll()">';
+            tr.appendChild(thCheck);
+            columns.forEach(function(col) {
+                tr.appendChild(makeSortableHeader(col, sortState, function() {
+                    currentPage = 1;
+                    renderTable();
+                    saveFilters();
+                }));
             });
-            html += '</tr>';
-            thead.innerHTML = html;
+            thead.appendChild(tr);
         }
 
         // ── Sort logic ──
-        function toggleSort(field) {
-            if (sortState.field === field) {
-                sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortState.field = field;
-                sortState.dir = 'asc';
-            }
-            currentPage = 1;
-            renderTable();
-            saveFilters();
-        }
-
         function sortData(data) {
             const field = sortState.field;
             const dir = sortState.dir === 'asc' ? 1 : -1;
@@ -534,6 +527,11 @@
                 }
                 va = a[field] || '';
                 vb = b[field] || '';
+                /* R-4b (round-3): lecturer stores an id — sort by resolved name */
+                if (field === 'lecturer') {
+                    va = (typeof lookupLecturer === 'function' && lookupLecturer(a.lecturer)) ? lookupLecturer(a.lecturer).name : a.lecturer;
+                    vb = (typeof lookupLecturer === 'function' && lookupLecturer(b.lecturer)) ? lookupLecturer(b.lecturer).name : b.lecturer;
+                }
                 if (typeof va === 'string') return va.localeCompare(vb) * dir;
                 return (va - vb) * dir;
             });

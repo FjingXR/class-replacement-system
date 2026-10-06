@@ -1,4 +1,5 @@
-@extends('layouts.ui-template', ['activeNav' => 'replacement-history', 'pageKey' => 'myRequestHistory'])
+@extends('layouts.ui-template', [
+        'homeUrl' => '/my-timetable-ui','activeNav' => 'replacement-history', 'pageKey' => 'myRequestHistory'])
 
 @section('title', 'My Request History — Class Replacement System')
 
@@ -384,6 +385,10 @@
             });
 
             if (sortState.field) {
+                /* R-4b (round-3): replacement sorts by date+time; status by the
+                   approval process order (not alphabetical); everything else is
+                   the raw field value through the shared compareBy. */
+                const STATUS_ORDER = { Pending: 0, Approved: 1, Rejected: 2, Completed: 3 };
                 filtered.sort(function(a, b) {
                     var va, vb;
                     if (sortState.field === 'requestedAt') {
@@ -395,6 +400,15 @@
                     } else if (sortState.field === 'classDate') {
                         va = a.classDate;
                         vb = b.classDate;
+                    } else if (sortState.field === 'replacementDate') {
+                        va = a.replacementDate + ' ' + a.replacementTime;
+                        vb = b.replacementDate + ' ' + b.replacementTime;
+                    } else if (sortState.field === 'status') {
+                        va = STATUS_ORDER[a.status] !== undefined ? STATUS_ORDER[a.status] : 9;
+                        vb = STATUS_ORDER[b.status] !== undefined ? STATUS_ORDER[b.status] : 9;
+                    } else {
+                        va = a[sortState.field];
+                        vb = b[sortState.field];
                     }
                     return compareBy(sortState, va, vb);
                 });
@@ -439,11 +453,11 @@
                 { label: 'Requested At', cls: 'col-requested-at', sortable: true, field: 'requestedAt', tip: 'When the replacement was requested. Age colour: green ≤1 day, amber 2–3 days, red 4+ days' },
                 { label: 'Course Code & Name', cls: 'col-code', sortable: true, field: 'courseCode', tip: 'Course affected by the conflict' },
                 { label: 'Original Class', cls: 'col-original', sortable: true, field: 'classDate', tip: 'Original class the request refers to — its state varies (still upcoming, replaced, cancelled, holiday, etc.)' },
-                { label: 'Requested Replacement', cls: 'col-replacement', sortable: false, tip: 'Proposed new date and time' },
-                { label: 'Requested Venue', cls: 'col-venue', sortable: false, tip: 'Venue requested for the replacement' },
-                { label: 'Students', cls: 'col-students', sortable: false, tip: 'Number of enrolled students' },
-                { label: 'Cohort(s)', cls: 'col-cohort', sortable: false, tip: 'Affected student cohorts' },
-                { label: 'Status', cls: 'col-status', sortable: false, tip: 'Current approval status' },
+                { label: 'Requested Replacement', cls: 'col-replacement', sortable: true, field: 'replacementDate', tip: 'Proposed new date and time — date, then time' },
+                { label: 'Requested Venue', cls: 'col-venue', sortable: true, field: 'venue', tip: 'Venue requested for the replacement' },
+                { label: 'Students', cls: 'col-students', sortable: true, field: 'totalStudents', tip: 'Number of enrolled students' },
+                { label: 'Cohort(s)', cls: 'col-cohort', sortable: false, tip: 'Affected student cohorts — not sortable: multi-cohort rows have no single value' },
+                { label: 'Status', cls: 'col-status', sortable: true, field: 'status', tip: 'Process order: Pending → Approved → Rejected → Completed' },
                 { label: 'Quick Cancel', cls: 'col-actions', sortable: false, tip: 'Cancel a pending request' },
             ];
             columns.forEach(function(col) {

@@ -1,4 +1,5 @@
-@extends('layouts.ui-template', ['activeNav' => 'venue-timetable', 'pageKey' => 'venueTimetable'])
+@extends('layouts.ui-template', [
+        'homeUrl' => '/my-timetable-ui','activeNav' => 'venue-timetable', 'pageKey' => 'venueTimetable'])
 
 @section('title', 'Venue Timetable — Class Replacement System')
 

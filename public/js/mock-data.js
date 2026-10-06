@@ -656,9 +656,10 @@ window.MockData = {
     },
 
     // ─────────────────────────────────────────────────────────────────────
-    // §2.12 upcomingReplacements — consumed by the student Upcoming
-    // Replacements page (/upcoming-replacements-ui, stub UI pending — see
-    // page-changelogs/todo list/upcoming-replacements-ui-plan.md).
+    // §2.12 replacementHistory — consumed by the student Replacement
+    // History page (/replacement-history-ui; renamed from
+    // upcoming-replacements-ui 2026-10-06 — see page-changelogs/todo
+    // list/replacement-history-ui-plan.md).
     // Rows are keyed to real rsd3g2Base courses + rsd3g2Flags weeks so the
     // timetable grid and this list stay consistent.
     //   Original slot: di/start/end in the same 30-min index space as
@@ -670,7 +671,7 @@ window.MockData = {
     //     .badge-pending).
     // Read-only — slice()/spread before mutating.
     // ─────────────────────────────────────────────────────────────────────
-    upcomingReplacements: [
+    replacementHistory: [
         {
             id: 1, code: 'BMIT7074', name: 'Software Testing', type: 'T',
             lecturer: 'Dr. Koh Li May', cohort: 'RSD3(S1)G2',
@@ -861,25 +862,25 @@ window.MockData = {
             id: 'n-stu-1', role: 'student', type: 'update',
             title: 'BMIT5678',
             desc: 'replacement class Mon 14:00 – 16:00 @ B110',
-            minutesAgo: 30, link: '/upcoming-replacements-ui',
+            minutesAgo: 30, link: '/replacement-history-ui',
         },
         {
             id: 'n-stu-2', role: 'student', type: 'update',
             title: 'BMIT2233',
             desc: 'replacement class Thu 12:00 – 14:00 @ B103',
-            minutesAgo: 120, link: '/upcoming-replacements-ui',
+            minutesAgo: 120, link: '/replacement-history-ui',
         },
         {
             id: 'n-stu-3', role: 'student', type: 'update',
             title: 'BMIT7074',
             desc: 'replacement moved to Thu 10:00 – 12:00 @ B005',
-            minutesAgo: 1560, link: '/upcoming-replacements-ui', read: true,
+            minutesAgo: 1560, link: '/replacement-history-ui', read: true,
         },
         {
             id: 'n-stu-4', role: 'student', type: 'update',
             title: 'BMIT7070',
             desc: 'replacement class Wed 12:00 – 14:00 @ B102',
-            minutesAgo: 4320, link: '/upcoming-replacements-ui', read: true,
+            minutesAgo: 4320, link: '/replacement-history-ui', read: true,
         },
 
         // ─── TEMP dummy rows — UI testing only, DELETE BEFORE SUBMISSION ───
@@ -887,13 +888,13 @@ window.MockData = {
             id: 'n-tmp-1', role: 'student', type: 'update',
             title: 'BMIT7071',
             desc: 'replacement moved to Week 11 Wed 10:00 – 12:00 @ B104',
-            minutesAgo: 5, link: '/upcoming-replacements-ui',
+            minutesAgo: 5, link: '/replacement-history-ui',
         },
         {
             id: 'n-tmp-2', role: 'student', type: 'update',
             title: 'BMIT5678',
             desc: 'replacement class Tue 09:00 – 11:00 @ B201',
-            minutesAgo: 65, link: '/upcoming-replacements-ui',
+            minutesAgo: 65, link: '/replacement-history-ui',
         },
         {
             id: 'n-tmp-3', role: 'pl', type: 'submitted',
@@ -917,7 +918,7 @@ window.MockData = {
             id: 'n-tmp-6', role: 'student', type: 'update',
             title: 'BMIT2233',
             desc: 'replacement moved to Thu 08:00 – 10:00 @ B202',
-            minutesAgo: 2, link: '/upcoming-replacements-ui',
+            minutesAgo: 2, link: '/replacement-history-ui',
         },
         {
             id: 'n-tmp-7', role: 'pl', type: 'submitted',

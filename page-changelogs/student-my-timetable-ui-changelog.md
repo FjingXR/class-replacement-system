@@ -177,3 +177,9 @@ Enabled stub: click fires the shared `toast.show('Printing is coming soon')` bot
 Week persistence key namespaced to `studentTimetableWeek` (was the shared generic
 `currentWeek` — pages silently overwrote each other's saved week). Legacy-value migration
 handled once in `WeekNavigator.load()`; shared sorting/labels untouched.
+
+### Postscript — sweep-fixes-round-3 (2026-10-06, rename + logo)
+
+Student nav item renamed to "Replacement History" → `/replacement-history-ui` (page
+rename, see that changelog). Logo click now lands on Student My Timetable (homeUrl
+param) instead of the welcome view.

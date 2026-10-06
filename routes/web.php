@@ -36,8 +36,8 @@ Route::get('/student-my-timetable-ui', function () {
     return view('ui-design-templates.student-my-timetable-UI-design-template', ['activeNav' => 'my-timetable']);
 });
 
-Route::get('/upcoming-replacements-ui', function () {
-    return view('ui-design-templates.upcoming-replacements-UI-design-template', ['activeNav' => 'upcoming-replacements']);
+Route::get('/replacement-history-ui', function () {
+    return view('ui-design-templates.replacement-history-UI-design-template', ['activeNav' => 'replacement-history']);
 });
 
 Route::get('/request-approval-ui', function () {

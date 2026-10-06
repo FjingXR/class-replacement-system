@@ -187,3 +187,22 @@
 **Zero 🔴 blocking findings.** Sweep covered: 9 pages × (dark 1440 + light + 768 mobile), console logs, token audit, interaction click-throughs (approve, cancel, submit, book, filters, cascades), and cross-page consistency. No fixes applied — report only.
 
 
+
+## Round 3 addendum (2026-10-06 — user-directed, not sweep findings)
+
+Round 3 (`.sdd/changes/sweep-fixes-round-3`, verified PASS) was feature work rather
+than defect fixes, but it closed the sweep's one blind spot: **replacement-home's
+data table** (JS-built, missed by the original `<table` inventory grep) is now fully
+covered by the sortable-table consolidation, alongside Replacement History (renamed
+from Upcoming Replacements), My Request History and Request Approval. Also shipped:
+role-home logo rule (all 9 pages), `All Weeks` dropdown de-duplication on the student
+table, and the lecturer-side display-only columns made sortable where reasonable
+(Cohort(s) intentionally excluded — multi-value).
+
+**Sortable-table ledger (final):**
+| Page | Sortable | Non-sortable (by design) |
+|---|---|---|
+| Replacement History | Subject, Original Slot, New Slot, Lecturer, Status | # |
+| My Request History | Requested At, Course, Original Class, Requested Replacement, Venue, Students, Status | Cohort(s), Quick Cancel |
+| Request Approval | Requested At, Lecturer (by name), Course, Original Class, Proposed Replacement, Students, Urgency, Status | #, Actions |
+| Replacement Home | Course, Original Class, Days Left, Venue | #, Students, Cohort(s), Conflict Reason, Action |

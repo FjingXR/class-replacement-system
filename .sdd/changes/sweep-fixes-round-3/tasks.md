@@ -1,0 +1,23 @@
+# Tasks — sweep-fixes-round-3
+
+- [x] T1 git mv: blade → replacement-history-UI-design-template, changelog → replacement-history-changelog.md, plan doc → replacement-history-ui-plan.md
+- [x] T2 rename refs: routes/web.php; page blade (extends/title/pageKey/VIEW_KEY + **legacy-key migration**, navItems, MockData.replacementHistory, header string); student-my-timetable navItems; ui-common (NOTIF_ROLE_BY_PAGE `replacementHistory: 'student'` + §10.0 comment); mock-data (§2.12 base name + comment + 7 `link:` deep-link rows). Closure grep: only the intentional `LEGACY_VIEW_KEY` remains
+- [x] T3 **superseded** — helper already existed: `makeSortableHeader`/`compareBy` (ui-common.js:1156); design.md D-2 revised
+- [x] T4 request-approval renderHeader → shared helper (callback = currentPage reset + renderTable + saveFilters); local `toggleSort` deleted; arrows unified to `span.sort-arrow`
+- [x] T5 my-request-history — **no-op**: already on the shared helper (audit confirmed)
+- [x] T6 student table: `columns` config + `sortKeys`/`applySort` (composite keys, awaiting-PL rows last, chronological tiebreak) + head via helper; desktop rows + mobile cards share one `visible` array
+- [x] T7 layout `homeUrl` param → `window.PAGE_HOME` emit; ui-common `navigateHome()`; homeUrl on 9 pages (7 staff, 2 student); **arrangement's page-local `navigateHome()` (shadowing the shared one, hardcoded `navigateTo('/')`) updated to `window.PAGE_HOME || '/'`**
+- [x] T8 Playwright (all 0 console errors): rename (route 200, title/header/nav/active, old route 404); student sorting — Subject asc/desc + `#` renumber, New Slot desc → awaiting-PL last, Status asc → P-block then R-block (desktop + mobile card parity), Original Slot; sort holds under All-Weeks; approval header regression (checkbox th + 5 sortable + arrow span + toggle); history page smoke (3 sortable, default ▼); logo — staff page → `/my-timetable-ui`, student page → `/student-my-timetable-ui`, arrangement → `/my-timetable-ui`; dark-theme spot check
+- [x] T8+ **BONUS fix — `All Weeks` de-duplication**: the page had BOTH its own hand-inserted `All Weeks` IIFE (pre-pending after populate) AND the shared helper's `includeAll` → two identical options. Single writer = `populateWeekSelect(…, { includeAll: true })`; IIFE removed (bonus: the option now survives breakpoint re-populate, which the hand-inserted one didn't). Verified: 15 options, one `all` at index 0, stable across 768↔1440, 0 console errors. (Earlier "lost in refactor" diagnosis corrected — the first probe had raced the IIFE.)
+- [x] T9 changelog postscripts below + lint:check (pre-existing backend debt only, none of this round's files)
+- [x] T10 closure grep + this artifact set
+
+- [x] T11 **(user extension, same round)** previously display-only columns made sortable where reasonable — history: Requested Replacement (date+time), Requested Venue, Students, Status (process-order map); approval: Lecturer (**by resolved name**, not stored id), Course Code & Name, Students. Deliberately NOT sortable: Cohort(s) (multi-value — misleading single key, tip says why) and Actions columns. Verified: history — replacement chronological, venue grouped, status P→A block; approval — lecturer alphabetical by name, students 25→50; 0 console errors
+- [x] T12 **bug fix (user report)** — duplicate `All Weeks` in weekFilter: page's legacy hand-insert option IIFE + shared `includeAll` both ran. Single writer = helper flag; IIFE deleted (also fixes silent loss of the option on breakpoint re-populate). Verified 15 options / one `all` / stable across 768↔1440
+
+- [x] T13 **(user extension)** replacement-home: **Days Left** (computed urgency — asc = Overdue first, desc = nearest-to-today; ordering mirrors Original Class by derivation, header = the urgency affordance users think in) and **Venue** (alphabetical grouping) made sortable; Students/Cohort(s)/Conflict Reason deliberately left (multi-value / existing reason filter). This table was missed by round-3's `<table` grep (JS-built) — now the complete item-4 inventory. Verified: arrows + both directions + venue grouping, 0 console errors. (An initial "no flip" reading was a test artifact: switching fields resets to asc by design, matching the other pages.)
+
+## Notes
+- Week arrows while `All Weeks` is selected just clamp at index 0 (shared index-based helpers) — pre-existing shared behaviour, cosmetic, left as-is.
+- Approval's Lecturer / Course / Students columns remain non-sortable by design (queue is timestamp/urgency/status-driven) — matches the original design intent.
+- Sort state is session-only on the student table (VIEW_KEY persists week/past only), mirroring approval/history's persistence of filters but not sort.

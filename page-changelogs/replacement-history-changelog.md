@@ -158,3 +158,27 @@ All 9 proposal §6 criteria pass in-browser:
 ## Post-2026-10-02 cross-reference
 
 The hardcoded badge feed built with this page (`notifBadge.textContent = … notificationCount`, `'notifCount' => 3`, and the server-side "3" echo) was removed by the `notifications-panel` change — the bell badge is now computed by `refreshNotifBadge()` in `ui-common.js`; see `notifications-panel-changelog.md`.
+
+### Postscript — sweep-fixes-round-3 (2026-10-06, RENAME + sorting)
+
+1. **Page renamed** "Upcoming Replacements" → **"Replacement History"** (route
+   `/replacement-history-ui`, nav key `replacement-history`, pageKey
+   `replacementHistory`): the list was never only upcoming — Pending + Confirmed +
+   Past rows with `Show Past` and the Past summary card. Legacy localStorage view
+   state under `upcoming-replacements-view` migrates once to
+   `replacement-history-view`. Changelog + plan doc `git mv`'d to match.
+2. **Sortable columns** (house pattern via shared `makeSortableHeader`): Subject,
+   Original Slot (week→day→time), New Slot (awaiting-PL rows sort last), Lecturer,
+   Status (Pending first, then confirmed; chronological tiebreak). `#` stays a row
+   number and re-numbers under any sort; desktop table + mobile cards share one
+   ordered array. Sort state is session-only.
+3. **Fix: `All Weeks` de-duplicated** — the page historically hand-inserted its
+   `All Weeks` option via a page-side IIFE *after* `populateWeekSelect`; when the
+   shared helper's `includeAll` flag was switched on for this page both ran and the
+   dropdown showed two. Single writer now = `populateWeekSelect(…, { includeAll: true })`
+   (the flag already existed); the IIFE is gone, which also means the option survives
+   the 768-breakpoint re-populate (the hand-inserted one silently vanished there).
+
+**Addendum (2026-10-06, later same day):** the duplicate `All Weeks` fix above
+superseded the page's own insert-IIFE entirely; default load keeps the current week
+("Week 11") and a previously saved `All Weeks` view restores from VIEW_KEY.

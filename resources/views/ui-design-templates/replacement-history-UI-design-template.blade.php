@@ -1,17 +1,18 @@
 @extends('layouts.ui-template', [
-    'activeNav' => 'upcoming-replacements',
-    'pageKey' => 'upcomingReplacements',
+        'homeUrl' => '/student-my-timetable-ui',
+    'activeNav' => 'replacement-history',
+    'pageKey' => 'replacementHistory',
     'navItems' => [
         ['key'=>'my-timetable','label'=>'Student My Timetable','href'=>'/student-my-timetable-ui'],
-        ['key'=>'upcoming-replacements','label'=>'Upcoming Replacements','href'=>'/upcoming-replacements-ui'],
+        ['key'=>'replacement-history','label'=>'Replacement History','href'=>'/replacement-history-ui'],
     ],
 ])
 
-@section('title', 'Upcoming Replacements')
+@section('title', 'Replacement History')
 
 @section('page-styles')
 
-        /* ─── Upcoming list: TABLE on desktop (shared .timetable/.data-table styles),
+        /* ─── Replacement history list: TABLE on desktop (shared .timetable/.data-table styles),
                CARDS on mobile only (user revision 2026-10-01) ─── */
         .upcoming-list {
             display: none; /* cards are mobile-only */
@@ -107,7 +108,7 @@
 @section('content')
 
         <!-- ─── Page Header ─── -->
-        @include('partials.ui-page-header', ['title' => 'Upcoming Replacements', 'description' => 'Replacement classes confirmed or pending for your cohort.', 'chips' => [['label' => 'RSD3(S1)G2']]])
+        @include('partials.ui-page-header', ['title' => 'Replacement History', 'description' => 'Replacement classes confirmed or pending for your cohort.', 'chips' => [['label' => 'RSD3(S1)G2']]])
 
         <!-- ─── Toolbar: week navigation + show-past toggle ─── -->
         <div class="toolbar">
@@ -145,7 +146,9 @@
         // ─── Top-level functions (inline handler strings run in global scope) ───
 
         // ─── Persisted view state (house pattern, cf. my-request-history saveFilters/restoreFilters) ───
-        const VIEW_KEY = 'upcoming-replacements-view';
+        const VIEW_KEY = 'replacement-history-view';
+            /* legacy key from the pre-rename page (2026-10-06) */
+            const LEGACY_VIEW_KEY = 'upcoming-replacements-view';
         function saveView() {
             try {
                 localStorage.setItem(VIEW_KEY, JSON.stringify({
@@ -166,6 +169,58 @@
                 ' (' + (h === 1 ? '1 hr' : h + ' hrs') + ') @ ' + venue;
         }
 
+        /* ── R-2 (round-3): sortable columns — shared makeSortableHeader house
+           pattern (cf. request-approval / my-request-history). Null field =
+           the natural chronological order below; sort state is session-only
+           (the VIEW_KEY persists week/past filters, not the sort). ── */
+        const columns = [
+            { label: '#', sortable: false, tip: 'Row number' },
+            { label: 'Subject', sortable: true, field: 'subject', tip: 'Course code and name' },
+            { label: 'Original Slot', sortable: true, field: 'originalSlot', tip: 'Week, day and time of the class being replaced' },
+            { label: 'New Slot', sortable: true, field: 'newSlot', tip: 'Proposed replacement slot — rows awaiting PL approval sort last' },
+            { label: 'Lecturer', sortable: true, field: 'lecturer', tip: 'Lecturer handling the replacement' },
+            { label: 'Status', sortable: true, field: 'status', tip: 'Pending first, then confirmed — nearest slot breaks ties' },
+        ];
+        let sortState = { field: null, dir: 'asc' };
+
+        const sortKeys = {
+            subject: r => r.code + ' ' + r.name,
+            originalSlot: r => [r.week, r.di, r.start],
+            /* awaiting-PL rows have no replacement yet — they sort last (both directions) */
+            newSlot: r => (r.newDay ? [r.week, r.newDi, r.newStart] : null),
+            lecturer: r => r.lecturer || '',
+            status: r => (r.status === 'pending' ? 0 : 1),
+        };
+
+        function applySort(visible, all) {
+            if (!sortState.field || !sortKeys[sortState.field]) {
+                visible.sort(all
+                    ? (a, b) => (a.week - b.week) || (a.di - b.di) || (a.start - b.start)
+                    : (a, b) => (a.di - b.di) || (a.start - b.start));
+                return;
+            }
+            const dir = sortState.dir === 'asc' ? 1 : -1;
+            const key = sortKeys[sortState.field];
+            visible.sort((a, b) => {
+                const ka = key(a), kb = key(b);
+                if (ka === null && kb === null) return 0;
+                if (ka === null) return 1;   /* nulls stay last regardless of direction */
+                if (kb === null) return -1;
+                let c;
+                if (Array.isArray(ka)) {
+                    c = 0;
+                    for (let i = 0; i < ka.length && c === 0; i++) {
+                        c = (ka[i] < kb[i] ? -1 : ka[i] > kb[i] ? 1 : 0);
+                    }
+                } else {
+                    c = (ka < kb ? -1 : ka > kb ? 1 : 0);
+                }
+                if (c !== 0) return c * dir;
+                /* tiebreak: the natural chronological order */
+                return (a.week - b.week) || (a.di - b.di) || (a.start - b.start);
+            });
+        }
+
         function renderUpcoming() {
             // AD-2: select values are 1-based strings; dataset weeks are 0-based.
             // 'all' = All Weeks option (page-side addition; shared helpers are
@@ -176,7 +231,7 @@
             const showPast = document.getElementById('showPast').checked;
 
             // AD-5: MockData is read-only — slice() before filtering
-            const visible = MockData.upcomingReplacements.slice()
+            const visible = MockData.replacementHistory.slice()
                 .filter(r => (all || r.week === w0) && (r.week >= cur || showPast));
 
             // AD-11: summary counts from the SAME visible predicate
@@ -187,17 +242,20 @@
             document.getElementById('sumPast').textContent     = visible.filter(r => r.status === 'replacement' && r.week < cur).length;
             document.getElementById('sumHours').textContent    = visible.reduce((s, r) => s + (r.end - r.start + 1) * 0.5, 0);
 
-            visible.sort(all
-                ? (a, b) => (a.week - b.week) || (a.di - b.di) || (a.start - b.start)
-                : (a, b) => (a.di - b.di) || (a.start - b.start));
+            applySort(visible, all);
 
             // ── Desktop table (shared .timetable/.data-table house pattern, cf. my-request-history) ──
             const weekDays = generateWeekData(); // one build per render; rows index into it
             const head = document.getElementById('upcomingHead');
             const body = document.getElementById('upcomingBody');
-            head.innerHTML = '<tr>' +
-                ['#', 'Subject', 'Original Slot', 'New Slot', 'Lecturer', 'Status'].map(h => '<th>' + h + '</th>').join('') +
-            '</tr>';
+            head.innerHTML = '';
+            const htr = document.createElement('tr');
+            columns.forEach(function(col) {
+                htr.appendChild(makeSortableHeader(col, sortState, function() {
+                    renderUpcoming();
+                }));
+            });
+            head.appendChild(htr);
             body.innerHTML = visible.map((r, i) => {
                 const past = r.week < cur;
                 const tip = r.status === 'replacement'
@@ -251,7 +309,7 @@
         }
 
         function openReplacementModal(id) {
-            const r = MockData.upcomingReplacements.find(x => x.id === id);
+            const r = MockData.replacementHistory.find(x => x.id === id);
             if (!r) return;
             const pending = r.status === 'pending';
             const flagsTuple = (MockData.cohortTimetable.rsd3g2Flags[r.week] || [])
@@ -335,21 +393,26 @@
             if (chipEl) chipEl.textContent = MockData.semester.chipText;
 
             // BINDING: page must load on 0-based week 9 ("Week 10"), never "Week 1"
-            populateWeekSelect('weekFilter', { selected: currentWeekIndex() + 1 });
-            // All Weeks option (page-side; prepended AFTER populate so the
-            // value-based selection above still lands on the current week)
-            (function() {
-                const sel = document.getElementById('weekFilter');
-                const opt = document.createElement('option');
-                opt.value = 'all';
-                opt.textContent = 'All Weeks';
-                sel.insertBefore(opt, sel.firstChild);
-            })();
+            /* includeAll: the All Weeks option renderUpcoming() filters on.
+               Single writer = the shared helper (a page-side IIFE prepend used
+               to double it up after includeAll landed 2026-10-06, and the old
+               hand-inserted option also vanished on breakpoint re-populate). */
+            populateWeekSelect('weekFilter', { selected: currentWeekIndex() + 1, includeAll: true });
 
             // Restore persisted view (defaults to the current week on first visit)
             (function() {
                 let saved = {};
-                try { saved = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}'); } catch (e) { saved = {}; }
+                try {
+                    saved = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}');
+                } catch (e) { saved = {}; }
+                /* legacy key from the pre-rename page (2026-10-06) — migrate once */
+                if (Object.keys(saved).length === 0) {
+                    try {
+                        const legacy = JSON.parse(localStorage.getItem(LEGACY_VIEW_KEY) || 'null');
+                        if (legacy) { saved = legacy; localStorage.setItem(VIEW_KEY, JSON.stringify(legacy)); }
+                        localStorage.removeItem(LEGACY_VIEW_KEY);
+                    } catch (e2) { /* ignore */ }
+                }
                 const sel = document.getElementById('weekFilter');
                 if (saved.week && (saved.week === 'all' || sel.querySelector('option[value="' + saved.week + '"]'))) {
                     sel.value = saved.week;
