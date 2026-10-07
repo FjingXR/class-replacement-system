@@ -285,3 +285,13 @@ shared `daysLeftLabel()` (ui-common) renders **"Overdue (N days ago)"** with sin
 handling, so the table cell, card view and detail modal all show it; `.col-urgency`
 widened 100→150px to fit without wrapping. Diff computed against the `mockNow` anchor
 like every other lead-time value.
+
+---
+
+## [2026-10-07] Quick-view modal grouped into tabs
+
+Replacement Details quick-view now splits its 15 flat rows into 3 tabs:
+**Status** (urgency badge, description, conflict reason) / **Class**
+(code, name, type, cohorts, students) / **Schedule** (week, day, date, times,
+duration, venue). Same tab component as my-request-history's Request Details.
+Blade: `replacement-home-UI-design-template.blade.php` `quickView()`.

@@ -459,3 +459,11 @@ hover via the shared `data-tip` tooltip system. Label-less holiday flags show
 no tooltip. One-line change in `HtmlBuilder.dayHeader` (ui-common.js:2155);
 applies to every timetable page via the shared builder.
 
+
+---
+
+## [2026-10-07] Class Details modal grouped into tabs
+
+Venue class-detail modal now splits into 2 tabs: **Session** (code, name,
+lecturer, cohort, start/end) / **Venue & Status** (venue, status badge,
+description, remarks). Blade: `venue-timetable-UI-design-template.blade.php`.

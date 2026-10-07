@@ -835,24 +835,45 @@ function computeSummary(events, days) {
  * @param {string} [cfg.modalId='classModal'] - Modal element ID
  * @param {string} [cfg.title] - Custom title (default: event.code)
  * @param {Array} [cfg.groups] - Grouped layout: [{ heading, rows: [{ label, value, strong? }] }].
- *   When present, renders one section per group (tidier for multi-category modals)
- *   and replaces the flat single-section layout. Additive — omit for the original behavior.
+ *   When present, renders one category per group; 2+ groups become a tab bar
+ *   (same tabbed taxonomy as my-request-history's Request Details). Additive —
+ *   omit for the flat event layout.
  */
-function openClassModal(cfg) {
-    // ── Grouped layout (additive, §10.0 rule 6 — detail without overwhelm) ──
-    if (cfg.groups) {
-        const bodyHtml = cfg.groups.map(function(g) {
-            return DetailModal.section(g.heading, g.rows.map(function(r) {
+/**
+ * Render grouped rows inside a detail modal: 2+ groups → a modal tab bar with
+ * one tab per category (like my-request-history's Request Details); a single
+ * group → plain stacked body. Shared by openClassModal and page modals.
+ * @param {object} opts - { modalId, title, subtitle?, timeline? }
+ * @param {Array} groups - [{ heading, rows: [{ label, value, strong? }] }]
+ * @returns {number} category count rendered (1 = plain body, 2+ = tabs)
+ */
+function renderModalGroups(opts, groups) {
+    const tabs = (groups || []).filter(g => g.rows && g.rows.length).map(function (g) {
+        return {
+            key: String(g.heading).toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            label: g.heading,
+            html: DetailModal.section(g.heading, g.rows.map(function (r) {
                 return DetailModal.row(r.label, r.value, { strong: r.strong });
-            }).join(''));
-        }).join('');
-        DetailModal.render({
+            }).join(''))
+        };
+    });
+    if (tabs.length > 1) {
+        DetailModal.render(Object.assign({}, opts, { tabs: tabs }));
+    } else {
+        DetailModal.render(Object.assign({}, opts, { body: tabs.length ? tabs[0].html : '' }));
+    }
+    return tabs.length;
+}
+
+function openClassModal(cfg) {
+    // ── Grouped layout (additive, §10.0 rules 5/6 — grouped categories as tabs) ──
+    if (cfg.groups) {
+        renderModalGroups({
             modalId: cfg.modalId || 'classModal',
             title: cfg.title || 'Class Details',
             subtitle: cfg.subtitle || '',
-            timeline: cfg.timeline || null,
-            body: bodyHtml
-        });
+            timeline: cfg.timeline || null
+        }, cfg.groups);
         return;
     }
 
@@ -895,11 +916,26 @@ function openClassModal(cfg) {
         cfg.extraFields.forEach((f, i) => { rows.splice(statusIdx + i, 0, f); });
     }
 
-    const bodyHtml = DetailModal.section('Class Information',
-        rows.map(r => DetailModal.row(r.label, r.value, { strong: r.strong })).join('')
-    );
+    // ── Auto-grouped layout (§10.0 rules 5/6 — detail grouped, not a wall) ──
+    // Same three-category taxonomy the request-history modal uses. Rows keep
+    // their order inside each bucket; unknown labels default to Class Information.
+    const STATUS_LABELS = ['Status', 'Status Description', 'Requested At', 'Requested By', 'Rejection Reason', 'Remarks'];
+    const SCHEDULE_LABELS = ['Day', 'Date', 'Start Time', 'End Time', 'Duration', 'Venue'];
+    function bucketOf(label) {
+        if (STATUS_LABELS.indexOf(label) >= 0) return 'Status';
+        if (SCHEDULE_LABELS.indexOf(label) >= 0) return 'Schedule';
+        return 'Class Information';
+    }
+    const buckets = rows.reduce(function (acc, r) {
+        const k = bucketOf(r.label);
+        (acc[k] = acc[k] || []).push(r);
+        return acc;
+    }, {});
+    const groups = ['Class Information', 'Schedule', 'Status']
+        .filter(k => buckets[k] && buckets[k].length)
+        .map(k => ({ heading: k, rows: buckets[k] }));
 
-    DetailModal.render({
+    renderModalGroups({
         modalId: cfg.modalId || 'classModal',
         title: cfg.title || 'Class Details',
         subtitle: (event.code || '') + (event.name ? ' \u2014 ' + event.name : ''),
@@ -910,8 +946,7 @@ function openClassModal(cfg) {
                 { label: 'Awaiting Replacement', time: 'Next', state: 'pending' },
               ]
             : null,
-        body: bodyHtml
-    });
+    }, groups);
 
     // Add "View Full Request" button to footer right side for own pending requests
     if (event.status === 'pending' && event.requestId) {

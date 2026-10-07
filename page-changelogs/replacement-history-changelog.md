@@ -182,3 +182,11 @@ The hardcoded badge feed built with this page (`notifBadge.textContent = … not
 **Addendum (2026-10-06, later same day):** the duplicate `All Weeks` fix above
 superseded the page's own insert-IIFE entirely; default load keeps the current week
 ("Week 11") and a previously saved `All Weeks` view restores from VIEW_KEY.
+
+---
+
+## [2026-10-07] Class modal groups → tabs
+
+The class detail modal's four grouped sections (Class / Original Slot /
+New Slot / Status) now render as a **tab bar** via the shared
+`renderModalGroups` helper instead of one long stacked body.

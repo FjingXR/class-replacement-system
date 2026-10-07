@@ -136,3 +136,20 @@ one place after the literal — §2.13 contract comment added (backend day: drop
 4. Sortable-header consolidation recorded in request-approval's postscript — the
    shared `makeSortableHeader`/`compareBy` are now the single implementation
    across all three data tables (student table included).
+
+### Postscript — group/detail-modals round (2026-10-07, tabbed class modals)
+
+1. `ui-common.js` — new shared helper `renderModalGroups(opts, groups)`: 2+ groups
+   render a `.modal-tabs` bar (one tab per category, matching
+   my-request-history's Request Details); 1 group renders a plain stacked body.
+2. `openClassModal` flat layout now **auto-groups** rows into
+   `Class Information` / `Schedule` / `Status` buckets (label-list based,
+   unknown labels default to Class Information) and renders via the helper —
+   so my-timetable, cohort-timetable and student-my-timetable class modals are
+   tabbed with zero per-page markup changes (`extraFields` unaffected:
+   Cohort/Total Students land in Class Information).
+3. `openClassModal(cfg.groups)` branch (replacement-history page) now renders
+   through the same helper — 4 tabs: Class / Original Slot / New Slot / Status.
+
+Verified: playwright smoke on all 8 modal pages — tab bar present, tab 2 click
+switches panel, 0 console errors (`/tmp/opencode/modal_tabs_smoke.py`).

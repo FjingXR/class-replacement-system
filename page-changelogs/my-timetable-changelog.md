@@ -322,3 +322,12 @@ hover via the shared `data-tip` tooltip system. Label-less holiday flags show
 no tooltip. One-line change in `HtmlBuilder.dayHeader` (ui-common.js:2155);
 applies to every timetable page via the shared builder.
 
+
+---
+
+## [2026-10-07] Class modal grouped into tabs (shared DetailModal taxonomy)
+
+The Class Details modal now groups rows into three tabs — Class Information /
+Schedule / Status — via the shared `renderModalGroups` helper in
+`ui-common.js` (see oop-js-consolidation postscript). No blade changes on this
+page; behavior comes from `openClassModal`'s auto-grouping.

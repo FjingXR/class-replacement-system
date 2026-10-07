@@ -927,18 +927,22 @@
                 modalId: 'eventModal',
                 title: 'Class Details',
                 subtitle: e.code + ' · ' + (e.name || ''),
-                body: DetailModal.section('Class Information',
-                    DetailModal.row('Subject Code', e.code, { strong: true }) +
-                    DetailModal.row('Subject Name', e.name || '—') +
-                    DetailModal.row('Lecturer', e.lecturer || '—') +
-                    DetailModal.row('Venue', venueStr) +
-                    DetailModal.row('Cohort', e.cohort || '—') +
-                    DetailModal.row('Start Time', startTime, { strong: true }) +
-                    DetailModal.row('End Time', endTime) +
-                    DetailModal.row('Status', '<span class="badge badge-' + e.status + '">' + StatusText.label(e.status) + '</span>') +
-                    DetailModal.row('Status Description', e.status === 'pending' ? 'Replacement request awaiting approval' : 'Class booked for this venue') +
-                    DetailModal.row('Remarks', e.remarks || '—')
-                )
+                tabs: [
+                    { key: 'session', label: 'Session', html: DetailModal.section('Session',
+                        DetailModal.row('Subject Code', e.code, { strong: true }) +
+                        DetailModal.row('Subject Name', e.name || '—') +
+                        DetailModal.row('Lecturer', e.lecturer || '—') +
+                        DetailModal.row('Cohort', e.cohort || '—') +
+                        DetailModal.row('Start Time', startTime, { strong: true }) +
+                        DetailModal.row('End Time', endTime)
+                    ) },
+                    { key: 'venue-status', label: 'Venue & Status', html: DetailModal.section('Venue & Status',
+                        DetailModal.row('Venue', venueStr) +
+                        DetailModal.row('Status', '<span class="badge badge-' + e.status + '">' + StatusText.label(e.status) + '</span>') +
+                        DetailModal.row('Status Description', e.status === 'pending' ? 'Replacement request awaiting approval' : 'Class booked for this venue') +
+                        DetailModal.row('Remarks', e.remarks || '—')
+                    ) },
+                ]
             });
         }
 

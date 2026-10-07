@@ -475,23 +475,29 @@
                 modalId: 'quickViewModal',
                 title: 'Replacement Details',
                 subtitle: c.code + ' · ' + c.name + ' (' + typeLabel + ')',
-                body: DetailModal.section('Replacement Details',
-                    DetailModal.row('Status', '<span class="urgency-badge ' + urgencyCls + '">' + daysLeftLabel(daysLeftVal) + '</span>') +
-                    DetailModal.row('Status Description', daysLeftVal < 0 ? 'Class date has passed — you can still arrange a replacement in any upcoming week' : daysLeftVal <= 3 ? 'Urgent — arrange a replacement soon' : daysLeftVal <= 7 ? 'Approaching — plan a replacement' : 'Within normal lead time') +
-                    DetailModal.row('Conflict Reason', '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>') +
-                    DetailModal.row('Subject Code', c.code, { strong: true }) +
-                    DetailModal.row('Subject Name', c.name) +
-                    DetailModal.row('Class Type', typeLabel) +
-                    DetailModal.row('Week', 'Week ' + (wn || '-')) +
-                    DetailModal.row('Day', c.day) +
-                    DetailModal.row('Date', formatDate(c.date) + weekTag) +
-                    DetailModal.row('Start Time', to12h(c.timeStart)) +
-                    DetailModal.row('End Time', to12h(c.timeEnd)) +
-                    DetailModal.row('Duration', c.duration + ' hr' + (c.duration > 1 ? 's' : '')) +
-                    DetailModal.row('Venue', c.venue) +
-                    DetailModal.row('Students', String(c.totalStudents)) +
-                    DetailModal.row('Cohort(s)', c.cohorts.join(', '))
-                )
+                tabs: [
+                    { key: 'status', label: 'Status', html: DetailModal.section('Status',
+                        DetailModal.row('Status', '<span class="urgency-badge ' + urgencyCls + '">' + daysLeftLabel(daysLeftVal) + '</span>') +
+                        DetailModal.row('Status Description', daysLeftVal < 0 ? 'Class date has passed — you can still arrange a replacement in any upcoming week' : daysLeftVal <= 3 ? 'Urgent — arrange a replacement soon' : daysLeftVal <= 7 ? 'Approaching — plan a replacement' : 'Within normal lead time') +
+                        DetailModal.row('Conflict Reason', '<span class="badge ' + badgeClass(c.conflictReason) + '">' + c.conflictReason + '</span>')
+                    ) },
+                    { key: 'class', label: 'Class', html: DetailModal.section('Class',
+                        DetailModal.row('Subject Code', c.code, { strong: true }) +
+                        DetailModal.row('Subject Name', c.name) +
+                        DetailModal.row('Class Type', typeLabel) +
+                        DetailModal.row('Cohort(s)', c.cohorts.join(', ')) +
+                        DetailModal.row('Students', String(c.totalStudents))
+                    ) },
+                    { key: 'schedule', label: 'Schedule', html: DetailModal.section('Schedule',
+                        DetailModal.row('Week', 'Week ' + (wn || '-')) +
+                        DetailModal.row('Day', c.day) +
+                        DetailModal.row('Date', formatDate(c.date) + weekTag) +
+                        DetailModal.row('Start Time', to12h(c.timeStart)) +
+                        DetailModal.row('End Time', to12h(c.timeEnd)) +
+                        DetailModal.row('Duration', c.duration + ' hr' + (c.duration > 1 ? 's' : '')) +
+                        DetailModal.row('Venue', c.venue)
+                    ) },
+                ]
             });
         }
 
