@@ -77,7 +77,7 @@
                 ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Normal or replacement sessions by other lecturers'],
                 ['color' => 'var(--color-surface-variant)', 'label' => 'Others\' Pending', 'tip' => 'Replacement request by other lecturers, awaiting PL approval'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Your Pending', 'tip' => 'Your replacement request, awaiting PL approval'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Conflict', 'tip' => 'Scheduling conflict or public holiday'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday'],
             ]
         ])
 
@@ -361,7 +361,10 @@
                         return;
                     }
                     var isMine = e.lecturer === MockData.currentUser.name;
-                    if (e.status === 'pending') {
+                    if (e.status === 'conflict') {
+                        // §10.0 legend A: Conflict = red, same colour on every page
+                        div.classList.add('event-conflict');
+                    } else if (e.status === 'pending') {
                         div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
                     } else {
                         div.classList.add(isMine ? 'event-mine' : 'event-others');

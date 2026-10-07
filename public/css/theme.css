@@ -886,6 +886,9 @@ html.dark .filter-select {
 .badge-replacement { background: var(--color-primary); color: var(--color-on-primary); }
 .badge-pending { background: var(--color-warning); color: var(--color-on-warning); }
 .badge-conflict { background: var(--color-error); color: var(--color-on-error); }
+/* §10.0 legend: "Conflict / Public Holiday" share red — holiday class badge
+   (added 2026-10-07 alongside openClassModal's unified st token) */
+.badge-public-holiday { background: var(--color-error); color: var(--color-on-error); }
 /* Neutral "Past" qualifier chip (upcoming-replacements) — §10.0 rule 2: same name+color for the same meaning */
 .badge-past {
     background: var(--color-surface-variant);

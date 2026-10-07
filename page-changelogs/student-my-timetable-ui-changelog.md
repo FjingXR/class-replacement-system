@@ -200,3 +200,21 @@ applies to every timetable page via the shared builder.
 
 Same as my-timetable: `openClassModal` auto-groups rows into Class Information /
 Schedule / Status tabs via `renderModalGroups` (ui-common.js).
+
+---
+
+## [2026-10-07] Confirmed replacement modal shows the replaced original class
+
+Shared `openClassModal` enhancement — replacement blocks show an
+**Original Class** tab when the event carries `replacedFor` or a date-shaped
+remarks string (rsd3-g2 flags now date the prior week's same weekday).
+
+---
+
+## [2026-10-07] Conflict blocks now render red (was: unstyled grey)
+
+A conflict-status block (e.g. BMIT2073, "Lecturer on leave" week) rendered with
+no status class because the shared default classifier lacked a conflict
+branch — the block in your paste (`event-block span-4` with no `event-*`
+class) is exactly that. Fixed in `buildTimetableGrid` (ui-common.js): conflict
+events now get `.event-conflict` (red, §10.0 legend A).

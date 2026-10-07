@@ -331,3 +331,31 @@ The Class Details modal now groups rows into three tabs — Class Information /
 Schedule / Status — via the shared `renderModalGroups` helper in
 `ui-common.js` (see oop-js-consolidation postscript). No blade changes on this
 page; behavior comes from `openClassModal`'s auto-grouping.
+
+---
+
+## [2026-10-07] Confirmed replacement modal shows the replaced original class
+
+Clicking a blue replacement block now shows a fourth tab **Original Class** —
+Original Date (weekday + dd-Mon-yyyy), Original Time, Original Venue and
+Original Conflict reason — built from the seeded `replacedFor`/`replacedReason`
+fields. The original week's same slot is now flagged red 'conflict' with that
+same reason, so the grid tells the full conflict → replacement story
+(e.g. AMCS2093 P DFT2: Fri 13-Nov B011 conflict → Fri 27-Nov replacement).
+
+---
+
+## [2026-10-07] Conflict blocks now render red (was: unstyled grey)
+
+Shared-default classifier fix in `buildTimetableGrid` (ui-common.js) — conflict
+events get `.event-conflict` (red) instead of no status class.
+
+## [2026-10-07] Demo conflict reasons made venue-coherent (follow-up)
+
+A dataset audit showed NO overlapping blocks anywhere — reasons implying a
+visible counterpart ("Clash with another module", "Venue double-booked")
+can't be backed up on the grid. The seeded demo reasons are now venue-aware:
+labs (B005/B006/B009-B011) → "Lab equipment failure", other venues →
+"Lecturer on leave". Both halves of each conflict→replacement pair carry the
+same reason; the raw cycle and overrides live in
+`seed_mock_data.py` (CONFLICT_REMARKS / default_reason / reason override).

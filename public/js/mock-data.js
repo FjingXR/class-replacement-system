@@ -218,7 +218,7 @@ window.MockData = {
 // §2.6  myTimetable — En. Lim Jia Zheng's own week (semester-202505 lecturer
     // PDF p.41, 7 blocks / 10.0 h), written out for all 14 weeks so that
     // replacement-arrangement's checkConflict() sees the real classes too.
-    // Week 11 is the all-normal seed; weeks 1, 2, 4, 9 carry the demo
+    // Week 11 is the all-normal seed; weeks 0, 1, 2, 4, 7, 9 carry the demo
     // replacement / pending / conflict states; week 3 is empty to exercise
     // the empty state. The page MUST copy before mutating (MockData is
     // read-only) — .slice() suffices, no individual field is ever rewritten.
@@ -228,8 +228,8 @@ window.MockData = {
         eventsByWeek: {
             0: [
                 { di: 0, start: 6, end: 9, code: 'AMCS2093', type: 'L', venue: 'B110', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1) + DSF2(S1)', cohorts: ['DFT2(S1)', 'DSF2(S1)'], studentCounts: [28, 22], status: 'normal', name: 'Operating Systems', remarks: '' },
-                { di: 1, start: 12, end: 15, code: 'BMIT2013', type: 'L', venue: 'B009', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'normal', name: 'Web-Based Integrated Systems', remarks: '' },
-                { di: 2, start: 2, end: 5, code: 'BMIT2013', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'normal', name: 'Web-Based Integrated Systems', remarks: '' },
+                { di: 1, start: 12, end: 15, code: 'BMIT2013', type: 'L', venue: 'B009', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'conflict', name: 'Web-Based Integrated Systems', remarks: 'Lab equipment failure' },
+                { di: 2, start: 2, end: 5, code: 'BMIT2013', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'conflict', name: 'Web-Based Integrated Systems', remarks: 'Lab equipment failure' },
                 { di: 2, start: 12, end: 13, code: 'AMCS2093', type: 'T', venue: 'B106', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 11, end: 12, code: 'AMCS2093', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 13, end: 14, code: 'AMCS2093', type: 'T', venue: 'B107', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'normal', name: 'Operating Systems', remarks: '' },
@@ -237,17 +237,17 @@ window.MockData = {
             ],
             1: [
                 { di: 0, start: 6, end: 9, code: 'AMCS2093', type: 'L', venue: 'B110', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1) + DSF2(S1)', cohorts: ['DFT2(S1)', 'DSF2(S1)'], studentCounts: [28, 22], status: 'normal', name: 'Operating Systems', remarks: '' },
-                { di: 1, start: 12, end: 15, code: 'BMIT2013', type: 'L', venue: 'B009', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'replacement', name: 'Web-Based Integrated Systems', remarks: '29-Sep-2026' },
+                { di: 1, start: 12, end: 15, code: 'BMIT2013', type: 'L', venue: 'B009', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'replacement', name: 'Web-Based Integrated Systems', remarks: '', replacedFor: '22-Sep-2026', replacedReason: 'Lab equipment failure' },
                 { di: 2, start: 2, end: 5, code: 'BMIT2013', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'normal', name: 'Web-Based Integrated Systems', remarks: '' },
                 { di: 2, start: 12, end: 13, code: 'AMCS2093', type: 'T', venue: 'B106', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 11, end: 12, code: 'AMCS2093', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'pending', name: 'Operating Systems', remarks: '', requestedAt: '28 Sep 2026, 11:00 AM', requestedBy: 'En. Lim Jia Zheng', requestId: 3 },
-                { di: 3, start: 13, end: 14, code: 'AMCS2093', type: 'T', venue: 'B107', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'normal', name: 'Operating Systems', remarks: '' },
+                { di: 3, start: 13, end: 14, code: 'AMCS2093', type: 'T', venue: 'B107', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'conflict', name: 'Operating Systems', remarks: 'Lecturer on leave' },
                 { di: 4, start: 6, end: 7, code: 'AMCS2093', type: 'P', venue: 'B011', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'normal', name: 'Operating Systems', remarks: '' },
             ],
             2: [
                 { di: 0, start: 6, end: 9, code: 'AMCS2093', type: 'L', venue: 'B110', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1) + DSF2(S1)', cohorts: ['DFT2(S1)', 'DSF2(S1)'], studentCounts: [28, 22], status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 1, start: 12, end: 15, code: 'BMIT2013', type: 'L', venue: 'B009', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'normal', name: 'Web-Based Integrated Systems', remarks: '' },
-                { di: 2, start: 2, end: 5, code: 'BMIT2013', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'replacement', name: 'Web-Based Integrated Systems', remarks: '07-Oct-2026' },
+                { di: 2, start: 2, end: 5, code: 'BMIT2013', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'replacement', name: 'Web-Based Integrated Systems', remarks: '', replacedFor: '23-Sep-2026', replacedReason: 'Lab equipment failure' },
                 { di: 2, start: 12, end: 13, code: 'AMCS2093', type: 'T', venue: 'B106', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 11, end: 12, code: 'AMCS2093', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 13, end: 14, code: 'AMCS2093', type: 'T', venue: 'B107', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'pending', name: 'Operating Systems', remarks: '', requestedAt: '02 Oct 2026, 02:30 PM', requestedBy: 'En. Lim Jia Zheng', requestId: 8 },
@@ -255,12 +255,12 @@ window.MockData = {
             ],
             3: [],   // empty week — "No classes this week"
             4: [
-                { di: 0, start: 6, end: 9, code: 'AMCS2093', type: 'L', venue: 'B110', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1) + DSF2(S1)', cohorts: ['DFT2(S1)', 'DSF2(S1)'], studentCounts: [28, 22], status: 'conflict', name: 'Operating Systems', remarks: 'Venue double-booked' },
+                { di: 0, start: 6, end: 9, code: 'AMCS2093', type: 'L', venue: 'B110', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1) + DSF2(S1)', cohorts: ['DFT2(S1)', 'DSF2(S1)'], studentCounts: [28, 22], status: 'conflict', name: 'Operating Systems', remarks: 'Lecturer on leave' },
                 { di: 1, start: 12, end: 15, code: 'BMIT2013', type: 'L', venue: 'B009', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'normal', name: 'Web-Based Integrated Systems', remarks: '' },
                 { di: 2, start: 2, end: 5, code: 'BMIT2013', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'RSD2(S1)G2 + RSD2(S1)G3', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], studentCounts: [16, 15], status: 'normal', name: 'Web-Based Integrated Systems', remarks: '' },
                 { di: 2, start: 12, end: 13, code: 'AMCS2093', type: 'T', venue: 'B106', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 11, end: 12, code: 'AMCS2093', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
-                { di: 3, start: 13, end: 14, code: 'AMCS2093', type: 'T', venue: 'B107', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'replacement', name: 'Operating Systems', remarks: '21-Oct-2026' },
+                { di: 3, start: 13, end: 14, code: 'AMCS2093', type: 'T', venue: 'B107', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'replacement', name: 'Operating Systems', remarks: '', replacedFor: '01-Oct-2026', replacedReason: 'Lecturer on leave' },
                 { di: 4, start: 6, end: 7, code: 'AMCS2093', type: 'P', venue: 'B011', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'normal', name: 'Operating Systems', remarks: '' },
             ],
             5: [
@@ -288,7 +288,7 @@ window.MockData = {
                 { di: 2, start: 12, end: 13, code: 'AMCS2093', type: 'T', venue: 'B106', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 11, end: 12, code: 'AMCS2093', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 13, end: 14, code: 'AMCS2093', type: 'T', venue: 'B107', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'normal', name: 'Operating Systems', remarks: '' },
-                { di: 4, start: 6, end: 7, code: 'AMCS2093', type: 'P', venue: 'B011', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'normal', name: 'Operating Systems', remarks: '' },
+                { di: 4, start: 6, end: 7, code: 'AMCS2093', type: 'P', venue: 'B011', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'conflict', name: 'Operating Systems', remarks: 'Lab equipment failure' },
             ],
             8: [
                 { di: 0, start: 6, end: 9, code: 'AMCS2093', type: 'L', venue: 'B110', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1) + DSF2(S1)', cohorts: ['DFT2(S1)', 'DSF2(S1)'], studentCounts: [28, 22], status: 'normal', name: 'Operating Systems', remarks: '' },
@@ -306,7 +306,7 @@ window.MockData = {
                 { di: 2, start: 12, end: 13, code: 'AMCS2093', type: 'T', venue: 'B106', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'pending', name: 'Operating Systems', remarks: '', requestedAt: '01 Oct 2026, 09:15 AM', requestedBy: 'En. Lim Jia Zheng', requestId: 11 },
                 { di: 3, start: 11, end: 12, code: 'AMCS2093', type: 'P', venue: 'B010', lecturer: 'En. Lim Jia Zheng', cohort: 'DSF2(S1)', studentCount: 22, status: 'normal', name: 'Operating Systems', remarks: '' },
                 { di: 3, start: 13, end: 14, code: 'AMCS2093', type: 'T', venue: 'B107', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'normal', name: 'Operating Systems', remarks: '' },
-                { di: 4, start: 6, end: 7, code: 'AMCS2093', type: 'P', venue: 'B011', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'replacement', name: 'Operating Systems', remarks: '25-Nov-2026' },
+                { di: 4, start: 6, end: 7, code: 'AMCS2093', type: 'P', venue: 'B011', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1)', studentCount: 28, status: 'replacement', name: 'Operating Systems', remarks: '', replacedFor: '13-Nov-2026', replacedReason: 'Lab equipment failure' },
             ],
             10: [
                 { di: 0, start: 6, end: 9, code: 'AMCS2093', type: 'L', venue: 'B110', lecturer: 'En. Lim Jia Zheng', cohort: 'DFT2(S1) + DSF2(S1)', cohorts: ['DFT2(S1)', 'DSF2(S1)'], studentCounts: [28, 22], status: 'normal', name: 'Operating Systems', remarks: '' },
@@ -550,19 +550,19 @@ window.MockData = {
                 { cohortId: 'rbu1s1g1', di: 3, start: 6, end: 7, code: 'MPU-3133', type: 'T', venue: 'B015', lecturer: 'En. Muada Bin Ojih', cohort: 'RBU1(S1)G1', status: 'normal', name: 'Falsafah dan Isu Semasa', remarks: '' },
             ];
             var flags = {
-                0:  [ [ 'dft1s1|0|4|MPU-2302', 'conflict', 'Venue double-booked' ] ],
-                1:  [ [ 'dsf2s1|1|2|AMIS1012', 'pending', '', '29 Sep 2026, 10:00 AM', 1 ], [ 'rsd3s1g2|0|10|BMIT3084', 'replacement', '28-Sep-2026' ] ],
-                2:  [ [ 'rsd2s1g1|0|6|BMIT2154', 'replacement', '05-Oct-2026' ] ],
-                3:  [ [ 'dft2s1|0|6|AMCS2093', 'conflict', 'Lab equipment failure' ] ],
-                4:  [ [ 'rsd2s1g3|0|2|BMIT1173', 'conflict', 'Venue double-booked' ], [ 'dsf1s1|1|11|AMCS1013', 'pending', '', '20 Oct 2026, 11:00 AM', 2 ] ],
-                5:  [ [ 'rsd3s1g2|2|6|BMIT2073', 'replacement', '28-Oct-2026' ] ],
-                6:  [ [ 'raf2s3g2|3|6|MPU-3133', 'conflict', 'Clash with another module' ] ],
-                7:  [ [ 'dft2s1|1|2|AMIS1012', 'pending', '', '10 Nov 2026, 10:00 AM', 3 ], [ 'rsd1s1g1|2|2|BMCS1013', 'replacement', '11-Nov-2026' ] ],
-                8:  [ [ 'rsd2s1g2|2|2|BMIT2013', 'conflict', 'Venue double-booked' ], [ 'rsd3s1g2|2|6|BMIT2073', 'pending', '', '18 Nov 2026, 11:00 AM', 4 ] ],
-                10:  [ [ 'rsd3s1g3|0|12|MPU-3232', 'pending', '', '30 Nov 2026, 10:00 AM', 5 ], [ 'dft1s1|1|4|AMIS1003', 'conflict', 'Lab equipment failure' ] ],
-                11:  [ [ 'rbu1s1g1|1|11|BMMS1743', 'replacement', '08-Dec-2026' ] ],
-                12:  [ [ 'dsf1s1|0|6|AMCS1013', 'conflict', 'Venue double-booked' ] ],
-                13:  [ [ 'rsd3s1g1|2|2|BMIT3173', 'pending', '', '23 Dec 2026, 10:00 AM', 6 ], [ 'dsf2s1|0|2|AMSE2002', 'replacement', '21-Dec-2026' ] ],
+                0:  [ [ 'dft1s1|0|4|MPU-2302', 'conflict', 'Lecturer on leave' ], [ 'rsd3s1g2|0|10|BMIT3084', 'conflict', 'Lab equipment failure' ] ],
+                1:  [ [ 'dsf2s1|1|2|AMIS1012', 'pending', '', '29 Sep 2026, 10:00 AM', 1 ], [ 'rsd3s1g2|0|10|BMIT3084', 'replacement', '21-Sep-2026' ], [ 'rsd2s1g1|0|6|BMIT2154', 'conflict', 'Lab equipment failure' ] ],
+                2:  [ [ 'rsd2s1g1|0|6|BMIT2154', 'replacement', '28-Sep-2026' ] ],
+                3:  [ [ 'dft2s1|0|6|AMCS2093', 'conflict', 'Lecturer on leave' ] ],
+                4:  [ [ 'rsd2s1g3|0|2|BMIT1173', 'conflict', 'Lecturer on leave' ], [ 'dsf1s1|1|11|AMCS1013', 'pending', '', '20 Oct 2026, 11:00 AM', 2 ], [ 'rsd3s1g2|2|6|BMIT2073', 'conflict', 'Lecturer on leave' ] ],
+                5:  [ [ 'rsd3s1g2|2|6|BMIT2073', 'replacement', '21-Oct-2026' ] ],
+                6:  [ [ 'raf2s3g2|3|6|MPU-3133', 'conflict', 'Lecturer on leave' ], [ 'rsd1s1g1|2|2|BMCS1013', 'conflict', 'Lecturer on leave' ] ],
+                7:  [ [ 'dft2s1|1|2|AMIS1012', 'pending', '', '10 Nov 2026, 10:00 AM', 3 ], [ 'rsd1s1g1|2|2|BMCS1013', 'replacement', '04-Nov-2026' ] ],
+                8:  [ [ 'rsd2s1g2|2|2|BMIT2013', 'conflict', 'Lab equipment failure' ], [ 'rsd3s1g2|2|6|BMIT2073', 'pending', '', '18 Nov 2026, 11:00 AM', 4 ] ],
+                10:  [ [ 'rsd3s1g3|0|12|MPU-3232', 'pending', '', '30 Nov 2026, 10:00 AM', 5 ], [ 'dft1s1|1|4|AMIS1003', 'conflict', 'Lecturer on leave' ], [ 'rbu1s1g1|1|11|BMMS1743', 'conflict', 'Lecturer on leave' ] ],
+                11:  [ [ 'rbu1s1g1|1|11|BMMS1743', 'replacement', '01-Dec-2026' ] ],
+                12:  [ [ 'dsf1s1|0|6|AMCS1013', 'conflict', 'Lecturer on leave' ], [ 'dsf2s1|0|2|AMSE2002', 'conflict', 'Lecturer on leave' ] ],
+                13:  [ [ 'rsd3s1g1|2|2|BMIT3173', 'pending', '', '23 Dec 2026, 10:00 AM', 6 ], [ 'dsf2s1|0|2|AMSE2002', 'replacement', '14-Dec-2026' ] ],
             };
             var out = [];
             for (var w = 0; w < 14; w++) {
@@ -604,8 +604,10 @@ window.MockData = {
             { di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', name: 'Subj BMIT3273' },
         ],
         rsd3g2Flags: {
-            1:  [ [ 'BMIT3084', 'replacement', '28-Sep-2026' ] ],
-            5:  [ [ 'BMIT2073', 'replacement', '28-Oct-2026' ] ],
+            0:  [ [ 'BMIT3084', 'conflict', 'Lab equipment failure' ] ],
+            1:  [ [ 'BMIT3084', 'replacement', '21-Sep-2026' ] ],
+            4:  [ [ 'BMIT2073', 'conflict', 'Lecturer on leave' ] ],
+            5:  [ [ 'BMIT2073', 'replacement', '21-Oct-2026' ] ],
             8:  [ [ 'BMIT2073', 'pending', '', '18 Nov 2026, 11:00 AM', 4 ] ],
         },
     },
