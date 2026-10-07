@@ -183,3 +183,13 @@ handled once in `WeekNavigator.load()`; shared sorting/labels untouched.
 Student nav item renamed to "Replacement History" → `/replacement-history-ui` (page
 rename, see that changelog). Logo click now lands on Student My Timetable (homeUrl
 param) instead of the welcome view.
+
+### Postscript — holiday-badge-generic-label (2026-10-07, shared ui-common)
+
+Day-header holiday badges now read generically as **PUBLIC HOLIDAY** (markup
+text `Public Holiday`; the badge CSS already uppercases it), with the specific
+holiday name — e.g. `Deepavali Holiday (In Lieu)`, `Christmas Eve` — shown on
+hover via the shared `data-tip` tooltip system. Label-less holiday flags show
+no tooltip. One-line change in `HtmlBuilder.dayHeader` (ui-common.js:2155);
+applies to every timetable page via the shared builder.
+

@@ -449,3 +449,13 @@ occupied-state branches of this page's `cellRender` changed — booking branches
 No shared files touched (`theme.css`, `ui-common.js`, `mock-data.js`, partials). Block
 builder duplicated a 2nd time (cohort = 1st) — promote-to-shared deferred to a 3rd
 occurrence per house rule.
+
+### Postscript — holiday-badge-generic-label (2026-10-07, shared ui-common)
+
+Day-header holiday badges now read generically as **PUBLIC HOLIDAY** (markup
+text `Public Holiday`; the badge CSS already uppercases it), with the specific
+holiday name — e.g. `Deepavali Holiday (In Lieu)`, `Christmas Eve` — shown on
+hover via the shared `data-tip` tooltip system. Label-less holiday flags show
+no tooltip. One-line change in `HtmlBuilder.dayHeader` (ui-common.js:2155);
+applies to every timetable page via the shared builder.
+

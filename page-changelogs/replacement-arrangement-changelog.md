@@ -927,3 +927,13 @@ chevron mirrors --color-on-surface-variant per theme (dark #9EAAB8 / light #5A69
    `tabIndex=0`, `aria-label="Available slot: Thu 11:00"`, **Enter/Space toggle the block**
    (verified live: Enter selects the 3-slot block, second Enter deselects), focus/blur give
    keyboard users the same block preview mouse users get on hover.
+
+### Postscript — holiday-badge-generic-label (2026-10-07, shared ui-common)
+
+Day-header holiday badges now read generically as **PUBLIC HOLIDAY** (markup
+text `Public Holiday`; the badge CSS already uppercases it), with the specific
+holiday name — e.g. `Deepavali Holiday (In Lieu)`, `Christmas Eve` — shown on
+hover via the shared `data-tip` tooltip system. Label-less holiday flags show
+no tooltip. One-line change in `HtmlBuilder.dayHeader` (ui-common.js:2155);
+applies to every timetable page via the shared builder.
+

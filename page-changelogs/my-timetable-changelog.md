@@ -312,3 +312,13 @@ to `cohortTimetableWeek`, student-my-timetable to `studentTimetableWeek`; any ke
 WeekNavigator derives `weekNav-<selectId>`. One-time migration in `load()` adopts a legacy
 `currentWeek` value on first visit then retires the old key (verified live: legacy value
 inherited, old key gone; default week math unchanged).
+
+### Postscript — holiday-badge-generic-label (2026-10-07, shared ui-common)
+
+Day-header holiday badges now read generically as **PUBLIC HOLIDAY** (markup
+text `Public Holiday`; the badge CSS already uppercases it), with the specific
+holiday name — e.g. `Deepavali Holiday (In Lieu)`, `Christmas Eve` — shown on
+hover via the shared `data-tip` tooltip system. Label-less holiday flags show
+no tooltip. One-line change in `HtmlBuilder.dayHeader` (ui-common.js:2155);
+applies to every timetable page via the shared builder.
+

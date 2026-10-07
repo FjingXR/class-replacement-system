@@ -2155,7 +2155,11 @@ class HtmlBuilder {
     static dayHeader(day) {
         let html = '<span class="day-label">' + day.abbr + '</span><span class="date-label">' + day.date + '</span>';
         if (day.holiday) {
-            html += '<span class="holiday-badge">' + (day.holidayLabel || 'Public Holiday') + '</span>';
+            /* generic badge text (displays PUBLIC HOLIDAY via the existing
+               uppercase transform); the specific holiday name, when known,
+               rides the shared data-tip hover tooltip */
+            const tipAttr = day.holidayLabel ? ' data-tip="' + day.holidayLabel + '"' : '';
+            html += '<span class="holiday-badge"' + tipAttr + '>Public Holiday</span>';
         }
         if (day.today) {
             html += '<span class="today-badge">Today</span>';
