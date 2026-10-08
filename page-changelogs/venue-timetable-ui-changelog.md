@@ -534,3 +534,14 @@ callback rebuilds whichever grid is on screen after `ClassCancellation.undo()`
 `buildTable()`; the class reappears without a manual reload). Confirmation
 toast shows last, over the rebuilt grid. Live-verified on my-timetable,
 student page, and replacement-home; 0 console errors.
+
+### Postscript — resize listener de-duped (2026-10-08, exempted from Batch-7 rejection)
+
+`buildTimetable()` re-registered an anonymous `resize` listener on every
+venue/week change, so N rebuilds stacked N copies (each resize ran N redraws
+of the mobile-card-list toggle). The handler is now stored on
+`window.__venueResizeHandler` and the previous one is removed before the new
+one is added — exactly one live listener regardless of rebuild count.
+Instrumented live check: 3 adds / 3 removes across rebuilds, mobile card list
+still toggles correctly at 375 px / 1440 px; 0 console errors. (The rest of
+Batch 7 — column/Sunday/span cosmetics — remains REJECTED.)

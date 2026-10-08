@@ -887,11 +887,16 @@
                rebuild (the builder hides it first to clear stale cards) */
             const mcl = document.getElementById('mobileCardList');
             if (mcl) mcl.style.display = (mcl.children.length && window.matchMedia('(max-width: 768px)').matches) ? '' : 'none';
-            /* keep it honest across viewport resizes (no rebuild needed) */
-            window.addEventListener('resize', function() {
+            /* keep it honest across viewport resizes (no rebuild needed).
+               De-duped: buildTimetable runs on every venue/week change, and
+               re-adding an anonymous listener here used to stack one copy per
+               rebuild (resize ran N redraws after N venue visits). */
+            if (window.__venueResizeHandler) window.removeEventListener('resize', window.__venueResizeHandler);
+            window.__venueResizeHandler = function() {
                 const mcl = document.getElementById('mobileCardList');
                 if (mcl) mcl.style.display = (mcl.children.length && window.matchMedia('(max-width: 768px)').matches) ? '' : 'none';
-            });
+            };
+            window.addEventListener('resize', window.__venueResizeHandler);
 
             /* lead-time banner (contextual: shown while the viewed week is blocked) */
             renderLeadTimeNote('leadTimeNote', weekData, currentWeek);
