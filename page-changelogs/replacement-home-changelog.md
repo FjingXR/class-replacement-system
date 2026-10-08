@@ -1,5 +1,12 @@
 # Changelog — Replacement Home Dashboard
 
+## [2026-10-08] conflictedClasses seeded with real subject codes & titles
+
+- `MockData.conflictedClasses` (`public/js/mock-data.js`): all 14 rows' `code`/`name`/`cohorts`/`totalStudents` now mirror §2.2 `courses[]` — fake `BMIT5555`-style codes replaced by 11 real, dropdown-eligible codes (`AMCS2093`, `AMCS1013`, `AMIS1003`, `BMCS1013`, `BMIT1173`, `BMIT2013`, `BMIT2073`, `BMIT2154`, `BMIT3084`, `BMMS1743`, `MPU-3133`).
+- Every row's code now passes `buildSubjectDropdown`'s two filters (code in `courses[]` + ≥1 conflict/cancelled slot in `cohortTimetable.events`), so the table row → quick-view → **Arrange Replacement** handoff pre-selects the subject on `/replacement-arrangement` (previously: blank subject + locked grid).
+- Cohort labels keep this array's spaced convention (`'DFT2 (S1)'`, `'RSD2 (S1) G2'` — cf. `formatCohortLabel`); `type`/`date`/`day`/`time`/`venue`/`duration`/`conflictReason` stay session-level instance facts (unchanged).
+- Verified live: data audit (14/14 rows consistent with `courses[]`, 0 problems), search by code & name, 3-row handoff (`AMCS2093`/`BMCS1013`/`MPU-3133`) pre-selects + `subjectInfo` coherent, quick-view Class tab shows code/name/type/cohorts/students, pagination "Showing 1-10 of 14" / page 2 intact, 0 console errors.
+
 ## [2026-10-02] Empty state above summary + summary auto-hides when empty
 
 - The `ui-empty-state` include moved **above** the "Summary Dashboard" strip in the DOM.
