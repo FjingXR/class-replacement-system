@@ -197,3 +197,21 @@ to `theme.css` (red — §10.0 legend "Conflict / Public Holiday"); holiday
 statusDesc now says "Class falls on a public holiday — no class runs".
 Verified on student/my/cohort timetable pages at week 8 (Mon 9 Nov): red
 "Public Holiday" badge everywhere, 0 console errors.
+
+---
+
+## [2026-10-08] computeSummary counts explicit conflicts; View Full Request ownership-gated
+
+- `computeSummary` now counts `status === 'conflict'` events (previously only
+  holiday overlaps bumped the Conflicts card — my week 0 showed 2 red blocks /
+  card 0). Single guarded branch prevents double-counting a conflict class that
+  also sits on a holiday.
+- `openClassModal`'s "View Full Request" footer link now requires
+  `event.requestedBy === MockData.currentUser.name`. Other lecturers' pendings
+  (cohort page AMIS1012 → `?id=1`, cohort rsd3g2 wk8 → `?id=4`) lose the button;
+  the `requests[]` ids they collided with were simultaneously rewired to the
+  current user's own AMCS2093 records (mock-data.js §2.9 ids 3/8/11).
+- Class Type map in the modal gained `P → Practical (P)` (BMIT2013 P showed
+  "Tutorial (T)"); `flashEarliestBookableDay`'s day-row selector fixed from
+  `tr[data-dayIndex=…]` to `tr[data-day-index=…]` (builder sets
+  `tr.dataset.dayIndex`, so the attribute form never matched — flash no-oped).

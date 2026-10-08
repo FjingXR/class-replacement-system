@@ -484,3 +484,33 @@ pages, with an undo toast (12 s) on any landing page until undone/arranged.
 (per-entry `toastSnoozed` in the ledger; `ToastManager.close()` in
 `ui-common.js`, layout ✕ → `toast.close()`). Cancelled state + freed slot
 replay unchanged; a new cancellation toasts again.
+
+---
+
+## [2026-10-08] Conflict blocks render red + twin merge + 6-item legend (bug audit + venue-legend-parity)
+
+Four fixes, applied together because they interlock:
+
+- **Combined-lecture twins were last-win.** Grid `slotMap` overwrote per event,
+  so for a same-slot twin pair (e.g. B110 week 3 AMCS2093: DFT2 conflict first,
+  DSF2 normal second) the normal twin won and the slot rendered green.
+  `getVenueEvents()` now merges duplicates: one block, cohort joined
+  ("DFT2(S1) + DSF2(S1)"), status combined by severity
+  (conflict > pending > replacement > normal). This also stops the modal showing
+  the cohort slug (`dsf2s1`) — the display name is kept.
+- **Conflict branch in `cellRender`.** `status === 'conflict'` now gets
+  `.event-conflict` (red, owner-agnostic, §10.0 parity with cohort) instead of
+  falling into the mine/others greens. Live: B006 week 0 BMIT3084 red;
+  B110 week 3 AMCS2093 red.
+- **Legend grew 4 → 6 items** per the frozen `venue-legend-parity` design §1:
+  Available, Your Classes, Others' Classes, Others' Pending (grey
+  `--color-surface-variant`), Your Pending, Conflict / Public Holiday. Spec
+  TC34/TC35 updated to the 6-item exact-text assertions.
+- **Modal**: Status Description for conflicts now reads "Scheduling conflict —
+  needs attention" (was "Class booked for this venue"); a Total Students row was
+  added, resolved from the course registry per merged cohort (B110 AMCS2093 →
+  50, B006 BMIT3084 → 14) since `cohortTimetable.events` carry no per-event
+  count.
+
+Known collision intentionally left: Available and Others' Classes share the
+same green (user decision, 2026-10-07; frozen design keeps it).

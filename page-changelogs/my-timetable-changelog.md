@@ -390,3 +390,23 @@ back as a replacement (Original-Date trail intact) instead of being demoted
 to 'normal'. The approved request itself is untouched (audit trail). The
 cancelled class then joins the replacement-home requires-replacement list
 like any other cancellation. Covered by new spec test S17 (14 passing).
+
+---
+
+## [2026-10-08] Conflict count on summary card + Replace Now on holiday/conflict + guide fix
+
+Three fixes from the 2026-10-07/08 bug audit:
+
+- **Conflicts card was always 0.** `computeSummary` counted only
+  holiday-overlapping classes; explicit `status === 'conflict'` events were
+  never counted. Now one branch counts both (`conflict || holiday`, guarded
+  against double-counting). Week 0 live: card reads 2, matching the 2 red
+  blocks.
+- **Replace Now now shows for conflicts too.** The footer button gated on
+  `day.holiday` alone, so a conflicted class (the most common reason to
+  replace) hid it. Gate is now `day.holiday || event.status === 'conflict'`.
+  Verified live: conflict footer `disp:flex`, pending `disp:none`.
+- **How-to guide drift**: status list dropped Approved/Rejected (not grid
+  statuses); "click a normal/approved slot" → "click any slot".
+- Dead code removed: unused `loadSavedWeek()`/`saveWeek()` wrappers (week
+  persistence runs through `WeekNavigator` directly).

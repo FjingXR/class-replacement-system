@@ -280,3 +280,18 @@ pages, with an undo toast (12 s) on any landing page until undone/arranged.
 (per-entry `toastSnoozed` in the ledger; `ToastManager.close()` in
 `ui-common.js`, layout ✕ → `toast.close()`). Cancelled state + chip replay
 unchanged; a new cancellation toasts again.
+
+---
+
+## [2026-10-08] Phantom multi-reds / double-pending fixed (reconstruction removed)
+
+`buildAllEvents()` rebuilt RSD3 G2 from `rsd3g2Base` + code-keyed
+`rsd3g2Flags`, flagging **every** block of a flagged code — week 0 showed 3 red
+BMIT3084 (L+T+P) where the student page shows 1, and week 8 double-pended
+BMIT2073. The reconstruction is deleted: the page now renders straight from
+`cohortTimetable.events`, whose flags are already slot-keyed snap-to-first
+(seeder §2.7, `check_mock` asserts views agree). Live parity: red count per
+week now equals the student page for all 14 weeks; `sumHours` also resets to 0
+in the faculty-selected branch of `onFacultyChange` (was left at 20).
+Other lecturers' pendings no longer offer "View Full Request" (ownership check
+in `openClassModal`, ui-common.js).

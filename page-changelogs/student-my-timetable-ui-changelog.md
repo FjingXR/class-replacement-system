@@ -218,3 +218,15 @@ no status class because the shared default classifier lacked a conflict
 branch — the block in your paste (`event-block span-4` with no `event-*`
 class) is exactly that. Fixed in `buildTimetableGrid` (ui-common.js): conflict
 events now get `.event-conflict` (red, §10.0 legend A).
+
+---
+
+## [2026-10-08] Copy + dead-code cleanup (audit follow-ups)
+
+- Conflicts card description said "Scheduling **overlaps**" — now
+  "Scheduling clashes and public holidays" (matches what the card counts).
+- Dropped the fabricated `'01 Sep 2026, 09:15 AM'` fallback for pending
+  `requestedAt` — every pending flag in `rsd3g2Flags` already carries its real
+  timestamp; the fallback was dead and invented a date if one ever didn't.
+- Removed unused `WEEK_KEY` / `loadSavedWeek()` / `saveWeek()` (week
+  persistence runs through `WeekNavigator` directly).
