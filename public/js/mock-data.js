@@ -222,6 +222,10 @@ window.MockData = {
     // replacement / pending / conflict states; week 3 is empty to exercise
     // the empty state. The page MUST copy before mutating (MockData is
     // read-only) — .slice() suffices, no individual field is ever rewritten.
+    // SDD cancel-class-enhancement: events may carry `status: 'cancelled'` at
+    // runtime (+ cancelledReason/cancelledDetail) via the ClassCancellation
+    // ledger (sessionStorage key `classCancellationLedger`); cancelled events
+    // are filtered from grids/summaries before render.
     // ─────────────────────────────────────────────────────────────────────
     myTimetable: {
         seedWeek: 11,
@@ -360,6 +364,11 @@ window.MockData = {
     // pages rebuild their 14 weeks from those); the CohortTimetable page
     // overwrites that cohort's weeks from them, so both views stay in step.
     // Holiday styling comes from MockData.holidays, not from here.
+    // SDD cancel-class-enhancement: computed events may carry
+    // `status: 'cancelled'` at runtime (+ cancelledReason/cancelledDetail) via
+    // the ClassCancellation ledger (sessionStorage key
+    // `classCancellationLedger`); cancelled events are filtered from
+    // grids/summaries before render.
     // ─────────────────────────────────────────────────────────────────────
     cohortTimetable: {
         faculties: [
@@ -660,6 +669,10 @@ window.MockData = {
     // ─────────────────────────────────────────────────────────────────────
     // §2.10 conflictedClasses — was replacement-home inline array (14 rows,
     // verbatim). Read-only — the page does not mutate it.
+    // SDD cancel-class-enhancement: cancelled classes are APPENDED to this
+    // array at runtime via the ClassCancellation ledger (sessionStorage key
+    // `classCancellationLedger`), keeping the same row shape as the seeded
+    // rows below (conflictReason = the mandatory cancellation reason).
     // ─────────────────────────────────────────────────────────────────────
     conflictedClasses: [
         { id: 1,  code: 'BMIT5555', name: 'Software Engineering',         type: 'L', date: '2026-09-04', day: 'Thursday', timeStart: '10:00', timeEnd: '12:00', duration: 2, venue: 'B110', totalStudents: 35, cohorts: ['DFT2 (S1)', 'DSF2 (S1)'], conflictReason: 'Public Holiday' },

@@ -467,3 +467,13 @@ applies to every timetable page via the shared builder.
 Venue class-detail modal now splits into 2 tabs: **Session** (code, name,
 lecturer, cohort, start/end) / **Venue & Status** (venue, status badge,
 description, remarks). Blade: `venue-timetable-UI-design-template.blade.php`.
+
+### Postscript — cancel-class-enhancement (2026-10-08, SDD change `cancel-class-enhancement`)
+
+Lecturers can now cancel their own classes — status normal with an end time
+in the future (real clock) — directly from the venue grid's class modal via
+the shared CancelClassModal (`partials/ui-cancel-class-modal`) with a
+mandatory enum reason (6 values incl. Other + detail; OOP: `ClassCancellation`
+in `ui-common.js`). A cancelled block vanishes and its slot frees; the
+sessionStorage ledger (`classCancellationLedger`) replays the state across
+pages, with an undo toast (12 s) on any landing page until undone/arranged.

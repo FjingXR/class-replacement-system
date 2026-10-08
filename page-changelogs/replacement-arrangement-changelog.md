@@ -937,3 +937,15 @@ hover via the shared `data-tip` tooltip system. Label-less holiday flags show
 no tooltip. One-line change in `HtmlBuilder.dayHeader` (ui-common.js:2155);
 applies to every timetable page via the shared builder.
 
+
+### Postscript — cancel-class-enhancement (2026-10-08, SDD change `cancel-class-enhancement`)
+
+Lecturers can now cancel their own classes — status normal with an end time
+in the future (real clock) — directly from any class modal via the shared
+CancelClassModal (`partials/ui-cancel-class-modal`) with a mandatory enum
+reason (6 values incl. Other + detail; OOP: `ClassCancellation` in
+`ui-common.js`). A cancelled block vanishes and its slot frees; the
+sessionStorage ledger (`classCancellationLedger`) replays the state across
+pages. On this page, submitting/replacing a class consumes its ledger entry,
+so the replacement chip/toast stop; an undo toast (12 s) on any landing page
+reverses the cancel until undone/arranged.

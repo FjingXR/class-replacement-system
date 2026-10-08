@@ -295,3 +295,14 @@ Replacement Details quick-view now splits its 15 flat rows into 3 tabs:
 (code, name, type, cohorts, students) / **Schedule** (week, day, date, times,
 duration, venue). Same tab component as my-request-history's Request Details.
 Blade: `replacement-home-UI-design-template.blade.php` `quickView()`.
+
+### Postscript — cancel-class-enhancement (2026-10-08, SDD change `cancel-class-enhancement`)
+
+Lecturers can now cancel their own classes — status normal with an end time
+in the future (real clock) — directly from any class modal via the shared
+CancelClassModal (`partials/ui-cancel-class-modal`) with a mandatory enum
+reason (6 values incl. Other + detail; OOP: `ClassCancellation` in
+`ui-common.js`). A cancelled class is auto-appended to the requires-replacement
+list and carries a "Just cancelled" chip (home page only); the sessionStorage
+ledger (`classCancellationLedger`) replays the state across pages, with an
+undo toast (12 s) on any landing page until undone/arranged.

@@ -359,3 +359,13 @@ labs (B005/B006/B009-B011) → "Lab equipment failure", other venues →
 "Lecturer on leave". Both halves of each conflict→replacement pair carry the
 same reason; the raw cycle and overrides live in
 `seed_mock_data.py` (CONFLICT_REMARKS / default_reason / reason override).
+
+### Postscript — cancel-class-enhancement (2026-10-08, SDD change `cancel-class-enhancement`)
+
+Lecturers can now cancel their own classes — status normal with an end time
+in the future (real clock) — directly from the my-timetable class modal via
+the shared CancelClassModal (`partials/ui-cancel-class-modal`) with a
+mandatory enum reason (6 values incl. Other + detail; OOP: `ClassCancellation`
+in `ui-common.js`). A cancelled block vanishes and its slot frees; the
+sessionStorage ledger (`classCancellationLedger`) replays the state across
+pages, with an undo toast (12 s) on any landing page until undone/arranged.

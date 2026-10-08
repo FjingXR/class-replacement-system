@@ -103,6 +103,9 @@
         <!-- ─── Event Modal ─── -->
         @include('partials.ui-class-detail-modal', ['modalId' => 'eventModal'])
 
+        <!-- ═══ Cancel Class Confirm Modal (shared partial — cancel-class-enhancement) ═══ -->
+        @include('partials.ui-cancel-class-modal')
+
 @endsection
 
 @section('page-scripts')
@@ -116,42 +119,50 @@
         /* ───── Read from centralized MockData ───── */
         const facultyData = MockData.cohortTimetable.faculties;
 
-        // Rebuild allEvents from centralized data
-        const allEvents = {};
-        MockData.cohortTimetable.events.forEach(function(entry) {
-            if (!allEvents[entry.cohortId]) allEvents[entry.cohortId] = {};
-            if (!allEvents[entry.cohortId][entry.week]) allEvents[entry.cohortId][entry.week] = [];
-            allEvents[entry.cohortId][entry.week].push(Object.assign({}, entry.event));
-        });
-
-        // Reconstruct RSD3 G2: populate ALL 14 weeks with base events, then apply flag overrides.
-        var rsd3g2Cohort = 'rsd3s1g2';
-        if (!allEvents[rsd3g2Cohort]) allEvents[rsd3g2Cohort] = {};
-        for (var w = 0; w < 14; w++) {
-            allEvents[rsd3g2Cohort][w] = [];
-            MockData.cohortTimetable.rsd3g2Base.forEach(function(evt) {
-                var copy = Object.assign({}, evt);
-                if (!copy.status) copy.status = 'normal';
-                allEvents[rsd3g2Cohort][w].push(copy);
+        // Rebuild allEvents from centralized data — re-callable because the
+        // copies (Object.assign) snapshot the status at build time: a same-load
+        // cancel mutates the canonical MockData stores, so the assembly MUST be
+        // re-run before every rebuild or the cancelled block stays visible
+        // (design §4 same-load snapshot fix).
+        let allEvents = {};
+        function buildAllEvents() {
+            allEvents = {};
+            MockData.cohortTimetable.events.forEach(function(entry) {
+                if (!allEvents[entry.cohortId]) allEvents[entry.cohortId] = {};
+                if (!allEvents[entry.cohortId][entry.week]) allEvents[entry.cohortId][entry.week] = [];
+                allEvents[entry.cohortId][entry.week].push(Object.assign({}, entry.event));
             });
-        }
-        MockData.cohortTimetable.rsd3g2Flags && Object.keys(MockData.cohortTimetable.rsd3g2Flags).forEach(function(w) {
-            var weekIdx = parseInt(w);
-            MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(entry) {
-                var flagCode = entry[0], flagStatus = entry[1], flagDate = entry[2] || '';
-                var flagRequestedAt = entry[3] || '';
-                var flagRequestId = entry[4] || '';
-                var weekEvents = allEvents[rsd3g2Cohort][weekIdx];
-                weekEvents.forEach(function(evt) {
-                    if (evt.code === flagCode) {
-                        evt.status = flagStatus;
-                        if (flagDate) evt.remarks = flagDate;
-                        if (flagRequestedAt) evt.requestedAt = flagRequestedAt;
-                        if (flagRequestId) evt.requestId = flagRequestId;
-                    }
+
+            // Reconstruct RSD3 G2: populate ALL 14 weeks with base events, then apply flag overrides.
+            var rsd3g2Cohort = 'rsd3s1g2';
+            if (!allEvents[rsd3g2Cohort]) allEvents[rsd3g2Cohort] = {};
+            for (var w = 0; w < 14; w++) {
+                allEvents[rsd3g2Cohort][w] = [];
+                MockData.cohortTimetable.rsd3g2Base.forEach(function(evt) {
+                    var copy = Object.assign({}, evt);
+                    if (!copy.status) copy.status = 'normal';
+                    allEvents[rsd3g2Cohort][w].push(copy);
+                });
+            }
+            MockData.cohortTimetable.rsd3g2Flags && Object.keys(MockData.cohortTimetable.rsd3g2Flags).forEach(function(w) {
+                var weekIdx = parseInt(w);
+                MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(entry) {
+                    var flagCode = entry[0], flagStatus = entry[1], flagDate = entry[2] || '';
+                    var flagRequestedAt = entry[3] || '';
+                    var flagRequestId = entry[4] || '';
+                    var weekEvents = allEvents[rsd3g2Cohort][weekIdx];
+                    weekEvents.forEach(function(evt) {
+                        if (evt.code === flagCode) {
+                            evt.status = flagStatus;
+                            if (flagDate) evt.remarks = flagDate;
+                            if (flagRequestedAt) evt.requestedAt = flagRequestedAt;
+                            if (flagRequestId) evt.requestId = flagRequestId;
+                        }
+                    });
                 });
             });
-        });
+        }
+        buildAllEvents();
 
         /* ───── State ───── */
         let currentWeek = currentWeekIndex();
@@ -376,7 +387,7 @@
                     });
                 }
             });
-            updateSummaries(weekEvents);
+            updateSummaries(weekEvents.filter(e => e.status !== 'cancelled'));
         }
 
         function updateSummaries(events) {
@@ -398,6 +409,20 @@
                     { label: 'Cohort', value: event.cohort || selectedCohortId || '—' }
                 ]
             });
+
+            // Cancel Class? button (shared modal — cancel-class-enhancement §5):
+            // self-hides via ClassCancellation.isCancellable (S1–S5); the Later
+            // path re-runs the allEvents assembly (same-load snapshot fix) then
+            // rebuilds the grid + summary in place.
+            CancelClass.renderButton(
+                document.querySelector('#eventModal .modal-footer'),
+                event, weekData[currentWeek].days, currentWeek,
+                function() {
+                    closeModal();
+                    buildAllEvents();
+                    buildTimetable();
+                }
+            );
         }
 
         function closeModal() {

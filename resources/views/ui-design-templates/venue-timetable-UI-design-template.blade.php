@@ -451,6 +451,9 @@
             </div>
         </div>
 
+        <!-- ─── Cancel Class Confirm Modal (shared partial — cancel-class-enhancement) ─── -->
+        @include('partials.ui-cancel-class-modal')
+
         <!-- ─── Available Slot Tooltip ─── -->
         <div class="available-tooltip" id="availableTooltip">
             <p id="tooltipText">Book B014 on Mon, 01 Sep 2026 at 09:00?</p>
@@ -701,7 +704,7 @@
             MockData.cohortTimetable.events.forEach(function(item) {
                 if (item.week !== weekIndex) return;
                 const e = item.event;
-                if (e.venue === venueCode) {
+                if (e.venue === venueCode && e.status !== 'cancelled') {
                     events.push({
                         ...e,
                         cohort: item.cohortId,
@@ -944,6 +947,19 @@
                     ) },
                 ]
             });
+
+            // Cancel Class? button (shared modal — cancel-class-enhancement §5):
+            // self-hides via ClassCancellation.isCancellable (S1–S5); the Later
+            // path closes the event modal and rebuilds the grid, so the
+            // cancelled block vanishes and the slot turns available again.
+            CancelClass.renderButton(
+                document.querySelector('#eventModal .modal-footer'),
+                e, weekData[currentWeek].days, currentWeek,
+                function() {
+                    closeModal();
+                    buildTimetable();
+                }
+            );
         }
 
         function closeModal() {

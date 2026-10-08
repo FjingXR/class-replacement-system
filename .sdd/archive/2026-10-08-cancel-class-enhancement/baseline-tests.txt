@@ -1,0 +1,798 @@
+npm notice run npx
+npm notice run 'playwright' test
+
+Running 109 tests using 4 workers
+
+  ✓    1 [chromium] › tests/login-staff-prefix.spec.ts:10:3 › Staff ID Optional P Prefix — Slim UI Fix › placeholder and hint (1.1s)
+  ✓    3 [chromium] › tests/ui-regression.spec.ts:26:5 › UI Regression Test Cases › Section 1: Page Load & Initialization › TC-1.1 Replacement Arrangement grid loads with URL params (1.7s)
+  ✓    5 [chromium] › tests/login-staff-prefix.spec.ts:35:3 › Staff ID Optional P Prefix — Slim UI Fix › 5425 + pw => enabled (870ms)
+  ✓    4 [chromium] › tests/venue-timetable.spec.ts:22:3 › Venue Timetable UI › TC01 — page loads with correct title (1.9s)
+  ✓    6 [chromium] › tests/ui-regression.spec.ts:34:5 › UI Regression Test Cases › Section 1: Page Load & Initialization › TC-1.2 Replacement Arrangement grid loads without URL params (1.0s)
+  ✓    7 [chromium] › tests/login-staff-prefix.spec.ts:36:3 › Staff ID Optional P Prefix — Slim UI Fix › P5425 + pw => enabled (819ms)
+  ✓    8 [chromium] › tests/venue-timetable.spec.ts:26:3 › Venue Timetable UI › TC02 — page header shows "Venue Timetable" (1.5s)
+  ✓   10 [chromium] › tests/login-staff-prefix.spec.ts:37:3 › Staff ID Optional P Prefix — Slim UI Fix › p5425 lower => disabled (842ms)
+  ✓   12 [chromium] › tests/login-staff-prefix.spec.ts:38:3 › Staff ID Optional P Prefix — Slim UI Fix › 542 3digits => disabled (834ms)
+  ✓   11 [chromium] › tests/venue-timetable.spec.ts:30:3 › Venue Timetable UI › TC03 — page description is visible (1.2s)
+  ✓   13 [chromium] › tests/login-staff-prefix.spec.ts:39:3 › Staff ID Optional P Prefix — Slim UI Fix › 54255 5digits => disabled (803ms)
+  ✓   14 [chromium] › tests/venue-timetable.spec.ts:34:3 › Venue Timetable UI › TC04 — semester chip displays semester info (1.2s)
+  ✓   15 [chromium] › tests/login-staff-prefix.spec.ts:40:3 › Staff ID Optional P Prefix — Slim UI Fix › P542 3digits with P => disabled (846ms)
+  ✘    2 [chromium] › tests/confirm-guards.spec.ts:47:1 › venue change with selection pops confirmation; cancel restores (6.8s)
+  ✓   17 [chromium] › tests/login-staff-prefix.spec.ts:41:3 › Staff ID Optional P Prefix — Slim UI Fix › PP5425 => disabled (801ms)
+  ✓   18 [chromium] › tests/login-staff-prefix.spec.ts:42:3 › Staff ID Optional P Prefix — Slim UI Fix ›  spaces trim => enabled (830ms)
+  ✓   20 [chromium] › tests/login-staff-prefix.spec.ts:43:3 › Staff ID Optional P Prefix — Slim UI Fix › empty id => disabled (812ms)
+  ✓   21 [chromium] › tests/login-staff-prefix.spec.ts:44:3 › Staff ID Optional P Prefix — Slim UI Fix › valid id empty pw => disabled (793ms)
+  ✓   22 [chromium] › tests/login-staff-prefix.spec.ts:45:3 › Staff ID Optional P Prefix — Slim UI Fix › P5425 trim with spaces => enabled (803ms)
+  ✓   23 [chromium] › tests/login-staff-prefix.spec.ts:47:3 › Staff ID Optional P Prefix — Slim UI Fix › student control remains (1.5s)
+  ✘   16 [chromium] › tests/venue-timetable.spec.ts:40:3 › Venue Timetable UI › TC05 — print button exists and is disabled (6.2s)
+  ✓   24 [chromium] › tests/login-staff-prefix.spec.ts:63:3 › Staff ID Optional P Prefix — Slim UI Fix › JS console test matrix (761ms)
+  ✓    9 [chromium] › tests/ui-regression.spec.ts:40:5 › UI Regression Test Cases › Section 1: Page Load & Initialization › TC-1.3 No JS errors on page load across all pages (9.9s)
+  ✘   19 [chromium] › tests/confirm-guards.spec.ts:58:1 › venue change confirm clears selection and applies (6.1s)
+  ✓   25 [chromium] › tests/venue-timetable.spec.ts:50:3 › Venue Timetable UI › TC06 — nav bar has Venue Timetable item (1.3s)
+  ✓   28 [chromium] › tests/venue-timetable.spec.ts:55:3 › Venue Timetable UI › TC07 — Venue Timetable nav item is active (1.2s)
+  ✓   26 [chromium] › tests/ui-regression.spec.ts:53:5 › UI Regression Test Cases › Section 1: Page Load & Initialization › TC-1.4 Duration param caps selection (6.1s)
+  ✘   27 [chromium] › tests/confirm-guards.spec.ts:69:1 › subject change with selection pops confirmation; cancel restores (6.1s)
+  ✘   30 [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /my-timetable-ui (1.8s)
+  ✘   29 [chromium] › tests/venue-timetable.spec.ts:64:3 › Venue Timetable UI › TC08 — venue dropdown is visible and populated (6.2s)
+  ✘   33 [chromium] › tests/venue-timetable.spec.ts:72:3 › Venue Timetable UI › TC09 — venue dropdown has venue options (1.3s)
+  ✓   32 [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /cohort-timetable-ui (2.2s)
+  ✘   35 [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /venue-timetable-ui (1.8s)
+  ✘   31 [chromium] › tests/confirm-guards.spec.ts:91:1 › subject change confirm clears selection and applies (6.2s)
+  ✘   36 [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /student-my-timetable-ui (1.8s)
+  ✓   38 [chromium] › tests/ui-regression.spec.ts:103:5 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.5 Replacement Arrangement week selector respects saved week (1.8s)
+  ✘   34 [chromium] › tests/venue-timetable.spec.ts:78:3 › Venue Timetable UI › TC10 — first venue is selected by default (6.5s)
+  -   37 [chromium] › tests/confirm-guards.spec.ts:112:1 › slot trigger change with selection pops confirmation; cancel restores
+  ✘   39 [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /my-timetable-ui (6.1s)
+  ✘   40 [chromium] › tests/venue-timetable.spec.ts:84:3 › Venue Timetable UI › TC11 — changing venue rebuilds timetable (6.3s)
+  ✓   42 [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /cohort-timetable-ui (1.1s)
+  ✓   43 [chromium] › tests/venue-timetable.spec.ts:98:3 › Venue Timetable UI › TC12 — favourite star is visible (1.4s)
+  ✘   41 [chromium] › tests/confirm-guards.spec.ts:140:1 › clear all with selection pops confirmation; cancel keeps selection (6.1s)
+  ✓   45 [chromium] › tests/venue-timetable.spec.ts:102:3 › Venue Timetable UI › TC13 — clicking favourite star toggles its state (1.5s)
+  ✓   46 [chromium] › tests/confirm-guards.spec.ts:149:1 › no confirmation popup when changing dropdowns without selection (1.6s)
+  ✓   47 [chromium] › tests/venue-timetable.spec.ts:115:3 › Venue Timetable UI › TC14 — week dropdown has 14 weeks (1.8s)
+  ✘   44 [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /venue-timetable-ui (6.2s)
+  ✓   49 [chromium] › tests/venue-timetable.spec.ts:122:3 › Venue Timetable UI › TC15 — prev/next arrows are visible (2.0s)
+  ✓   51 [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /replacement-home-ui (1.3s)
+  ✓   50 [chromium] › tests/venue-timetable.spec.ts:127:3 › Venue Timetable UI › TC16 — clicking next week updates the grid (1.9s)
+  ✓   52 [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /request-approval-ui (1.1s)
+  ✓   54 [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /my-request-history-ui (1.1s)
+  ✓   53 [chromium] › tests/venue-timetable.spec.ts:137:3 › Venue Timetable UI › TC17 — clicking prev week on first week stays at first week (1.8s)
+  ✘   48 [chromium] › tests/confirm-guards.spec.ts:163:1 › week next arrow with selection pops confirmation; confirm saves and navigates (6.7s)
+  ✘   55 [chromium] › tests/ui-regression.spec.ts:142:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.1 Select slot and verify summary updates (6.1s)
+  ✘   56 [chromium] › tests/venue-timetable.spec.ts:154:3 › Venue Timetable UI › TC21 — venue type filter button is visible (6.3s)
+  ✘   57 [chromium] › tests/confirm-guards.spec.ts:176:1 › week prev arrow with selection pops confirmation; cancel keeps selection (6.6s)
+  ✘   59 [chromium] › tests/venue-timetable.spec.ts:158:3 › Venue Timetable UI › TC22 — clicking venue type button opens dropdown (6.4s)
+  ✘   58 [chromium] › tests/ui-regression.spec.ts:154:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.2 Maximum selection enforcement (7.3s)
+  ✘   60 [chromium] › tests/confirm-guards.spec.ts:191:1 › week dropdown change with selection pops confirmation; cancel restores dropdown value (6.1s)
+  ✘   61 [chromium] › tests/venue-timetable.spec.ts:163:3 › Venue Timetable UI › TC23 — venue type dropdown has 3 checkboxes (6.6s)
+  ✘   62 [chromium] › tests/ui-regression.spec.ts:166:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.3 Clear All resets selection (6.4s)
+  ✘   63 [chromium] › tests/confirm-guards.spec.ts:211:1 › back button with saved selection (after week change) shows confirmation (6.4s)
+  ✘   64 [chromium] › tests/venue-timetable.spec.ts:169:3 › Venue Timetable UI › TC24 — unchecking all venue type checkboxes shows no-match state (6.5s)
+  ✘   65 [chromium] › tests/ui-regression.spec.ts:179:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.4 Submit request confirmation modal (6.3s)
+  ✘   66 [chromium] › tests/venue-timetable.spec.ts:180:3 › Venue Timetable UI › TC25 — checking all venue type checkboxes resets to All Types (6.4s)
+  ✘   67 [chromium] › tests/ui-regression.spec.ts:191:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.5 Submit request confirm sends request (6.2s)
+  ✓   69 [chromium] › tests/ui-regression.spec.ts:208:5 › UI Regression Test Cases › Section 5: Request Approval Flow › TC-5.1 Approve request confirmation popup (1.3s)
+  ✓   68 [chromium] › tests/venue-timetable.spec.ts:206:3 › Venue Timetable UI › TC29 — timetable grid is visible (1.5s)
+  ✓   70 [chromium] › tests/ui-regression.spec.ts:217:5 › UI Regression Test Cases › Section 5: Request Approval Flow › TC-5.2 Reject request requires reason (1.2s)
+  ✓   71 [chromium] › tests/venue-timetable.spec.ts:210:3 › Venue Timetable UI › TC30 — grid has day rows (7 days) (1.4s)
+  ✓   72 [chromium] › tests/ui-regression.spec.ts:233:5 › UI Regression Test Cases › Section 6: Request History › TC-6.1 My Request History status badges correct (971ms)
+  ✓   73 [chromium] › tests/venue-timetable.spec.ts:216:3 › Venue Timetable UI › TC31 — grid has time header columns (1.2s)
+  ✓   74 [chromium] › tests/venue-timetable.spec.ts:222:3 › Venue Timetable UI › TC32 — booked cells show course code (1.3s)
+  ✓   75 [chromium] › tests/venue-timetable.spec.ts:232:3 › Venue Timetable UI › TC33 — available cells are visible (empty, no text) (1.2s)
+  ✓   76 [chromium] › tests/venue-timetable.spec.ts:245:3 › Venue Timetable UI › TC34 — legend bar has 4 items (1.5s)
+  ✓   77 [chromium] › tests/venue-timetable.spec.ts:250:3 › Venue Timetable UI › TC35 — legend shows Available, Your Classes, Others' Classes, Pending (1.3s)
+  ✓   78 [chromium] › tests/venue-timetable.spec.ts:262:3 › Venue Timetable UI › TC36 — summary bar has 4 cards (1.4s)
+  ✓   79 [chromium] › tests/venue-timetable.spec.ts:267:3 › Venue Timetable UI › TC37 — summary cards show Total, Available, Pending, Unavailable (1.2s)
+  ✓   80 [chromium] › tests/venue-timetable.spec.ts:274:3 › Venue Timetable UI › TC38 — summary values are numeric (1.1s)
+  ✓   81 [chromium] › tests/venue-timetable.spec.ts:283:3 › Venue Timetable UI › TC39 — clicking a booked cell opens modal (1.2s)
+  ✓   82 [chromium] › tests/venue-timetable.spec.ts:292:3 › Venue Timetable UI › TC40 — modal shows course code field (1.3s)
+  ✓   83 [chromium] › tests/venue-timetable.spec.ts:301:3 › Venue Timetable UI › TC41 — modal shows venue field with format "CODE — Type (N seats)" (1.4s)
+  ✓   84 [chromium] › tests/venue-timetable.spec.ts:313:3 › Venue Timetable UI › TC42 — clicking close button closes modal (1.6s)
+  ✓   85 [chromium] › tests/venue-timetable.spec.ts:322:3 › Venue Timetable UI › TC43 — pressing Escape closes modal (1.2s)
+  ✓   86 [chromium] › tests/venue-timetable.spec.ts:331:3 › Venue Timetable UI › TC44 — clicking overlay closes modal (1.3s)
+  ✓   87 [chromium] › tests/venue-timetable.spec.ts:344:3 › Venue Timetable UI › TC45 — clicking available cell shows tooltip (1.5s)
+  ✓   88 [chromium] › tests/venue-timetable.spec.ts:353:3 › Venue Timetable UI › TC46 — tooltip shows booking confirmation text (1.4s)
+  ✓   89 [chromium] › tests/venue-timetable.spec.ts:362:3 › Venue Timetable UI › TC47 — tooltip has Book button (1.4s)
+  ✓   90 [chromium] › tests/venue-timetable.spec.ts:370:3 › Venue Timetable UI › TC48 — pressing Escape closes tooltip (1.6s)
+  ✓   91 [chromium] › tests/venue-timetable.spec.ts:383:3 › Venue Timetable UI › TC49 — booking banner shows when code+cohort in URL (2.6s)
+  ✓   92 [chromium] › tests/venue-timetable.spec.ts:391:3 › Venue Timetable UI › TC50 — booking banner hidden when no params (1.6s)
+  ✓   93 [chromium] › tests/venue-timetable.spec.ts:401:3 › Venue Timetable UI › TC51 — error banner is hidden by default (1.2s)
+  ✓   94 [chromium] › tests/venue-timetable.spec.ts:409:3 › Venue Timetable UI › TC52 — hint text hidden when venue has classes (1.9s)
+  ✓   95 [chromium] › tests/venue-timetable.spec.ts:421:3 › Venue Timetable UI › TC53 — empty state visible on initial load before venue selection (1.8s)
+  ✓   96 [chromium] › tests/venue-timetable.spec.ts:433:3 › Venue Timetable UI › TC54 — available cell has tabindex for keyboard focus (1.6s)
+  ✓   97 [chromium] › tests/venue-timetable.spec.ts:441:3 › Venue Timetable UI › TC55 — available cell has role="button" (1.3s)
+  ✘   98 [chromium] › tests/venue-timetable.spec.ts:453:3 › Venue Timetable UI › TC56 — mobile: venue dropdown exists (6.9s)
+  ✘   99 [chromium] › tests/venue-timetable.spec.ts:459:3 › Venue Timetable UI › TC57 — mobile: filter bar is visible (6.4s)
+  ✓  100 [chromium] › tests/venue-timetable.spec.ts:464:3 › Venue Timetable UI › TC58 — mobile: summary cards exist (1.7s)
+  ✓  101 [chromium] › tests/venue-timetable.spec.ts:474:3 › Venue Timetable UI › TC59 — tablet: timetable grid is visible (1.8s)
+  ✘  102 [chromium] › tests/venue-timetable.spec.ts:484:3 › Venue Timetable UI › TC60 — state is saved to localStorage on venue change (6.4s)
+  ✓  103 [chromium] › tests/venue-timetable.spec.ts:494:3 › Venue Timetable UI › TC61 — favourites are saved to localStorage (1.8s)
+  ✘  104 [chromium] › tests/venue-timetable.spec.ts:501:3 › Venue Timetable UI › TC62 — recent venues are saved to localStorage (6.2s)
+  ✓  105 [chromium] › tests/venue-timetable.spec.ts:513:3 › Venue Timetable UI › TC63 — toast notification is hidden by default (1.3s)
+  ✘  106 [chromium] › tests/venue-timetable.spec.ts:524:3 › Venue Timetable UI › TC65 — mobile: venue type filter button is visible (6.3s)
+  ✓  107 [chromium] › tests/venue-timetable.spec.ts:533:3 › Venue Timetable UI › TC66 — changing venue updates summary card counts (1.7s)
+  ✓  108 [chromium] › tests/venue-timetable.spec.ts:551:3 › Venue Timetable UI › TC67 — changing week updates the grid content (1.9s)
+  ✘  109 [chromium] › tests/venue-timetable.spec.ts:570:3 › Venue Timetable UI › TC69 — grid rebuilds correctly after venue change (6.4s)
+
+
+  1) [chromium] › tests/confirm-guards.spec.ts:47:1 › venue change with selection pops confirmation; cancel restores 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:49:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-venue-chang-847d2-onfirmation-cancel-restores-chromium/error-context.md
+
+  2) [chromium] › tests/confirm-guards.spec.ts:58:1 › venue change confirm clears selection and applies 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:60:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-venue-chang-0c627-lears-selection-and-applies-chromium/error-context.md
+
+  3) [chromium] › tests/confirm-guards.spec.ts:69:1 › subject change with selection pops confirmation; cancel restores 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:71:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-subject-cha-8ccb5-onfirmation-cancel-restores-chromium/error-context.md
+
+  4) [chromium] › tests/confirm-guards.spec.ts:91:1 › subject change confirm clears selection and applies 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:93:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-subject-cha-9e33f-lears-selection-and-applies-chromium/error-context.md
+
+  5) [chromium] › tests/confirm-guards.spec.ts:140:1 › clear all with selection pops confirmation; cancel keeps selection 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:142:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-clear-all-w-1893d-tion-cancel-keeps-selection-chromium/error-context.md
+
+  6) [chromium] › tests/confirm-guards.spec.ts:163:1 › week next arrow with selection pops confirmation; confirm saves and navigates 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:165:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-week-next-a-5a677-confirm-saves-and-navigates-chromium/error-context.md
+
+  7) [chromium] › tests/confirm-guards.spec.ts:176:1 › week prev arrow with selection pops confirmation; cancel keeps selection 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:182:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-week-prev-a-23453-tion-cancel-keeps-selection-chromium/error-context.md
+
+  8) [chromium] › tests/confirm-guards.spec.ts:191:1 › week dropdown change with selection pops confirmation; cancel restores dropdown value 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:193:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-week-dropdo-fa813-cel-restores-dropdown-value-chromium/error-context.md
+
+  9) [chromium] › tests/confirm-guards.spec.ts:211:1 › back button with saved selection (after week change) shows confirmation 
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('.timetable .cell-content.cell-selected').first() to be visible
+
+
+      12 |   await cell.waitFor({ state: 'visible', timeout: 10000 });
+      13 |   await cell.click();
+    > 14 |   await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+         |                                                                        ^
+      15 | }
+      16 |
+      17 | async function pickOtherVenue(page): Promise<boolean> {
+        at selectGridSlot (/home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:14:72)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/confirm-guards.spec.ts:213:3)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/confirm-guards-back-button-4008e-k-change-shows-confirmation-chromium/error-context.md
+
+  10) [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /my-timetable-ui 
+
+    Error: expect(received).not.toBeNull()
+
+    Received: null
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:99:28)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-1b423-persists-on-my-timetable-ui-chromium/error-context.md
+
+  11) [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /venue-timetable-ui 
+
+    Error: expect(received).not.toBeNull()
+
+    Received: null
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:99:28)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-ad4fc-sists-on-venue-timetable-ui-chromium/error-context.md
+
+  12) [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /student-my-timetable-ui 
+
+    Error: expect(received).not.toBeNull()
+
+    Received: null
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:99:28)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-b476f--on-student-my-timetable-ui-chromium/error-context.md
+
+  13) [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /my-timetable-ui 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('#classModal').first()
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#classModal').first()
+        13 × locator resolved to <div id="classModal" class="modal-overlay" onclick="closeModalOutside(event)">…</div>
+           - unexpected value "hidden"
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:131:61)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-eb007-al-opens-on-my-timetable-ui-chromium/error-context.md
+
+  14) [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /venue-timetable-ui 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator:  locator('#eventModal').first()
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#eventModal').first()
+        13 × locator resolved to <div id="eventModal" class="modal-overlay" onclick="if(event.target===this)closeModal()">…</div>
+           - unexpected value "hidden"
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:131:61)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-54b66-opens-on-venue-timetable-ui-chromium/error-context.md
+
+  15) [chromium] › tests/ui-regression.spec.ts:142:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.1 Select slot and verify summary updates 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#progressText').first()
+    Expected substring: "Selected 1 of 4 slots"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('#progressText').first()
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:148:32)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-cde3b--and-verify-summary-updates-chromium/error-context.md
+
+  16) [chromium] › tests/ui-regression.spec.ts:154:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.2 Maximum selection enforcement 
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Selected 4 of 4 slots"
+    Received string:    ""
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:163:20)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-31bdb-ximum-selection-enforcement-chromium/error-context.md
+
+  17) [chromium] › tests/ui-regression.spec.ts:166:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.3 Clear All resets selection 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#clearAllBtn, button:has-text("Clear ALL"), .clear-all').first()
+        - locator resolved to <button disabled id="clearAllBtn" onclick="clearAll()" class="btn btn-danger">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        9 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 500ms
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:173:69)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-eb238--Clear-All-resets-selection-chromium/error-context.md
+
+  18) [chromium] › tests/ui-regression.spec.ts:179:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.4 Submit request confirmation modal 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#submitRequestBtn, button:has-text("Submit Request"), .submit-request').first()
+        - locator resolved to <button disabled onclick="proceed()" class="btn btn-primary">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        9 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 500ms
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:185:71)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-299cd--request-confirmation-modal-chromium/error-context.md
+
+  19) [chromium] › tests/ui-regression.spec.ts:191:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.5 Submit request confirm sends request 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#submitRequestBtn, button:has-text("Submit Request"), .submit-request').first()
+        - locator resolved to <button disabled onclick="proceed()" class="btn btn-primary">…</button>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 100ms
+        9 × waiting for element to be visible, enabled and stable
+          - element is not enabled
+        - retrying click action
+          - waiting 500ms
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/ui-regression.spec.ts:197:71)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/ui-regression-UI-Regressio-e829a-quest-confirm-sends-request-chromium/error-context.md
+
+  20) [chromium] › tests/venue-timetable.spec.ts:40:3 › Venue Timetable UI › TC05 — print button exists and is disabled 
+
+    Error: expect(locator).toBeDisabled() failed
+
+    Locator:  locator('.print-btn')
+    Expected: disabled
+    Received: enabled
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeDisabled" with timeout 5000ms
+      - waiting for locator('.print-btn')
+        14 × locator resolved to <button class="print-btn" title="Coming soon" onclick="toast.show('Printing is coming soon')">…</button>
+           - unexpected value "enabled"
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:43:23)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/venue-timetable-Venue-Time-0c139-tton-exists-and-is-disabled-chromium/error-context.md
+
+  21) [chromium] › tests/venue-timetable.spec.ts:64:3 › Venue Timetable UI › TC08 — venue dropdown is visible and populated 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#venueSelect')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#venueSelect')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:66:26)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-df65a-wn-is-visible-and-populated-chromium/error-context.md
+
+  22) [chromium] › tests/venue-timetable.spec.ts:72:3 › Venue Timetable UI › TC09 — venue dropdown has venue options 
+
+    Error: expect(received).toBeGreaterThanOrEqual(expected)
+
+    Expected: >= 5
+    Received:    0
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:75:19)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/venue-timetable-Venue-Time-32c1e--dropdown-has-venue-options-chromium/error-context.md
+
+  23) [chromium] › tests/venue-timetable.spec.ts:78:3 › Venue Timetable UI › TC10 — first venue is selected by default 
+
+    TimeoutError: locator.inputValue: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueSelect')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:80:32)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-6eab0-enue-is-selected-by-default-chromium/error-context.md
+
+  24) [chromium] › tests/venue-timetable.spec.ts:84:3 › Venue Timetable UI › TC11 — changing venue rebuilds timetable 
+
+    TimeoutError: locator.selectOption: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueSelect')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:86:18)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-00ac5-ng-venue-rebuilds-timetable-chromium/error-context.md
+
+  25) [chromium] › tests/venue-timetable.spec.ts:154:3 › Venue Timetable UI › TC21 — venue type filter button is visible 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#venueTypeBtn')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#venueTypeBtn')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:155:49)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-d909a-pe-filter-button-is-visible-chromium/error-context.md
+
+  26) [chromium] › tests/venue-timetable.spec.ts:158:3 › Venue Timetable UI › TC22 — clicking venue type button opens dropdown 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueTypeBtn')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:159:41)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-918a8--type-button-opens-dropdown-chromium/error-context.md
+
+  27) [chromium] › tests/venue-timetable.spec.ts:163:3 › Venue Timetable UI › TC23 — venue type dropdown has 3 checkboxes 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueTypeBtn')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:164:41)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-375ed-e-dropdown-has-3-checkboxes-chromium/error-context.md
+
+  28) [chromium] › tests/venue-timetable.spec.ts:169:3 › Venue Timetable UI › TC24 — unchecking all venue type checkboxes shows no-match state 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueTypeBtn')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:170:41)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-0bf56-kboxes-shows-no-match-state-chromium/error-context.md
+
+  29) [chromium] › tests/venue-timetable.spec.ts:180:3 › Venue Timetable UI › TC25 — checking all venue type checkboxes resets to All Types 
+
+    TimeoutError: locator.click: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueTypeBtn')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:181:41)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-8c110-ckboxes-resets-to-All-Types-chromium/error-context.md
+
+  30) [chromium] › tests/venue-timetable.spec.ts:453:3 › Venue Timetable UI › TC56 — mobile: venue dropdown exists 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#venueSelect')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#venueSelect')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:456:48)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/venue-timetable-Venue-Time-1a877-obile-venue-dropdown-exists-chromium/error-context.md
+
+  31) [chromium] › tests/venue-timetable.spec.ts:459:3 › Venue Timetable UI › TC57 — mobile: filter bar is visible 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.filter-bar')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.filter-bar')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:461:47)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/venue-timetable-Venue-Time-ddb18-obile-filter-bar-is-visible-chromium/error-context.md
+
+  32) [chromium] › tests/venue-timetable.spec.ts:484:3 › Venue Timetable UI › TC60 — state is saved to localStorage on venue change 
+
+    TimeoutError: locator.selectOption: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueSelect')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:486:18)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-03bce-ocalStorage-on-venue-change-chromium/error-context.md
+
+  33) [chromium] › tests/venue-timetable.spec.ts:501:3 › Venue Timetable UI › TC62 — recent venues are saved to localStorage 
+
+    TimeoutError: locator.selectOption: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueSelect')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:503:18)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-74998-s-are-saved-to-localStorage-chromium/error-context.md
+
+  34) [chromium] › tests/venue-timetable.spec.ts:524:3 › Venue Timetable UI › TC65 — mobile: venue type filter button is visible 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#venueTypeBtn')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('#venueTypeBtn')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:526:49)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:9)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:11)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:7)
+
+    Error Context: test-results/venue-timetable-Venue-Time-fedbd-pe-filter-button-is-visible-chromium/error-context.md
+
+  35) [chromium] › tests/venue-timetable.spec.ts:570:3 › Venue Timetable UI › TC69 — grid rebuilds correctly after venue change 
+
+    TimeoutError: locator.selectOption: Timeout 5000ms exceeded.
+    Call log:
+      - waiting for locator('#venueSelect')
+
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/tests/venue-timetable.spec.ts:572:18)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1644:15)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1133:17)
+        at /home/philler/Desktop/tarumt/degree/y3s1/BMCS3404 PROJECT I (4)/class-replacement-system/node_modules/playwright/lib/worker/workerProcessEntry.js:1642:22)
+
+    Error Context: test-results/venue-timetable-Venue-Time-c9b64-orrectly-after-venue-change-chromium/error-context.md
+
+  35 failed
+    [chromium] › tests/confirm-guards.spec.ts:47:1 › venue change with selection pops confirmation; cancel restores 
+    [chromium] › tests/confirm-guards.spec.ts:58:1 › venue change confirm clears selection and applies 
+    [chromium] › tests/confirm-guards.spec.ts:69:1 › subject change with selection pops confirmation; cancel restores 
+    [chromium] › tests/confirm-guards.spec.ts:91:1 › subject change confirm clears selection and applies 
+    [chromium] › tests/confirm-guards.spec.ts:140:1 › clear all with selection pops confirmation; cancel keeps selection 
+    [chromium] › tests/confirm-guards.spec.ts:163:1 › week next arrow with selection pops confirmation; confirm saves and navigates 
+    [chromium] › tests/confirm-guards.spec.ts:176:1 › week prev arrow with selection pops confirmation; cancel keeps selection 
+    [chromium] › tests/confirm-guards.spec.ts:191:1 › week dropdown change with selection pops confirmation; cancel restores dropdown value 
+    [chromium] › tests/confirm-guards.spec.ts:211:1 › back button with saved selection (after week change) shows confirmation 
+    [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /my-timetable-ui 
+    [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /venue-timetable-ui 
+    [chromium] › tests/ui-regression.spec.ts:78:7 › UI Regression Test Cases › Section 2: Week Navigation › TC-2.x Today button persists on /student-my-timetable-ui 
+    [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /my-timetable-ui 
+    [chromium] › tests/ui-regression.spec.ts:126:7 › UI Regression Test Cases › Section 3: Modal & Detail Views › TC-3.x Modal opens on /venue-timetable-ui 
+    [chromium] › tests/ui-regression.spec.ts:142:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.1 Select slot and verify summary updates 
+    [chromium] › tests/ui-regression.spec.ts:154:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.2 Maximum selection enforcement 
+    [chromium] › tests/ui-regression.spec.ts:166:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.3 Clear All resets selection 
+    [chromium] › tests/ui-regression.spec.ts:179:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.4 Submit request confirmation modal 
+    [chromium] › tests/ui-regression.spec.ts:191:5 › UI Regression Test Cases › Section 4: Replacement Flow › TC-4.5 Submit request confirm sends request 
+    [chromium] › tests/venue-timetable.spec.ts:40:3 › Venue Timetable UI › TC05 — print button exists and is disabled 
+    [chromium] › tests/venue-timetable.spec.ts:64:3 › Venue Timetable UI › TC08 — venue dropdown is visible and populated 
+    [chromium] › tests/venue-timetable.spec.ts:72:3 › Venue Timetable UI › TC09 — venue dropdown has venue options 
+    [chromium] › tests/venue-timetable.spec.ts:78:3 › Venue Timetable UI › TC10 — first venue is selected by default 
+    [chromium] › tests/venue-timetable.spec.ts:84:3 › Venue Timetable UI › TC11 — changing venue rebuilds timetable 
+    [chromium] › tests/venue-timetable.spec.ts:154:3 › Venue Timetable UI › TC21 — venue type filter button is visible 
+    [chromium] › tests/venue-timetable.spec.ts:158:3 › Venue Timetable UI › TC22 — clicking venue type button opens dropdown 
+    [chromium] › tests/venue-timetable.spec.ts:163:3 › Venue Timetable UI › TC23 — venue type dropdown has 3 checkboxes 
+    [chromium] › tests/venue-timetable.spec.ts:169:3 › Venue Timetable UI › TC24 — unchecking all venue type checkboxes shows no-match state 
+    [chromium] › tests/venue-timetable.spec.ts:180:3 › Venue Timetable UI › TC25 — checking all venue type checkboxes resets to All Types 
+    [chromium] › tests/venue-timetable.spec.ts:453:3 › Venue Timetable UI › TC56 — mobile: venue dropdown exists 
+    [chromium] › tests/venue-timetable.spec.ts:459:3 › Venue Timetable UI › TC57 — mobile: filter bar is visible 
+    [chromium] › tests/venue-timetable.spec.ts:484:3 › Venue Timetable UI › TC60 — state is saved to localStorage on venue change 
+    [chromium] › tests/venue-timetable.spec.ts:501:3 › Venue Timetable UI › TC62 — recent venues are saved to localStorage 
+    [chromium] › tests/venue-timetable.spec.ts:524:3 › Venue Timetable UI › TC65 — mobile: venue type filter button is visible 
+    [chromium] › tests/venue-timetable.spec.ts:570:3 › Venue Timetable UI › TC69 — grid rebuilds correctly after venue change 
+  1 skipped
+  73 passed (2.9m)

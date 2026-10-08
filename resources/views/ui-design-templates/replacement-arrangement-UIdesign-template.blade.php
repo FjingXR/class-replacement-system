@@ -1828,6 +1828,13 @@
                  <div style="border:1px solid var(--color-outline);border-radius:var(--radius-sm);padding:10px 14px;max-height:200px;overflow-y:auto;">${listHtml}</div>`,
                 function() {
                     hideConfirmModal();
+                    /* S13b — the submitted request consumes this subject's
+                       cancellation ledger entry: the entry is RETAINED (the
+                       cancelled state keeps replaying) but its chip + the
+                       load toast stop and undo is no longer offered. */
+                    if (currentCourse && typeof ClassCancellation !== 'undefined') {
+                        ClassCancellation.markConsumedByCode(currentCourse.code);
+                    }
                     // Save as recent slot
                     if (selectedOriginalSlot) {
                         setRecentSlot(selectedOriginalSlot);

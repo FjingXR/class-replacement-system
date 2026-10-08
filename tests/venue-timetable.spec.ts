@@ -575,4 +575,59 @@ test.describe('Venue Timetable UI', () => {
     const count = await rows.count();
     expect(count).toBe(7);
   });
+
+  // ════════════════════════════════════════════
+  // 27. CANCEL CLASS FREES THE SLOT (cancel-class-enhancement §8)
+  // ════════════════════════════════════════════
+
+  // Fixture, VERIFIED against public/js/mock-data.js §2.7: B110 — Week 11
+  // (idx 10) Monday AMCS2093(L, start=6 end=9), lecturer
+  // 'En. Lim Jia Zheng' = currentUser, status 'normal' → own + cancellable
+  // (week 10 Monday = 2026-11-30, beyond the real clock's Oct 5+ demo
+  // anchor, so the S5 end-time guard can never bite). B110 also carries
+  // AMIS1012(L) rows from OTHER cohorts (not currentUser) — untouched here.
+  // The venue dropdown is the custom VenueDropdown (4-column hierarchy);
+  // its instance is closure-scoped, so the room is picked via UI clicks:
+  // Lecture Hall → Block B → Floor 1 → B110.
+  test('TC70 — cancelling an own class frees the venue slot (B110 Week 11)', async ({ page }) => {
+    // Week 10 (0-indexed) — B110's own AMCS2093 lecture is future + normal
+    await page.locator('#weekSelect').selectOption('10');
+
+    // Navigate the custom venue dropdown: Type → Block → Floor → Room
+    await page.locator('.venue-dd-trigger').click();
+    await page.locator('.venue-col-item-parent[data-type="LectureHall"]').click();
+    await page.locator('.venue-col-item-parent[data-block="B"]').click();
+    await page.locator('.venue-col-item-parent[data-floor="Floor 1"]').click();
+    await page.locator('.venue-col-item-room[data-code="B110"]').click();
+    await expect(page.locator('.venue-dd-trigger .venue-dd-label')).toContainText('B110');
+
+    // Grid rebuilt for B110 — wait for the own lecture block before sampling
+    const block = page.locator('#tableBody .event-block:has-text("AMCS2093(L)")');
+    await expect(block).toBeVisible();
+    const availableBefore = Number(await page.locator('#sumAvailable').textContent());
+
+    // Cancel it through the shared modal
+    await block.click();
+    await expect(page.locator('#eventModal')).toBeVisible();
+    await expect(page.locator('#eventModal .modal-footer [data-cancel-class-btn]')).toBeVisible();
+    await page.locator('#eventModal .modal-footer [data-cancel-class-btn]').click();
+    await expect(page.locator('#cancelClassOverlay')).toBeVisible();
+    await page.locator('#cancelReasonList input[type="radio"][value="Medical Leave"]').click();
+    await expect(page.locator('#confirmCancelClassBtn')).toBeEnabled();
+    await page.locator('#confirmCancelClassBtn').click();
+    await expect(page.locator('#cancelClassSuccessState')).toBeVisible();
+    await page.locator('#cancelLaterBtn').click();
+
+    // The cancelled block vanishes from the venue grid…
+    await expect(page.locator('#tableBody .event-block:has-text("AMCS2093(L)")')).toHaveCount(0);
+    // …its four Monday slots (08:00–09:30) turn bookable again…
+    await expect(page.locator('#tableBody td[data-day="0"][data-hour="6"] .cell-available')).toBeVisible();
+    await expect(page.locator('#tableBody td[data-day="0"][data-hour="7"] .cell-available')).toBeVisible();
+    await expect(page.locator('#tableBody td[data-day="0"][data-hour="8"] .cell-available')).toBeVisible();
+    await expect(page.locator('#tableBody td[data-day="0"][data-hour="9"] .cell-available')).toBeVisible();
+    // …and the Available summary card counts them back in.
+    await expect.poll(
+      () => page.locator('#sumAvailable').textContent().then((t) => Number(t)),
+    ).toBe(availableBefore + 4);
+  });
 });

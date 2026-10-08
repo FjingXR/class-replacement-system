@@ -64,82 +64,6 @@
             outline-offset: 2px;
         }
 
-        /* ───── Cancel Confirmation Modal ───── */
-        .cancel-overlay {
-            position: fixed; inset: 0; z-index: 1000;
-            background: rgba(0,0,0,0.45);
-            backdrop-filter: blur(6px);
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        .cancel-modal {
-            background: var(--color-surface);
-            border: 1px solid var(--color-outline);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-lg);
-            max-width: 420px; width: 100%;
-            animation: modalIn 0.2s ease;
-        }
-        .cancel-modal-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 20px 24px 0;
-        }
-        .cancel-modal-title {
-            font-size: 18px; font-weight: 700; color: var(--color-on-surface);
-        }
-        .cancel-modal-body {
-            padding: 20px 24px;
-            font-size: 14px; color: var(--color-on-surface);
-            line-height: 1.5;
-        }
-        .cancel-modal-footer {
-            display: flex; justify-content: flex-end; gap: 10px;
-            padding: 0 24px 20px;
-        }
-        .btn-cancel-secondary {
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--color-outline-strong);
-            background: var(--color-surface);
-            color: var(--color-on-surface-variant);
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background var(--transition), transform 0.15s;
-        }
-        .btn-cancel-secondary:hover {
-            background: var(--color-surface-variant);
-        }
-        .btn-cancel-secondary:active {
-            transform: scale(0.97);
-        }
-        .btn-cancel-secondary:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
-        }
-        .btn-cancel-danger {
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            border: none;
-            background: var(--color-error);
-            color: var(--color-on-error);
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background var(--transition), transform 0.15s;
-        }
-        .btn-cancel-danger:hover {
-            filter: brightness(1.1);
-        }
-        .btn-cancel-danger:active {
-            transform: scale(0.97);
-        }
-        .btn-cancel-danger:focus-visible {
-            outline: 2px solid var(--color-error);
-            outline-offset: 2px;
-        }
         .timetable td.hour-cell.offday-slot {
             background: transparent;
         }
@@ -211,28 +135,12 @@
         </div>
         <div class="modal-footer-right">
             <button class="btn-replace-now" id="btnReplaceNow" style="display:none" onclick="goToReplacement(currentModalEvent?.code, currentModalEvent?.cohort, { day: currentModalEvent?.di, start: currentModalEvent?.start, end: currentModalEvent?.end, venue: currentModalEvent?.venue, duration: (currentModalEvent && currentModalEvent.start !== undefined && currentModalEvent.end !== undefined) ? ((currentModalEvent.end - currentModalEvent.start + 1) / 2) : undefined }, 'my-timetable')">Replace Now</button>
-            <button class="btn-cancel-class" id="btnCancelClass" style="display:none" onclick="cancelClass()"></button>
         </div>
     @endsection
     @include('partials.ui-class-detail-modal')
 
-    <!-- ═══ Cancel Confirmation Modal ═══ -->
-    <div class="cancel-overlay" id="cancelConfirmOverlay" style="display:none" onclick="if(event.target===this)closeCancelConfirm(false)">
-        <div class="cancel-modal">
-            <div class="cancel-modal-header">
-                <span class="cancel-modal-title">Cancel Class</span>
-                <button class="modal-close" onclick="closeCancelConfirm(false)">&times;</button>
-            </div>
-            <div class="cancel-modal-body">
-                <p>Are you sure you want to cancel this class?</p>
-                <p class="section-heading-sub" style="margin-top:6px;">This action cannot be undone. A cancellation notice will be sent to all affected parties.</p>
-            </div>
-            <div class="cancel-modal-footer">
-                <button class="btn-cancel-secondary" onclick="closeCancelConfirm(false)">No, Keep It</button>
-                <button class="btn-cancel-danger" onclick="closeCancelConfirm(true)">Yes, Cancel Class</button>
-            </div>
-            </div>
-        </div>
+    <!-- ═══ Cancel Class Confirm Modal (shared partial — cancel-class-enhancement) ═══ -->
+    @include('partials.ui-cancel-class-modal')
 
     <!-- ═══ Copy Toast ═══ -->
     <div class="copy-toast" id="copyToast"></div>
@@ -275,10 +183,6 @@
             const replaceBtn = document.getElementById('btnReplaceNow');
             replaceBtn.style.display = isConflict ? 'flex' : 'none';
 
-            const cancelBtn = document.getElementById('btnCancelClass');
-            cancelBtn.style.display = (isConflict || event.status === 'pending') ? 'none' : 'flex';
-            cancelBtn.textContent = 'Cancel Class?';
-
             let cohortValue = event.cohort;
             let studentValue = event.studentCount ? String(event.studentCount) : '—';
             if (event.cohorts && event.studentCounts) {
@@ -297,23 +201,22 @@
                     { label: 'Total Students', value: studentValue }
                 ]
             });
+
+            // Cancel Class? button (shared modal — cancel-class-enhancement §5):
+            // self-hides via ClassCancellation.isCancellable (S1–S5); the Later
+            // path closes the class modal and rebuilds the grid in place.
+            CancelClass.renderButton(
+                document.querySelector('#classModal .modal-footer'),
+                event, days, currentWeek,
+                function() {
+                    closeModal();
+                    buildTimetable();
+                }
+            );
         }
 
         function closeModal() {
             document.getElementById('classModal').style.display = 'none';
-        }
-
-        function cancelClass() {
-            const overlay = document.getElementById('cancelConfirmOverlay');
-            overlay.style.display = 'flex';
-        }
-
-        function closeCancelConfirm(confirmed) {
-            document.getElementById('cancelConfirmOverlay').style.display = 'none';
-            if (confirmed) {
-                closeModal();
-                toast.show('Class cancelled.', null);
-            }
         }
 
         function closeModalOutside(e) {
@@ -341,7 +244,7 @@
         }
 
         function updateSummary() {
-            const events = eventsData[currentWeek] || [];
+            const events = (eventsData[currentWeek] || []).filter(e => e.status !== 'cancelled');
             computeSummary(events, weekData[currentWeek].days);
             updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
         }

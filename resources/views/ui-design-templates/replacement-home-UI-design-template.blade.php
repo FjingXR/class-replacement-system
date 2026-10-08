@@ -43,6 +43,20 @@
             color: var(--color-on-error);
         }
 
+        /* ───── Just-cancelled Chip ───── */
+        .just-cancelled-chip {
+            display: inline-block;
+            background: var(--color-error-container);
+            color: var(--color-on-error-container);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
         /* ───── Summary Card Colors ───── */
         .summary-card.card-conflict .summary-value { color: var(--color-error); }
         .summary-card.card-venues .summary-value { color: var(--color-primary); }
@@ -378,6 +392,22 @@
                         td.innerHTML = cell.html;
                         row.appendChild(td);
                     });
+                    /* S13 — "Just cancelled" chip iff THIS row has its own
+                       un-undone, un-consumed ledger entry (per-entry chips,
+                       §6 stack semantics). Page-local placement — cell index
+                       2 is the Original Class block (col-original); do NOT
+                       mutate shared HtmlBuilder.replacementHomeRow (§5).
+                       Undo clears it on the next buildTable (S14). */
+                    const cxlEntries = ClassCancellation.allEntries();
+                    if (cxlEntries.some(function(entry) {
+                            return entry.row && entry.row.id === c.id &&
+                                   !entry.consumed && entry.chip;
+                        })) {
+                        const chip = document.createElement('span');
+                        chip.className = 'just-cancelled-chip';
+                        chip.textContent = 'Just cancelled';
+                        row.children[2].appendChild(chip);
+                    }
                     (function(row, idx) {
                         row.onclick = function() { quickView(idx); };
                         row.style.cursor = 'pointer';
