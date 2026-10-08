@@ -5,13 +5,31 @@ const BASE = 'http://localhost:8000/replacement-arrangement';
 async function openPage(page) {
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await page.locator('.timetable .cell-content').first().waitFor({ state: 'visible', timeout: 15000 });
+  // Toolbar restructure (replacement-arrangement-toolbar-restructure): the
+  // grid is selection-locked until a subject is picked — even when the URL
+  // carries ?code=. Pick the first subject so slots become selectable.
+  const subject = page.locator('#subjectSelector');
+  await subject.selectOption({ index: 1 });
+  await page.locator('.timetable .cell-content.cell-available').first()
+    .waitFor({ state: 'visible', timeout: 10000 });
 }
 
 async function selectGridSlot(page) {
-  const cell = page.locator('.timetable .cell-content.cell-available').first();
-  await cell.waitFor({ state: 'visible', timeout: 10000 });
-  await cell.click();
-  await page.locator('.timetable .cell-content.cell-selected').first().waitFor({ state: 'visible', timeout: 5000 });
+  // Not every green cell is selectable: a slot overlapping the subject's own
+  // classes is refused with a toast ("That slot is no longer available") —
+  // e.g. the first available cell after a week jump. Try cells until one
+  // selects; the selection renders as a merged .event-selection block.
+  const cells = page.locator('.timetable .cell-content.cell-available');
+  const n = Math.min(await cells.count(), 8);
+  for (let i = 0; i < n; i++) {
+    await cells.nth(i).click();
+    try {
+      await page.locator('.timetable .event-block.event-selection').first()
+        .waitFor({ state: 'visible', timeout: 1500 });
+      return;
+    } catch (e) { /* refused — try the next available cell */ }
+  }
+  throw new Error('no selectable slot among the first ' + n + ' available cells');
 }
 
 async function pickOtherVenue(page): Promise<boolean> {
@@ -160,35 +178,37 @@ test('no confirmation popup when changing dropdowns without selection', async ({
   }
 });
 
-test('week next arrow with selection pops confirmation; confirm saves and navigates', async ({ page }) => {
+test('week next arrow with selection saves silently and navigates (multi-week model)', async ({ page }) => {
   await openPage(page);
   await selectGridSlot(page);
-  const nextBtn = page.locator('.week-arrow[aria-label="Next week"]');
-  await nextBtn.click();
-  await expect(page.locator('#confirmModal')).toBeVisible({ timeout: 5000 });
-  await expect(page.locator('#confirmModal .modal-body')).toContainText('saved');
-  await page.locator('#modalConfirmBtn').click();
-  await expect(page.locator('#confirmModal')).toBeHidden({ timeout: 5000 });
-  // Selection should be cleared visually after navigation
-  await expect(page.locator('.timetable .cell-content.cell-selected').first()).toBeHidden({ timeout: 5000 });
+  // Week navigation no longer warns: selections persist per venue+week
+  // (multi-week model), so the old confirm modal is gone by design.
+  await page.locator('.week-arrow[aria-label="Next week"]').click();
+  await page.waitForTimeout(800);   // skeleton-led rebuild
+  await expect(page.locator('#confirmModal')).toBeHidden({ timeout: 3000 });
+  // the budget survived the navigation
+  await expect(page.locator('#infoTotal')).toContainText('4 of 4 slots');
+  const week = await page.evaluate(() => weekNav.currentWeek);
+  expect(week).toBeGreaterThan(0);
 });
 
-test('week prev arrow with selection pops confirmation; cancel keeps selection', async ({ page }) => {
+test('week prev arrow with selection saves silently and navigates (multi-week model)', async ({ page }) => {
   await openPage(page);
-  // Navigate to week 2 first so prev is available
-  const nextBtn = page.locator('.week-arrow[aria-label="Next week"]');
-  await nextBtn.click();
-  await page.waitForTimeout(300);
+  // Navigate to a later week first so prev is available (the navigator skips
+  // past/current/unbookable weeks, so next may land several weeks ahead)
+  await page.locator('.week-arrow[aria-label="Next week"]').click();
+  await page.waitForTimeout(800);
+  const weekBefore = await page.evaluate(() => weekNav.currentWeek);
   await selectGridSlot(page);
-  const prevBtn = page.locator('.week-arrow[aria-label="Previous week"]');
-  await prevBtn.click();
-  await expect(page.locator('#confirmModal')).toBeVisible({ timeout: 5000 });
-  await page.locator('#confirmModal .btn-outline').click();
-  await expect(page.locator('#confirmModal')).toBeHidden({ timeout: 5000 });
-  await expect(page.locator('.timetable .cell-content.cell-selected').first()).toBeVisible({ timeout: 5000 });
+  await page.locator('.week-arrow[aria-label="Previous week"]').click();
+  await page.waitForTimeout(800);
+  await expect(page.locator('#confirmModal')).toBeHidden({ timeout: 3000 });
+  await expect(page.locator('#infoTotal')).toContainText('4 of 4 slots');
+  const week = await page.evaluate(() => weekNav.currentWeek);
+  expect(week).toBeLessThan(weekBefore);
 });
 
-test('week dropdown change with selection pops confirmation; cancel restores dropdown value', async ({ page }) => {
+test('week dropdown change with selection saves silently and applies', async ({ page }) => {
   await openPage(page);
   await selectGridSlot(page);
   const weekSel = page.locator('#weekSelector');
@@ -202,23 +222,17 @@ test('week dropdown change with selection pops confirmation; cancel restores dro
   }
   if (!targetVal) { test.skip(true, 'no alternate week'); return; }
   await weekSel.selectOption(targetVal);
-  await expect(page.locator('#confirmModal')).toBeVisible({ timeout: 5000 });
-  await page.locator('#confirmModal .btn-outline').click();
-  await expect(page.locator('#confirmModal')).toBeHidden({ timeout: 5000 });
-  await expect(weekSel).toHaveValue(beforeVal);
+  await page.waitForTimeout(800);
+  await expect(page.locator('#confirmModal')).toBeHidden({ timeout: 3000 });
+  await expect(weekSel).toHaveValue(targetVal);
+  await expect(page.locator('#infoTotal')).toContainText('4 of 4 slots');
 });
 
-test('back button with saved selection (after week change) shows confirmation', async ({ page }) => {
+test('back button with saved selection shows confirmation', async ({ page }) => {
   await openPage(page);
   await selectGridSlot(page);
-  // Navigate away (confirm the week change)
-  const nextBtn = page.locator('.week-arrow[aria-label="Next week"]');
-  await nextBtn.click();
+  // Leaving the page with a live selection still warns ('Unsaved Changes')
+  await page.locator('.back-btn').click();
   await expect(page.locator('#confirmModal')).toBeVisible({ timeout: 5000 });
-  await page.locator('#modalConfirmBtn').click();
-  await expect(page.locator('#confirmModal')).toBeHidden({ timeout: 5000 });
-  // Now click the page back button — should show confirmation because saved selections exist
-  const backBtn = page.locator('.back-btn');
-  await backBtn.click();
-  await expect(page.locator('#confirmModal')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('#confirmModal .modal-body')).toContainText('lost');
 });

@@ -254,8 +254,10 @@ test.describe('Cancel Class Flow', () => {
     await expect(page.locator('#toastBar .toast-undo')).toBeVisible();
 
     // S13 — home row listed with the Just cancelled chip (seed date chosen
-    // to sort onto pagination page 1)
-    const row = page.locator('#tableBody tr', { hasText: 'AMCS2093' });
+    // to sort onto pagination page 1). B107 is unique to the seeded row —
+    // the demo conflictedClasses list also carries two AMCS2093 rows
+    // (B110/B111), so filtering by code alone is a strict-mode violation.
+    const row = page.locator('#tableBody tr', { hasText: 'B107' });
     await expect(row).toBeVisible();
     await expect(row.locator('.just-cancelled-chip')).toBeVisible();
 
@@ -303,8 +305,9 @@ test.describe('Cancel Class Flow', () => {
     await page.goto(HOME);
     // Chip gone (un-consumed chip rendering is entry-scoped)…
     await expect(page.locator('.just-cancelled-chip')).toHaveCount(0);
-    // …the row is still listed (state kept replaying)…
-    await expect(page.locator('#tableBody tr', { hasText: 'AMCS2093' })).toBeVisible();
+    // …the row is still listed (state kept replaying — B107 = seeded row;
+    // the demo list has two more AMCS2093 rows, so code-only text matches 3)…
+    await expect(page.locator('#tableBody tr', { hasText: 'B107' })).toBeVisible();
     // …and the load toast no longer offers undo.
     await expect(page.locator('#toastBar .toast-undo')).toBeHidden();
   });

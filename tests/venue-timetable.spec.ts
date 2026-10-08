@@ -2,6 +2,28 @@ import { test, expect } from '@playwright/test';
 
 const PAGE = '/venue-timetable-ui';
 
+/** Open the cascading venue dropdown and walk Type → Block → Floor → Room,
+ *  picking the `index`-th room of the first reachable branch. Returns false
+ *  when a column is empty. (The old #venueSelect <select> was replaced by the
+ *  4-column VenueDropdown — changelog 2026-08-16.) */
+async function pickVenue(page, index: number): Promise<boolean> {
+  await page.locator('.venue-dd-trigger').click();
+  const cols = page.locator('.venue-dd-panel .venue-col');
+  for (let level = 0; level < 3; level++) {
+    const items = cols.nth(level).locator('.venue-col-item-parent');
+    if ((await items.count()) === 0) return false;
+    await items.first().click();
+    // the next column is built on demand — wait for it to become visible
+    await cols.nth(level + 1).waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
+  }
+  const rooms = cols.nth(3).locator('.venue-col-item-room');
+  const roomCount = await rooms.count();
+  if (roomCount === 0) return false;
+  await rooms.nth(Math.min(index, roomCount - 1)).click();
+  await page.waitForTimeout(400);
+  return true;
+}
+
 test.describe('Venue Timetable UI', () => {
 
   test.beforeEach(async ({ page }) => {
@@ -37,10 +59,13 @@ test.describe('Venue Timetable UI', () => {
     await expect(chip).toContainText('202605 Semester');
   });
 
-  test('TC05 — print button exists and is disabled', async ({ page }) => {
+  test('TC05 — print button exists and shows coming-soon toast', async ({ page }) => {
     const btn = page.locator('.print-btn');
     await expect(btn).toBeVisible();
-    await expect(btn).toBeDisabled();
+    // 2026-10-03: the print action is a placeholder — enabled, but every
+    // click explains itself via the shared toast instead of printing.
+    await btn.click();
+    await expect(page.locator('#toastBar')).toContainText('Printing is coming soon');
   });
 
   // ════════════════════════════════════════════
@@ -61,34 +86,34 @@ test.describe('Venue Timetable UI', () => {
   // 3. VENUE DROPDOWN
   // ════════════════════════════════════════════
 
-  test('TC08 — venue dropdown is visible and populated', async ({ page }) => {
-    const select = page.locator('#venueSelect');
-    await expect(select).toBeVisible();
-    const options = select.locator('option');
-    const count = await options.count();
-    expect(count).toBeGreaterThan(0);
+  test('TC08 — venue dropdown trigger is visible and opens the columns', async ({ page }) => {
+    const trigger = page.locator('.venue-dd-trigger');
+    await expect(trigger).toBeVisible();
+    await trigger.click();
+    await expect(page.locator('.venue-dd')).toHaveClass(/open/);
+    await expect(page.locator('.venue-dd-panel .venue-col').first()).toBeVisible();
   });
 
-  test('TC09 — venue dropdown has venue options', async ({ page }) => {
-    const options = page.locator('#venueSelect option');
-    const count = await options.count();
-    expect(count).toBeGreaterThanOrEqual(5);
+  test('TC09 — venue registry backs the dropdown (≥5 rooms)', async ({ page }) => {
+    await page.locator('.venue-dd-trigger').click();
+    // the cascading columns are built from MockData.venues (23 rooms)
+    const venueCount = await page.evaluate(() => MockData.venues.length);
+    expect(venueCount).toBeGreaterThanOrEqual(5);
+    await expect(page.locator('.venue-dd-panel .venue-col-item-parent').first()).toBeVisible();
   });
 
-  test('TC10 — first venue is selected by default', async ({ page }) => {
-    const select = page.locator('#venueSelect');
-    const value = await select.inputValue();
-    expect(value).toBeTruthy();
+  test('TC10 — a venue is selected by default', async ({ page }) => {
+    const code = await page.evaluate(() => venueDropdown.getSelected());
+    expect(code).toBeTruthy();
+    // and the trigger shows it, not the placeholder
+    await expect(page.locator('.venue-dd-trigger')).not.toContainText('Select a venue');
   });
 
   test('TC11 — changing venue rebuilds timetable', async ({ page }) => {
-    const select = page.locator('#venueSelect');
-    await select.selectOption({ index: 1 });
-    await page.waitForTimeout(500);
-    const body = page.locator('#tableBody');
-    const rows = body.locator('tr');
-    const count = await rows.count();
-    expect(count).toBeGreaterThan(0);
+    const changed = await pickVenue(page, 1);
+    test.skip(!changed, 'no alternate venue reachable in the cascading dropdown');
+    const rows = page.locator('#tableBody tr');
+    await expect(rows).toHaveCount(7);
   });
 
   // ════════════════════════════════════════════
@@ -151,43 +176,44 @@ test.describe('Venue Timetable UI', () => {
   // test('TC19 — "All" is the default time filter', ...)
   // test('TC20 — clicking Morning filter activates it', ...)
 
-  test('TC21 — venue type filter button is visible', async ({ page }) => {
-    await expect(page.locator('#venueTypeBtn')).toBeVisible();
+  // TC21–TC25 — the old #venueTypeBtn checkbox filter was replaced by the
+  // cascading dropdown's Type column (choosing a type IS the filter).
+
+  test('TC21 — venue type column reachable inside the dropdown', async ({ page }) => {
+    await page.locator('.venue-dd-trigger').click();
+    await expect(page.locator('.venue-dd-panel .venue-col').first()).toBeVisible();
+    await expect(page.locator('.venue-dd-panel .venue-col-item-parent').first()).toBeVisible();
   });
 
-  test('TC22 — clicking venue type button opens dropdown', async ({ page }) => {
-    await page.locator('#venueTypeBtn').click();
-    await expect(page.locator('#venueTypeDropdown')).toHaveClass(/open/);
+  test('TC22 — dropdown opens and closes on trigger toggle', async ({ page }) => {
+    await page.locator('.venue-dd-trigger').click();
+    await expect(page.locator('.venue-dd')).toHaveClass(/open/);
+    await page.locator('.venue-dd-trigger').click();
+    await expect(page.locator('.venue-dd')).not.toHaveClass(/open/);
   });
 
-  test('TC23 — venue type dropdown has 3 checkboxes', async ({ page }) => {
-    await page.locator('#venueTypeBtn').click();
-    const checks = page.locator('#venueTypeDropdown input[type="checkbox"]');
-    await expect(checks).toHaveCount(3);
-  });
-
-  test('TC24 — unchecking all venue type checkboxes shows no-match state', async ({ page }) => {
-    await page.locator('#venueTypeBtn').click();
-    const checks = page.locator('#venueTypeDropdown input[type="checkbox"]');
-    const count = await checks.count();
-    for (let i = 0; i < count; i++) {
-      await checks.nth(i).uncheck();
+  test('TC23 — type column lists the 4 registry venue types', async ({ page }) => {
+    await page.locator('.venue-dd-trigger').click();
+    // data-type attributes disambiguate ('Lab' is a substring of 'CiscoLab')
+    const col = page.locator('.venue-dd-panel .venue-col').first();
+    for (const t of ['Tutorial', 'LectureHall', 'Lab', 'CiscoLab']) {
+      await expect(col.locator(`.venue-col-item-parent[data-type="${t}"]`)).toBeVisible();
     }
-    // Button text should change to "Filtered"
-    await expect(page.locator('#venueTypeBtn')).toContainText('Filtered');
   });
 
-  test('TC25 — checking all venue type checkboxes resets to All Types', async ({ page }) => {
-    await page.locator('#venueTypeBtn').click();
-    const checks = page.locator('#venueTypeDropdown input[type="checkbox"]');
-    const count = await checks.count();
-    for (let i = 0; i < count; i++) {
-      await checks.nth(i).uncheck();
-    }
-    for (let i = 0; i < count; i++) {
-      await checks.nth(i).check();
-    }
-    await expect(page.locator('#venueTypeBtn')).toContainText('All Types');
+  test('TC24 — clicking a type lists its blocks', async ({ page }) => {
+    await page.locator('.venue-dd-trigger').click();
+    await page.locator('.venue-dd-panel .venue-col-item-parent[data-type="Lab"]').first().click();
+    const blocks = page.locator('.venue-dd-panel .venue-col').nth(1).locator('.venue-col-item-parent');
+    await expect(blocks.first()).toBeVisible();
+  });
+
+  test('TC25 — room selection closes the dropdown and updates the selection', async ({ page }) => {
+    const changed = await pickVenue(page, 0);
+    test.skip(!changed, 'no room reachable in the cascading dropdown');
+    await expect(page.locator('.venue-dd')).not.toHaveClass(/open/);
+    const after = await page.evaluate(() => venueDropdown.getSelected());
+    expect(after).toBeTruthy();
   });
 
   // ════════════════════════════════════════════
@@ -454,15 +480,15 @@ test.describe('Venue Timetable UI', () => {
   // 18. MOBILE VIEW (≤768px)
   // ════════════════════════════════════════════
 
-  test('TC56 — mobile: venue dropdown exists', async ({ page }) => {
+  test('TC56 — mobile: venue dropdown trigger exists', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.waitForTimeout(300);
-    await expect(page.locator('#venueSelect')).toBeVisible();
+    await expect(page.locator('.venue-dd-trigger')).toBeVisible();
   });
 
-  test('TC57 — mobile: filter bar is visible', async ({ page }) => {
+  test('TC57 — mobile: picker bar is visible', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    await expect(page.locator('.filter-bar')).toBeVisible();
+    await expect(page.locator('.semester-bar')).toBeVisible();
   });
 
   test('TC58 — mobile: summary cards exist', async ({ page }) => {
@@ -486,13 +512,12 @@ test.describe('Venue Timetable UI', () => {
   // ════════════════════════════════════════════
 
   test('TC60 — state is saved to localStorage on venue change', async ({ page }) => {
-    const select = page.locator('#venueSelect');
-    await select.selectOption({ index: 2 });
+    await page.evaluate(() => venueDropdown.select('B006'));
     await page.waitForTimeout(500);
     const state = await page.evaluate(() => localStorage.getItem('venueTimetableState'));
     expect(state).toBeTruthy();
     const parsed = JSON.parse(state!);
-    expect(parsed.venue).toBeTruthy();
+    expect(parsed.venue).toBe('B006');
   });
 
   test('TC61 — favourites are saved to localStorage', async ({ page }) => {
@@ -503,11 +528,11 @@ test.describe('Venue Timetable UI', () => {
   });
 
   test('TC62 — recent venues are saved to localStorage', async ({ page }) => {
-    const select = page.locator('#venueSelect');
-    await select.selectOption({ index: 3 });
+    await page.evaluate(() => venueDropdown.select('B110'));
     await page.waitForTimeout(300);
     const recent = await page.evaluate(() => localStorage.getItem('venueRecent'));
     expect(recent).toBeTruthy();
+    expect(JSON.parse(recent!)).toContain('B110');
   });
 
   // ════════════════════════════════════════════
@@ -525,9 +550,9 @@ test.describe('Venue Timetable UI', () => {
   // TC64 — time filter removed
   // test('TC64 — mobile: time filter buttons are visible', ...)
 
-  test('TC65 — mobile: venue type filter button is visible', async ({ page }) => {
+  test('TC65 — mobile: venue dropdown trigger is visible', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    await expect(page.locator('#venueTypeBtn')).toBeVisible();
+    await expect(page.locator('.venue-dd-trigger')).toBeVisible();
   });
 
   // ════════════════════════════════════════════
@@ -572,8 +597,7 @@ test.describe('Venue Timetable UI', () => {
   // ════════════════════════════════════════════
 
   test('TC69 — grid rebuilds correctly after venue change', async ({ page }) => {
-    const select = page.locator('#venueSelect');
-    await select.selectOption({ index: 1 });
+    await page.evaluate(() => venueDropdown.select('B110'));
     await page.waitForTimeout(600);
     const rows = page.locator('#tableBody tr');
     const count = await rows.count();
