@@ -273,3 +273,10 @@ mandatory enum reason (6 values incl. Other + detail; OOP: `ClassCancellation`
 in `ui-common.js`). A cancelled block vanishes and its slot frees; the
 sessionStorage ledger (`classCancellationLedger`) replays the state across
 pages, with an undo toast (12 s) on any landing page until undone/arranged.
+
+### Postscript — toast snooze (2026-10-08, SDD-waived micro-fix)
+
+✕-closing the cancellation undo toast now snoozes it for the browser session
+(per-entry `toastSnoozed` in the ledger; `ToastManager.close()` in
+`ui-common.js`, layout ✕ → `toast.close()`). Cancelled state + chip replay
+unchanged; a new cancellation toasts again.

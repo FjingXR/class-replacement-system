@@ -57,6 +57,28 @@
             white-space: nowrap;
         }
 
+        /* Undo affordance beside the chip (toast-snooze companion) */
+        .just-cancelled-undo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            margin-left: 4px;
+            padding: 0;
+            border: 1px solid var(--color-outline);
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--color-on-surface-variant);
+            cursor: pointer;
+            vertical-align: middle;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+        .just-cancelled-undo:hover {
+            background: var(--color-surface-variant);
+            color: var(--color-on-surface);
+        }
+
         /* ───── Summary Card Colors ───── */
         .summary-card.card-conflict .summary-value { color: var(--color-error); }
         .summary-card.card-venues .summary-value { color: var(--color-primary); }
@@ -407,6 +429,21 @@
                         chip.className = 'just-cancelled-chip';
                         chip.textContent = 'Just cancelled';
                         row.children[2].appendChild(chip);
+                        /* Undo affordance — keeps undo reachable when the
+                           load toast was ✕-snoozed for the session
+                           (toast-snooze fix, 2026-10-08). Icon-first, stops
+                           row propagation so quickView doesn't fire. */
+                        const undoBtn = document.createElement('button');
+                        undoBtn.type = 'button';
+                        undoBtn.className = 'just-cancelled-undo';
+                        undoBtn.setAttribute('data-tip', 'Undo cancellation');
+                        undoBtn.setAttribute('aria-label', 'Undo cancellation');
+                        undoBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>';
+                        undoBtn.onclick = function(ev) {
+                            ev.stopPropagation();
+                            undoCancelledByRowId(c.id);
+                        };
+                        row.children[2].appendChild(undoBtn);
                     }
                     (function(row, idx) {
                         row.onclick = function() { quickView(idx); };
@@ -420,6 +457,19 @@
             updateResultCount({ elId: 'resultCount', data: currentFiltered, total: conflictedClasses.length, label: 'classes' });
             updateSummary();
             renderCards();
+        }
+
+        /* Undo a cancellation from the home list (toast-snooze companion):
+           restores the class everywhere via ClassCancellation.undo, rebuilds
+           the table (row + chip + undo button vanish), mirrors the S14 toast. */
+        function undoCancelledByRowId(rowId) {
+            const entry = ClassCancellation.allEntries().find(function(e) {
+                return e.row && e.row.id === rowId && !e.consumed;
+            });
+            if (!entry) return;
+            ClassCancellation.undo(entry);
+            buildTable();
+            toast.show('Class restored.', null);
         }
 
         function renderCards() {

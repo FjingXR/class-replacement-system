@@ -369,3 +369,24 @@ mandatory enum reason (6 values incl. Other + detail; OOP: `ClassCancellation`
 in `ui-common.js`). A cancelled block vanishes and its slot frees; the
 sessionStorage ledger (`classCancellationLedger`) replays the state across
 pages, with an undo toast (12 s) on any landing page until undone/arranged.
+
+### Postscript — stale View-Full-Request + toast snooze (2026-10-08, SDD-waived micro-fix)
+
+Two shared-modal fixes: (1) the "View Full Request" anchor appended for a
+pending class lingered in the static footer when a normal class was opened
+next — footer cleanup now runs on EVERY `openClassModal` open
+(`ui-common.js`). (2) The cancellation undo toast no longer nags after the
+user ✕-closes it: the ✕ snoozes that entry's toast for the session
+(`toastSnoozed`; undo remains available on the replacement-home chip).
+
+### Postscript — replacement-status classes now cancellable (2026-10-08, SDD-waived extension)
+
+FR 2.16 read literally: a confirmed replacement slot is still the lecturer's
+own scheduled class, so `isCancellable` now accepts status `'replacement'`
+alongside `'normal'` (own + future-end + non-holiday guards unchanged).
+Undo semantics hardened to match: the ledger entry records `priorStatus` at
+cancel time and `undo()` restores THAT — a cancelled replacement block comes
+back as a replacement (Original-Date trail intact) instead of being demoted
+to 'normal'. The approved request itself is untouched (audit trail). The
+cancelled class then joins the replacement-home requires-replacement list
+like any other cancellation. Covered by new spec test S17 (14 passing).

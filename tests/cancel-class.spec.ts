@@ -430,3 +430,48 @@ test.describe('Cancel Class Flow', () => {
     await expect(page.locator('#tableBody .event-block:has-text("BMIT2013(L)")')).toHaveCount(1);
   });
 });
+
+  // ── S17 — confirmed replacement classes are cancellable too (FR 2.16
+  // extension, 2026-10-08 SDD-waived: a moved slot is still the lecturer's
+  // own scheduled class); undo restores the PRIOR status ──
+  test('S17 — own replacement-status class: cancel allowed, undo restores replacement status', async ({ page }) => {
+    await page.goto(MY);
+    await page.locator('#weekSelect').selectOption('9');
+    // Week 9 Friday AMCS2093 B011 (start=6 end=7) — own + status
+    // 'replacement' + future end (Fri 04 Dec 2026 vs real clock Oct 08).
+    const block = page.locator('#tableBody .event-block:has-text("AMCS2093")')
+      .filter({ hasText: 'B011' });
+    await expect(block).toBeVisible();
+    await block.click();
+    await expect(page.locator('#classModal')).toBeVisible();
+    const btn = page.locator('#classModal .modal-footer [data-cancel-class-btn]');
+    await expect(btn).toBeVisible();
+    await btn.click();
+
+    const overlay = page.locator('#cancelClassOverlay');
+    await expect(overlay).toBeVisible();
+    await page.locator('#cancelReasonList input').first().check();
+    await page.locator('#confirmCancelClassBtn').click();
+    await expect(page.locator('#cancelClassSuccessState')).toBeVisible();
+    await page.locator('#cancelLaterBtn').click();
+
+    // Block vanishes from the grid once cancelled
+    await expect(
+      page.locator('#tableBody .event-block:has-text("AMCS2093")')
+        .filter({ hasText: 'B011' }),
+    ).toHaveCount(0);
+
+    // Undo → the block returns AS a replacement (priorStatus preserved),
+    // NOT demoted to 'normal' (the Original-Date trail must survive).
+    await page.locator('#toastBar .toast-undo').click();
+    await expect(page.locator('#toastBar')).toContainText('Class restored.');
+    await page.goto(MY);
+    await page.locator('#weekSelect').selectOption('9');
+    const restored = page.locator('#tableBody .event-block:has-text("AMCS2093")')
+      .filter({ hasText: 'B011' });
+    await expect(restored).toBeVisible();
+    const status = await restored.first().evaluate(
+      (el) => (el as { __eventData?: { status?: string } }).__eventData?.status,
+    );
+    expect(status).toBe('replacement');
+  });

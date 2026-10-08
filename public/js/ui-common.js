@@ -988,24 +988,27 @@ function openClassModal(cfg) {
             : null,
     }, groups);
 
+    // Footer cleanup runs on EVERY open: the footer is static markup, so an
+    // anchor appended for a previous pending class would otherwise linger on
+    // a normal class's modal (reported 2026-10-08 — "why View Full Request?").
+    var _mOverlay = document.getElementById(cfg.modalId || 'classModal');
+    var _mFooter = _mOverlay ? _mOverlay.querySelector('.modal-footer') : null;
+    if (_mFooter) {
+        _mFooter.querySelectorAll('a.btn-action').forEach(function(b) { b.remove(); });
+    }
+
     // Add "View Full Request" button to footer right side for own pending requests
-    if (event.status === 'pending' && event.requestId) {
-        var overlay = document.getElementById(cfg.modalId || 'classModal');
-        var footer = overlay.querySelector('.modal-footer');
-        if (footer) {
-            // Remove any previously appended buttons to avoid duplicates
-            footer.querySelectorAll('a.btn-action').forEach(function(b) { b.remove(); });
-            var viewBtn = document.createElement('a');
-            viewBtn.href = '/my-request-history-ui?id=' + event.requestId;
-            viewBtn.className = 'btn-action';
-            viewBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> View Full Request';
-            viewBtn.style.textDecoration = 'none';
-            var rightGroup = footer.querySelector('.modal-footer-right');
-            if (rightGroup) {
-                rightGroup.appendChild(viewBtn);
-            } else {
-                footer.appendChild(viewBtn);
-            }
+    if (event.status === 'pending' && event.requestId && _mFooter) {
+        var viewBtn = document.createElement('a');
+        viewBtn.href = '/my-request-history-ui?id=' + event.requestId;
+        viewBtn.className = 'btn-action';
+        viewBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> View Full Request';
+        viewBtn.style.textDecoration = 'none';
+        var rightGroup = _mFooter.querySelector('.modal-footer-right');
+        if (rightGroup) {
+            rightGroup.appendChild(viewBtn);
+        } else {
+            _mFooter.appendChild(viewBtn);
         }
     }
 }
@@ -2435,11 +2438,14 @@ window.addEventListener('scroll', () => {
 class ToastManager {
     constructor() {
         this._timer = null;
+        this._current = null;
     }
 
-    show(message, undoCallback, duration = 5000, linkText = '', linkUrl = '', details = '') {
+    show(message, undoCallback, duration = 5000, linkText = '', linkUrl = '', details = '', onManualDismiss = null) {
         const bar = document.getElementById('toastBar');
         if (!bar) return;
+
+        this._current = { message: message, onManualDismiss: onManualDismiss };
 
         const msgEl = bar.querySelector('.toast-message');
         const detailsEl = bar.querySelector('.toast-details');
@@ -2483,6 +2489,15 @@ class ToastManager {
         const bar = document.getElementById('toastBar');
         if (bar) bar.classList.remove('visible');
         clearTimeout(this._timer);
+    }
+
+    /* Manual close (the ✕ in the layout toast bar). Unlike the auto-timeout
+       dismiss(), this fires the current toast's onManualDismiss hook so a
+       dismissal can have consequences (e.g. snoozing the cancellation toast). */
+    close() {
+        this.dismiss();
+        const hook = this._current && this._current.onManualDismiss;
+        if (hook) hook();
     }
 }
 
@@ -3483,12 +3498,15 @@ const ClassCancellation = {
     },
 
     /* S1–S5 guards, recomputed per call (cheap; the confirm path re-checks
-       at S6): own class + status 'normal' + non-holiday, non-Sunday day +
-       END datetime strictly in the future (real clock per design §1). */
+       at S6): own class + status 'normal' OR 'replacement' (a confirmed
+       replacement slot is still the lecturer's own scheduled class — FR
+       2.16; 2026-10-08 SDD-waived extension, priorStatus preserved for
+       undo) + non-holiday, non-Sunday day + END datetime strictly in the
+       future (real clock per design §1). */
     isCancellable(event, days, weekIndex) {
         if (!event) return false;
         if (event.lecturer !== MockData.currentUser.name) return false;  // S2
-        if (event.status !== 'normal') return false;                     // S3
+        if (event.status !== 'normal' && event.status !== 'replacement') return false; // S3
         const day = days && days[event.di];
         if (!day || day.holiday || day.sunday || day.abbr === 'Sun') return false; // S4
         const end = this.endDateTime(event, days, weekIndex);
@@ -3758,17 +3776,23 @@ const ClassCancellation = {
             cancelledAt: new Date().toISOString(),
             row: row,
             chip: true,
+            /* Status to restore on undo — a cancelled 'replacement' block
+               must come back AS a replacement (Original-Date trail intact),
+               not as 'normal' (2026-10-08 SDD-waived extension). */
+            priorStatus: event.status === 'replacement' ? 'replacement' : 'normal',
         };
         this.ledgerAppend(entry);
         return { ok: true, entry: entry };
     },
 
-    /* S14 — restore EVERY resolved twin to 'normal' (strip the
-       cancellation fields), remove the row by id, remove the entry. */
+    /* S14 — restore EVERY resolved twin to its PRIOR status ('normal' or
+       'replacement' — see cancel()'s priorStatus), strip the cancellation
+       fields, remove the row by id, remove the entry. */
     undo(entry) {
         if (!entry) return;
+        const restore = entry.priorStatus || 'normal';
         this.resolveMatches(entry.matchKey).forEach(function(m) {
-            m.eventRef.status = 'normal';
+            m.eventRef.status = restore;
             delete m.eventRef.cancelledReason;
             delete m.eventRef.cancelledDetail;
         });
@@ -3841,12 +3865,37 @@ const ClassCancellation = {
 
     /* §6 — the ONE undo-toast helper: the load bootstrap AND the "I'll Do
        It Later" path both call it; the confirm path must NOT double-toast
-       (the modal's success state carries the message instead). */
+       (the modal's success state carries the message instead). Manually
+       closing the toast (✕) snoozes it for the session — the bootstrap
+       stops re-toasting this entry, and undo stays reachable via the home
+       chip's Undo affordance (replacement-home page). */
     showUndoToast() {
         toast.show('Class cancelled — arrange replacement when ready', function() {
             ClassCancellation.undo(ClassCancellation.activeEntry());
             toast.show('Class restored.', null);
-        }, ClassCancellation.UNDO_TOAST_MS);
+        }, ClassCancellation.UNDO_TOAST_MS, '', '', '', function() {
+            ClassCancellation.snoozeToast();
+        });
+    },
+
+    /* Toast snooze — the user explicitly closed the cancellation toast, so
+       stop re-showing it on every page load (2026-10-08 feedback: the toast
+       kept returning after every refresh). The LEDGER ENTRY IS KEPT: the
+       cancelled state + chip still replay; only the toast is silenced. */
+    snoozeToast() {
+        const entry = this.activeEntry();
+        if (entry && !entry.toastSnoozed) {
+            entry.toastSnoozed = true;
+            this.ledgerUpdate(entry);
+        }
+    },
+
+    /* Does ANY live entry still deserve a load toast? A snoozed entry stays
+       silent; a NEW cancellation (fresh entry, unsnoozed) toasts again. */
+    needsLoadToast() {
+        return this.allEntries().some(function(e) {
+            return e && !e.removed && !e.consumed && !e.toastSnoozed;
+        });
     },
 };
 
@@ -3859,7 +3908,7 @@ const ClassCancellation = {
 document.addEventListener('DOMContentLoaded', function() {
     try {
         ClassCancellation.applyLedger();
-        if (ClassCancellation.activeEntry()) ClassCancellation.showUndoToast();
+        if (ClassCancellation.needsLoadToast()) ClassCancellation.showUndoToast();
     } catch (e) { /* degrade — page init must never break over the ledger */ }
 });
 

@@ -949,3 +949,10 @@ sessionStorage ledger (`classCancellationLedger`) replays the state across
 pages. On this page, submitting/replacing a class consumes its ledger entry,
 so the replacement chip/toast stop; an undo toast (12 s) on any landing page
 reverses the cancel until undone/arranged.
+
+### Postscript — toast snooze (2026-10-08, SDD-waived micro-fix)
+
+✕-closing the cancellation undo toast now snoozes it for the browser session
+(per-entry `toastSnoozed` in the ledger; `ToastManager.close()` in
+`ui-common.js`, layout ✕ → `toast.close()`). Submitting the arrangement still
+consumes the entry (`consumed:'arranged'`), which stops chip + toast for good.

@@ -306,3 +306,21 @@ reason (6 values incl. Other + detail; OOP: `ClassCancellation` in
 list and carries a "Just cancelled" chip (home page only); the sessionStorage
 ledger (`classCancellationLedger`) replays the state across pages, with an
 undo toast (12 s) on any landing page until undone/arranged.
+
+### Postscript — toast snooze + chip Undo (2026-10-08, SDD-waived micro-fix)
+
+User feedback: the cancellation undo toast re-appeared on every refresh after
+being ✕-closed. The ✕ now snoozes the toast for the browser session (per-entry
+`toastSnoozed` flag in the ledger; a NEW cancellation toasts again) — the
+cancelled state + chip still replay. Undo stays reachable: the "Just cancelled"
+row now carries an Undo icon button (`.just-cancelled-undo`, restores the class
+everywhere). Shared pieces: `ToastManager.close()` hook (`ui-common.js`),
+layout ✕ → `toast.close()`.
+
+### Postscript — cancelled replacement classes join the list (2026-10-08, SDD-waived extension)
+
+Following the my-timetable extension (replacement-status classes are now
+cancellable — FR 2.16), a cancelled confirmed-replacement class flows into
+the requires-replacement list with the usual "Just cancelled" chip + undo
+button; undo restores it as a replacement class (priorStatus preserved),
+not as a normal one.
