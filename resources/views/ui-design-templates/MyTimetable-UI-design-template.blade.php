@@ -85,9 +85,9 @@
             'guideTitle' => 'How to use this page',
             'guideItems' => [
                 '<strong>Week navigation</strong> — use arrows or Today button to browse weeks',
-                '<strong>Slot status</strong> — Normal (green), Conflicted (red), Pending (amber), Approved (blue), Rejected (grey)',
+                '<strong>Slot status</strong> — Normal (green), Conflicted (red), Pending (amber)',
                 '<strong>Request replacement</strong> — click any conflicted slot to open the request form',
-                '<strong>View details</strong> — click a normal/approved slot to see class details',
+                '<strong>View details</strong> — click any slot to see class details',
             ]
         ])
 
@@ -170,15 +170,14 @@
         const weekNav = new WeekNavigator(MockData.semester, weekData, null, 'myTimetableWeek');
         weekNav._currentWeek = currentWeek;
 
-        /* ───── Week persistence: keep the user's chosen week across refresh ───── */
-        function loadSavedWeek() { weekNav.load(); currentWeek = weekNav.currentWeek; }
-        function saveWeek() { weekNav.save(); }
-
         function openModal(event) {
             currentModalEvent = event;
 
             const days = weekData[currentWeek].days;
-            const isConflict = days[event.di] && days[event.di].holiday;
+            // Replace Now applies to any class that needs a replacement:
+            // a scheduling conflict OR a class falling on a public holiday
+            // (Decision A 2026-10-07 — holiday blocks get the button too).
+            const isConflict = (days[event.di] && days[event.di].holiday) || event.status === 'conflict';
 
             const replaceBtn = document.getElementById('btnReplaceNow');
             replaceBtn.style.display = isConflict ? 'flex' : 'none';
