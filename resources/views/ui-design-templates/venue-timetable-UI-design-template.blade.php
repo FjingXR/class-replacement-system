@@ -426,8 +426,10 @@
                     'description' => 'All time slots shown for <strong>this venue</strong> in the selected week.'],
                 ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available',
                     'description' => '<strong>Free time slots</strong> that can be booked for this venue.'],
-                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
-                    'description' => 'Slots held by <strong>replacement requests</strong> awaiting approval.'],
+                ['class' => 'card-replacement', 'valueId' => 'sumMyClasses', 'label' => 'My Teaching Classes',
+                    'description' => 'Sessions <strong>you teach</strong> in this venue this week — <strong>each class counts separately</strong>.'],
+                ['class' => 'card-hours', 'valueId' => 'sumMyHours', 'label' => 'My Teaching Hours',
+                    'description' => 'Total hours of <strong>your classes</strong> in this venue this week (each slot = <strong>30 minutes</strong>).'],
                 ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable',
                     'description' => '<strong>Cannot book</strong> — booked class, Sunday, or public holiday.'],
             ]
@@ -957,8 +959,18 @@
             const unavailable = occupied + sunday + ph + tooSoon;
             document.getElementById('sumTotal').textContent = available + pending + unavailable;
             document.getElementById('sumAvailable').textContent   = available;
-            document.getElementById('sumPending').textContent     = pending;
             document.getElementById('sumUnavailable').textContent = unavailable;
+
+            /* My Teaching cards — offday events are skipped because this
+               grid renders them as PH cells, never as blocks (the same
+               grid-equivalence rule the slot counters above follow). */
+            const onGrid = (events || []).filter(function (e) {
+                const d = weekData[currentWeek].days[e.di];
+                return d && !d.sunday && !d.holiday;
+            });
+            const my = myTeachingStats(onGrid);
+            document.getElementById('sumMyClasses').textContent = my.classes;
+            document.getElementById('sumMyHours').textContent   = (my.hours % 1 === 0 ? my.hours : my.hours.toFixed(1));
         }
 
         /* ════════════════════════════════════════════

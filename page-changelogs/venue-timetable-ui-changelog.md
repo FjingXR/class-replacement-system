@@ -545,3 +545,40 @@ one is added — exactly one live listener regardless of rebuild count.
 Instrumented live check: 3 adds / 3 removes across rebuilds, mobile card list
 still toggles correctly at 375 px / 1440 px; 0 console errors. (The rest of
 Batch 7 — column/Sunday/span cosmetics — remains REJECTED.)
+
+### Postscript — venue-legend-parity shipped (2026-10-08)
+
+Legend bar rebuilt to the cohort page's exact five class-status items,
+preceded by the venue-only **Available** item (6 total, in order):
+Available · Your Classes · Others' Classes · Others' Pending · Your
+Pending · Conflict / Public Holiday. Item 6's tip carries the venue
+nuance (public-holiday slots show as empty 'PH' cells — not red).
+
+To keep the new legend truthful, the venue `cellRender` gained the
+missing conflict branch: `e.status === 'conflict'` now renders
+`event-conflict` (red, owner-agnostic — parity with the cohort builder)
+before the mine/others fallback. Previously a conflicted class (e.g.
+B110 Monday `AMCS2093`, "Lecturer on leave") silently rendered as an
+ordinary green block on this page while rendering red everywhere else.
+
+Branch order is unchanged (sunday/holiday cells still win — a booked
+class on an offday still shows the offday cell), booking affordances
+untouched, `.event-conflict` was already global in theme.css (no new
+CSS). Live-verified: 6-item legend desktop + mobile, B110 Week 4
+AMCS2093 red / AMIS1012 green, 130 available cells intact. This
+supersedes venue-event-blocks' 4-item legend expectations (TC34/TC35
+rewritten to 6 items during the spec de-stale). Implementation landed
+in `b47221e` (parallel session); artifacts in
+`.sdd/changes/venue-legend-parity/`.
+
+### Postscript — My Teaching summary cards, Pending removed (2026-10-08)
+
+**Pending** card removed (held slots still count toward Total Slots);
+added **My Teaching Classes** + **My Teaching Hours** — same semantics
+and labels as the cohort page, scoped to this venue. Final bar:
+Total Slots · Available · My Teaching Classes · My Teaching Hours ·
+Unavailable (red card last, mirroring cohort). Counting is
+grid-equivalent: offday events excluded (they render as PH cells),
+merged-cohort twins deduped. Verified B110 → **1 class / 2 hours**
+(AMCS2093(L)). Spec TC36 4→5 cards, TC37 ids, TC58 mobile count,
+new TC38b (B110 weekly pattern).

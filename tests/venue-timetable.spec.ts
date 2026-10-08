@@ -289,21 +289,33 @@ test.describe('Venue Timetable UI', () => {
   // 10. SUMMARY CARDS
   // ════════════════════════════════════════════
 
-  test('TC36 — summary bar has 4 cards', async ({ page }) => {
+  test('TC36 — summary bar has 5 cards', async ({ page }) => {
     const cards = page.locator('.summary-bar .summary-card');
-    await expect(cards).toHaveCount(4);
+    await expect(cards).toHaveCount(5);
   });
 
-  test('TC37 — summary cards show Total, Available, Pending, Unavailable', async ({ page }) => {
+  test('TC37 — summary cards show Total, Available, My Teaching, Unavailable', async ({ page }) => {
     await expect(page.locator('#sumTotal')).toBeVisible();
     await expect(page.locator('#sumAvailable')).toBeVisible();
-    await expect(page.locator('#sumPending')).toBeVisible();
+    await expect(page.locator('#sumMyClasses')).toBeVisible();
+    await expect(page.locator('#sumMyHours')).toBeVisible();
     await expect(page.locator('#sumUnavailable')).toBeVisible();
+    await expect(page.locator('#sumPending')).toHaveCount(0);   // Pending card removed
   });
 
   test('TC38 — summary values are numeric', async ({ page }) => {
     const total = await page.locator('#sumTotal').textContent();
     expect(Number(total)).not.toBeNaN();
+  });
+
+  test('TC38b — My Teaching cards match the grid (B110, weekly pattern)', async ({ page }) => {
+    /* B110's weekly pattern carries exactly one class of the logged-in
+       lecturer (AMCS2093(L), 2h — merged-cohort twins deduped to one
+       visible block) in every week, so any week works. B110 is NOT the
+       default venue (venues[0] = B002), so preselect it via URL. */
+    await page.goto(`${PAGE}?venue=B110`, { waitUntil: 'networkidle' });
+    await expect(page.locator('#sumMyClasses')).toHaveText('1');
+    await expect(page.locator('#sumMyHours')).toHaveText('2');
   });
 
   // ════════════════════════════════════════════
@@ -494,7 +506,7 @@ test.describe('Venue Timetable UI', () => {
   test('TC58 — mobile: summary cards exist', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     const cards = page.locator('.summary-bar .summary-card');
-    await expect(cards).toHaveCount(4);
+    await expect(cards).toHaveCount(5);
   });
 
   // ════════════════════════════════════════════

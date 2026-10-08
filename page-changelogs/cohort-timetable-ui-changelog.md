@@ -315,3 +315,16 @@ callback rebuilds whichever grid is on screen after `ClassCancellation.undo()`
 `buildTable()`; the class reappears without a manual reload). Confirmation
 toast shows last, over the rebuilt grid. Live-verified on my-timetable,
 student page, and replacement-home; 0 console errors.
+
+### Postscript — My Teaching summary cards (2026-10-08)
+
+Cards 3–4 replaced: **Replacements → My Teaching Classes** and
+**Pending → My Teaching Hours** (values `sumMyClasses` / `sumMyHours`).
+My Teaching Classes counts each session separately — Subject A (T) and
+Subject A (L) are two classes; My Teaching Hours sums those classes'
+durations (slot = 30 min). Card colours unchanged (primary / neutral
+hours style); Total Classes, Teaching Hours and Conflicts untouched.
+Computation lives in the shared `myTeachingStats()` (grid-slotMap
+dedupe so merged-cohort twins count once); `computeSummary` writes are
+now null-guarded. Verified dft2s1 Week 1 → **3 classes / 4 hours**
+(AMCS2093 L 2h + T 1h + P 1h).

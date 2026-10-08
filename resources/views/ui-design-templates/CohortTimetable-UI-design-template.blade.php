@@ -88,10 +88,10 @@
                     'description' => 'Total classes scheduled for <strong>this cohort</strong> in the selected week.'],
                 ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Teaching Hours',
                     'description' => 'Total <strong>teaching hours</strong> for this cohort in the selected week (each slot = <strong>30 minutes</strong>).'],
-                ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements',
-                    'description' => 'Classes with a <strong>replacement lecturer</strong> assigned this week.'],
-                ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
-                    'description' => 'Replacement requests for this cohort still <strong>waiting for approval</strong> or a volunteer.'],
+                ['class' => 'card-replacement', 'valueId' => 'sumMyClasses', 'label' => 'My Teaching Classes',
+                    'description' => 'Sessions <strong>taught by you</strong> this week — <strong>each class counts separately</strong> (e.g. Subject A (T) and Subject A (L) are two classes).'],
+                ['class' => 'card-hours', 'valueId' => 'sumMyHours', 'label' => 'My Teaching Hours',
+                    'description' => 'Total hours of <strong>your classes</strong> this week (each slot = <strong>30 minutes</strong>).'],
                 ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts',
                     'description' => '<strong>Scheduling clashes</strong> or classes on <strong>public holidays</strong> for this cohort that need attention.'],
             ]
@@ -175,8 +175,8 @@
                 document.getElementById('timetable').querySelector('tbody').innerHTML = '';
                 document.getElementById('sumTotal').textContent = '0';
                 document.getElementById('sumHours').textContent = '0';
-                document.getElementById('sumReplacement').textContent = '0';
-                document.getElementById('sumPending').textContent = '0';
+                document.getElementById('sumMyClasses').textContent = '0';
+                document.getElementById('sumMyHours').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
                 updateWeekArrows(true, true);
                 selectedCohortId = null;
@@ -195,8 +195,8 @@
             document.getElementById('timetable').querySelector('tbody').innerHTML = '';
             document.getElementById('sumTotal').textContent = '0';
             document.getElementById('sumHours').textContent = '0';
-            document.getElementById('sumReplacement').textContent = '0';
-            document.getElementById('sumPending').textContent = '0';
+            document.getElementById('sumMyClasses').textContent = '0';
+            document.getElementById('sumMyHours').textContent = '0';
             document.getElementById('sumConflict').textContent = '0';
             updateWeekArrows(true, true);
             selectedCohortId = null;
@@ -216,8 +216,8 @@
                 document.getElementById('timetable').querySelector('tbody').innerHTML = '';
                 document.getElementById('sumTotal').textContent = '0';
                 document.getElementById('sumHours').textContent = '0';
-                document.getElementById('sumReplacement').textContent = '0';
-                document.getElementById('sumPending').textContent = '0';
+                document.getElementById('sumMyClasses').textContent = '0';
+                document.getElementById('sumMyHours').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
                 updateWeekArrows(true, true);
                 saveState();
@@ -326,8 +326,8 @@
                 document.getElementById('emptyText').textContent = 'No classes scheduled for this cohort in the selected week.';
                 document.getElementById('sumTotal').textContent = '0';
                 document.getElementById('sumHours').textContent = '0';
-                document.getElementById('sumReplacement').textContent = '0';
-                document.getElementById('sumPending').textContent = '0';
+                document.getElementById('sumMyClasses').textContent = '0';
+                document.getElementById('sumMyHours').textContent = '0';
                 document.getElementById('sumConflict').textContent = '0';
                 updateWeekArrows(currentWeek <= 0, currentWeek >= weekData.length - 1);
                 return;

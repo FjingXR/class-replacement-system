@@ -809,6 +809,26 @@ function buildTimetableGrid(cfg) {
  * @param {Array} events - Array of event objects for the current week
  * @param {Array} days - Array of day objects from weekData
  */
+/* ───── My-teaching stats (shared: cohort + venue summary bars) ───── */
+
+/**
+ * Count + hours of the classes taught by the logged-in lecturer within a
+ * page's (already week/filter-scoped) events array. Dedupes via the grid's
+ * own slotMap semantics (last-write-wins per day:start) so merged-cohort
+ * duplicate rows count once — the number always matches visible blocks.
+ * Offday events are skipped by callers whose grid renders them as PH cells.
+ */
+function myTeachingStats(events) {
+    const heads = {};
+    (events || []).forEach(function (e) {
+        if (!e || e.lecturer !== MockData.currentUser.name) return;
+        heads[e.di + ':' + e.start] = e;               // last-write-wins = grid slotMap semantics
+    });
+    const mine = Object.keys(heads).map(function (k) { return heads[k]; });
+    const hours = mine.reduce(function (s, e) { return s + (e.end - e.start + 1) * 0.5; }, 0);
+    return { classes: mine.length, hours: hours };
+}
+
 function computeSummary(events, days) {
     let total = events.length;
     let replacement = 0, pending = 0, conflict = 0, hrs = 0;
@@ -820,11 +840,22 @@ function computeSummary(events, days) {
         hrs += (e.end - e.start + 1) * 0.5;
     });
 
-    document.getElementById('sumTotal').textContent = total;
-    document.getElementById('sumHours').textContent = (hrs % 1 === 0 ? hrs : hrs.toFixed(1));
-    document.getElementById('sumReplacement').textContent = replacement;
-    document.getElementById('sumPending').textContent = pending;
-    document.getElementById('sumConflict').textContent = conflict;
+    /* Null-guarded: pages whose summary bar drops a card (e.g. cohort's
+       Replacements/Pending → My Teaching cards) keep the shared builder
+       crash-free; existing ids keep their exact previous behavior. */
+    const set = function (id, v) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = v;
+    };
+    set('sumTotal', total);
+    set('sumHours', (hrs % 1 === 0 ? hrs : hrs.toFixed(1)));
+    set('sumReplacement', replacement);
+    set('sumPending', pending);
+    set('sumConflict', conflict);
+
+    const my = myTeachingStats(events);
+    set('sumMyClasses', my.classes);
+    set('sumMyHours', (my.hours % 1 === 0 ? my.hours : my.hours.toFixed(1)));
 }
 
 // ───── Shared modal open helper ─────
@@ -3681,6 +3712,7 @@ const ClassCancellation = {
             code: event.code,
             name: event.name,
             type: event.type,
+            lecturer: event.lecturer,   // cancelled classes are own by construction — keeps them visible under replacement-home's owner scoping
             date: iso,
             day: DateHelper.isoDayName(iso),
             timeStart: this._to24h(hours[event.start]),
@@ -3850,6 +3882,15 @@ const ClassCancellation = {
             });
             const rows = MockData.conflictedClasses || [];
             if (entry.row && !rows.some(function(r) { return r.id === entry.row.id; })) {
+                /* Own-records backfill: ledgers persisted before replacement-home
+                   became owner-scoped store rows without `lecturer`. Cancellations
+                   are own-only by construction, so the twin event's lecturer is
+                   the owner — without this the replayed row would be filtered out
+                   of replacement-home (S12/S13b). */
+                if (!entry.row.lecturer) {
+                    entry.row.lecturer = (matches[0] && matches[0].eventRef.lecturer) ||
+                                         MockData.currentUser.name;
+                }
                 rows.push(entry.row);
             }
         });

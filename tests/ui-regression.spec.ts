@@ -257,4 +257,34 @@ test.describe('UI Regression Test Cases', () => {
       expect(counts.some(Boolean)).toBe(true);
     });
   });
+
+  // Section 7: Summary Cards — My Teaching / Own Records
+  test.describe('Section 7: Summary Cards — My Teaching / Own Records', () => {
+    test('TC-7.1 Cohort summary: My Teaching cards count each class separately', async ({ page }) => {
+      await page.goto(`${BASE}/cohort-timetable-ui`, { waitUntil: 'networkidle' });
+      await page.locator('#facultySelect').selectOption('focs');
+      await page.locator('#cohortSelect').selectOption('dft2s1');
+      await page.locator('#weekSelect').selectOption('0');
+      await expect(page.locator('#sumMyClasses')).toHaveText('3');   // AMCS2093 (L)+(T)+(P) — three classes, not one subject
+      await expect(page.locator('#sumMyHours')).toHaveText('4');     // 2h + 1h + 1h
+      // untouched cards keep their ids and stay numeric
+      expect(Number(await page.locator('#sumTotal').textContent())).not.toBeNaN();
+      expect(Number(await page.locator('#sumHours').textContent())).not.toBeNaN();
+      expect(Number(await page.locator('#sumConflict').textContent())).not.toBeNaN();
+    });
+
+    test('TC-7.2 Replacement Home is own-records: table and cards scoped to the logged-in lecturer', async ({ page }) => {
+      await page.goto(`${BASE}/replacement-home-ui`, { waitUntil: 'networkidle' });
+      // 4 of the 14 seeded conflicts belong to En. Lim Jia Zheng (§2.10 lecturer field)
+      await expect(page.locator('#tableBody tr')).toHaveCount(4);
+      await expect(page.locator('#summaryMyConflicted')).toHaveText('4');
+      await expect(page.locator('#summaryMyHours')).toHaveText('8');
+      await expect(page.locator('#summaryMyCourses')).toHaveText('2');
+      // others' conflicts are gone (id 3 — AMCS1013, Ts. Norshikin)
+      await expect(page.locator('#tableBody tr:has-text("AMCS1013")')).toHaveCount(0);
+      // replaced cards are gone entirely
+      await expect(page.locator('#summaryVenues')).toHaveCount(0);
+      await expect(page.locator('#summaryStudents')).toHaveCount(0);
+    });
+  });
 });
