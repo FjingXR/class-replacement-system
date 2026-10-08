@@ -410,3 +410,12 @@ Three fixes from the 2026-10-07/08 bug audit:
   statuses); "click a normal/approved slot" → "click any slot".
 - Dead code removed: unused `loadSavedWeek()`/`saveWeek()` wrappers (week
   persistence runs through `WeekNavigator` directly).
+
+### Postscript — snooze rule extended (2026-10-08, U3 decision)
+
+The undo toast now shows for **5 s** (was 12 s) and **auto-dismissing after the
+full display also snoozes** it — surviving the whole toast counts as "seen",
+same as clicking ✕. Only navigating away mid-display (timer killed) leaves the
+entry unsnoozed, so the toast legitimately re-shows on the next load.
+`ToastManager.show` gained an `onAutoDismiss` hook alongside `onManualDismiss`;
+`UNDO_TOAST_MS` 12000 → 5000. Live-verified all three paths, 0 console errors.

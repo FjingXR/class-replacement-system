@@ -2445,11 +2445,11 @@ class ToastManager {
         this._current = null;
     }
 
-    show(message, undoCallback, duration = 5000, linkText = '', linkUrl = '', details = '', onManualDismiss = null) {
+    show(message, undoCallback, duration = 5000, linkText = '', linkUrl = '', details = '', onManualDismiss = null, onAutoDismiss = null) {
         const bar = document.getElementById('toastBar');
         if (!bar) return;
 
-        this._current = { message: message, onManualDismiss: onManualDismiss };
+        this._current = { message: message, onManualDismiss: onManualDismiss, onAutoDismiss: onAutoDismiss };
 
         const msgEl = bar.querySelector('.toast-message');
         const detailsEl = bar.querySelector('.toast-details');
@@ -2486,7 +2486,16 @@ class ToastManager {
         bar.classList.add('visible');
 
         clearTimeout(this._timer);
-        this._timer = setTimeout(() => this.dismiss(), duration);
+        this._timer = setTimeout(() => {
+            this.dismiss();
+            /* Full display = seen (2026-10-08 decision): a toast that survived
+               its whole duration retires itself via onAutoDismiss (e.g. the
+               cancellation undo toast snoozes). Manual ✕ goes through close()
+               instead; navigating away early kills the timer — no hook, and
+               the toast legitimately re-shows on the next load. */
+            const hook = this._current && this._current.onAutoDismiss;
+            if (hook) hook();
+        }, duration);
     }
 
     dismiss() {
@@ -3476,7 +3485,7 @@ const ClassCancellation = {
     REASONS: ['Medical Leave', 'Annual Leave', 'Official Event',
               'Family Emergency', 'Venue/Facility Issue', 'Other'],
     LEDGER_KEY: 'classCancellationLedger',  // sessionStorage — tab-scope demo reset
-    UNDO_TOAST_MS: 12000,
+    UNDO_TOAST_MS: 5000,
     _seq: 0,               // entry-id suffix — no same-millisecond collision
     _MONTHS: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     _memLedger: [],        // §10 fallback mirror when storage throws
@@ -3869,15 +3878,19 @@ const ClassCancellation = {
 
     /* §6 — the ONE undo-toast helper: the load bootstrap AND the "I'll Do
        It Later" path both call it; the confirm path must NOT double-toast
-       (the modal's success state carries the message instead). Manually
-       closing the toast (✕) snoozes it for the session — the bootstrap
-       stops re-toasting this entry, and undo stays reachable via the home
-       chip's Undo affordance (replacement-home page). */
+       (the modal's success state carries the message instead). Snooze rule
+       (2026-10-08 decision): the toast shows for 5 s — surviving the full
+       display OR clicking ✕ both count as "seen" and snooze it for the
+       session; only a quick navigate-away (timer killed) re-toasts on the
+       next load. Undo stays reachable via the home chip's Undo affordance
+       (replacement-home page). */
     showUndoToast() {
         toast.show('Class cancelled — arrange replacement when ready', function() {
             ClassCancellation.undo(ClassCancellation.activeEntry());
             toast.show('Class restored.', null);
         }, ClassCancellation.UNDO_TOAST_MS, '', '', '', function() {
+            ClassCancellation.snoozeToast();
+        }, function() {
             ClassCancellation.snoozeToast();
         });
     },

@@ -514,3 +514,12 @@ Four fixes, applied together because they interlock:
 
 Known collision intentionally left: Available and Others' Classes share the
 same green (user decision, 2026-10-07; frozen design keeps it).
+
+### Postscript — snooze rule extended (2026-10-08, U3 decision)
+
+The undo toast now shows for **5 s** (was 12 s) and **auto-dismissing after the
+full display also snoozes** it — surviving the whole toast counts as "seen",
+same as clicking ✕. Only navigating away mid-display (timer killed) leaves the
+entry unsnoozed, so the toast legitimately re-shows on the next load.
+`ToastManager.show` gained an `onAutoDismiss` hook alongside `onManualDismiss`;
+`UNDO_TOAST_MS` 12000 → 5000. Live-verified all three paths, 0 console errors.

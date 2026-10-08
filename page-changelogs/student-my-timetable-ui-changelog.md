@@ -230,3 +230,12 @@ events now get `.event-conflict` (red, §10.0 legend A).
   timestamp; the fallback was dead and invented a date if one ever didn't.
 - Removed unused `WEEK_KEY` / `loadSavedWeek()` / `saveWeek()` (week
   persistence runs through `WeekNavigator` directly).
+
+### Postscript — snooze rule extended (2026-10-08, U3 decision)
+
+The undo toast now shows for **5 s** (was 12 s) and **auto-dismissing after the
+full display also snoozes** it — surviving the whole toast counts as "seen",
+same as clicking ✕. Only navigating away mid-display (timer killed) leaves the
+entry unsnoozed, so the toast legitimately re-shows on the next load.
+`ToastManager.show` gained an `onAutoDismiss` hook alongside `onManualDismiss`;
+`UNDO_TOAST_MS` 12000 → 5000. Live-verified all three paths, 0 console errors.
