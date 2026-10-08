@@ -266,6 +266,15 @@
         document.addEventListener('DOMContentLoaded', function() {
             weekNav.load();
             currentWeek = weekNav.currentWeek;
+            /* ?week=N deep link WINS over any saved week position — the
+               cross-page undo lands here at the cancelled class's session
+               week (clamped to the demo range; absent/invalid → saved or
+               mock-now week, unchanged behavior). */
+            const urlWeek = parseInt(new URLSearchParams(location.search).get('week'), 10);
+            if (!isNaN(urlWeek) && urlWeek >= 0 && urlWeek < weekData.length) {
+                currentWeek = urlWeek;
+                weekNav._currentWeek = urlWeek;
+            }
             document.getElementById('semesterChip').textContent = MockData.semester.chipText;
             populateWeekSelect('weekSelect', { ranges: false, selected: currentWeek });
 

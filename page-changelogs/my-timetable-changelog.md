@@ -1,5 +1,11 @@
 # Changelog — Lecturer My Timetable
 
+## [2026-10-08] `?week=` deep link (undo lands on the cancelled class's week)
+
+- The page now honours a `?week=N` query param: applied in the `DOMContentLoaded` init **after** `weekNav.load()`, so a deep link **wins over the saved week position** (localStorage `myTimetableWeek`); an absent/invalid/out-of-range param keeps the saved/mock-now behavior unchanged.
+- Consumer: the shared cancel-undo toast — undo clicked **off** my-timetable navigates to `/my-timetable-ui?week=<matchKey.week>&restored=1` (ui-common.js, see oop-js-consolidation changelog 2026-10-08).
+- Verified: `?week=5` with saved week 6 → select shows 5; plain load with saved week 6 → select shows 6; undo clicked on replacement-arrangement lands on `/my-timetable-ui?week=2&restored=1` with the cancelled block restored (`status: normal`) and the "Class restored." toast; undo clicked **on** my-timetable stays in place (no navigation). Full playwright suite 121 passed / 3 skipped.
+
 ## [2026-08-16] Replaced hardcoded inline styles with shared utility classes
 
 Refactored hardcoded `font-size`/`font-weight`/`color` inline styles to use shared CSS classes from `theme.css`. Specifically, the cancel-modal description text now uses `.section-heading-sub`.

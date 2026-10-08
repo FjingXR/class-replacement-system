@@ -3890,17 +3890,25 @@ const ClassCancellation = {
        (replacement-home page). */
     showUndoToast() {
         toast.show('Class cancelled — arrange replacement when ready', function() {
-            ClassCancellation.undo(ClassCancellation.activeEntry());
-            /* U2 (2026-10-08): restore the VIEW too. The toast can fire on
-               any page (S12 bootstrap), so rebuild whatever grid is on
-               screen — every timetable page exposes a global
-               buildTimetable(), replacement-home exposes buildTable().
-               Without this the class only reappeared after a manual reload. */
-            if (typeof buildTimetable === 'function') buildTimetable();
-            else if (typeof buildTable === 'function') buildTable();
-            /* U1: confirmation LAST — the undo bar is already dismissed, so
-               this toast survives and reads over the rebuilt grid. */
-            toast.show('Class restored.', null);
+            const entry = ClassCancellation.activeEntry();
+            if (!entry) return;
+            ClassCancellation.undo(entry);
+            /* On my-timetable the in-place grid rebuild IS the feedback
+               (U2, 2026-10-08). Anywhere else the undo deep-links to
+               my-timetable at the cancelled class's session week
+               (?week=<matchKey.week>) — the restored=1 param makes the
+               arrival page confirm with the same 'Class restored.' toast
+               (2026-10-08 user request: UNDO must land on the exact
+               class session week, not stay on the arrangement page). */
+            if (location.pathname === '/my-timetable-ui') {
+                if (typeof buildTimetable === 'function') buildTimetable();
+                toast.show('Class restored.', null);
+            } else {
+                const wk = (entry.matchKey && Number.isInteger(entry.matchKey.week))
+                    ? entry.matchKey.week : null;
+                window.location.href = '/my-timetable-ui' +
+                    (wk !== null ? '?week=' + wk + '&restored=1' : '?restored=1');
+            }
         }, ClassCancellation.UNDO_TOAST_MS, '', '', '', function() {
             ClassCancellation.snoozeToast();
         }, function() {
@@ -3939,7 +3947,20 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
         ClassCancellation.applyLedger();
         if (ClassCancellation.needsLoadToast()) ClassCancellation.showUndoToast();
+        else if (new URLSearchParams(location.search).get('restored') === '1')
+            toast.show('Class restored.', null);  // arrival feedback after a cross-page undo
     } catch (e) { /* degrade — page init must never break over the ledger */ }
+});
+
+/* bfcache guard — Arrange-Now (or any future leave-with-modal-open path)
+   can be revisited via the browser BACK button; the restored snapshot
+   replays with the cancel modal still shown. Close it here — open() fully
+   resets the confirm/success state on the next open (2026-10-08 user
+   report: modal still open after BACK from replacement-arrangement). */
+window.addEventListener('pageshow', function(e) {
+    if (e.persisted) {
+        try { CancelClassModal.close(); } catch (err) { /* degrade */ }
+    }
 });
 
 // ───── CancelClassModal + CancelClass.renderButton (cancel-class-enhancement — design §5) ─────
@@ -4123,6 +4144,10 @@ const CancelClassModal = {
     arrangeNow() {
         const ctx = this._ctx;
         if (!ctx || !ctx.entry) return;
+        /* Close BEFORE navigating: the browser's BACK button restores this
+           page from bfcache, and an open success modal would replay with it
+           (2026-10-08 user report). open() resets state on next open. */
+        this.close();
         const row = ctx.entry.row;
         window.location.href = '/replacement-arrangement?code=' + encodeURIComponent(row.code) +
             '&date=' + encodeURIComponent(row.date) +

@@ -6,6 +6,7 @@
 
 | Timestamp | Location | Change | Detail |
 |-----------|----------|--------|--------|
+| 2026-10-08 | `CancelClassModal.arrangeNow()`, `showUndoToast()`, S12 bootstrap | Fixed + extended | (1) `arrangeNow()` now closes the modal **before** navigating — browser BACK from replacement-arrangement restored the page from bfcache with the success modal still shown (user report); a `pageshow` (`e.persisted`) guard closes any restored modal as belt-and-braces. (2) Undo toast clicked **off** my-timetable now deep-links to `/my-timetable-ui?week=<matchKey.week>&restored=1` — landing on the cancelled class's exact session week (user request: undo previously stayed on the arrangement page); on my-timetable itself the undo keeps the in-place grid rebuild + "Class restored." toast (U1/U2 behavior unchanged). (3) S12 bootstrap shows the same "Class restored." toast on arrival when the URL carries `?restored=1`. |
 | 2026-08-01 | — | Extended | Grew from 5 → 17 shared functions. Added `updateWeekArrows(prevDisabled, nextDisabled)`, `hours` const (08:00–18:30 half-hour slots), `add30min(t)`, `goToReplacement()` (→ `/replacement-arrangement`), `compareBy(sortState, va, vb)`, `makeSortableHeader(col, sortState, render)`, `paginate(cfg)`, `updateResultCount(cfg)`, `closeOnEsc(closeFn)`, `closeOnOverlayClick(e, closeFn)`, `togglePassword()`, `ripple(e, btn)` — extracted from inline copies across templates |
 
 ### `resources/views/ui-design-templates/MyTimetable-UI-design-template.blade.php`
