@@ -242,17 +242,21 @@ test.describe('Venue Timetable UI', () => {
   // 9. LEGEND BAR
   // ════════════════════════════════════════════
 
-  test('TC34 — legend bar has 4 items', async ({ page }) => {
+  test('TC34 — legend bar has 6 items', async ({ page }) => {
     const items = page.locator('.legend-bar .legend-item');
-    await expect(items).toHaveCount(4);
+    await expect(items).toHaveCount(6);
   });
 
-  test('TC35 — legend shows Available, Your Classes, Others\' Classes, Pending', async ({ page }) => {
+  test('TC35 — legend shows all 6 venue states in order', async ({ page }) => {
     const items = page.locator('.legend-bar .legend-item');
-    await expect(items.nth(0)).toContainText('Available');
-    await expect(items.nth(1)).toContainText('Your Classes');
-    await expect(items.nth(2)).toContainText("Others' Classes");
-    await expect(items.nth(3)).toContainText('Pending');
+    await expect(items).toHaveText([
+      'Available',
+      'Your Classes',
+      "Others' Classes",
+      "Others' Pending",
+      'Your Pending',
+      'Conflict / Public Holiday',
+    ]);
   });
 
   // ════════════════════════════════════════════

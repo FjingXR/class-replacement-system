@@ -340,7 +340,7 @@
             'guideItems' => [
                 '<strong>Select venue</strong> — choose a building, then a venue to view its timetable',
                 '<strong>Week navigation</strong> — use arrows or Today button to browse weeks',
-                '<strong>Slot status</strong> — Normal (green), Conflicted (red), Pending (amber), Approved (blue), Rejected (grey)',
+                '<strong>Slot status</strong> — Normal (green), Conflicted (red), Pending (amber)',
                 '<strong>View details</strong> — click any slot to see class details and cohort info',
                 '<strong>Booking check</strong> — the banner shows if the venue is available for booking',
             ]
@@ -410,9 +410,11 @@
         @include('partials.ui-legend-bar', [
             'items' => [
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue (Sunday, holiday and lead-time slots can\'t be booked)'],
-                ['color' => 'var(--color-primary-container)', 'label' => 'Your Classes', 'tip' => 'Your sessions in this venue, incl. replacement sessions'],
-                ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Other lecturers\' sessions — these are filled blocks, empty green cells are bookable'],
-                ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting PL approval — others\' pending requests show grey'],
+                ['color' => 'var(--color-primary-container)', 'label' => 'Your Classes', 'tip' => 'Normal or replacement sessions assigned to you'],
+                ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Normal or replacement sessions by other lecturers'],
+                ['color' => 'var(--color-surface-variant)', 'label' => 'Others\' Pending', 'tip' => 'Replacement request by other lecturers, awaiting PL approval'],
+                ['color' => 'var(--color-tertiary-container)', 'label' => 'Your Pending', 'tip' => 'Your replacement request, awaiting PL approval'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday (on venue, public-holiday slots show as empty \'PH\' cells — not red)'],
             ]
         ])
 
@@ -698,21 +700,56 @@
            ════════════════════════════════════════════ */
 
         function getVenueEvents(venueCode, weekIndex) {
-            const events = [];
-            if (!MockData.cohortTimetable || !MockData.cohortTimetable.events) return events;
+            /* Combined-lecture twins (same venue, same di+start, one row per
+               cohort) used to be LAST-WIN in the grid slotMap (ui-common.js),
+               so a normal twin could overwrite a conflict twin and the slot
+               rendered green. Merge them here: status by severity
+               (conflict > pending > replacement > normal), cohorts joined,
+               students summed. */
+            const SEVERITY = { conflict: 3, pending: 2, replacement: 1, normal: 0 };
+            const byKey = {};
+            const order = [];
+            if (!MockData.cohortTimetable || !MockData.cohortTimetable.events) return order;
 
             MockData.cohortTimetable.events.forEach(function(item) {
                 if (item.week !== weekIndex) return;
                 const e = item.event;
-                if (e.venue === venueCode && e.status !== 'cancelled') {
-                    events.push({
-                        ...e,
-                        cohort: item.cohortId,
-                    });
+                if (e.venue !== venueCode || e.status === 'cancelled') return;
+                const ev = Object.assign({}, e, {
+                    cohort: e.cohort || item.cohortId,
+                    cohorts: [e.cohort || item.cohortId],   // per-cohort list → Total Students lookup
+                });
+                const key = ev.di + ':' + ev.start;
+                const cur = byKey[key];
+                if (!cur) {
+                    byKey[key] = ev;
+                    order.push(key);
+                    return;
                 }
+                if ((SEVERITY[ev.status] || 0) > (SEVERITY[cur.status] || 0)) cur.status = ev.status;
+                if (cur.cohort.indexOf(ev.cohort) === -1) cur.cohort += ' + ' + ev.cohort;
+                if (cur.cohorts.indexOf(ev.cohorts[0]) === -1) cur.cohorts.push(ev.cohorts[0]);
+                if (!cur.requestedAt && ev.requestedAt) cur.requestedAt = ev.requestedAt;
+                if (!cur.requestedBy && ev.requestedBy) cur.requestedBy = ev.requestedBy;
+                if (!cur.remarks && ev.remarks) cur.remarks = ev.remarks;
             });
 
-            return events;
+            return order.map(function(k) { return byKey[k]; });
+        }
+
+        /* cohortTimetable.events carry no studentCount — resolve the total from
+           the course registry (sum of each merged cohort's count; course total
+           as fallback). */
+        function venueTotalStudents(e) {
+            if (e.studentCount) return e.studentCount;
+            const course = (MockData.courses || []).find(function(c) { return c.code === e.code; });
+            if (!course) return '—';
+            let sum = 0, matched = false;
+            (e.cohorts || []).forEach(function(cn) {
+                const i = course.cohorts.indexOf(cn);
+                if (i !== -1) { sum += course.cohortCounts[i] || 0; matched = true; }
+            });
+            return matched ? sum : (course.studentCount != null ? course.studentCount : '—');
         }
 
         /* ════════════════════════════════════════════
@@ -785,6 +822,8 @@
                         var isMine = e.lecturer === MockData.currentUser.name;
                         if (e.status === 'pending') {
                             div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
+                        } else if (e.status === 'conflict') {
+                            div.classList.add('event-conflict');   // §10.0: conflict = red, owner-agnostic (parity with cohort)
                         } else {
                             div.classList.add(isMine ? 'event-mine' : 'event-others');
                         }
@@ -936,13 +975,14 @@
                         DetailModal.row('Subject Name', e.name || '—') +
                         DetailModal.row('Lecturer', e.lecturer || '—') +
                         DetailModal.row('Cohort', e.cohort || '—') +
+                        DetailModal.row('Total Students', venueTotalStudents(e)) +
                         DetailModal.row('Start Time', startTime, { strong: true }) +
                         DetailModal.row('End Time', endTime)
                     ) },
                     { key: 'venue-status', label: 'Venue & Status', html: DetailModal.section('Venue & Status',
                         DetailModal.row('Venue', venueStr) +
                         DetailModal.row('Status', '<span class="badge badge-' + e.status + '">' + StatusText.label(e.status) + '</span>') +
-                        DetailModal.row('Status Description', e.status === 'pending' ? 'Replacement request awaiting approval' : 'Class booked for this venue') +
+                        DetailModal.row('Status Description', e.status === 'conflict' ? 'Scheduling conflict — needs attention' : e.status === 'pending' ? 'Replacement request awaiting approval' : 'Class booked for this venue') +
                         DetailModal.row('Remarks', e.remarks || '—')
                     ) },
                 ]
