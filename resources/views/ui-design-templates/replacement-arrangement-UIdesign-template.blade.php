@@ -1303,6 +1303,12 @@
                 grid.innerHTML = '';
                 document.getElementById('summaryInfo').style.display = 'none';
                 document.getElementById('summaryTip').innerHTML = 'Tip: Click an <span class="tip-success">available (green)</span> time slot to begin.';
+                /* the 'N of M slots' counter lives outside the empty-state —
+                   without this it kept the pre-clear value (stale '4 of 4'
+                   after a deselect/clear) */
+                document.getElementById('infoTotal').textContent = `0 of ${MAX_SELECTION} slots`;
+                const durEl = document.getElementById('infoDuration');
+                if (durEl) durEl.textContent = '0m';
                 return;
             }
 
@@ -1375,6 +1381,11 @@
             const table = body.closest('.timetable');
             if (table) table.classList.remove('has-selection');
             updateCounter();
+            /* the Conflict Schedule strip (infoTotal) is rendered by
+               updateSelectionSummary, not updateCounter — without this call a
+               deselect left the strip reading e.g. '4 of 4 slots' while
+               nothing was selected */
+            updateSelectionSummary();
         }
 
         // Like deselectBlock, but preserves saved data in selectedSlotsByVenue
@@ -1863,6 +1874,7 @@
                     Object.keys(selectedSlotsByVenue).forEach(k => { selectedSlotsByVenue[k] = {}; });
                     deselectBlock();
                     updateCounter();
+                    updateSelectionSummary();   // strip must drop to '0 of N' immediately (same staleness as deselectBlock)
                     toast.show('All selections cleared.', function() {
                         Object.keys(savedSlots).forEach(k => { selectedSlotsByVenue[k] = savedSlots[k]; });
                         /* only re-render when the view hasn't moved since the clear —
@@ -1977,19 +1989,6 @@
                 else fill.style.background = 'var(--color-primary)';
             }
             if (text) text.textContent = 'Selected ' + count + ' of ' + max + ' slots';
-        }
-
-        function checkConflict(dayIndex, hourIndex) {
-            const weekLabel = weekData[weekNav.currentWeek].label;
-            const semesterWeek = parseInt(weekLabel.replace('Week ', ''));
-            const events = MockData.myTimetable.eventsByWeek[semesterWeek] || [];
-            for (let i = 0; i < events.length; i++) {
-                const e = events[i];
-                if (e.di === dayIndex && hourIndex >= e.start && hourIndex < e.end) {
-                    return e.code;
-                }
-            }
-            return null;
         }
 
         function pushHistory(entry) {

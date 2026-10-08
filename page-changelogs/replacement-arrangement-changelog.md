@@ -956,3 +956,22 @@ reverses the cancel until undone/arranged.
 (per-entry `toastSnoozed` in the ledger; `ToastManager.close()` in
 `ui-common.js`, layout ✕ → `toast.close()`). Submitting the arrangement still
 consumes the entry (`consumed:'arranged'`), which stops chip + toast for good.
+
+---
+
+## [2026-10-08] Selection summary strip went stale after deselect / Clear ALL
+
+The Conflict Schedule strip's "N of M slots" counter (`#infoTotal`) is rendered
+by `updateSelectionSummary()`, but that function **early-returns in its
+empty-state branch** (0 selections) without touching the counter — and
+`deselectBlock()` / `clearAll()` only called `updateCounter()`. Result: after
+deselecting a block or confirming Clear ALL, the strip kept reading e.g.
+"4 of 4 slots" while nothing was selected.
+
+Fix: the empty branch now writes `0 of ${MAX_SELECTION} slots` (and 0m
+duration) itself; `deselectBlock()` and `clearAll()` call
+`updateSelectionSummary()` alongside `updateCounter()`.
+
+Also removed `checkConflict()` — dead since the toolbar restructure (no call
+sites) and wrong regardless (it indexed the 1-based "Week N" label into the
+0-based `eventsByWeek`). Found during the Playwright de-staleness pass.
