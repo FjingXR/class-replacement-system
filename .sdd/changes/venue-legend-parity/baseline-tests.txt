@@ -1,0 +1,15 @@
+  ✓  51 [chromium] › tests/venue-timetable.spec.ts:489:3 › Venue Timetable UI › TC57 — mobile: picker bar is visible (1.5s)
+  ✓  52 [chromium] › tests/venue-timetable.spec.ts:494:3 › Venue Timetable UI › TC58 — mobile: summary cards exist (1.6s)
+  ✓  53 [chromium] › tests/venue-timetable.spec.ts:504:3 › Venue Timetable UI › TC59 — tablet: timetable grid is visible (1.9s)
+  ✓  54 [chromium] › tests/venue-timetable.spec.ts:514:3 › Venue Timetable UI › TC60 — state is saved to localStorage on venue change (1.8s)
+  ✓  55 [chromium] › tests/venue-timetable.spec.ts:523:3 › Venue Timetable UI › TC61 — favourites are saved to localStorage (1.6s)
+  ✓  56 [chromium] › tests/venue-timetable.spec.ts:530:3 › Venue Timetable UI › TC62 — recent venues are saved to localStorage (1.8s)
+  ✓  57 [chromium] › tests/venue-timetable.spec.ts:542:3 › Venue Timetable UI › TC63 — toast notification is hidden by default (1.5s)
+  ✓  58 [chromium] › tests/venue-timetable.spec.ts:553:3 › Venue Timetable UI › TC65 — mobile: venue dropdown trigger is visible (1.5s)
+  ✓  59 [chromium] › tests/venue-timetable.spec.ts:562:3 › Venue Timetable UI › TC66 — changing venue updates summary card counts (1.6s)
+  ✓  60 [chromium] › tests/venue-timetable.spec.ts:580:3 › Venue Timetable UI › TC67 — changing week updates the grid content (2.1s)
+  ✓  61 [chromium] › tests/venue-timetable.spec.ts:599:3 › Venue Timetable UI › TC69 — grid rebuilds correctly after venue change (2.2s)
+  ✓  62 [chromium] › tests/venue-timetable.spec.ts:620:3 › Venue Timetable UI › TC70 — cancelling an own class frees the venue slot (B110 Week 11) (2.9s)
+
+  2 skipped
+  60 passed (1.7m)

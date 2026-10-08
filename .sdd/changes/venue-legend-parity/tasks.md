@@ -3,7 +3,7 @@
 **Status:** proposal.md frozen (R1 PASS), design.md frozen (R1 PASS); see
 review-log.md.
 
-- [ ] **T0 — Baseline [no deps]**
+- [x] **T0 — Baseline [no deps]**
   `npx playwright test tests/venue-timetable.spec.ts` — confirm the
   current state (expect the 16 known pre-existing failures from the
   macos-ui-refactor staleness set; TC34/TC35 passing at 4 items). Note in

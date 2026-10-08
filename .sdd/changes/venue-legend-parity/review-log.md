@@ -53,3 +53,31 @@ concurred with batching).
 ### ✅ Verdict
 PASS — design.md + tasks.md FROZEN. All artifacts frozen; ready for
 /sdd-apply.
+
+## Implementation & verify — 2026-10-08
+
+Implementation landed via the parallel session in commit `b47221e`
+("fix(venue-timetable): conflict red, twin merge, 6-item legend, modal
+rows") together with the spec de-stale (`37a2b2f`, 37 → 0 failures);
+TC34/TC35 rewritten to the 6-item expectations per frozen design §3.
+
+### Verify (design §4 sweep) — all PASS
+1. ✅ Legend 6 items in order (desktop): Available · Your Classes ·
+   Others' Classes · Others' Pending · Your Pending · Conflict / Public
+   Holiday.
+2. ✅ B110 + Week 4 (idx 3): Monday `AMCS2093(L)` renders
+   `event-conflict` (red) while `AMIS1012(L)` stays `event-others`
+   (green). Note: block tooltip carries the lecturer name; the
+   "Lecturer on leave" remark surfaces in the detail modal (design §4.2
+   wording adjusted accordingly).
+3. ✅ Pending states unchanged (suite green; venue-event-blocks §9 set).
+4. ✅ Booking intact: 130 `cell-available` cells, hint logic unchanged.
+5. ✅ Mobile legend renders 6 items (375 px).
+6. ✅ Changelog postscript written (supersession note included).
+
+Evidence: `.playwright-mcp/venue-legend-parity-b110-wk3-conflict-red.png`,
+`.playwright-mcp/venue-legend-parity-mobile-legend.png`;
+`baseline-tests.txt` (60 passed / 2 skipped / 0 failed).
+
+### ✅ Verdict
+IMPLEMENTED & VERIFIED — change complete; archive when convenient.
