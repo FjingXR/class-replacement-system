@@ -419,3 +419,14 @@ same as clicking ✕. Only navigating away mid-display (timer killed) leaves the
 entry unsnoozed, so the toast legitimately re-shows on the next load.
 `ToastManager.show` gained an `onAutoDismiss` hook alongside `onManualDismiss`;
 `UNDO_TOAST_MS` 12000 → 5000. Live-verified all three paths, 0 console errors.
+
+### Postscript — undo feedback + grid rebuild (2026-10-08, U1/U2)
+
+Clicking the undo toast's **Undo** now works as it looks: `ToastManager`
+dismisses the undo bar **before** running the callback (U1 — the callback's
+"Class restored." toast was previously wiped ~0 ms after appearing), and the
+callback rebuilds whichever grid is on screen after `ClassCancellation.undo()`
+(U2 — every timetable page's `buildTimetable()` / replacement-home's
+`buildTable()`; the class reappears without a manual reload). Confirmation
+toast shows last, over the rebuilt grid. Live-verified on my-timetable,
+student page, and replacement-home; 0 console errors.

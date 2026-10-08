@@ -2468,8 +2468,12 @@ class ToastManager {
         if (undoCallback) {
             undoBtn.style.display = 'inline-block';
             undoBtn.onclick = () => {
-                undoCallback();
+                /* Dismiss FIRST (U1, 2026-10-08): callbacks commonly show
+                   their own confirmation toast — dismissing AFTER the callback
+                   wiped the callback's bar ~0 ms after it appeared, so the
+                   user saw the toast vanish with no feedback. */
                 this.dismiss();
+                undoCallback();
             };
         } else {
             undoBtn.style.display = 'none';
@@ -3887,6 +3891,15 @@ const ClassCancellation = {
     showUndoToast() {
         toast.show('Class cancelled — arrange replacement when ready', function() {
             ClassCancellation.undo(ClassCancellation.activeEntry());
+            /* U2 (2026-10-08): restore the VIEW too. The toast can fire on
+               any page (S12 bootstrap), so rebuild whatever grid is on
+               screen — every timetable page exposes a global
+               buildTimetable(), replacement-home exposes buildTable().
+               Without this the class only reappeared after a manual reload. */
+            if (typeof buildTimetable === 'function') buildTimetable();
+            else if (typeof buildTable === 'function') buildTable();
+            /* U1: confirmation LAST — the undo bar is already dismissed, so
+               this toast survives and reads over the rebuilt grid. */
             toast.show('Class restored.', null);
         }, ClassCancellation.UNDO_TOAST_MS, '', '', '', function() {
             ClassCancellation.snoozeToast();

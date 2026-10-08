@@ -215,3 +215,14 @@ Verified on student/my/cohort timetable pages at week 8 (Mon 9 Nov): red
   "Tutorial (T)"); `flashEarliestBookableDay`'s day-row selector fixed from
   `tr[data-dayIndex=…]` to `tr[data-day-index=…]` (builder sets
   `tr.dataset.dayIndex`, so the attribute form never matched — flash no-oped).
+
+### Postscript — undo feedback + grid rebuild (2026-10-08, U1/U2)
+
+Clicking the undo toast's **Undo** now works as it looks: `ToastManager`
+dismisses the undo bar **before** running the callback (U1 — the callback's
+"Class restored." toast was previously wiped ~0 ms after appearing), and the
+callback rebuilds whichever grid is on screen after `ClassCancellation.undo()`
+(U2 — every timetable page's `buildTimetable()` / replacement-home's
+`buildTable()`; the class reappears without a manual reload). Confirmation
+toast shows last, over the rebuilt grid. Live-verified on my-timetable,
+student page, and replacement-home; 0 console errors.
