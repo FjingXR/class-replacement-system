@@ -60,7 +60,7 @@
                 ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
                     'description' => 'Replacement requests still <strong>being processed</strong> for your classes.'],
                 ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts',
-                    'description' => '<strong>Scheduling overlaps</strong> in your timetable that need attention.'],
+                    'description' => '<strong>Scheduling clashes and public holidays</strong> in your timetable that need attention.'],
             ]
         ])
 
@@ -98,8 +98,6 @@
                         ev.remarks = remarks;
                         if (flagRequestedAt) {
                             ev.requestedAt = flagRequestedAt;
-                        } else if (status === 'pending') {
-                            ev.requestedAt = '01 Sep 2026, 09:15 AM';
                         }
                         if (status === 'pending') {
                             ev.requestedBy = ev.lecturer;
@@ -122,10 +120,6 @@
 
         const weekNav = new WeekNavigator(MockData.semester, weekData, null, 'studentTimetableWeek');
         weekNav._currentWeek = currentWeek;
-
-        const WEEK_KEY = 'studentMyTimetableWeek';
-        function loadSavedWeek() { weekNav.load(); currentWeek = weekNav.currentWeek; }
-        function saveWeek() { weekNav.save(); }
 
         function buildWeekOptions() {
             populateWeekSelect('weekSelect', { ranges: false, selected: currentWeek });
