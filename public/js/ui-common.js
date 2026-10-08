@@ -198,7 +198,8 @@ function firstBookableDay(weekData) {
  * Pulses the earliest bookable day row so the arrangement page's
  * "Earliest bookable" action lands on the exact origin (the lead-time
  * boundary day), not just somewhere in the week. Day rows carry
- * tr[data-dayIndex]; the pulse uses the shared success token.
+ * tr[data-day-index] (builder sets tr.dataset.dayIndex); the pulse uses the
+ * shared success token.
  * @param {Array}  weekData
  * @param {number} weekIdx — the week on screen (must hold a bookable day)
  */
@@ -206,7 +207,7 @@ function flashEarliestBookableDay(weekData, weekIdx) {
     const body = document.getElementById('tableBody');
     const dayIdx = firstBookableDayIn(weekData, weekIdx);
     if (!body || dayIdx < 0) return;
-    const rows = body.querySelectorAll('tr[data-dayIndex="' + dayIdx + '"]');
+    const rows = body.querySelectorAll('tr[data-day-index="' + dayIdx + '"]');
     rows.forEach(function(r) {
         r.classList.remove('bookable-flash');
         void r.offsetWidth; /* restart the animation on repeat clicks */
@@ -815,7 +816,7 @@ function computeSummary(events, days) {
     events.forEach(e => {
         if (e.status === 'replacement') replacement++;
         if (e.status === 'pending') pending++;
-        if (days[e.di] && days[e.di].holiday) conflict++;
+        if (e.status === 'conflict' || (days[e.di] && days[e.di].holiday)) conflict++;
         hrs += (e.end - e.start + 1) * 0.5;
     });
 
@@ -902,7 +903,7 @@ function openClassModal(cfg) {
     const rows = [
         { label: 'Subject Code', value: event.code },
         { label: 'Subject Name', value: event.name },
-        { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : 'Tutorial (T)' },
+        { label: 'Class Type', value: event.type === 'L' ? 'Lecture (L)' : event.type === 'P' ? 'Practical (P)' : 'Tutorial (T)' },
         { label: 'Lecturer', value: event.lecturer },
         { label: 'Venue', value: event.venue || '\u2014' },
         { label: 'Day', value: dayNames[di] || days[di].abbr },
@@ -997,8 +998,11 @@ function openClassModal(cfg) {
         _mFooter.querySelectorAll('a.btn-action').forEach(function(b) { b.remove(); });
     }
 
-    // Add "View Full Request" button to footer right side for own pending requests
-    if (event.status === 'pending' && event.requestId && _mFooter) {
+    // Add "View Full Request" button to footer right side for OWN pending
+    // requests only: requests[] ids resolve on my-request-history, so another
+    // lecturer's pending (e.g. cohort page) must not link into this user's
+    // request history (reported 2026-10-08 — id-collision leak).
+    if (event.status === 'pending' && event.requestId && event.requestedBy === MockData.currentUser.name && _mFooter) {
         var viewBtn = document.createElement('a');
         viewBtn.href = '/my-request-history-ui?id=' + event.requestId;
         viewBtn.className = 'btn-action';
