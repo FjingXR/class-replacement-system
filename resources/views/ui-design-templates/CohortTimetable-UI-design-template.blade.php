@@ -132,35 +132,10 @@
                 if (!allEvents[entry.cohortId][entry.week]) allEvents[entry.cohortId][entry.week] = [];
                 allEvents[entry.cohortId][entry.week].push(Object.assign({}, entry.event));
             });
-
-            // Reconstruct RSD3 G2: populate ALL 14 weeks with base events, then apply flag overrides.
-            var rsd3g2Cohort = 'rsd3s1g2';
-            if (!allEvents[rsd3g2Cohort]) allEvents[rsd3g2Cohort] = {};
-            for (var w = 0; w < 14; w++) {
-                allEvents[rsd3g2Cohort][w] = [];
-                MockData.cohortTimetable.rsd3g2Base.forEach(function(evt) {
-                    var copy = Object.assign({}, evt);
-                    if (!copy.status) copy.status = 'normal';
-                    allEvents[rsd3g2Cohort][w].push(copy);
-                });
-            }
-            MockData.cohortTimetable.rsd3g2Flags && Object.keys(MockData.cohortTimetable.rsd3g2Flags).forEach(function(w) {
-                var weekIdx = parseInt(w);
-                MockData.cohortTimetable.rsd3g2Flags[w].forEach(function(entry) {
-                    var flagCode = entry[0], flagStatus = entry[1], flagDate = entry[2] || '';
-                    var flagRequestedAt = entry[3] || '';
-                    var flagRequestId = entry[4] || '';
-                    var weekEvents = allEvents[rsd3g2Cohort][weekIdx];
-                    weekEvents.forEach(function(evt) {
-                        if (evt.code === flagCode) {
-                            evt.status = flagStatus;
-                            if (flagDate) evt.remarks = flagDate;
-                            if (flagRequestedAt) evt.requestedAt = flagRequestedAt;
-                            if (flagRequestId) evt.requestId = flagRequestId;
-                        }
-                    });
-                });
-            });
+            // RSD3 G2 renders straight from cohortTimetable.events: the seeder already
+            // applies rsd3g2Flags slot-keyed (snap-to-first-block) in §2.7, so a
+            // local rebuild from rsd3g2Base + code-keyed rsd3g2Flags would re-flag
+            // every block of a code (phantom multi-reds / double pendings).
         }
         buildAllEvents();
 
@@ -219,6 +194,7 @@
             document.getElementById('timetable').querySelector('thead').innerHTML = '';
             document.getElementById('timetable').querySelector('tbody').innerHTML = '';
             document.getElementById('sumTotal').textContent = '0';
+            document.getElementById('sumHours').textContent = '0';
             document.getElementById('sumReplacement').textContent = '0';
             document.getElementById('sumPending').textContent = '0';
             document.getElementById('sumConflict').textContent = '0';
