@@ -203,7 +203,7 @@ window.MockData = {
         { code: 'BMIT2203', name: 'Human Computer Interaction', type: 'L', cohorts: ['RSD2(S1)G2', 'RSD2(S1)G3'], cohortCounts: [16, 15], studentCount: 31 },
         { code: 'BMIT3084', name: 'Enterprise Networking', type: 'L', cohorts: ['RSD3(S1)G2'], cohortCounts: [14], studentCount: 14 },
         { code: 'BMIT3173', name: 'Integrative Programming', type: 'L', cohorts: ['RSD3(S1)G1', 'RSD3(S1)G3'], cohortCounts: [14, 13], studentCount: 27 },
-        { code: 'BMIT3273', name: 'Subj BMIT3273', type: 'L', cohorts: ['RSD3(S1)G1', 'RSD3(S1)G2', 'RSD3(S1)G3'], cohortCounts: [14, 14, 13], studentCount: 41 },
+        { code: 'BMIT3273', name: 'Cloud Computing', type: 'L', cohorts: ['RSD3(S1)G1', 'RSD3(S1)G2', 'RSD3(S1)G3'], cohortCounts: [14, 14, 13], studentCount: 41 },
         { code: 'BMMS1743', name: 'Quantitative Methods', type: 'L', cohorts: ['RBU1(S1)G1'], cohortCounts: [20], studentCount: 20 },
         { code: 'BMSE2163', name: 'Software Engineering', type: 'L', cohorts: ['RSD2(S1)G1', 'RSD2(S1)G2'], cohortCounts: [16, 16], studentCount: 32 },
         { code: 'BMSE3153', name: 'Software Project Management', type: 'L', cohorts: ['RSD3(S1)G2', 'RSD3(S1)G3'], cohortCounts: [14, 13], studentCount: 27 },
@@ -216,8 +216,8 @@ window.MockData = {
     ],
     // ─────────────────────────────────────────────────────────────────────
 // §2.6  myTimetable — En. Lim Jia Zheng's own week (semester-202505 lecturer
-    // PDF p.41, 7 blocks / 10.0 h), written out for all 14 weeks so that
-    // replacement-arrangement's checkConflict() sees the real classes too.
+    // PDF p.41, 7 blocks / 10.0 h), written out for all 14 weeks so the
+    // arrangement page's own selection logic sees the real classes too.
     // Week 11 is the all-normal seed; weeks 0, 1, 2, 4, 7, 9 carry the demo
     // replacement / pending / conflict states; week 3 is empty to exercise
     // the empty state. The page MUST copy before mutating (MockData is
@@ -514,16 +514,16 @@ window.MockData = {
                 { cohortId: 'rsd2s1g3', di: 4, start: 14, end: 15, code: 'BMCS2053', type: 'P', venue: 'B009', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD2(S1)G3', status: 'normal', name: 'Object-Oriented Analysis and Design', remarks: '' },
                 { cohortId: 'rsd3s1g1', di: 0, start: 11, end: 14, code: 'BMCS3033', type: 'L', venue: 'B018', lecturer: 'En. Daniel Royd Michael', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Social and Professional Issues', remarks: '' },
                 { cohortId: 'rsd3s1g1', di: 1, start: 6, end: 9, code: 'BMIS2003', type: 'L', venue: 'B006', lecturer: 'Dr. Christopher Lazarus', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Blockchain Application Development', remarks: '' },
-                { cohortId: 'rsd3s1g1', di: 1, start: 12, end: 15, code: 'BMIT3273', type: 'L', venue: 'B107', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Subj BMIT3273', remarks: '' },
+                { cohortId: 'rsd3s1g1', di: 1, start: 12, end: 15, code: 'BMIT3273', type: 'L', venue: 'B107', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Cloud Computing', remarks: '' },
                 { cohortId: 'rsd3s1g1', di: 2, start: 2, end: 5, code: 'BMIT3173', type: 'L', venue: 'B014', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Integrative Programming', remarks: '' },
                 { cohortId: 'rsd3s1g1', di: 3, start: 2, end: 5, code: 'BMIS2003', type: 'P', venue: 'B006', lecturer: 'Dr. Christopher Lazarus', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Blockchain Application Development', remarks: '' },
                 { cohortId: 'rsd3s1g1', di: 3, start: 12, end: 15, code: 'BMIT3173', type: 'P', venue: 'B006', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Integrative Programming', remarks: '' },
                 { cohortId: 'rsd3s1g1', di: 4, start: 3, end: 4, code: 'BMCS3033', type: 'T', venue: 'B011', lecturer: 'En. Daniel Royd Michael', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Social and Professional Issues', remarks: '' },
-                { cohortId: 'rsd3s1g1', di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Subj BMIT3273', remarks: '' },
+                { cohortId: 'rsd3s1g1', di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G1', status: 'normal', name: 'Cloud Computing', remarks: '' },
                 { cohortId: 'rsd3s1g2', di: 0, start: 2, end: 5, code: 'BMSE3153', type: 'L', venue: 'B102', lecturer: 'Pn. Lee Yee Fong', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Software Project Management', remarks: '' },
                 { cohortId: 'rsd3s1g2', di: 0, start: 10, end: 13, code: 'BMIT3084', type: 'L', venue: 'B006', lecturer: 'Dr. Christopher Lazarus', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Enterprise Networking', remarks: '' },
                 { cohortId: 'rsd3s1g2', di: 1, start: 10, end: 11, code: 'BMSE3153', type: 'P', venue: 'B009', lecturer: 'Pn. Surayaini Binti Basri', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Software Project Management', remarks: '' },
-                { cohortId: 'rsd3s1g2', di: 1, start: 12, end: 15, code: 'BMIT3273', type: 'L', venue: 'B107', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Subj BMIT3273', remarks: '' },
+                { cohortId: 'rsd3s1g2', di: 1, start: 12, end: 15, code: 'BMIT3273', type: 'L', venue: 'B107', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Cloud Computing', remarks: '' },
                 { cohortId: 'rsd3s1g2', di: 2, start: 6, end: 9, code: 'BMIT2073', type: 'L', venue: 'B015', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Mobile Application Development', remarks: '' },
                 { cohortId: 'rsd3s1g2', di: 2, start: 12, end: 15, code: 'BMIT2073', type: 'P', venue: 'B010', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Mobile Application Development', remarks: '' },
                 { cohortId: 'rsd3s1g2', di: 3, start: 2, end: 5, code: 'BMIS2113', type: 'L', venue: 'B105', lecturer: 'En. Daniel Royd Michael', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Information Technology Infrastructure', remarks: '' },
@@ -531,11 +531,11 @@ window.MockData = {
                 { cohortId: 'rsd3s1g2', di: 3, start: 10, end: 11, code: 'BMIS2113', type: 'P', venue: 'B005', lecturer: 'En. Daniel Royd Michael', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Information Technology Infrastructure', remarks: '' },
                 { cohortId: 'rsd3s1g2', di: 4, start: 4, end: 5, code: 'BMIT3084', type: 'T', venue: 'B006', lecturer: 'Dr. Christopher Lazarus', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Enterprise Networking', remarks: '' },
                 { cohortId: 'rsd3s1g2', di: 4, start: 6, end: 9, code: 'BMIT3084', type: 'P', venue: 'B006', lecturer: 'Dr. Christopher Lazarus', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Enterprise Networking', remarks: '' },
-                { cohortId: 'rsd3s1g2', di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Subj BMIT3273', remarks: '' },
+                { cohortId: 'rsd3s1g2', di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G2', status: 'normal', name: 'Cloud Computing', remarks: '' },
                 { cohortId: 'rsd3s1g3', di: 0, start: 2, end: 5, code: 'BMSE3153', type: 'L', venue: 'B102', lecturer: 'Pn. Lee Yee Fong', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Software Project Management', remarks: '' },
                 { cohortId: 'rsd3s1g3', di: 0, start: 12, end: 13, code: 'MPU-3232', type: 'L', venue: 'B002', lecturer: 'Pn. Tan Sharon', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Entrepreneurship', remarks: '' },
                 { cohortId: 'rsd3s1g3', di: 1, start: 10, end: 11, code: 'BMSE3153', type: 'P', venue: 'B009', lecturer: 'Pn. Surayaini Binti Basri', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Software Project Management', remarks: '' },
-                { cohortId: 'rsd3s1g3', di: 1, start: 12, end: 15, code: 'BMIT3273', type: 'L', venue: 'B107', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Subj BMIT3273', remarks: '' },
+                { cohortId: 'rsd3s1g3', di: 1, start: 12, end: 15, code: 'BMIT3273', type: 'L', venue: 'B107', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Cloud Computing', remarks: '' },
                 { cohortId: 'rsd3s1g3', di: 2, start: 2, end: 5, code: 'BMIT3173', type: 'L', venue: 'B014', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Integrative Programming', remarks: '' },
                 { cohortId: 'rsd3s1g3', di: 2, start: 6, end: 9, code: 'BMIT2073', type: 'L', venue: 'B015', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Mobile Application Development', remarks: '' },
                 { cohortId: 'rsd3s1g3', di: 2, start: 12, end: 15, code: 'BMIT2073', type: 'P', venue: 'B010', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Mobile Application Development', remarks: '' },
@@ -544,7 +544,7 @@ window.MockData = {
                 { cohortId: 'rsd3s1g3', di: 3, start: 10, end: 11, code: 'BMIS2113', type: 'P', venue: 'B005', lecturer: 'En. Daniel Royd Michael', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Information Technology Infrastructure', remarks: '' },
                 { cohortId: 'rsd3s1g3', di: 3, start: 12, end: 15, code: 'BMIT3173', type: 'P', venue: 'B006', lecturer: 'Ts. Norshikin Binti Zainal Abidin', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Integrative Programming', remarks: '' },
                 { cohortId: 'rsd3s1g3', di: 4, start: 4, end: 5, code: 'MPU-3232', type: 'T', venue: 'B103', lecturer: 'Dr. Chang Foo Chung', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Entrepreneurship', remarks: '' },
-                { cohortId: 'rsd3s1g3', di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Subj BMIT3273', remarks: '' },
+                { cohortId: 'rsd3s1g3', di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', cohort: 'RSD3(S1)G3', status: 'normal', name: 'Cloud Computing', remarks: '' },
                 { cohortId: 'raf2s3g2', di: 2, start: 6, end: 7, code: 'MPU-3302', type: 'T', venue: 'B106', lecturer: 'En. Muada Bin Ojih', cohort: 'RAF2(S3)G2', status: 'normal', name: 'Subj MPU-3302', remarks: '' },
                 { cohortId: 'raf2s3g2', di: 3, start: 6, end: 7, code: 'MPU-3133', type: 'T', venue: 'B015', lecturer: 'En. Muada Bin Ojih', cohort: 'RAF2(S3)G2', status: 'normal', name: 'Falsafah dan Isu Semasa', remarks: '' },
                 { cohortId: 'raf2s3g4', di: 2, start: 6, end: 7, code: 'MPU-3302', type: 'T', venue: 'B106', lecturer: 'En. Muada Bin Ojih', cohort: 'RAF2(S3)G4', status: 'normal', name: 'Subj MPU-3302', remarks: '' },
@@ -602,7 +602,7 @@ window.MockData = {
             { di: 0, start: 2, end: 5, code: 'BMSE3153', type: 'L', venue: 'B102', lecturer: 'Pn. Lee Yee Fong', name: 'Software Project Management' },
             { di: 0, start: 10, end: 13, code: 'BMIT3084', type: 'L', venue: 'B006', lecturer: 'Dr. Christopher Lazarus', name: 'Enterprise Networking' },
             { di: 1, start: 10, end: 11, code: 'BMSE3153', type: 'P', venue: 'B009', lecturer: 'Pn. Surayaini Binti Basri', name: 'Software Project Management' },
-            { di: 1, start: 12, end: 15, code: 'BMIT3273', type: 'L', venue: 'B107', lecturer: 'En. Jefther Edward', name: 'Subj BMIT3273' },
+            { di: 1, start: 12, end: 15, code: 'BMIT3273', type: 'L', venue: 'B107', lecturer: 'En. Jefther Edward', name: 'Cloud Computing' },
             { di: 2, start: 6, end: 9, code: 'BMIT2073', type: 'L', venue: 'B015', lecturer: 'Ts. Norshikin Binti Zainal Abidin', name: 'Mobile Application Development' },
             { di: 2, start: 12, end: 15, code: 'BMIT2073', type: 'P', venue: 'B010', lecturer: 'Ts. Norshikin Binti Zainal Abidin', name: 'Mobile Application Development' },
             { di: 3, start: 2, end: 5, code: 'BMIS2113', type: 'L', venue: 'B105', lecturer: 'En. Daniel Royd Michael', name: 'Information Technology Infrastructure' },
@@ -610,7 +610,7 @@ window.MockData = {
             { di: 3, start: 10, end: 11, code: 'BMIS2113', type: 'P', venue: 'B005', lecturer: 'En. Daniel Royd Michael', name: 'Information Technology Infrastructure' },
             { di: 4, start: 4, end: 5, code: 'BMIT3084', type: 'T', venue: 'B006', lecturer: 'Dr. Christopher Lazarus', name: 'Enterprise Networking' },
             { di: 4, start: 6, end: 9, code: 'BMIT3084', type: 'P', venue: 'B006', lecturer: 'Dr. Christopher Lazarus', name: 'Enterprise Networking' },
-            { di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', name: 'Subj BMIT3273' },
+            { di: 4, start: 13, end: 16, code: 'BMIT3273', type: 'P', venue: 'B006', lecturer: 'En. Jefther Edward', name: 'Cloud Computing' },
         ],
         rsd3g2Flags: {
             0:  [ [ 'BMIT3084', 'conflict', 'Lab equipment failure' ] ],
