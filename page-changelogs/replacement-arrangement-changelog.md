@@ -1,5 +1,17 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-10-09f] Summary card shows the selection duration
+
+- Selection summary card time line now ends `· N slots (xH)` — hours derived from the 30-min slot count: 4 → `(2H)`, 3 → `(1.5H)`, 2 → `(1H)`, 1 → `(0.5H)`.
+
+## [2026-10-09e] Selection tip keyword styling (selection summary)
+
+- "Maximum selection reached" tip reworked: **MAX** white + caps + no bold; **SELECTED BLOCK** primary blue + bold + caps; **REMOVE** white + bold + caps; surrounding text plain (`--color-on-surface`) instead of muted variant. Same markup applied to the under-max "Click the selected block to remove it." tip for consistency. New page CSS: `.tip-plain/.tip-max/.tip-remove`, `.tip-action` gains `text-transform: uppercase`.
+
+## [2026-10-09d] Guard-modal dismiss button relabelled "Cancel" → "Close"
+
+- The shared `#confirmModal` footer dismiss button (subject / venue / time-slot / week-nav / back-button guards) now reads **Close**, matching the alert modal's Close — behaviour unchanged (still dismisses + restores).
+
 ## [2026-10-09c] URL `&duration=` now actually governs the selection span
 
 - **Bug**: arriving from my-timetable with `&duration=1` (1 h conflict class) still demanded a 4-slot (2 h) block. `DOMContentLoaded` sized `BLOCK_SPAN` from the URL correctly, but `applyUrlParams`' slot match missed (the clicked holiday-conflict isn't a seeded picker slot), so `applyDefaultSlotSelection()` fell through to "first option" and auto-committed the w3 6–9 (2 h) slot — and `commitSlotSelection()` resized `BLOCK_SPAN` 2 → 4, overriding the URL (the F-8 comment claimed "URL branch keeps INITIAL authority" but nothing enforced it).

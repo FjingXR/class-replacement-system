@@ -725,12 +725,20 @@
             color: var(--color-on-surface-variant);
             text-align: center;
         }
+        .sel-summary-tip .tip-plain { color: var(--color-on-surface); }
+        .sel-summary-tip .tip-max { font-weight: 400; } /* white + CAP via literal text, no bold */
         .sel-summary-tip .tip-action {
             color: var(--color-primary);
             font-weight: 700;
+            text-transform: uppercase;
         }
         html.dark .sel-summary-tip .tip-action {
             color: var(--color-on-primary-container); /* dark navy primary is too dim on the dark surface */
+        }
+        .sel-summary-tip .tip-remove {
+            color: var(--color-on-surface); /* white, not primary */
+            font-weight: 700;
+            text-transform: uppercase;
         }
         .sel-summary-tip .tip-success {
             color: var(--color-success);
@@ -1117,7 +1125,7 @@
             </div>
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="hideConfirmModal(event)">Cancel</button>
+                <button class="btn btn-outline" onclick="hideConfirmModal(event)">Close</button>
                 <button class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
                 <button class="btn btn-primary" id="modalActionBtn" style="display:none"></button>
             </div>
@@ -1327,6 +1335,9 @@
                 const startStr = hours[b.startHour];
                 const endStr = add30min(hours[b.endHour - 1]);
                 const endDisplay = add30min(hours[b.endHour - 1]); // end of last slot
+                /* duration in hours (30-min slots): 4 → 2H, 3 → 1.5H, 2 → 1H */
+                const durH = b.slotCount / 2;
+                const durLabel = (Number.isInteger(durH) ? durH : durH.toFixed(1)) + 'H';
 
                 const card = document.createElement('div');
                 card.className = 'sel-summary-card';
@@ -1337,7 +1348,7 @@
                     <div class="card-venue">${b.venue}</div>
                     <div class="card-day">${b.weekLabel} · ${b.day.abbr}</div>
                     <div class="card-date">${b.day.date}</div>
-                    <div class="card-time">${to12h(startStr)} – ${to12h(endDisplay)} · ${b.slotCount} slots</div>
+                    <div class="card-time">${to12h(startStr)} – ${to12h(endDisplay)} · ${b.slotCount} slots (${durLabel})</div>
                 `;
                 grid.appendChild(card);
             });
@@ -1355,9 +1366,9 @@
 
             const tip = document.getElementById('summaryTip');
             if (getGlobalTotal() >= MAX_SELECTION) {
-                tip.innerHTML = 'Tip: Maximum selection reached. <span class="tip-action">Click the selected block to remove it.</span>';
+                tip.innerHTML = 'Tip: <span class="tip-plain"><span class="tip-max">MAX</span>imum selection reached. Click the <span class="tip-action">selected block</span> to <span class="tip-remove">remove</span> it.</span>';
             } else if (allBlocks.length > 0) {
-                tip.innerHTML = 'Tip: <span class="tip-action">Click the selected block to remove it.</span>';
+                tip.innerHTML = 'Tip: <span class="tip-plain">Click the <span class="tip-action">selected block</span> to <span class="tip-remove">remove</span> it.</span>';
             } else {
                 tip.innerHTML = 'Tip: Click an <span class="tip-success">available (green)</span> time slot to begin.';
             }
