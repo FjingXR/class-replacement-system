@@ -1936,8 +1936,17 @@ html.dark .semester-bar select:not(.week-select) {
     color: var(--color-on-tertiary-container);
 }
 .event-conflict {
-    background: var(--color-error-container);
+    /* §10.0 conflict = red, but a plain tint reads like any other block —
+       solid error border + diagonal caution stripes (token-only via
+       color-mix, adapts to dark theme) make "needs attention" unmistakable
+       on every page that renders conflicted classes. */
+    background:
+        repeating-linear-gradient(45deg,
+            color-mix(in srgb, var(--color-error) 16%, transparent) 0 6px,
+            transparent 6px 14px),
+        var(--color-error-container);
     color: var(--color-on-error-container);
+    border: 2px solid var(--color-error);
 }
 /* ── Cohort timetable: own vs others (scoped) ── */
 .timetable .event-mine {

@@ -582,3 +582,14 @@ grid-equivalent: offday events excluded (they render as PH cells),
 merged-cohort twins deduped. Verified B110 → **1 class / 2 hours**
 (AMCS2093(L)). Spec TC36 4→5 cards, TC37 ids, TC58 mobile count,
 new TC38b (B110 weekly pattern).
+
+### Postscript — conflict blocks made unmistakable (2026-10-08)
+
+`.event-conflict` (global, theme.css) upgraded from a plain red tint to
+a **2px solid `--color-error` border + diagonal caution stripes**
+(`repeating-linear-gradient` over the container tint, token-only via
+`color-mix` — adapts to dark theme). Same meaning, same red per §10.0;
+just impossible to mistake for an ordinary block at grid glance.
+Applies to every page rendering conflicted classes (cohort, venue,
+my timetable, student). No legend or test changes needed; verified live
+on cohort (dft2s1 W4 AMCS2093) and venue (B110 W4), suite 124 passed.

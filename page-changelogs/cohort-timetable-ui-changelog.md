@@ -328,3 +328,14 @@ Computation lives in the shared `myTeachingStats()` (grid-slotMap
 dedupe so merged-cohort twins count once); `computeSummary` writes are
 now null-guarded. Verified dft2s1 Week 1 → **3 classes / 4 hours**
 (AMCS2093 L 2h + T 1h + P 1h).
+
+### Postscript — conflict blocks made unmistakable (2026-10-08)
+
+`.event-conflict` (global, theme.css) upgraded from a plain red tint to
+a **2px solid `--color-error` border + diagonal caution stripes**
+(`repeating-linear-gradient` over the container tint, token-only via
+`color-mix` — adapts to dark theme). Same meaning, same red per §10.0;
+just impossible to mistake for an ordinary block at grid glance.
+Applies to every page rendering conflicted classes (cohort, venue,
+my timetable, student). No legend or test changes needed; verified live
+on cohort (dft2s1 W4 AMCS2093) and venue (B110 W4), suite 124 passed.
