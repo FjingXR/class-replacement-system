@@ -52,15 +52,15 @@
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes',
-                    'description' => 'Total classes in <strong>your timetable</strong> this week.'],
+                    'description' => 'Total classes in <span class="info-keyword">your timetable</span> this week.'],
                 ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Class Hours',
-                    'description' => 'Total <strong>class hours</strong> you have this week (each slot = <strong>30 minutes</strong>).'],
+                    'description' => 'Total <span class="info-keyword">class hours</span> you have this week (each slot = <strong>30 minutes</strong>).'],
                 ['class' => 'card-replacement', 'valueId' => 'sumReplacement', 'label' => 'Replacements',
-                    'description' => 'Classes where a <strong>different lecturer</strong> is covering this week.'],
+                    'description' => 'Classes where a <span class="info-keyword">different lecturer</span> is covering this week.'],
                 ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
-                    'description' => 'Replacement requests still <strong>being processed</strong> for your classes.'],
+                    'description' => 'Replacement requests still <span class="warn-keyword">being processed</span> for your classes.'],
                 ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts',
-                    'description' => '<strong>Scheduling clashes and public holidays</strong> in your timetable that need attention.'],
+                    'description' => '<span class="warn-keyword">Scheduling clashes and public holidays</span> in your timetable that need attention.'],
             ]
         ])
 

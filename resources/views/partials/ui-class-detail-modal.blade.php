@@ -7,7 +7,7 @@
     <div class="modal">
         <div class="modal-header">
             <span class="modal-title" id="modalTitle">Class Details</span>
-            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <button class="modal-close" onclick="closeModal()" data-tip="Close">&times;</button>
         </div>
         <div class="modal-body" id="modalBody"></div>
         <div class="modal-footer">

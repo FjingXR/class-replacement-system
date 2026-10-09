@@ -8,7 +8,7 @@
     <div class="modal">
         <div class="modal-header">
             <span class="modal-title" id="cancelClassTitle">Cancel Class</span>
-            <button class="modal-close" onclick="CancelClassModal.dismiss()">&times;</button>
+            <button class="modal-close" onclick="CancelClassModal.dismiss()" data-tip="Close">&times;</button>
         </div>
         <div class="modal-body">
             <!-- ─── Confirm state (impact preview + reason gating) ─── -->

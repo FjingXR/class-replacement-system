@@ -2491,6 +2491,21 @@ tr.bookable-flash > td { animation: bookable-pulse 1.15s ease-in-out 1; }
 .event-block.event-selection:hover::after { opacity: 1; }
 .ev-code { cursor: pointer; }
 
+/* ── Warning keyword (modals & card backs) ──────────────────── */
+/* Born-shared (AGENTS.md §10.7): one red keyword for irreversible /
+   attention consequences, one bold-uppercase keyword in default color
+   for informational emphasis. Uppercase via text-transform so source
+   copy stays natural-case and text assertions stay valid. */
+.warn-keyword {
+    color: var(--color-error);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.info-keyword {
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
 /* ── Copy toast ─────────────────────────────────────────────── */
 .copy-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--color-inverse-surface); color: var(--color-on-inverse-surface); padding: 8px 16px; border-radius: var(--radius-sm); font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; }
 .copy-toast.show { opacity: 1; }

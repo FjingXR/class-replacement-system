@@ -676,3 +676,11 @@ day fully suppressed (22 PH cells).
 - Legend trimmed to status chips only (swatches reuse the real block
   classes), plus an ownership hint — *"thick border = your classes ·
   hairline = others'"* — replacing the Your/Others swatch pairs.
+
+### Postscript — tooltip parity + card keywords (2026-10-09, SDD: warning-modal-keywords)
+
+The print button's native `title=` tooltip moved to the shared `data-tip` bubble system
+(same text), and the venue modal's close ✕ now shows a "Close" tooltip like every other
+modal. The five summary-card flip-backs carry the new keyword language — one bold-uppercase
+keyword per description (`FREE TIME SLOTS`, `YOU TEACH`, …), with the "Cannot book" card's
+keyword in red (`CANNOT BOOK`) since it's an attention card.

@@ -368,7 +368,7 @@
                 <button class="fav-btn" id="favStar" data-tip="Add to Favourites">&#9734;</button>
             </div>
             @include('partials.ui-week-nav', ['prevOnclick' => 'prevWeek()', 'nextOnclick' => 'nextWeek()', 'selectId' => 'weekSelect', 'selectOnclick' => 'selectWeek(this.value)', 'disabled' => false])
-            <button class="print-btn" title="Coming soon" onclick="toast.show('Printing is coming soon')" style="margin-left:auto;">
+            <button class="print-btn" data-tip="Coming soon" onclick="toast.show('Printing is coming soon')" style="margin-left:auto;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="6 9 6 2 18 2 18 9"/>
                     <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -422,15 +422,15 @@
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots',
-                    'description' => 'All time slots shown for <strong>this venue</strong> in the selected week.'],
+                    'description' => 'All time slots shown for <span class="info-keyword">this venue</span> in the selected week.'],
                 ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available',
-                    'description' => '<strong>Free time slots</strong> that can be booked for this venue.'],
+                    'description' => '<span class="info-keyword">Free time slots</span> that can be booked for this venue.'],
                 ['class' => 'card-replacement', 'valueId' => 'sumMyClasses', 'label' => 'My Teaching Classes',
-                    'description' => 'Sessions <strong>you teach</strong> in this venue this week — <strong>each class counts separately</strong>.'],
+                    'description' => 'Sessions <span class="info-keyword">you teach</span> in this venue this week — <strong>each class counts separately</strong>.'],
                 ['class' => 'card-hours', 'valueId' => 'sumMyHours', 'label' => 'My Teaching Hours',
-                    'description' => 'Total hours of <strong>your classes</strong> in this venue this week (each slot = <strong>30 minutes</strong>).'],
+                    'description' => 'Total hours of <span class="info-keyword">your classes</span> in this venue this week (each slot = <strong>30 minutes</strong>).'],
                 ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable',
-                    'description' => '<strong>Cannot book</strong> — booked class, Sunday, or public holiday.'],
+                    'description' => '<span class="warn-keyword">Cannot book</span> — booked class, Sunday, or public holiday.'],
             ]
         ])
 
@@ -445,7 +445,7 @@
             <div class="modal">
                 <div class="modal-header">
                     <span class="modal-title" id="modalTitle">Class Details</span>
-                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                    <button class="modal-close" onclick="closeModal()" data-tip="Close">&times;</button>
                 </div>
                 <div class="modal-body" id="modalBody"></div>
                 <div class="modal-footer">

@@ -224,11 +224,11 @@
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-conflict', 'valueId' => 'summaryMyConflicted', 'label' => 'My Conflicted Classes',
-                    'description' => '<strong>Your classes</strong> that need a replacement arrangement.'],
+                    'description' => 'Your classes that <span class="warn-keyword">need a replacement arrangement</span>.'],
                 ['class' => 'card-duration', 'valueId' => 'summaryMyHours', 'label' => 'My Hours to Cover',
-                    'description' => 'Total <strong>hours of your class time</strong> that need to be rescheduled.'],
+                    'description' => 'Total <span class="info-keyword">hours of your class time</span> that need to be rescheduled.'],
                 ['class' => 'card-courses', 'valueId' => 'summaryMyCourses', 'label' => 'My Courses',
-                    'description' => 'Number of <strong>your different courses</strong> affected by the conflicts.'],
+                    'description' => 'Number of <span class="info-keyword">your different courses</span> affected by the conflicts.'],
             ]
         ])
 
@@ -237,7 +237,7 @@
             <div class="modal" style="max-width:420px">
                 <div class="modal-header">
                     <h3 class="modal-title">Keyboard Shortcuts</h3>
-                    <button class="modal-close" onclick="hideKeyboardShortcuts()">✕</button>
+                    <button class="modal-close" onclick="hideKeyboardShortcuts()" data-tip="Close">✕</button>
                 </div>
                 <div class="modal-body">
                     <div class="modal-field"><span class="modal-field-label">Focus search</span><span class="modal-field-value"><code style="padding:2px 6px;border:1px solid var(--color-outline);border-radius:var(--radius-xs);font-size:12px;background:var(--color-surface-variant)">/</code></span></div>
@@ -265,7 +265,7 @@
             <div class="modal" style="max-width:500px">
                 <div class="modal-header">
                     <span class="modal-title" id="qvTitle">Replacement Details</span>
-                    <button class="modal-close" onclick="hideQuickView()">✕</button>
+                    <button class="modal-close" onclick="hideQuickView()" data-tip="Close">✕</button>
                 </div>
                 <div class="modal-body" id="qvBody"></div>
                 <div class="modal-footer">

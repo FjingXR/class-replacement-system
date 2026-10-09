@@ -1,17 +1,17 @@
 @php
     $descriptions = [
-        'card-total'       => 'Total number of <strong>scheduled classes</strong> for the selected period.',
-        'card-hours'       => 'Total <strong>teaching hours</strong> for the selected period (each slot = <strong>30 minutes</strong>).',
-        'card-replacement' => 'Classes with a <strong>replacement lecturer</strong> assigned.',
-        'card-pending'     => 'Replacement requests still <strong>waiting for approval</strong> or a volunteer.',
-        'card-conflict'    => '<strong>Scheduling clashes</strong> or classes on <strong>public holidays</strong> that need attention.',
-        'card-available'   => '<strong>Free time slots</strong> that can be booked for this venue.',
-        'card-approved'    => 'Requests that have been <strong>approved</strong> and are ready to proceed.',
-        'card-rejected'    => 'Requests that were <strong>declined</strong> and need alternative arrangements.',
-        'card-venues'      => 'Number of <strong>unique venues</strong> involved in the conflicted classes.',
-        'card-students'    => 'Total <strong>students impacted</strong> by the scheduling conflicts.',
-        'card-duration'    => 'Total <strong>hours of class time</strong> that need to be rescheduled.',
-        'card-courses'     => 'Number of <strong>different courses</strong> affected by the conflicts.',
+        'card-total'       => 'Total number of <span class="info-keyword">scheduled classes</span> for the selected period.',
+        'card-hours'       => 'Total <span class="info-keyword">teaching hours</span> for the selected period (each slot = <strong>30 minutes</strong>).',
+        'card-replacement' => 'Classes with a <span class="info-keyword">replacement lecturer</span> assigned.',
+        'card-pending'     => 'Replacement requests still <span class="warn-keyword">waiting for approval</span> or a volunteer.',
+        'card-conflict'    => '<span class="warn-keyword">Scheduling clashes</span> or classes on <strong>public holidays</strong> that need attention.',
+        'card-available'   => '<span class="info-keyword">Free time slots</span> that can be booked for this venue.',
+        'card-approved'    => 'Requests that have been <span class="info-keyword">approved</span> and are ready to proceed.',
+        'card-rejected'    => 'Requests that were <span class="warn-keyword">declined</span> and need alternative arrangements.',
+        'card-venues'      => 'Number of <span class="info-keyword">unique venues</span> involved in the conflicted classes.',
+        'card-students'    => 'Total <span class="info-keyword">students impacted</span> by the scheduling conflicts.',
+        'card-duration'    => 'Total <span class="info-keyword">hours of class time</span> that need to be rescheduled.',
+        'card-courses'     => 'Number of <span class="info-keyword">different courses</span> affected by the conflicts.',
     ];
 @endphp
 

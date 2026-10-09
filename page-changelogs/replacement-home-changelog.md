@@ -331,3 +331,10 @@ cancellable — FR 2.16), a cancelled confirmed-replacement class flows into
 the requires-replacement list with the usual "Just cancelled" chip + undo
 button; undo restores it as a replacement class (priorStatus preserved),
 not as a normal one.
+
+### Postscript — card keywords + close tooltips (2026-10-09, SDD: warning-modal-keywords)
+
+The three summary-card flip-backs joined the keyword language: "My Conflicted Classes" warns
+in red (**NEED A REPLACEMENT ARRANGEMENT**), the hours/courses cards use bold-uppercase
+keywords in the default color. The keyboard-shortcuts and quick-view modal ✕s gained
+"Close" data-tip tooltips.

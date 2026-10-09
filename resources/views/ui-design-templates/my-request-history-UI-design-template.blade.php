@@ -195,7 +195,7 @@
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                     <span class="toggle-label">Exclude Completed</span>
                 </label>
-                <button class="btn-clear" id="clearFilters" title="Reset all filters">Reset Filters</button>
+                <button class="btn-clear" id="clearFilters" data-tip="Reset all filters">Reset Filters</button>
             </div>
             <div class="toolbar-right">
                 <span class="result-count" id="resultCount">Showing 20 of 20 results</span>
@@ -233,15 +233,15 @@
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests',
-                    'description' => 'Replacement requests <strong>you submitted</strong> that match your current filters.'],
+                    'description' => 'Replacement requests <span class="info-keyword">you submitted</span> that match your current filters.'],
                 ['class' => 'card-hours', 'valueId' => 'summaryHours', 'label' => 'Replacement Hours',
-                    'description' => 'Total <strong>replacement class hours</strong> across your filtered requests.'],
+                    'description' => 'Total <span class="info-keyword">replacement class hours</span> across your filtered requests.'],
                 ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved',
-                    'description' => 'Your requests that have been <strong>approved</strong> and are ready to proceed.'],
+                    'description' => 'Your requests that have been <span class="info-keyword">approved</span> and are ready to proceed.'],
                 ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending',
-                    'description' => 'Your requests still <strong>waiting for approval</strong> or a volunteer.'],
+                    'description' => 'Your requests still <span class="warn-keyword">waiting for approval</span> or a volunteer.'],
                 ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected',
-                    'description' => 'Your requests that were <strong>declined</strong> and need an alternative arrangement.'],
+                    'description' => 'Your requests that were <span class="warn-keyword">declined</span> and need an alternative arrangement.'],
             ]
         ])
 
@@ -250,7 +250,7 @@
         <div class="modal" id="detailsModal">
             <div class="modal-header">
                 <span class="modal-title" id="modalTitle">Request Details</span>
-                <button class="modal-close" onclick="closeModal()">✕</button>
+                <button class="modal-close" onclick="closeModal()" data-tip="Close">✕</button>
             </div>
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
@@ -258,7 +258,7 @@
                     <button class="btn-outline" onclick="closeModal()">Close</button>
                 </div>
                 <div class="modal-footer-right">
-                    <button class="btn-danger" id="cancelRequestBtn" style="display:none" onclick="openCancelConfirm()">Cancel Request</button>
+                    <button class="btn-danger" id="cancelRequestBtn" style="display:none" onclick="openCancelConfirm(currentRequestId)">Cancel Request</button>
                 </div>
             </div>
         </div>
@@ -269,10 +269,10 @@
         <div class="modal" style="max-width:420px">
             <div class="modal-header">
                 <h3 class="modal-title">Confirm Cancellation</h3>
-                <button class="modal-close" onclick="closeCancelConfirm()">✕</button>
+                <button class="modal-close" onclick="closeCancelConfirm()" data-tip="Close">✕</button>
             </div>
             <div class="modal-body" id="cancelConfirmBody">
-                <p style="font-size:14px;color:var(--color-on-surface);line-height:1.5">Are you sure you want to cancel this replacement request? This action cannot be undone.</p>
+                <p style="font-size:14px;color:var(--color-on-surface);line-height:1.5">Are you sure you want to cancel this replacement request? This action cannot be <span class="warn-keyword">undone</span>.</p>
             </div>
             <div class="modal-footer">
                 <div class="modal-footer-left">
@@ -290,7 +290,7 @@
         <div class="modal" style="max-width:440px">
             <div class="modal-header">
                 <h3 class="modal-title">Confirm Batch Cancellation</h3>
-                <button class="modal-close" onclick="closeBatchCancelConfirm()">✕</button>
+                <button class="modal-close" onclick="closeBatchCancelConfirm()" data-tip="Close">✕</button>
             </div>
             <div class="modal-body" id="batchCancelBody"></div>
             <div class="modal-footer">
@@ -353,17 +353,17 @@
             var excludeCompleted = document.getElementById('hideCompleted').checked;
 
             if (status !== 'all') {
-                chips.push('<span class="filter-chip">Status: ' + status + '<button class="filter-chip-remove" onclick="document.getElementById(\'statusFilter\').value=\'all\';pageState.currentPage=1;saveFilters();renderTable()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Status: ' + status + '<button class="filter-chip-remove" onclick="document.getElementById(\'statusFilter\').value=\'all\';pageState.currentPage=1;saveFilters();renderTable()" data-tip="Remove">&times;</button></span>');
             }
             if (week !== 'all') {
                 var weekLabel = document.getElementById('weekFilter').selectedOptions[0] ? document.getElementById('weekFilter').selectedOptions[0].textContent : week;
-                chips.push('<span class="filter-chip">Week: ' + weekLabel + '<button class="filter-chip-remove" onclick="document.getElementById(\'weekFilter\').value=\'all\';pageState.currentPage=1;saveFilters();renderTable()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Week: ' + weekLabel + '<button class="filter-chip-remove" onclick="document.getElementById(\'weekFilter\').value=\'all\';pageState.currentPage=1;saveFilters();renderTable()" data-tip="Remove">&times;</button></span>');
             }
             if (search) {
-                chips.push('<span class="filter-chip">Search: "' + search + '"<button class="filter-chip-remove" onclick="document.getElementById(\'searchInput\').value=\'\';pageState.currentPage=1;saveFilters();renderTable()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Search: "' + search + '"<button class="filter-chip-remove" onclick="document.getElementById(\'searchInput\').value=\'\';pageState.currentPage=1;saveFilters();renderTable()" data-tip="Remove">&times;</button></span>');
             }
             if (excludeCompleted) {
-                chips.push('<span class="filter-chip">Exclude Completed<button class="filter-chip-remove" onclick="document.getElementById(\'hideCompleted\').checked=false;pageState.currentPage=1;saveFilters();renderTable()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Exclude Completed<button class="filter-chip-remove" onclick="document.getElementById(\'hideCompleted\').checked=false;pageState.currentPage=1;saveFilters();renderTable()" data-tip="Remove">&times;</button></span>');
             }
             container.innerHTML = chips.length > 0 ? '<span class="filter-chips-label">Active Filters:</span>' + chips.join('') : '';
         }
@@ -536,7 +536,7 @@
                         { html: String(r.totalStudents), cls: 'col-students' },
                         { html: r.cohorts.join('<br>'), cls: 'col-cohort' },
                         { html: badgeHtml, cls: 'col-status' },
-                        { html: isPending ? '<button class="btn-inline-cancel" onclick="quickCancel(' + r.id + ')">Cancel</button>' : '<span style="color:var(--color-on-surface-variant)">-</span>', cls: 'col-actions' },
+                        { html: isPending ? '<button class="btn-inline-cancel" onclick="quickCancel(' + r.id + ')">Cancel Request</button>' : '<span style="color:var(--color-on-surface-variant)">-</span>', cls: 'col-actions' },
                     ];
                     cells.forEach(function(cell) {
                         const td = document.createElement('td');
@@ -606,7 +606,7 @@
             if (!r) return;
             pendingCancelId = id;
             document.getElementById('cancelConfirmBody').innerHTML =
-                '<p class="page-desc" style="color:var(--color-on-surface);line-height:1.5;margin-bottom:12px">Are you sure you want to cancel this replacement request? This action cannot be undone.</p>' +
+                '<p class="page-desc" style="color:var(--color-on-surface);line-height:1.5;margin-bottom:12px">Are you sure you want to cancel this replacement request? This action cannot be <span class="warn-keyword">undone</span>.</p>' +
                 '<div style="background:var(--color-surface-variant);border-radius:var(--radius-sm);padding:12px;font-size:13px;line-height:1.6">' +
                 '<strong>' + r.courseCode + '</strong> — ' + r.courseName + '<br>' +
                 'Class: ' + r.classDay + ', ' + formatDate(r.classDate) + '<br>' +
@@ -616,6 +616,7 @@
         }
 
         var pendingCancelId = null;
+        var currentRequestId = null;   // R4.1 — id of the request shown in the detail modal
         document.getElementById('confirmCancelAction').addEventListener('click', function() {
             if (pendingCancelId !== null) {
                 var idx = mockRequests.findIndex(function(r) { return r.id === pendingCancelId; });
@@ -653,7 +654,7 @@
                     '</div></div>';
             }).join('');
             document.getElementById('batchCancelBody').innerHTML =
-                '<p class="page-desc" style="color:var(--color-on-surface);line-height:1.5;margin-bottom:8px">Cancel ' + count + ' selected request(s)? This action cannot be undone.</p>' +
+                '<p class="page-desc" style="color:var(--color-on-surface);line-height:1.5;margin-bottom:8px">Cancel ' + count + ' selected request(s)? This action cannot be <span class="warn-keyword">undone</span>.</p>' +
                 '<div style="max-height:200px;overflow-y:auto">' + listHtml + '</div>';
             document.getElementById('batchCancelOverlay').style.display = 'flex';
         }
@@ -707,6 +708,10 @@
         function openModalById(id) {
             const r = mockRequests.find(x => x.id === id);
             if (!r) return;
+            /* warning-modal-keywords R4.1: the static Cancel Request button
+               resolves its id in global scope at CLICK time — store it here
+               (after the lookup guard so a failed lookup never clobbers). */
+            currentRequestId = id;
 
             const statusDot = r.status === 'Pending' ? 'dot-warning' : r.status === 'Approved' || r.status === 'Completed' ? 'dot-success' : r.status === 'Rejected' ? 'dot-error' : 'dot-primary';
 
@@ -776,14 +781,13 @@
             DetailModal.close();
         }
 
-        function confirmCancelRequest() {
-            if (confirm('Are you sure you want to cancel this replacement request? This action cannot be undone.')) {
-                alert('Your replacement request has been cancelled.');
-                closeModal();
-            }
-        }
-
-        function openCancelConfirm() {
+        /* warning-modal-keywords R5: confirmCancelRequest() (native confirm +
+           alert) deleted — dead code, zero callers; the styled modal below is
+           the one cancel path. */
+        function openCancelConfirm(requestId) {
+            /* R4.2 — bind the overlay to the viewed request (quickCancel passes
+               its row id; the detail-modal button passes currentRequestId). */
+            if (requestId !== undefined) pendingCancelId = requestId;
             document.getElementById('cancelConfirmOverlay').style.display = 'flex';
         }
 

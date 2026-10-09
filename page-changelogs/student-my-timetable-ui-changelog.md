@@ -304,3 +304,9 @@ swatches follow automatically. Verified live on all four pages.
 - Legend unchanged at 4 chips (Normal / Replacement / Pending /
   Conflict / Public Holiday); swatches now reuse the real block classes so they show
   the exact fill + border styling.
+
+### Postscript — card flip-back keywords (2026-10-09, SDD: warning-modal-keywords)
+
+The five summary-card flip-backs use the new keyword language — **YOUR TIMETABLE**, **CLASS
+HOURS**, **DIFFERENT LECTURER** in the default color; **BEING PROCESSED** and **SCHEDULING
+CLASHES AND PUBLIC HOLIDAYS** in red (attention cards).

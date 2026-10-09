@@ -386,3 +386,10 @@ swatches follow automatically. Verified live on all four pages.
 - Legend trimmed to status chips only (swatches reuse the real block
   classes), plus an ownership hint — *"thick border = your classes ·
   hairline = others'"* — replacing the Your/Others swatch pairs.
+
+### Postscript — card flip-back keywords (2026-10-09, SDD: warning-modal-keywords)
+
+The five summary-card flip-backs use the new keyword language: one bold-uppercase keyword
+per description — **THIS COHORT**, **TEACHING HOURS**, **TAUGHT BY YOU**, **YOUR CLASSES** in
+the default color, and **SCHEDULING CLASHES** in red (attention card). Secondary emphasis
+("each slot = 30 minutes") stays plain bold.

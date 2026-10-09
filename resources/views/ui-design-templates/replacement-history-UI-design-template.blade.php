@@ -129,11 +129,11 @@
 
         <!-- ─── Summary strip (5 cards: Total / Upcoming / Pending / Past / Hours) — hidden when the view is empty ─── -->
         @include('partials.ui-summary-bar', [ 'cards' => [
-            ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total', 'description' => 'Replacement classes affecting <strong>your cohort</strong> in the selected view.'],
-            ['class' => 'card-replacement', 'valueId' => 'sumUpcoming', 'label' => 'Upcoming', 'description' => 'Confirmed replacement classes <strong>still ahead</strong> of you — check the New Slot column for when and where.'],
-            ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending', 'description' => 'Replacement requests still <strong>waiting for PL approval</strong> for your cohort.'],
-            ['class' => 'card-hours', 'valueId' => 'sumPast', 'label' => 'Past', 'description' => 'Confirmed replacements that have <strong>already taken place</strong> — enable Show Past to see them.'],
-            ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Hours', 'description' => 'Total <strong>hours</strong> of replaced classes in the selected view (each slot = <strong>30 minutes</strong>).'],
+            ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total', 'description' => 'Replacement classes affecting <span class="info-keyword">your cohort</span> in the selected view.'],
+            ['class' => 'card-replacement', 'valueId' => 'sumUpcoming', 'label' => 'Upcoming', 'description' => 'Confirmed replacement classes <span class="info-keyword">still ahead</span> of you — check the New Slot column for when and where.'],
+            ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending', 'description' => 'Replacement requests still <span class="warn-keyword">waiting for PL approval</span> for your cohort.'],
+            ['class' => 'card-hours', 'valueId' => 'sumPast', 'label' => 'Past', 'description' => 'Confirmed replacements that have <span class="info-keyword">already taken place</span> — enable Show Past to see them.'],
+            ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Hours', 'description' => 'Total <span class="info-keyword">hours</span> of replaced classes in the selected view (each slot = <strong>30 minutes</strong>).'],
         ] ])
 
         <!-- ─── Class detail modal (shared shell for openClassModal) ─── -->

@@ -84,15 +84,15 @@
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Classes',
-                    'description' => 'Total classes scheduled for <strong>this cohort</strong> in the selected week.'],
+                    'description' => 'Total classes scheduled for <span class="info-keyword">this cohort</span> in the selected week.'],
                 ['class' => 'card-hours', 'valueId' => 'sumHours', 'label' => 'Teaching Hours',
-                    'description' => 'Total <strong>teaching hours</strong> for this cohort in the selected week (each slot = <strong>30 minutes</strong>).'],
+                    'description' => 'Total <span class="info-keyword">teaching hours</span> for this cohort in the selected week (each slot = <strong>30 minutes</strong>).'],
                 ['class' => 'card-replacement', 'valueId' => 'sumMyClasses', 'label' => 'My Teaching Classes',
-                    'description' => 'Sessions <strong>taught by you</strong> this week — <strong>each class counts separately</strong> (e.g. Subject A (T) and Subject A (L) are two classes).'],
+                    'description' => 'Sessions <span class="info-keyword">taught by you</span> this week — <strong>each class counts separately</strong> (e.g. Subject A (T) and Subject A (L) are two classes).'],
                 ['class' => 'card-hours', 'valueId' => 'sumMyHours', 'label' => 'My Teaching Hours',
-                    'description' => 'Total hours of <strong>your classes</strong> this week (each slot = <strong>30 minutes</strong>).'],
+                    'description' => 'Total hours of <span class="info-keyword">your classes</span> this week (each slot = <strong>30 minutes</strong>).'],
                 ['class' => 'card-conflict', 'valueId' => 'sumConflict', 'label' => 'Conflicts',
-                    'description' => '<strong>Scheduling clashes</strong> or classes on <strong>public holidays</strong> for this cohort that need attention.'],
+                    'description' => '<span class="warn-keyword">Scheduling clashes</span> or classes on <strong>public holidays</strong> for this cohort that need attention.'],
             ]
         ])
 

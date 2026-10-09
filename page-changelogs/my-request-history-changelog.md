@@ -490,3 +490,21 @@ sortable — **Requested Replacement** (date, then time), **Requested Venue**,
 **Students** (numeric), **Status** (process order Pending → Approved → Rejected →
 Completed, not alphabetical). **Cohort(s) stays non-sortable on purpose:** rows can
 carry several cohorts, so a sort key would be misleading; its header tip says so.
+
+### Postscript — cancel warnings, bug fix, dead code removal (2026-10-09, SDD: warning-modal-keywords)
+
+All three cancel-request confirmations (single, quick-cancel, batch) now show **UNDONE**
+(red+bold+caps) in "This action cannot be undone" — red is reserved for the irreversible, and
+a cancelled request has no undo beyond the 5s toast. **Bug fix**: the detail modal's "Cancel
+Request" button was a silent no-op — it opened the confirm overlay without binding a request
+id, so "Yes, Cancel Request" did nothing. `openModalById` now stores `currentRequestId` and
+the button passes it through `openCancelConfirm(...)` → `pendingCancelId`, giving the
+detail-modal path the exact behavior quick-cancel always had (row removed, undo toast).
+**Dead code removed**: `confirmCancelRequest()` (native `confirm()` + `alert()` — zero
+callers, unstyleable, duplicated the sentence). Tooltips: "Reset all filters", the 4 filter
+chip ✕s, and the 3 modal-close buttons now use the shared `data-tip` system instead of
+native `title=`.
+
+**Follow-up (2026-10-10, user request, SDD-waived):** the quick-cancel row action now reads
+**"Cancel Request"** instead of the ambiguous "Cancel" (which read like dismissing a dialog
+rather than cancelling the request).

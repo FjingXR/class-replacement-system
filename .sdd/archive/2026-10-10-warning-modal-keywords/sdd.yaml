@@ -1,0 +1,8 @@
+name: warning-modal-keywords
+created: 2026-10-09
+status: proposed-apply-ready
+batches:
+  proposal: frozen (Round 2 PASS)
+  design: frozen (Round 2 PASS)
+  specs/warning-language: frozen (Round 2 PASS)
+  tasks: frozen (Round 2 PASS)

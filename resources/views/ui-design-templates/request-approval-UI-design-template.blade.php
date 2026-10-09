@@ -309,22 +309,22 @@
 
 @include('partials.ui-summary-bar', ['cards' => [
     ['class' => 'card-total', 'valueId' => 'summaryTotal', 'label' => 'Total Requests',
-        'description' => 'Replacement requests <strong>matching your current filters</strong> in the selected period.'],
+        'description' => 'Replacement requests <span class="info-keyword">matching your current filters</span> in the selected period.'],
     ['class' => 'card-pending', 'valueId' => 'summaryPending', 'label' => 'Pending Requests',
-        'description' => 'Requests still <strong>waiting for your approval</strong> — no decision made yet.'],
+        'description' => 'Requests still <span class="warn-keyword">waiting for your approval</span> — no decision made yet.'],
     ['class' => 'card-approved', 'valueId' => 'summaryApproved', 'label' => 'Approved',
-        'description' => 'Requests you have <strong>approved</strong> and are ready to proceed.'],
+        'description' => 'Requests you have <span class="info-keyword">approved</span> and are ready to proceed.'],
     ['class' => 'card-rejected', 'valueId' => 'summaryRejected', 'label' => 'Rejected',
-        'description' => 'Requests you <strong>declined</strong> — the lecturer will need an alternative arrangement.'],
+        'description' => 'Requests you <span class="warn-keyword">declined</span> — the lecturer will need an alternative arrangement.'],
     ['class' => 'card-total', 'valueId' => 'summaryReviewed', 'label' => 'Total Reviewed',
-        'description' => 'Requests already <strong>decided</strong> (approved, rejected, or completed).']
+        'description' => 'Requests already <span class="info-keyword">decided</span> (approved, rejected, or completed).']
 ]])
 
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
         <div class="modal-header">
             <span class="modal-title" id="modalTitle">Request Details</span>
-            <button class="modal-close" onclick="closeModal()">✕</button>
+            <button class="modal-close" onclick="closeModal()" data-tip="Close">✕</button>
         </div>
         <div class="modal-body" id="modalBody"></div>
         <div class="modal-footer">
@@ -343,7 +343,7 @@
     <div class="modal">
         <div class="modal-header">
             <h2>Rejection Reason</h2>
-            <button class="modal-close" onclick="closeRejectModal()">✕</button>
+            <button class="modal-close" onclick="closeRejectModal()" data-tip="Close">✕</button>
         </div>
         <div class="modal-body">
             <div id="rejectSummary" class="approval-compare"></div>
@@ -372,7 +372,7 @@
     <div class="modal">
         <div class="modal-header">
             <h2 id="approveNotesTitle">Approve Request</h2>
-            <button class="modal-close" onclick="closeApproveNotesModal()">✕</button>
+            <button class="modal-close" onclick="closeApproveNotesModal()" data-tip="Close">✕</button>
         </div>
         <div class="modal-body">
             <div id="approveNotesSummary" class="approval-compare"></div>
@@ -775,17 +775,17 @@
             const week = document.getElementById('weekFilter').value;
 
             if (status !== 'all') {
-                chips.push('<span class="filter-chip">Status: ' + status + '<button class="filter-chip-remove" onclick="document.getElementById(\'statusFilter\').value=\'all\';renderTable()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Status: ' + status + '<button class="filter-chip-remove" onclick="document.getElementById(\'statusFilter\').value=\'all\';renderTable()" data-tip="Remove">&times;</button></span>');
             }
             if (urgency !== 'all') {
-                chips.push('<span class="filter-chip">Urgency: ' + (urgency === 'urgent' ? 'Urgent' : 'Normal') + '<button class="filter-chip-remove" onclick="setUrgencyFilter(\'all\');renderTable()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Urgency: ' + (urgency === 'urgent' ? 'Urgent' : 'Normal') + '<button class="filter-chip-remove" onclick="setUrgencyFilter(\'all\');renderTable()" data-tip="Remove">&times;</button></span>');
             }
             if (week !== 'all') {
                 const weekLabel = document.getElementById('weekFilter').selectedOptions[0]?.textContent || week;
-                chips.push('<span class="filter-chip">Week: ' + weekLabel + '<button class="filter-chip-remove" onclick="document.getElementById(\'weekFilter\').value=\'all\';onWeekFilterChange()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Week: ' + weekLabel + '<button class="filter-chip-remove" onclick="document.getElementById(\'weekFilter\').value=\'all\';onWeekFilterChange()" data-tip="Remove">&times;</button></span>');
             }
             if (search) {
-                chips.push('<span class="filter-chip">Search: "' + search + '"<button class="filter-chip-remove" onclick="document.getElementById(\'searchInput\').value=\'\';renderTable()" title="Remove">&times;</button></span>');
+                chips.push('<span class="filter-chip">Search: "' + search + '"<button class="filter-chip-remove" onclick="document.getElementById(\'searchInput\').value=\'\';renderTable()" data-tip="Remove">&times;</button></span>');
             }
             container.innerHTML = '<span class="filter-chips-label">Filters:</span>' + chips.join('');
         }

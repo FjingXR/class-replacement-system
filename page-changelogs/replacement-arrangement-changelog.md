@@ -1022,3 +1022,32 @@ sites) and wrong regardless (it indexed the 1-based "Week N" label into the
   booked (occupied by a class, public holiday, Sunday).
 - "Reserved by Others" tooltip now points at the pending request:
   "Cannot book — their replacement request is still pending approval".
+
+### Postscript — warning modal keywords + danger confirm buttons (2026-10-09, SDD: warning-modal-keywords)
+
+The confirm modal now speaks the app-wide warning design language: the leave/go-back guard
+shows **LOST** (red+bold+caps) with the question on its own line; Clear All shows **ALL** in
+red with the undo reassurance on its own line; both change-guards break before "Continue?"
+(no red — the selection is re-selectable, red is reserved for the irreversible). The confirm
+button is now **danger-red with an action-specific label** ("Yes, Leave Page" / "Yes, Go
+Back" / "Yes, Clear All" / "Yes, Change") on the 5 warning guards only — the submit confirm
+("Confirm Your Selection") and the informational "No Selection" modal keep the neutral
+primary "Confirm", because red means irreversible and neither is. Mechanism:
+`showConfirmModal(title, body, cb, opts)` gained `opts.danger` + `opts.confirmLabel`, re-
+derived on every open so no state leaks between modals.
+
+**Follow-up (2026-10-10, label-only, user request):** the submit confirmation
+("Confirm Your Selection") now shows **"Yes, Submit Request"** instead of the generic
+"Confirm" — still the neutral primary (blue) button; only the label changed. No danger
+styling: submitting is a go-ahead, not a warning.
+
+**Follow-up (2026-10-10, user request, SDD-waived):** selection summary cards — the ✕
+button's hover tooltip now reads "Remove this Selection — Action cannot be UNDONE" (true:
+single-card removal has no undo affordance), and the duration suffix reads "(2 Hours)" /
+"(1.5 Hours)" instead of "(2H)" / "(1.5H)".
+
+**Follow-up (2026-10-10, user request, SDD-waived):** the confirm modal's SAFE button is no
+longer the vague "Close" on warnings — `showConfirmModal` gained `opts.cancelLabel`, and the
+guards now read **"Stay"** (leave/back), **"No, Clear Nothing"** (Clear All), and **"No, Keep
+My Selection"** (subject/venue/week change guards). Informational modals ("No Selection") and
+the submit confirm keep "Close". Red/danger side unchanged.

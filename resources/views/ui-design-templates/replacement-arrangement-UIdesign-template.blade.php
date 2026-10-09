@@ -1036,13 +1036,13 @@
         @include('partials.ui-summary-bar', [
             'cards' => [
                 ['class' => 'card-total', 'valueId' => 'sumTotal', 'label' => 'Total Slots',
-                    'description' => 'All time slots shown for <strong>this venue</strong> in the selected week.'],
+                    'description' => 'All time slots shown for <span class="info-keyword">this venue</span> in the selected week.'],
                 ['class' => 'card-available', 'valueId' => 'sumAvailable', 'label' => 'Available',
-                    'description' => '<strong>Free slots</strong> you can select as the replacement.'],
+                    'description' => '<span class="info-keyword">Free slots</span> you can select as the replacement.'],
                 ['class' => 'card-pending', 'valueId' => 'sumPending', 'label' => 'Pending',
-                    'description' => 'Your replacement requests <strong>awaiting approval</strong>.'],
+                    'description' => 'Your replacement requests <span class="warn-keyword">awaiting approval</span>.'],
                 ['class' => 'card-conflict', 'valueId' => 'sumUnavailable', 'label' => 'Unavailable',
-                    'description' => '<strong>Cannot select</strong> — booked by others, Sunday, or public holiday.'],
+                    'description' => '<span class="warn-keyword">Cannot select</span> — booked by others, Sunday, or public holiday.'],
             ]
         ])
         --}}
@@ -1121,7 +1121,7 @@
         <div class="modal">
             <div class="modal-header">
                 <span class="modal-title" id="modalTitle">Confirm</span>
-                <button class="modal-close" onclick="hideConfirmModal(event)">&times;</button>
+                <button class="modal-close" onclick="hideConfirmModal(event)" data-tip="Close">&times;</button>
             </div>
             <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
@@ -1335,16 +1335,16 @@
                 const startStr = hours[b.startHour];
                 const endStr = add30min(hours[b.endHour - 1]);
                 const endDisplay = add30min(hours[b.endHour - 1]); // end of last slot
-                /* duration in hours (30-min slots): 4 → 2H, 3 → 1.5H, 2 → 1H */
+                /* duration in hours (30-min slots): 4 → 2 Hours, 3 → 1.5 Hours, 2 → 1 Hours */
                 const durH = b.slotCount / 2;
-                const durLabel = (Number.isInteger(durH) ? durH : durH.toFixed(1)) + 'H';
+                const durLabel = (Number.isInteger(durH) ? durH : durH.toFixed(1)) + ' Hours';
 
                 const card = document.createElement('div');
                 card.className = 'sel-summary-card';
                 card.dataset.venue = b.venue;
                 card.dataset.week = b.weekIdx;
                 card.innerHTML = `
-                    <button class="card-remove" onclick="removeSavedBlock('${b.venue}', ${b.weekIdx})" data-tip="Remove this selection" aria-label="Remove">×</button>
+                    <button class="card-remove" onclick="removeSavedBlock('${b.venue}', ${b.weekIdx})" data-tip="Remove this Selection — Action cannot be UNDONE" aria-label="Remove">×</button>
                     <div class="card-venue">${b.venue}</div>
                     <div class="card-day">${b.weekLabel} · ${b.day.abbr}</div>
                     <div class="card-date">${b.day.date}</div>
@@ -1694,7 +1694,7 @@
             if (selectedBlock && newVenue !== currentVenue) {
                 showConfirmModal(
                     'Change Venue?',
-                    'You have selected slots on the grid. Changing the <strong>venue</strong> will clear them. Continue?',
+                    'You have selected slots on the grid. Changing the <strong>venue</strong> will clear them.<br>Continue?',
                     function() {
                         hideConfirmModal();
                         /* 2026-10-09 user decision: confirming the clear is an
@@ -1711,7 +1711,8 @@
                             pendingBookingIntent = null;
                             renderBookingIntent();
                         }
-                    }
+                    },
+                    { danger: true, confirmLabel: 'Yes, Change', cancelLabel: 'No, Keep My Selection' }
                 );
                 // Cancel path: snap the dropdown back to the current venue
                 const cancelBtn = document.querySelector('#confirmModal .btn-outline');
@@ -1775,11 +1776,22 @@
             document.getElementById('confirmModal').style.display = 'flex';
         }
 
-        function showConfirmModal(title, bodyHtml, callback) {
+        function showConfirmModal(title, bodyHtml, callback, opts) {
+            opts = opts || {};
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalBody').innerHTML = bodyHtml;
             confirmCallback = callback;
             const confirmBtn = document.getElementById('modalConfirmBtn');
+            /* Danger is opt-in per call site (design §2): the 5 warning guards
+               pass danger:true; submit-confirm + informational modals keep
+               btn-primary. Re-derived on EVERY open — no stale class leaks. */
+            confirmBtn.classList.toggle('btn-danger', !!opts.danger);
+            confirmBtn.classList.toggle('btn-primary', !opts.danger);
+            confirmBtn.textContent = opts.confirmLabel || 'Confirm';
+            /* Safe-side label: warnings read "Stay"/"No, …" (a choice, not a
+                popup dismissal); informational modals keep "Close". */
+            const cancelBtn0 = document.querySelector('#confirmModal .btn-outline');
+            if (cancelBtn0) cancelBtn0.textContent = opts.cancelLabel || 'Close';
             confirmBtn.onclick = function() {
                 if (confirmCallback) confirmCallback();
                 else hideConfirmModal();
@@ -1806,7 +1818,7 @@
             if (!selectedBlock) { proceedFn(); return; }
             showConfirmModal(
                 'Clear Current Selection?',
-                'You have selected slots on the grid. Changing the <strong>' + actionLabel + '</strong> will remove them. Continue?',
+                'You have selected slots on the grid. Changing the <strong>' + actionLabel + '</strong> will remove them.<br>Continue?',
                 function() {
                     hideConfirmModal();
                     /* 2026-10-09 user decision: the modal promises "will remove
@@ -1822,7 +1834,8 @@
                     }
                     discardSelection();
                     proceedFn();
-                }
+                },
+                { danger: true, confirmLabel: 'Yes, Change', cancelLabel: 'No, Keep My Selection' }
             );
             const cancelBtn = document.querySelector('#confirmModal .btn-outline');
             if (cancelBtn) {
@@ -1901,14 +1914,15 @@
                     selectionHistory.length = 0;
                     updateCounter();
                     toast.show(sub.message, null, 5000, 'View \u2192', '/my-request-history-ui', sub.details);
-                }
+                },
+                { confirmLabel: 'Yes, Submit Request' }
             );
         }
 
         function clearAll() {
             showConfirmModal(
                 'Clear All Selections',
-                'Are you sure you want to clear all selections across <strong>ALL</strong> weeks? You can undo this from the toast that appears.',
+                'Are you sure you want to clear all selections across <span class="warn-keyword">all</span> weeks?<br>You can undo this from the toast that appears.',
                 function() {
                     hideConfirmModal();
                     var savedBlock = selectedBlock ? { ...selectedBlock } : null;
@@ -1933,7 +1947,8 @@
                         }
                         updateCounter();
                     });
-                }
+                },
+                { danger: true, confirmLabel: 'Yes, Clear All', cancelLabel: 'No, Clear Nothing' }
             );
         }
 
@@ -1941,7 +1956,7 @@
             if (selectedBlock || getGlobalTotal() > 0) {
                 showConfirmModal(
                     'Unsaved Changes',
-                    'You have selections that will be lost if you leave this page. Are you sure you want to leave?',
+                    'You have selections that will be <span class="warn-keyword">lost</span> if you leave this page.<br>Are you sure you want to leave?',
                     function() {
                         /* Confirmed leave → navigate at once; selections are in-memory
                            and die with the page (no clearing ceremony / undo toast).
@@ -1949,7 +1964,8 @@
                         hideConfirmModal();
                         allowUnload = true;
                         window.location.href = url;
-                    }
+                    },
+                    { danger: true, confirmLabel: 'Yes, Leave Page', cancelLabel: 'Stay' }
                 );
             } else {
                 window.location.href = url;
@@ -1960,7 +1976,7 @@
             if (selectedBlock || getGlobalTotal() > 0) {
                 showConfirmModal(
                     'Unsaved Changes',
-                    'You have selections that will be lost if you leave this page. Are you sure you want to go back?',
+                    'You have selections that will be <span class="warn-keyword">lost</span> if you leave this page.<br>Are you sure you want to go back?',
                     function() {
                         /* Confirmed leave → navigate at once; selections are in-memory
                            and die with the page (no clearing ceremony / 5s undo wait).
@@ -1968,7 +1984,8 @@
                         hideConfirmModal();
                         allowUnload = true;
                         BackNavigator.navigate();
-                    }
+                    },
+                    { danger: true, confirmLabel: 'Yes, Go Back', cancelLabel: 'Stay' }
                 );
             } else {
                 BackNavigator.navigate();
@@ -2656,7 +2673,7 @@
                 item.className = 'slot-dd-item';
                 item.dataset.index = index;
                 item.innerHTML = `
-                    <span class="slot-dd-item-star" data-index="${index}" title="Toggle favourite">★</span>
+                    <span class="slot-dd-item-star" data-index="${index}" data-tip="Toggle favourite">★</span>
                     <span class="slot-dd-item-label">W${slot.week} · ${shortDate}, ${startStr} - ${endStr} @ ${slot.venue}</span>
                     <span class="slot-dd-item-badge" style="background:${statusBg};color:${statusColor};">${statusLabel}</span>
                 `;

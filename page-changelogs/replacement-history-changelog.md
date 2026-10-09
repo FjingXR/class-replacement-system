@@ -190,3 +190,9 @@ superseded the page's own insert-IIFE entirely; default load keeps the current w
 The class detail modal's four grouped sections (Class / Original Slot /
 New Slot / Status) now render as a **tab bar** via the shared
 `renderModalGroups` helper instead of one long stacked body.
+
+### Postscript — card flip-back keywords (2026-10-09, SDD: warning-modal-keywords)
+
+The five summary-card flip-backs use the new keyword language — **YOUR COHORT**, **STILL
+AHEAD**, **ALREADY TAKEN PLACE**, **HOURS** in the default color; **WAITING FOR PL APPROVAL**
+in red (attention card).

@@ -630,3 +630,10 @@ Logo click now lands on My Timetable (homeUrl param) instead of the welcome view
 sortable — **Lecturer** (sorted by resolved lecturer *name*, not the stored id),
 **Course Code & Name**, **Students** (numeric). `Cohorts`-style multi-value and the
 Actions column stay non-sortable by design.
+
+### Postscript — tooltip parity + card keywords (2026-10-09, SDD: warning-modal-keywords)
+
+The four filter-chip ✕ buttons (Status / Urgency / Week / Search) moved from native `title=`
+to the shared `data-tip` bubble ("Remove"), and the three modal close ✕s gained "Close" tips.
+The five summary-card flip-backs use the keyword language — bold-uppercase keywords, with
+**WAITING FOR YOUR APPROVAL** and **DECLINED** in red (attention cards).

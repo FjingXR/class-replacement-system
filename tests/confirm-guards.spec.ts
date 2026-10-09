@@ -236,3 +236,34 @@ test('back button with saved selection shows confirmation', async ({ page }) => 
   await expect(page.locator('#confirmModal')).toBeVisible({ timeout: 5000 });
   await expect(page.locator('#confirmModal .modal-body')).toContainText('lost');
 });
+
+// ── warning-modal-keywords (SDD 2026-10-09): keyword language + danger buttons ──
+
+test('leave-guard shows the red LOST keyword + danger "Yes, Leave Page" button', async ({ page }) => {
+  await openPage(page);
+  await selectGridSlot(page);
+  // Trigger the leave guard directly (same entry point the nav links use)
+  await page.evaluate(() => navigateTo('/my-timetable-ui'));
+  await expect(page.locator('#confirmModal')).toBeVisible({ timeout: 5000 });
+  // R1.1 — exactly one warn-keyword span (LOST); R3.3 — action-specific danger label
+  const body = page.locator('#confirmModal #modalBody');
+  await expect(body.locator('.warn-keyword')).toHaveCount(1);
+  await expect(body).toContainText('will be');
+  await expect(page.locator('#modalConfirmBtn')).toHaveClass(/btn-danger/);
+  await expect(page.locator('#modalConfirmBtn')).toHaveText('Yes, Leave Page');
+  await page.locator('#confirmModal .btn-outline').click();
+  await expect(page.locator('#confirmModal')).toBeHidden({ timeout: 5000 });
+});
+
+test('change-guard has NO red keyword (recoverable) but uses the danger "Yes, Change" button', async ({ page }) => {
+  await openPage(page);
+  await selectGridSlot(page);
+  // Same entry point confirmChangeWithSelection uses internally
+  await page.evaluate(() => confirmChangeWithSelection('venue', () => {}, () => {}));
+  await expect(page.locator('#confirmModal')).toBeVisible({ timeout: 5000 });
+  const body = page.locator('#confirmModal #modalBody');
+  await expect(body.locator('.warn-keyword')).toHaveCount(0);
+  await expect(page.locator('#modalConfirmBtn')).toHaveClass(/btn-danger/);
+  await expect(page.locator('#modalConfirmBtn')).toHaveText('Yes, Change');
+  await page.locator('#confirmModal .btn-outline').click();
+});
