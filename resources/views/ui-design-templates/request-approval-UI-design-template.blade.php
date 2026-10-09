@@ -177,6 +177,37 @@
         .lecturer-cell-email:hover { opacity: 0.8; }
         .lecturer-cell-email .copy-icon { font-size: 10px; opacity: 0.6; }
 
+        /* ───── Approval context card (Approve/Reject modals) ───── */
+        .approval-compare { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+        .approval-card { border: 1px solid var(--color-outline); border-radius: var(--radius-md); padding: 10px 12px; background: var(--color-surface); }
+        .approval-card-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+        .approval-id { font-size: 12px; font-weight: 700; color: var(--color-on-surface-variant); }
+        .approval-card .cell-code { display: inline-block; font-weight: 700; }
+        .approval-course { font-size: 13px; font-weight: 600; color: var(--color-on-surface); margin-bottom: 2px; }
+        .approval-classtype { font-size: 11px; font-weight: 500; color: var(--color-on-surface-variant); }
+        .approval-lecturer { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--color-on-surface-variant); margin-bottom: 10px; }
+        .lecturer-avatar {
+            width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700;
+            background: var(--color-primary-container); color: var(--color-on-primary-container);
+        }
+        .approval-lecturer .copy-icon { cursor: pointer; font-size: 12px; opacity: 0.7; }
+        .approval-lecturer .copy-icon:hover { opacity: 1; }
+        .approval-compare-row { display: flex; align-items: stretch; gap: 8px; }
+        .cmp-card { flex: 1; min-width: 0; border-radius: var(--radius-md); padding: 8px 10px; }
+        .cmp-label { display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-on-surface-variant); margin-bottom: 4px; }
+        .cmp-original { background: var(--color-surface-variant); opacity: 0.85; }
+        .cmp-replacement { background: var(--color-success-container); border-left: 3px solid var(--color-success); }
+        .cmp-arrow { align-self: center; font-size: 16px; font-weight: 700; color: var(--color-on-surface-variant); flex-shrink: 0; }
+        .approval-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .meta-chip { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-md); background: var(--color-surface-variant); color: var(--color-on-surface-variant); }
+        .approval-conflict { margin-top: 8px; font-size: 12px; padding: 6px 8px; border-radius: var(--radius-sm); background: var(--color-error-container); color: var(--color-on-error-container); }
+        @media (max-width: 768px) {
+            .approval-compare-row { flex-direction: column; }
+            .cmp-arrow { transform: rotate(90deg); }
+        }
+
         /* ───── Responsive Card View (base .request-card styles in theme.css) ───── */
         @media (max-width: 768px) {
             .grid-wrapper, .pagination-bar, .sort-hint { display: none !important; }
@@ -315,6 +346,7 @@
             <button class="modal-close" onclick="closeRejectModal()">✕</button>
         </div>
         <div class="modal-body">
+            <div id="rejectSummary" class="approval-compare"></div>
             <div class="reject-presets">
                 <button class="reject-preset-chip" onclick="applyRejectPreset('Venue unavailable')">Venue unavailable</button>
                 <button class="reject-preset-chip" onclick="applyRejectPreset('Insufficient notice')">Insufficient notice</button>
@@ -322,7 +354,7 @@
                 <button class="reject-preset-chip" onclick="applyRejectPreset('Lecturer unavailable')">Lecturer unavailable</button>
                 <button class="reject-preset-chip" onclick="applyRejectPreset('')">Other</button>
             </div>
-            <p class="section-heading-sub" style="margin-bottom:8px">Please provide a reason for rejection (required):</p>
+            <p class="section-heading-sub" style="margin-bottom:8px">Please provide a reason for rejection (<strong style="text-transform:uppercase">required</strong>):</p>
             <textarea id="rejectReasonInput" placeholder="Enter rejection reason..." rows="4" class="modal-textarea"></textarea>
         </div>
         <div class="modal-footer">
@@ -339,11 +371,11 @@
 <div class="modal-overlay" id="approveNotesModal">
     <div class="modal">
         <div class="modal-header">
-            <h2>Approve Request</h2>
+            <h2 id="approveNotesTitle">Approve Request</h2>
             <button class="modal-close" onclick="closeApproveNotesModal()">✕</button>
         </div>
         <div class="modal-body">
-            <div id="approveNotesSummary" style="margin-bottom:12px;font-size:13px;white-space:pre-line;color:var(--color-on-surface)"></div>
+            <div id="approveNotesSummary" class="approval-compare"></div>
             <p class="section-heading-sub" style="margin-bottom:8px">Notes (optional):</p>
             <textarea id="approveNotesInput" placeholder="Optional note for the audit trail..." rows="2" class="modal-textarea"></textarea>
         </div>
@@ -434,13 +466,47 @@
             } catch (e) { return false; }
         }
 
-        // ── Approve summary helper (§7.2) ──
-        function approveSummary(r) {
-            return '#' + r.id + ' ' + r.courseCode + ' — ' + r.courseName +
-                '\nLecturer: ' + r.lecturer +
-                '\nOriginal: ' + dayAbbr(r.classDay) + ' ' + DateHelper.formatDate(r.classDate) + ' ' + r.timeStart + '–' + r.timeEnd +
-                '\nReplacement: ' + DateHelper.formatDate(r.replacementDate) + ' ' + r.replacementTime +
-                '\nVenue: ' + (r.replacementVenue || r.venue);
+        // ── Approval context card (§7.2) — shared by the Approve and Reject
+        //    confirm modals. Header chips (id, code, slot validity, urgency —
+        //    same badge classes/colours as the table), lecturer row, and an
+        //    Original → Replacement comparison pair built from the SAME
+        //    HtmlBuilder blocks the table uses, so the confirm step shows the
+        //    decision cues without duplicating any formatting logic. ──
+        function approvalCard(r) {
+            const level = urgencyLevel(r.classDate);
+            const conflict = r.slotValidity === 'conflict';
+            const slotBadge = '<span class="slot-badge ' + (conflict ? 'slot-conflict' : 'slot-valid')
+                + '" data-tip="' + escHtml(conflict ? (r.conflictReason || 'Slot conflict') : 'Slot available') + '">'
+                + (conflict ? '⚠' : '✓') + '</span>';
+            const lec = lookupLecturer(r.lecturer);
+            const initials = r.lecturer.replace(/^(Dr|Prof|Mr|Ms|Mrs|En)\.\s*/i, '')
+                .split(' ').filter(Boolean).map(function(w) { return w[0]; }).slice(0, 2).join('').toUpperCase();
+            const lecturerHtml = lec
+                ? escHtml(lec.name) + ' <span class="lecturer-cell-id">(' + escHtml(lec.staffId) + ')</span>'
+                    + ' <span class="copy-icon" role="button" onclick="copyEmail(\'' + escHtml(lec.email) + '\', event)" data-tip="Click to copy email">📋</span>'
+                : escHtml(r.lecturer);
+            return ''
+                + '<div class="approval-card">'
+                +   '<div class="approval-card-head">'
+                +     '<span class="approval-id">#' + r.id + '</span>'
+                +     '<span class="cell-code">' + escHtml(r.courseCode) + '</span>'
+                +     slotBadge
+                +     '<span class="urgency-badge ' + urgencyClass(level) + '">' + urgencyLabel(level) + '</span>'
+                +   '</div>'
+                +   '<div class="approval-course">' + escHtml(r.courseName) + ' <span class="approval-classtype">[' + escHtml(r.classType) + ']</span></div>'
+                +   '<div class="approval-lecturer"><span class="lecturer-avatar">' + escHtml(initials) + '</span><span>' + lecturerHtml + '</span></div>'
+                +   '<div class="approval-compare-row">'
+                +     '<div class="cmp-card cmp-original"><span class="cmp-label">Original</span>' + HtmlBuilder.classBlock(r) + '</div>'
+                +     '<span class="cmp-arrow" aria-hidden="true">→</span>'
+                +     '<div class="cmp-card cmp-replacement"><span class="cmp-label">Replacement</span>' + HtmlBuilder.replacementBlock(r, { colorStatus: false }) + '</div>'
+                +   '</div>'
+                +   '<div class="approval-meta">'
+                +     '<span class="meta-chip">' + r.duration + ' hr' + (r.duration > 1 ? 's' : '') + '</span>'
+                +     '<span class="meta-chip">' + r.totalStudents + ' students</span>'
+                +     (r.cohorts && r.cohorts.length ? '<span class="meta-chip">' + escHtml(r.cohorts.join(', ')) + '</span>' : '')
+                +   '</div>'
+                +   (conflict ? '<div class="approval-conflict">⚠ ' + escHtml(r.conflictReason || 'Slot conflict') + '</div>' : '')
+                + '</div>';
         }
 
         // ── Sort state ──
@@ -932,11 +998,12 @@
 
         function openApproveNotesModal(ids) {
             currentApproveIds = ids;
-            const summary = ids.map(id => {
-                const r = MockData.approvalRequests.find(x => x.id === id);
-                return approveSummary(r);
-            }).join('\n\n');
-            document.getElementById('approveNotesSummary').textContent = summary;
+            const rows = ids.map(function(id) {
+                return MockData.approvalRequests.find(function(x) { return x.id === id; });
+            }).filter(Boolean);
+            document.getElementById('approveNotesTitle').textContent =
+                ids.length === 1 ? 'Approve Request' : 'Approve ' + ids.length + ' Requests';
+            document.getElementById('approveNotesSummary').innerHTML = rows.map(approvalCard).join('');
             document.getElementById('approveNotesInput').value = '';
             document.getElementById('approveNotesModal').classList.add('show');
             document.getElementById('approveNotesInput').focus();
@@ -969,6 +1036,8 @@
         function openRejectModal(id) {
             closeModal();               // auto-close Request Details when acting from it
             currentRejectId = id;
+            const r = MockData.approvalRequests.find(function(x) { return x.id === id; });
+            document.getElementById('rejectSummary').innerHTML = r ? approvalCard(r) : '';
             document.getElementById('rejectReasonInput').value = '';
             document.getElementById('confirmRejectBtn').disabled = true;
             document.getElementById('rejectReasonModal').classList.add('show');

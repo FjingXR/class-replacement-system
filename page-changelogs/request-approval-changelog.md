@@ -1,5 +1,15 @@
 # Changelog — Request Approval (PL Side)
 
+## [2026-10-08] Structured context card in the Approve & Reject modals (was plain-text summary)
+
+- `approveSummary()`'s raw 5-line text blob (`white-space:pre-line`) replaced by a structured **approval context card** rendered by a new `approvalCard(r)` helper — shared by **both** the Approve notes modal and the Reject modal (which previously showed no request context at all).
+- Card contents: head chips (`#id`, course code, slot-validity badge, urgency badge — same badge classes/colours as the table), course name + `[L/T/P]` type, lecturer row with initials avatar + copy-email affordance (reuses `lookupLecturer`/`copyEmail`), an **Original → Replacement comparison pair** (muted card → green-tinted card, stacks vertically ≤768px), meta chips (duration, students, cohorts), and a conflict-reason line when the slot is invalid.
+- The comparison pair reuses the table's shared `HtmlBuilder.classBlock()` / `HtmlBuilder.replacementBlock()` (ui-common.js) — identical date/time/venue formatting, zero duplicated logic; the slot badge moved into the head chips so the venue line is not duplicated.
+- `openApproveNotesModal()`: bulk path now titles the modal "Approve N Requests" and stacks one card per request instead of one merged text blob.
+- `approveSummary()` deleted (single consumer was the old blob).
+- New page-local CSS in `@section('page-styles')`: `.approval-compare/.approval-card/.cmp-card/.cmp-original/.cmp-replacement/.cmp-arrow/.meta-chip/.approval-conflict/.lecturer-avatar` — theme tokens only, no hardcoded hex.
+- Verified live: single approve on request #4 (BMIT4403 — chips `#4 BMIT4403 ⚠ Urgent`, comparison pair, meta chips, `⚠ Room E201 already occupied` line), bulk 3 selected → "Approve 3 Requests" + 3 stacked cards, reject modal → same card above the 5 preset chips; 0 console errors. Playwright suite re-run recorded below.
+
 ## [2026-10-02] Empty state above summary + summary auto-hides when empty
 
 - The inline empty-state block (previously duplicated markup, below the summary) moved **above** the `ui-summary-bar` include.
