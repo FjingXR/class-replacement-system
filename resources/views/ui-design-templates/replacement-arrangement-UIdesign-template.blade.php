@@ -1019,8 +1019,8 @@
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to select as replacement'],
                 ['color' => 'var(--color-primary-container)', 'label' => 'Your Current Selection', 'tip' => 'Slot you have selected for the replacement'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending (You)', 'tip' => 'Your replacement request awaiting approval'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Classes on Public Holiday / Sunday', 'tip' => 'Cannot book — falls on a public holiday or Sunday'],
-                ['color' => 'var(--color-surface-variant)', 'label' => 'Reserved by Others', 'tip' => 'Cannot book — already reserved by another staff'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Unavailable', 'tip' => 'Cannot book — occupied by a class, or falls on a public holiday / Sunday'],
+                ['color' => 'var(--color-surface-variant)', 'label' => 'Reserved by Others', 'tip' => 'Cannot book — their replacement request is still pending approval'],
             ]
         ])
 

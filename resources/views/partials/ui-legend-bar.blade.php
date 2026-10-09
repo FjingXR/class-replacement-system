@@ -1,8 +1,8 @@
 @php
     $items = $items ?? [
-        ['color' => 'var(--color-success-container)', 'label' => 'Normal Class', 'tip' => 'Scheduled class with no issues'],
-        ['color' => 'var(--color-primary-container)', 'label' => 'Replacement', 'tip' => 'Approved replacement session'],
-        ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
+        ['class' => 'event-normal', 'label' => 'Normal Class', 'tip' => 'Scheduled class with no issues'],
+        ['class' => 'event-replacement', 'label' => 'Replacement', 'tip' => 'Approved replacement session'],
+        ['class' => 'event-pending', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
         ['class' => 'event-conflict', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday — this class will not run as scheduled'],
     ];
 @endphp
@@ -12,11 +12,18 @@
     <div class="legend-items">
         @foreach($items as $item)
             <div class="legend-item" @if(!empty($item['tip'])) data-tip="{{ $item['tip'] }}" @endif>
-                {{-- Swatch may carry a real block class (e.g. event-conflict) so the
-                     legend shows the exact loud styling instead of a flat colour. --}}
+                {{-- Swatches carry the real block class so the legend shows the
+                     exact status styling (fill + border) instead of a flat colour. --}}
                 <span class="legend-swatch{{ empty($item['class']) ? '' : ' '.$item['class'] }}" @if(empty($item['class'])) style="background: {{ $item['color'] }};" @endif></span>
                 <span>{{ $item['label'] }}</span>
             </div>
         @endforeach
     </div>
+    @if(!empty($ownershipHint))
+        <span class="legend-ownership-hint">
+            <span class="osd-demo osd-thick"></span> thick border (3px) = your classes
+            &nbsp;·&nbsp;
+            <span class="osd-demo osd-thin"></span> thin border (0.5px) = others'
+        </span>
+    @endif
 </div>

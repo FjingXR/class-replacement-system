@@ -663,3 +663,16 @@ day fully suppressed (22 PH cells).
   shared `eventStatusLabel()` helper in ui-common (Normal / Pending /
   Replacement / Conflict / Cancelled, with a public-holiday day outranking
   the event's own status as "Public Holiday").
+
+### Postscript — §10.0 two-axis block language + legend trim (2026-10-09)
+
+- **Colour = status, border = ownership.** Blocks now share one fill per
+  status (Normal = success green, Pending = tertiary, Conflict/Holiday =
+  error red); ownership moved entirely to border weight — **3px = your
+  classes, 0.5px hairline = others'**. The quiet-vs-loud red split is gone:
+  everyone's conflicts are the same error red, only the border differs.
+- Replacement keeps its blue **only on the personal pages**; on this page it
+  folds into Normal (tooltip still says "Replacement").
+- Legend trimmed to status chips only (swatches reuse the real block
+  classes), plus an ownership hint — *"thick border = your classes ·
+  hairline = others'"* — replacing the Your/Others swatch pairs.

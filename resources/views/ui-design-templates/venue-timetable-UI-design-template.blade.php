@@ -5,14 +5,6 @@
 
 @section('page-styles')
 
-        /* ───── Hairline block definition (venue page only) ─────
-           Regular blocks get a 0.5px border for definition; the viewer's own
-           conflict / public-holiday blocks are excluded — they keep their loud
-           3px border. */
-        #timetable .event-block:not(.event-conflict) {
-            border: 0.5px solid var(--color-outline-strong);
-        }
-
         /* ───── Venue Dropdown ───── */
         .venue-bar {
             display: flex;
@@ -416,14 +408,12 @@
 
         <!-- ─── Legend Bar ─── -->
         @include('partials.ui-legend-bar', [
+            'ownershipHint' => true,
             'items' => [
                 ['color' => 'var(--color-success-container)', 'label' => 'Available', 'tip' => 'Free slot — click to book this venue (Sunday, holiday and lead-time slots can\'t be booked)'],
-                ['color' => 'var(--color-primary-container)', 'label' => 'Your Classes', 'tip' => 'Normal or replacement sessions assigned to you'],
-                ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Normal or replacement sessions by other lecturers'],
-                ['color' => 'var(--color-surface-variant)', 'label' => 'Others\' Pending', 'tip' => 'Replacement request by other lecturers, awaiting PL approval'],
-                ['color' => 'var(--color-tertiary-container)', 'label' => 'Your Pending', 'tip' => 'Your replacement request, awaiting PL approval'],
-                ['class' => 'event-conflict', 'label' => 'Your Conflict', 'tip' => 'Your conflicted class or your own public-holiday class — thick red border, it won\'t run (other lecturers\' conflicts show plain red; remaining holiday slots show as empty \'PH\' cells)'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Others\' Conflict', 'tip' => 'Other lecturers\' conflicted classes — plain red, no action needed from you'],
+                ['class' => 'event-normal', 'label' => 'Normal', 'tip' => 'Scheduled class with no issues (replacement sessions fold in here on this page)'],
+                ['class' => 'event-pending', 'label' => 'Pending', 'tip' => 'Replacement request awaiting PL approval'],
+                ['class' => 'event-conflict', 'label' => 'Conflict / Public Holiday', 'tip' => 'This class will not run as scheduled — scheduling conflict or public holiday (remaining holiday slots show as empty \'PH\' cells)'],
             ]
         ])
 
@@ -845,7 +835,7 @@
                         } else if (e.status === 'pending') {
                             div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
                         } else if (e.status === 'conflict') {
-                            // Loud red = own conflicts; others' stay quiet red (owner-gated, parity with cohort)
+                            // Own conflicts get the loud 3px red border; others' the same red with a hairline (owner-gated, parity with cohort)
                             div.classList.add(isMine ? 'event-conflict' : 'event-public-holiday');
                         } else {
                             div.classList.add(isMine ? 'event-mine' : 'event-others');

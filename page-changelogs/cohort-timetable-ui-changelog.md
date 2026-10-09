@@ -373,3 +373,16 @@ swatches follow automatically. Verified live on all four pages.
   lecturer-only `tooltipExtra` hook was removed — the shared builder in
   ui-common now appends lecturer + run-status (`eventStatusLabel()`)
   uniformly on every timetable page.
+
+### Postscript — §10.0 two-axis block language + legend trim (2026-10-09)
+
+- **Colour = status, border = ownership.** Blocks now share one fill per
+  status (Normal = success green, Pending = tertiary, Conflict/Holiday =
+  error red); ownership moved entirely to border weight — **3px = your
+  classes, 0.5px hairline = others'**. The quiet-vs-loud red split is gone:
+  everyone's conflicts are the same error red, only the border differs.
+- Replacement keeps its blue **only on the personal pages**; on this page it
+  folds into Normal (tooltip still says "Replacement").
+- Legend trimmed to status chips only (swatches reuse the real block
+  classes), plus an ownership hint — *"thick border = your classes ·
+  hairline = others'"* — replacing the Your/Others swatch pairs.

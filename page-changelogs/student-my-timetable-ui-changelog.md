@@ -292,3 +292,15 @@ swatches follow automatically. Verified live on all four pages.
   lecturer-only `tooltipExtra` hook was removed — the shared builder in
   ui-common now appends lecturer + run-status (`eventStatusLabel()`)
   uniformly on every timetable page.
+
+### Postscript — §10.0 two-axis block language (2026-10-09)
+
+- **Every block now carries the loud 3px border** — everything on this page
+  is the viewer's own, so ownership borders don't apply here (the 3px vs
+  0.5px hairline split only matters on the cohort/venue browse pages).
+- Status colours stay: Normal = success green, Pending = tertiary,
+  Replacement = **primary blue (kept on personal pages only)**,
+  Conflict/Holiday = error red with its 3px border.
+- Legend unchanged at 4 chips (Normal / Replacement / Pending /
+  Conflict / Public Holiday); swatches now reuse the real block classes so they show
+  the exact fill + border styling.

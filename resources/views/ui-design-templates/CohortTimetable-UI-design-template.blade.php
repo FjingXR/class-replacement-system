@@ -72,13 +72,11 @@
 
         <!-- ─── Legend Bar ─── -->
         @include('partials.ui-legend-bar', [
+            'ownershipHint' => true,
             'items' => [
-                ['color' => 'var(--color-primary-container)', 'label' => 'Your Classes', 'tip' => 'Normal or replacement sessions assigned to you'],
-                ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Normal or replacement sessions by other lecturers'],
-                ['color' => 'var(--color-surface-variant)', 'label' => 'Others\' Pending', 'tip' => 'Replacement request by other lecturers, awaiting PL approval'],
-                ['color' => 'var(--color-tertiary-container)', 'label' => 'Your Pending', 'tip' => 'Your replacement request, awaiting PL approval'],
-                ['class' => 'event-conflict', 'label' => 'Your Conflict / Holiday', 'tip' => 'Your conflicted or public-holiday class — striped, needs your attention'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Others\' Conflict / Holiday', 'tip' => 'Other lecturers\' conflicted or public-holiday classes — plain red, no action needed from you'],
+                ['class' => 'event-normal', 'label' => 'Normal', 'tip' => 'Scheduled class with no issues (replacement sessions fold in here on this page)'],
+                ['class' => 'event-pending', 'label' => 'Pending', 'tip' => 'Replacement request awaiting PL approval'],
+                ['class' => 'event-conflict', 'label' => 'Conflict / Public Holiday', 'tip' => 'This class will not run as scheduled — scheduling conflict or public holiday'],
             ]
         ])
 
@@ -342,13 +340,14 @@
                 onEventClick: function(e, di) { openModal(e, di); },
                 statusClassFn: function(div, e, isConflict) {
                     var isMine = e.lecturer === MockData.currentUser.name;
-                    /* Loud red (stripes + border) is reserved for the logged-in
-                       lecturer's own conflicted / public-holiday classes —
-                       everyone else's stays quiet red (plain tint). */
+                    /* §10.0 two-axis language: colour = status (same fill for
+                       everyone), border weight = ownership — own conflict/PH
+                       gets the loud 3px error border; everyone else's is the
+                       same red with a 0.5px hairline. */
                     if ((isConflict || e.status === 'conflict') && isMine) {
                         div.classList.add('event-conflict');
                     } else if (isConflict || e.status === 'conflict') {
-                        div.classList.add('event-public-holiday');   // quiet red tint, no stripes
+                        div.classList.add('event-public-holiday');   // same error red, hairline border (not yours)
                     } else if (e.status === 'pending') {
                         div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
                     } else {

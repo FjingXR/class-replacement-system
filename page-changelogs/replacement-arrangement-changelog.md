@@ -975,3 +975,11 @@ duration) itself; `deselectBlock()` and `clearAll()` call
 Also removed `checkConflict()` — dead since the toolbar restructure (no call
 sites) and wrong regardless (it indexed the 1-based "Week N" label into the
 0-based `eventsByWeek`). Found during the Playwright de-staleness pass.
+
+### Postscript — legend: "Unavailable" chip (2026-10-09)
+
+- Legend chip "Classes on Public Holiday / Sunday" renamed to
+  **"Unavailable"** — hover tooltip now lists every reason a slot can't be
+  booked (occupied by a class, public holiday, Sunday).
+- "Reserved by Others" tooltip now points at the pending request:
+  "Cannot book — their replacement request is still pending approval".

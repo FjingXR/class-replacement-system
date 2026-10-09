@@ -290,26 +290,28 @@ test.describe('Venue Timetable UI', () => {
   // 9. LEGEND BAR
   // ════════════════════════════════════════════
 
-  test('TC34 — legend bar has 7 items', async ({ page }) => {
+  test('TC34 — legend bar has 4 items (Available + 3 status chips)', async ({ page }) => {
     const items = page.locator('.legend-bar .legend-item');
-    await expect(items).toHaveCount(7);
+    await expect(items).toHaveCount(4);
   });
 
-  test('TC35 — legend shows all 7 venue states in order', async ({ page }) => {
+  test('TC35 — legend shows Available + status chips in order, with ownership hint', async ({ page }) => {
     const items = page.locator('.legend-bar .legend-item');
     await expect(items).toHaveText([
       'Available',
-      'Your Classes',
-      "Others' Classes",
-      "Others' Pending",
-      'Your Pending',
-      'Your Conflict',
-      "Others' Conflict",
+      'Normal',
+      'Pending',
+      'Conflict / Public Holiday',
     ]);
+    // §10.0 two-axis language: colour = status, border weight = ownership
+    const hint = page.locator('.legend-bar .legend-ownership-hint');
+    await expect(hint).toBeVisible();
+    await expect(hint.locator('.osd-thick')).toHaveCount(1);
+    await expect(hint.locator('.osd-thin')).toHaveCount(1);
   });
 
-  test('TC35b — loud conflict is owner-gated (own striped red, others quiet red)', async ({ page }) => {
-    // B110 wk3: AMCS2093(L) is currentUser's conflict → loud (striped event-conflict)
+  test('TC35b — ownership is border-gated (own 3px red, others hairline red)', async ({ page }) => {
+    // B110 wk3: AMCS2093(L) is currentUser's conflict → loud (event-conflict, 3px)
     await page.goto(`${PAGE}?venue=B110`, { waitUntil: 'networkidle' });
     await page.locator('#weekSelect').selectOption('3');
     await page.waitForTimeout(400);
@@ -318,7 +320,8 @@ test.describe('Venue Timetable UI', () => {
     await expect(myLoud.locator('.ev-code')).toHaveText(/AMCS2093/);
     await expect(page.locator('#tableBody .event-public-holiday')).toHaveCount(0);
 
-    // B101 Week 1 (index 0): MPU-2302(T) is En. Muada's conflict → quiet red (no stripes class)
+    // B101 Week 1 (index 0): MPU-2302(T) is En. Muada's conflict → same error
+    // fill but hairline border (event-public-holiday = "not yours to act on")
     await page.goto(`${PAGE}?venue=B101`, { waitUntil: 'networkidle' });
     await page.locator('#weekSelect').selectOption('0');
     await page.waitForTimeout(400);
