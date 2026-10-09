@@ -461,3 +461,12 @@ real `event-conflict` class so the legend shows the exact styling
 quiet tint = others'). Verified: my timetable W8 Monday (Deepavali
 in-lieu) + W14 (Christmas) PH classes and student page W1/W5 conflicts +
 W8 PH all render loud; suite green.
+
+### Postscript — diagonal hatching removed; loud red = 3px border only (2026-10-09)
+
+The 45° caution stripes on `.event-conflict` proved too busy — reverted to
+a plain `--color-error-container` tint, with the border thickened
+2px → **3px** so own/personal conflicted + public-holiday classes still
+read unmistakably (owner-gating unchanged: loud border = yours, quiet
+plain tint = others' on cohort/venue; personal pages all loud). Legend
+swatches follow automatically. Verified live on all four pages.

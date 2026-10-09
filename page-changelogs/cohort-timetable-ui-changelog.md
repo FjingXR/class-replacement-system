@@ -356,3 +356,12 @@ semantics are unchanged); student page intentionally untouched (owner-blind
 red there). Verified live: cohort dft1s1 W1 Muada's `MPU-2302(T)` quiet,
 dft2s1 W4 own `AMCS2093(L)` loud; venue B110 W4 loud + B101 W1 quiet.
 TC34/35 → 7 legend items; new TC35b (owner-gating on venue); suite green.
+
+### Postscript — diagonal hatching removed; loud red = 3px border only (2026-10-09)
+
+The 45° caution stripes on `.event-conflict` proved too busy — reverted to
+a plain `--color-error-container` tint, with the border thickened
+2px → **3px** so own/personal conflicted + public-holiday classes still
+read unmistakably (owner-gating unchanged: loud border = yours, quiet
+plain tint = others' on cohort/venue; personal pages all loud). Legend
+swatches follow automatically. Verified live on all four pages.
