@@ -365,3 +365,11 @@ a plain `--color-error-container` tint, with the border thickened
 read unmistakably (owner-gating unchanged: loud border = yours, quiet
 plain tint = others' on cohort/venue; personal pages all loud). Legend
 swatches follow automatically. Verified live on all four pages.
+
+### Postscript — block tooltips show lecturer + status (2026-10-09)
+
+- Event-block hover tooltips now read `"Subject · Lecturer · Status"`
+  (e.g. `Operating Systems · En. Lim Jia Zheng · Conflict`). The
+  lecturer-only `tooltipExtra` hook was removed — the shared builder in
+  ui-common now appends lecturer + run-status (`eventStatusLabel()`)
+  uniformly on every timetable page.

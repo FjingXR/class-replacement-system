@@ -470,3 +470,12 @@ a plain `--color-error-container` tint, with the border thickened
 read unmistakably (owner-gating unchanged: loud border = yours, quiet
 plain tint = others' on cohort/venue; personal pages all loud). Legend
 swatches follow automatically. Verified live on all four pages.
+
+### Postscript — block tooltips show cohort + lecturer + status (2026-10-09)
+
+- Event-block hover tooltips now read
+  `"Subject · Cohort(s) · Lecturer · Status"`
+  (e.g. `Operating Systems · DFT2(S1) + DSF2(S1) · En. Lim Jia Zheng ·
+  Normal`). Cohort context is kept as the page's `tooltipExtra`; the shared
+  builder appends lecturer + run-status (`eventStatusLabel()`) — uniform
+  with the other timetable pages.

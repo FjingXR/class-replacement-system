@@ -231,9 +231,10 @@
                 days: weekData[currentWeek].days,
                 onEventClick: function(e) { openModal(e); },
                 tooltipExtra: function(e) {
-                    // Tooltip shows the cohort(s) — the lecturer is the viewer, so venue/lecturer are redundant.
+                    // Page context: cohort(s). The shared builder appends the
+                    // lecturer + run-status ("· En. Lim Jia Zheng · Normal").
                     if (e.cohorts && e.cohorts.length) return e.cohorts.join(' + ');
-                    return e.cohort || e.venue || '—';
+                    return e.cohort || '';
                 },
                 replacementNoteFn: function(e) {
                     return buildReplacementNote(e);

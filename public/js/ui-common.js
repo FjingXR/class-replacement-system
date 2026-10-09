@@ -747,9 +747,13 @@ function buildTimetableGrid(cfg) {
                 div.__eventData = e;
                 div.dataset.name = e.name || '';
                 div.dataset.venue = e.venue || '';
-                div.dataset.tip2 = (typeof cfg.tooltipExtra === 'function')
+                /* Hover tooltip = subject name (data-name) · page context ·
+                   lecturer · run-status — uniform on every timetable page. */
+                const tipCtx = (typeof cfg.tooltipExtra === 'function')
                     ? cfg.tooltipExtra(e)
-                    : (e.venue || '');
+                    : '';
+                div.dataset.tip2 = [tipCtx, e.lecturer || '—', eventStatusLabel(e, isConflict)]
+                    .filter(Boolean).join(' · ');
                 if (typeof cfg.statusClassFn === 'function') {
                     cfg.statusClassFn(div, e, isConflict);
                 } else if (isConflict || e.status === 'conflict') {
@@ -2229,6 +2233,20 @@ function formatDate(iso) { return DateHelper.formatDate(iso); }
 function formatDateTime(iso) { return DateHelper.formatDateTime(iso); }
 function fmt(d) { return DateHelper.fmt(d); }
 function add30min(t) { return DateHelper.add30min(t); }
+
+/* Human label for an event's run-status — the hover-tooltip suffix on every
+   timetable page ("· Normal / Pending / …"). A public-holiday day outranks
+   the event's own status (its class won't run for a different reason). */
+function eventStatusLabel(e, isConflict) {
+    if (isConflict) return 'Public Holiday';
+    switch (e.status) {
+        case 'conflict':    return 'Conflict';
+        case 'pending':     return 'Pending';
+        case 'replacement': return 'Replacement';
+        case 'cancelled':   return 'Cancelled';
+        default:            return 'Normal';
+    }
+}
 function dayAbbr(day) { return DateHelper.dayAbbr(day); }
 function isoDayName(iso) { return DateHelper.isoDayName(iso); }
 function getTodayMs() { return DateHelper.getTodayMs(); }

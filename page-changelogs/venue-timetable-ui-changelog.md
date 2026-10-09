@@ -650,3 +650,16 @@ day fully suppressed (22 PH cells).
   counts (`Lab — 5 venues`, `Block B — 5 venues`, …).
 - TC23 → 3 categories; new TC23b (Lab cascade includes B006, tips present,
   hover reveals true name above the item).
+
+### Postscript — hairline block borders + status tooltips (2026-10-09)
+
+- **Venue page only:** regular event blocks get a `0.5px` hairline border
+  (`--color-outline-strong`) for definition — scoped via the blade's
+  `page-styles` (`#timetable .event-block:not(.event-conflict)`); the
+  viewer's own conflict / public-holiday blocks are excluded and keep their
+  loud 3px border. (Renders as a 1px hairline at 1× DPR.)
+- **Block tooltips now end with the run-status:** the venue cellRender tip
+  is `"Subject · Lecturer · Status"` — the status label comes from the new
+  shared `eventStatusLabel()` helper in ui-common (Normal / Pending /
+  Replacement / Conflict / Cancelled, with a public-holiday day outranking
+  the event's own status as "Public Holiday").

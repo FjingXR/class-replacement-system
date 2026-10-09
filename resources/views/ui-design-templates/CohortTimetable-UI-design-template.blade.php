@@ -340,9 +340,6 @@
                 events: weekEvents,
                 days: weekData[currentWeek].days,
                 onEventClick: function(e, di) { openModal(e, di); },
-                tooltipExtra: function(e) {
-                    return e.lecturer || '—';
-                },
                 statusClassFn: function(div, e, isConflict) {
                     var isMine = e.lecturer === MockData.currentUser.name;
                     /* Loud red (stripes + border) is reserved for the logged-in

@@ -5,6 +5,14 @@
 
 @section('page-styles')
 
+        /* ───── Hairline block definition (venue page only) ─────
+           Regular blocks get a 0.5px border for definition; the viewer's own
+           conflict / public-holiday blocks are excluded — they keep their loud
+           3px border. */
+        #timetable .event-block:not(.event-conflict) {
+            border: 0.5px solid var(--color-outline-strong);
+        }
+
         /* ───── Venue Dropdown ───── */
         .venue-bar {
             display: flex;
@@ -827,7 +835,9 @@
                         div._evt = e; div._di = di; div.__eventData = e;   // parity with default builder
                         div.dataset.name  = e.name  || '';
                         div.dataset.venue = e.venue || '';
-                        div.dataset.tip2  = e.lecturer || '—';             // `.event-block::after` tooltip: "name · lecturer"
+                        /* `.event-block::after` tooltip: "name · lecturer · status"
+                           — parity with the shared builder's uniform format. */
+                        div.dataset.tip2 = (e.lecturer || '—') + ' · ' + eventStatusLabel(e, day.holiday);
                         var isMine = e.lecturer === MockData.currentUser.name;
                         if (day.holiday) {
                             /* own class on a public holiday — loud red, it won't run */
