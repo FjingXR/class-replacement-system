@@ -561,10 +561,10 @@ window.MockData = {
             var flags = {
                 0:  [ [ 'dft1s1|0|4|MPU-2302', 'conflict', 'Lecturer on leave' ], [ 'rsd3s1g2|0|10|BMIT3084', 'conflict', 'Lab equipment failure' ] ],
                 1:  [ [ 'dsf2s1|1|2|AMIS1012', 'pending', '', '29 Sep 2026, 10:00 AM', 1 ], [ 'rsd3s1g2|0|10|BMIT3084', 'replacement', '21-Sep-2026' ], [ 'rsd2s1g1|0|6|BMIT2154', 'conflict', 'Lab equipment failure' ] ],
-                2:  [ [ 'rsd2s1g1|0|6|BMIT2154', 'replacement', '28-Sep-2026' ] ],
+                2:  [ [ 'rsd2s1g1|0|6|BMIT2154', 'replacement', '28-Sep-2026' ], [ 'rsd2s1g2|1|12|BMIT2013', 'conflict', 'Lecturer on medical leave' ] ],
                 3:  [ [ 'dft2s1|0|6|AMCS2093', 'conflict', 'Lecturer on leave' ] ],
                 4:  [ [ 'rsd2s1g3|0|2|BMIT1173', 'conflict', 'Lecturer on leave' ], [ 'dsf1s1|1|11|AMCS1013', 'pending', '', '20 Oct 2026, 11:00 AM', 2 ], [ 'rsd3s1g2|2|6|BMIT2073', 'conflict', 'Lecturer on leave' ] ],
-                5:  [ [ 'rsd3s1g2|2|6|BMIT2073', 'replacement', '21-Oct-2026' ] ],
+                5:  [ [ 'rsd3s1g2|2|6|BMIT2073', 'replacement', '21-Oct-2026' ], [ 'dft2s1|3|13|AMCS2093', 'conflict', 'Venue double-booked' ] ],
                 6:  [ [ 'raf2s3g2|3|6|MPU-3133', 'conflict', 'Lecturer on leave' ], [ 'rsd1s1g1|2|2|BMCS1013', 'conflict', 'Lecturer on leave' ] ],
                 7:  [ [ 'dft2s1|1|2|AMIS1012', 'pending', '', '10 Nov 2026, 10:00 AM', 3 ], [ 'rsd1s1g1|2|2|BMCS1013', 'replacement', '04-Nov-2026' ] ],
                 8:  [ [ 'rsd2s1g2|2|2|BMIT2013', 'conflict', 'Lab equipment failure' ], [ 'rsd3s1g2|2|6|BMIT2073', 'pending', '', '18 Nov 2026, 11:00 AM', 4 ] ],
