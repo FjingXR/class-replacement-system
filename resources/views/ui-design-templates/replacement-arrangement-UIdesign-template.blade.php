@@ -1119,6 +1119,7 @@
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="hideConfirmModal(event)">Cancel</button>
                 <button class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
+                <button class="btn btn-primary" id="modalActionBtn" style="display:none"></button>
             </div>
         </div>
     </div>
@@ -1487,7 +1488,10 @@
 
         function selectBlock(day, startHour) {
             if (selectedBlock) {
-                showAlertModal('Clear current selection', 'You already have a selected block. Clear it first before selecting a new one.');
+                showAlertModal('Clear current selection', 'You already have a selected block. Clear it first before selecting a new one.', {
+                    label: 'Clear Current Selection',
+                    fn: function() { userDeselectSelectedBlock(); }
+                });
                 return false;
             }
             const span = BLOCK_SPAN;
@@ -1677,14 +1681,18 @@
                     'You have selected slots on the grid. Changing the <strong>venue</strong> will clear them. Continue?',
                     function() {
                         hideConfirmModal();
-                        /* keep the booking armed for the next subject pick —
-                           capture BEFORE the discard clears the block */
-                        const rearm = bookingIntentMemory && intentMatchesBlock(
+                        /* 2026-10-09 user decision: confirming the clear is an
+                           explicit discard — the booking pre-fill is SPENT
+                           (markBookingCancelled), not re-armed, matching the
+                           subject/slot confirm modals. Capture BEFORE the
+                           discard clears the block. */
+                        const isBooking = bookingIntentMemory && intentMatchesBlock(
                             currentVenue.code || currentVenue, weekNav.currentWeek, selectedBlock);
                         deselectBlock();
                         applyVenueChange(newVenue);
-                        if (rearm) {
-                            pendingBookingIntent = { ...bookingIntentMemory };
+                        if (isBooking) {
+                            markBookingCancelled();
+                            pendingBookingIntent = null;
                             renderBookingIntent();
                         }
                     }
@@ -1722,14 +1730,26 @@
 
         let confirmCallback = null;
 
-        function showAlertModal(title, bodyHtml) {
+        function showAlertModal(title, bodyHtml, action) {
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalBody').innerHTML = bodyHtml;
             const cancelBtn = document.querySelector('.modal-footer .btn-outline');
             const confirmBtn = document.getElementById('modalConfirmBtn');
+            const actionBtn = document.getElementById('modalActionBtn');
+            /* optional bottom-right action (2026-10-09): e.g. "Clear Current
+               Selection" — OK stays as the plain dismiss (demoted to outline
+               so the action reads as the primary choice) */
+            if (action) {
+                actionBtn.style.display = '';
+                actionBtn.textContent = action.label;
+                actionBtn.onclick = function() { hideConfirmModal(); action.fn(); };
+                confirmBtn.className = 'btn btn-outline';
+            } else {
+                actionBtn.style.display = 'none';
+            }
             cancelBtn.style.display = 'none';
-            confirmBtn.textContent = 'OK';
-            confirmBtn.className = 'btn btn-primary';
+            confirmBtn.textContent = 'Close';
+            confirmBtn.className = action ? 'btn btn-outline' : 'btn btn-primary';
             confirmBtn.onclick = function() {
                 cancelBtn.style.display = '';
                 confirmBtn.textContent = 'Confirm';
@@ -1758,6 +1778,12 @@
             // Reset Cancel button to its default behavior after any custom handler
             const cancelBtn = document.querySelector('#confirmModal .btn-outline');
             if (cancelBtn) cancelBtn.onclick = function(ev) { hideConfirmModal(ev); };
+            // Reset the optional action button + OK label/weight for the next open
+            const actionBtn = document.getElementById('modalActionBtn');
+            if (actionBtn) actionBtn.style.display = 'none';
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            confirmBtn.textContent = 'Confirm';
+            confirmBtn.className = 'btn btn-primary';
         }
 
         function confirmChangeWithSelection(actionLabel, proceedFn, cancelFn) {
@@ -1767,13 +1793,15 @@
                 'You have selected slots on the grid. Changing the <strong>' + actionLabel + '</strong> will remove them. Continue?',
                 function() {
                     hideConfirmModal();
-                    /* the change must not spend the booking: if the block being
-                       cleared IS the booking's pre-fill, re-arm the intent so the
-                       next subject application re-selects it */
+                    /* 2026-10-09 user decision: the modal promises "will remove
+                       them" — confirming IS an explicit discard, so a booking
+                       pre-fill is SPENT here (markBookingCancelled — same
+                       contract as clicking the block's ×; survives reload),
+                       NOT re-armed for the next subject pick. */
                     if (bookingIntentMemory && intentMatchesBlock(
                             currentVenue.code || currentVenue, weekNav.currentWeek, selectedBlock)) {
-                        pendingBookingIntent = { ...bookingIntentMemory };
-                        /* signal that the booking is armed again (N5) */
+                        markBookingCancelled();
+                        pendingBookingIntent = null;
                         renderBookingIntent();
                     }
                     discardSelection();

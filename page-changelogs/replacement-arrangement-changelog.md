@@ -1,5 +1,26 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-10-09b] "Clear current selection" alert gains a Clear action button
+
+- Clicking a grid slot while another block is selected showed an alert with only an OK dismiss — the user had to dismiss, manually remove the block, then re-click. The alert now carries a **Close** (dismiss) and a **Clear Current Selection** button (bottom-right, primary) wired to `userDeselectSelectedBlock()` (the same explicit-discard primitive as the block's ×, so a booking pre-fill is spent correctly).
+- `showAlertModal()` gained an optional `action = {label, fn}` parameter: the action renders as the primary bottom-right button and **OK** demotes to outline; `hideConfirmModal()` resets the button and OK's weight so no stray action leaks into the confirm guards.
+
+## [2026-10-09] Confirm-modals now actually CLEAR the selection (booking pre-fill spent, not re-armed)
+
+### Problem
+
+Arriving from venue-timetable (`?venue=B011&date=…&time=…`), picking a subject pre-fills the booked slot. Changing the subject popped "Clear Current Selection? … will remove them. Continue?" — but on **Confirm** the old code **re-armed the booking intent** (`pendingBookingIntent = {...bookingIntentMemory}`, the N5 "keep the booking alive" rule), and `applySubjectChange()`'s trailing `consumeBookingIntent()` immediately **re-selected the slot**. The modal promised a clear; the user got the block back.
+
+### Fix (2026-10-09 user decision: confirming = explicit discard)
+
+- `confirmChangeWithSelection()` (subject + time-slot guards): when the cleared block **is** the booking pre-fill, call `markBookingCancelled()` instead of re-arming — the booking is spent, the reminder banner clears, and `bookingIntentCancelled` in sessionStorage stops a reload from resurrecting it (same contract as clicking the block's ×).
+- `onVenueChange()` confirm: same re-arm pattern removed — captured `isBooking` before `deselectBlock()`, spends the booking after the venue applies.
+- Manual (non-booking) selections were already cleared correctly and are unchanged; Cancel paths still restore everything.
+
+### Verified
+
+Booking URL → subject pick → pre-fill → subject change → Confirm: 0 selected cells, `selectedSlotsByVenue` empty, `bookingIntentCancelled = B011|12 Oct 2026|11:30`, banner empty; reload + subject pick → still nothing re-selected. Venue change → Confirm: same clear. 0 console errors.
+
 ## [2026-08-19] Fix: week-navigation confirmation preserves selection + back button checks saved slots
 
 ### Problem
