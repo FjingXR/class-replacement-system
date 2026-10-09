@@ -1150,6 +1150,11 @@
         /* the size of ONE block (slots) — derived from the original class
            duration via URL; the multi-week BUDGET stays MAX_SELECTION */
         let BLOCK_SPAN = 4;
+        /* true when the URL carried &duration= (my-timetable/venue handoffs):
+           the ORIGINAL class's size is known, so auto-default slot picks
+           (favourite/recent/first-option) must NOT resize the block away
+           from it — only an explicit user pick in the slot panel may. */
+        let urlSpanLocked = false;
 
         const weekData = generateWeekData();
         const venueSlotData = MockData.venueSlots;
@@ -2684,7 +2689,7 @@
             applyDefaultSlotSelection(slots);
         }
 
-        function selectSlot(slot, index) {
+        function selectSlot(slot, index, opts) {
             if (revertingChange) return;
 
             if (selectedBlock && index !== lastSlotIndex) {
@@ -2707,18 +2712,22 @@
                 return;
             }
             lastSlotIndex = index;
-            commitSlotSelection(slot, index);
+            commitSlotSelection(slot, index, opts);
         }
 
-        function commitSlotSelection(slot, index) {
+        function commitSlotSelection(slot, index, opts) {
             /* F-8 (round-2): the block size follows the picked conflict slot's
                duration — same clamp family as the URL branch (0.5–4 h → ≤8
                slots; slot indices are 30-min units) so a venue-arrival pick
                (subject + slot chosen on this page) sizes the block exactly
                like a home-path entry with &duration=. URL branch keeps
-               INITIAL authority; MAX_SELECTION floor stays ≥ BLOCK_SPAN. */
+               INITIAL authority; MAX_SELECTION floor stays ≥ BLOCK_SPAN.
+               (2026-10-09: "initial authority" is now actually enforced — an
+               AUTO default pick (favourite/recent/first-option, opts.auto)
+               cannot resize a URL-&duration= block; only an explicit user
+               pick in the panel may.) */
             const slotSpan = Math.min(Math.max(slot.end - slot.start + 1, 1), 8);
-            if (slotSpan !== BLOCK_SPAN) {
+            if (!(urlSpanLocked && opts && opts.auto) && slotSpan !== BLOCK_SPAN) {
                 BLOCK_SPAN = slotSpan;
                 MAX_SELECTION = Math.max(MAX_SELECTION, BLOCK_SPAN);
             }
@@ -2812,7 +2821,7 @@
                 const match = slots.find(s => s.code === fav.code && s.day === fav.day && s.start === fav.start && s.venue === fav.venue);
                 if (match) {
                     const idx = slots.indexOf(match);
-                    selectSlot(match, idx);
+                    selectSlot(match, idx, { auto: true });
                     return;
                 }
             }
@@ -2822,13 +2831,13 @@
                 const match = slots.find(s => s.code === recent.code && s.day === recent.day && s.start === recent.start && s.venue === recent.venue);
                 if (match) {
                     const idx = slots.indexOf(match);
-                    selectSlot(match, idx);
+                    selectSlot(match, idx, { auto: true });
                     return;
                 }
             }
             // 4. First option
             if (slots.length > 0) {
-                selectSlot(slots[0], 0);
+                selectSlot(slots[0], 0, { auto: true });
             }
         }
 
@@ -2883,7 +2892,7 @@
                 );
                 if (matchingSlot) {
                     const slotIndex = slots.indexOf(matchingSlot);
-                    selectSlot(matchingSlot, slotIndex);
+                    selectSlot(matchingSlot, slotIndex, { auto: true });
                 }
             }
             evaluateBookingFit();
@@ -2898,6 +2907,7 @@
                 const hrs = Math.min(Math.max(parseFloat(urlParams.duration), 0.5), 4);
                 BLOCK_SPAN = Math.round(hrs * 2);
                 MAX_SELECTION = Math.max(MAX_SELECTION, BLOCK_SPAN);
+                urlSpanLocked = true;
             }
             buildSubjectDropdown();
             renderTitleSummary();

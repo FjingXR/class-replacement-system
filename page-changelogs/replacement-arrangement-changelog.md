@@ -1,5 +1,11 @@
 # Changelog — Replacement Arrangement (Selected Subject Page)
 
+## [2026-10-09c] URL `&duration=` now actually governs the selection span
+
+- **Bug**: arriving from my-timetable with `&duration=1` (1 h conflict class) still demanded a 4-slot (2 h) block. `DOMContentLoaded` sized `BLOCK_SPAN` from the URL correctly, but `applyUrlParams`' slot match missed (the clicked holiday-conflict isn't a seeded picker slot), so `applyDefaultSlotSelection()` fell through to "first option" and auto-committed the w3 6–9 (2 h) slot — and `commitSlotSelection()` resized `BLOCK_SPAN` 2 → 4, overriding the URL (the F-8 comment claimed "URL branch keeps INITIAL authority" but nothing enforced it).
+- **Fix**: new `urlSpanLocked` flag set when the URL carries `&duration=`; auto default picks (`applyDefaultSlotSelection` favourite/recent/first-option + `applyUrlParams`' URL match, via `selectSlot(..., {auto:true})`) can no longer resize a URL-sized block. **Explicit** user picks in the slot panel still resize (choosing a 2 h conflict means a 2 h replacement).
+- Verified: the exact my-timetable handoff URL → `BLOCK_SPAN=2`, grid click selects 2 cells (was 4/4); manual 2 h panel pick → 4; plain arrival (no params) → auto-pick still sizes from the slot. 0 console errors.
+
 ## [2026-10-09b] "Clear current selection" alert gains a Clear action button
 
 - Clicking a grid slot while another block is selected showed an alert with only an OK dismiss — the user had to dismiss, manually remove the block, then re-click. The alert now carries a **Close** (dismiss) and a **Clear Current Selection** button (bottom-right, primary) wired to `userDeselectSelectedBlock()` (the same explicit-discard primitive as the block's ×, so a booking pre-fill is spent correctly).
