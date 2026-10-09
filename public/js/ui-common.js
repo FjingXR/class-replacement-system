@@ -752,10 +752,11 @@ function buildTimetableGrid(cfg) {
                     : (e.venue || '');
                 if (typeof cfg.statusClassFn === 'function') {
                     cfg.statusClassFn(div, e, isConflict);
-                } else if (isConflict) {
-                    div.classList.add('event-public-holiday');
-                } else if (e.status === 'conflict') {
-                    // §10.0 legend A: Conflict = red (conflicted original class)
+                } else if (isConflict || e.status === 'conflict') {
+                    // §10.0: conflict & PH are the same "this class won't run as
+                    // scheduled" story — one loud red on personal timetables
+                    // (everything here is the viewer's own; owner-gating with a
+                    // quiet tint only applies to the cohort/venue browse pages)
                     div.classList.add('event-conflict');
                 } else if (e.status === 'normal') {
                     div.classList.add('event-normal');

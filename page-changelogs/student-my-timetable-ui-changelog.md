@@ -261,3 +261,17 @@ just impossible to mistake for an ordinary block at grid glance.
 Applies to every page rendering conflicted classes (cohort, venue,
 my timetable, student). No legend or test changes needed; verified live
 on cohort (dft2s1 W4 AMCS2093) and venue (B110 W4), suite 124 passed.
+
+### Postscript — conflict & PH unified to one loud red (2026-10-09)
+
+On personal timetables everything shown is the viewer's own, so the old
+split (conflicted = loud striped `event-conflict`, public-holiday = quiet
+plain tint) was meaningless noise. Default builder (`ui-common.js`) now
+sends **both** conflict-status and PH-day classes to the loud
+`event-conflict` treatment — one red, one meaning: "this class will not
+run as scheduled". The shared legend's default conflict swatch reuses the
+real `event-conflict` class so the legend shows the exact styling
+(Cohort/Venue pages keep their own owner-gated legend split: loud = yours,
+quiet tint = others'). Verified: my timetable W8 Monday (Deepavali
+in-lieu) + W14 (Christmas) PH classes and student page W1/W5 conflicts +
+W8 PH all render loud; suite green.

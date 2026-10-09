@@ -3,7 +3,7 @@
         ['color' => 'var(--color-success-container)', 'label' => 'Normal Class', 'tip' => 'Scheduled class with no issues'],
         ['color' => 'var(--color-primary-container)', 'label' => 'Replacement', 'tip' => 'Approved replacement session'],
         ['color' => 'var(--color-tertiary-container)', 'label' => 'Pending', 'tip' => 'Replacement request awaiting approval'],
-        ['color' => 'var(--color-error-container)', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday'],
+        ['class' => 'event-conflict', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday — this class will not run as scheduled'],
     ];
 @endphp
 
