@@ -414,7 +414,7 @@
                 ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Normal or replacement sessions by other lecturers'],
                 ['color' => 'var(--color-surface-variant)', 'label' => 'Others\' Pending', 'tip' => 'Replacement request by other lecturers, awaiting PL approval'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Your Pending', 'tip' => 'Your replacement request, awaiting PL approval'],
-                ['class' => 'event-conflict', 'label' => 'Your Conflict', 'tip' => 'Your conflicted class — striped, needs your attention (on venue, public-holiday slots show as empty \'PH\' cells — not red)'],
+                ['class' => 'event-conflict', 'label' => 'Your Conflict', 'tip' => 'Your conflicted class or your own public-holiday class — thick red border, it won\'t run (other lecturers\' conflicts show plain red; remaining holiday slots show as empty \'PH\' cells)'],
                 ['color' => 'var(--color-error-container)', 'label' => 'Others\' Conflict', 'tip' => 'Other lecturers\' conflicted classes — plain red, no action needed from you'],
             ]
         ])
@@ -806,7 +806,13 @@
                 events: weekEvents,
                 days: days,
                 cellRender: function(td, di, hi, day, info) {
-                    if (day.sunday || day.holiday) {
+                    /* PH-day exception: the logged-in lecturer's OWN classes
+                       still render as loud red blocks on public-holiday days
+                       (parity with my-timetable — "your class won't run");
+                       everyone else's stay empty 'PH' cells. */
+                    const offMine = info && info.event && day.holiday &&
+                                    info.event.lecturer === MockData.currentUser.name;
+                    if ((day.sunday || day.holiday) && !offMine) {
                         /* Unavailable slot (holiday/Sunday) — always empty */
                         const div = document.createElement('div');
                         div.className = 'cell-content ' + (day.holiday ? 'cell-ph' : 'cell-sun');
@@ -823,7 +829,10 @@
                         div.dataset.venue = e.venue || '';
                         div.dataset.tip2  = e.lecturer || '—';             // `.event-block::after` tooltip: "name · lecturer"
                         var isMine = e.lecturer === MockData.currentUser.name;
-                        if (e.status === 'pending') {
+                        if (day.holiday) {
+                            /* own class on a public holiday — loud red, it won't run */
+                            div.classList.add('event-conflict');
+                        } else if (e.status === 'pending') {
                             div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
                         } else if (e.status === 'conflict') {
                             // Loud red = own conflicts; others' stay quiet red (owner-gated, parity with cohort)

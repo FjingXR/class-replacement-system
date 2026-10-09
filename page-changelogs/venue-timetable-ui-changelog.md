@@ -621,3 +621,16 @@ a plain `--color-error-container` tint, with the border thickened
 read unmistakably (owner-gating unchanged: loud border = yours, quiet
 plain tint = others' on cohort/venue; personal pages all loud). Legend
 swatches follow automatically. Verified live on all four pages.
+
+### Postscript — own public-holiday classes now render on the venue grid (2026-10-09)
+
+Holiday days used to flatten the whole day into empty 'PH' cells. Now the
+logged-in lecturer's OWN classes on a public-holiday day still render — as
+loud red `event-conflict` blocks (3px border, parity with my-timetable:
+"your class won't run"), with full modal interaction. Other lecturers'
+holiday classes and Sundays stay empty `cell-ph`/`cell-sun` cells.
+Summary cards unchanged (offday events still excluded from My Teaching /
+counts — visible-but-not-counted is intentional). Legend 'Your Conflict'
+tip updated. Verified: B011 W14 own `AMCS2093(P)` Fri loud (Thu Christmas
+Eve cells empty), B110 W8 own `AMCS2093(L)` Mon loud, B006 W8 all-others
+day fully suppressed (22 PH cells).
