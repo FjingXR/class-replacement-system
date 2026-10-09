@@ -268,12 +268,12 @@ test.describe('Venue Timetable UI', () => {
   // 9. LEGEND BAR
   // ════════════════════════════════════════════
 
-  test('TC34 — legend bar has 6 items', async ({ page }) => {
+  test('TC34 — legend bar has 7 items', async ({ page }) => {
     const items = page.locator('.legend-bar .legend-item');
-    await expect(items).toHaveCount(6);
+    await expect(items).toHaveCount(7);
   });
 
-  test('TC35 — legend shows all 6 venue states in order', async ({ page }) => {
+  test('TC35 — legend shows all 7 venue states in order', async ({ page }) => {
     const items = page.locator('.legend-bar .legend-item');
     await expect(items).toHaveText([
       'Available',
@@ -281,8 +281,29 @@ test.describe('Venue Timetable UI', () => {
       "Others' Classes",
       "Others' Pending",
       'Your Pending',
-      'Conflict / Public Holiday',
+      'Your Conflict',
+      "Others' Conflict",
     ]);
+  });
+
+  test('TC35b — loud conflict is owner-gated (own striped red, others quiet red)', async ({ page }) => {
+    // B110 wk3: AMCS2093(L) is currentUser's conflict → loud (striped event-conflict)
+    await page.goto(`${PAGE}?venue=B110`, { waitUntil: 'networkidle' });
+    await page.locator('#weekSelect').selectOption('3');
+    await page.waitForTimeout(400);
+    const myLoud = page.locator('#tableBody .event-conflict');
+    await expect(myLoud).toHaveCount(1);
+    await expect(myLoud.locator('.ev-code')).toHaveText(/AMCS2093/);
+    await expect(page.locator('#tableBody .event-public-holiday')).toHaveCount(0);
+
+    // B101 Week 1 (index 0): MPU-2302(T) is En. Muada's conflict → quiet red (no stripes class)
+    await page.goto(`${PAGE}?venue=B101`, { waitUntil: 'networkidle' });
+    await page.locator('#weekSelect').selectOption('0');
+    await page.waitForTimeout(400);
+    await expect(page.locator('#tableBody .event-conflict')).toHaveCount(0);
+    const quiet = page.locator('#tableBody .event-public-holiday');
+    await expect(quiet).toHaveCount(1);
+    await expect(quiet.locator('.ev-code')).toHaveText(/MPU-2302/);
   });
 
   // ════════════════════════════════════════════
@@ -383,11 +404,23 @@ test.describe('Venue Timetable UI', () => {
   // 12. AVAILABLE SLOT TOOLTIP
   // ════════════════════════════════════════════
 
+  /** Open the available-slot tooltip on the first bookable cell. Scrolls the
+   *  cell into view and lets the (by-design) scroll-hide handler settle BEFORE
+   *  clicking — otherwise Playwright's auto-scroll on click races the tooltip
+   *  open and it closes instantly (TC47 flake 2026-10-08, legend grew taller). */
+  async function openAvailableTooltip(page: import('@playwright/test').Page): Promise<void> {
+    const cell = page.locator('#tableBody .cell-available').first();
+    if ((await cell.count()) === 0) return;
+    await cell.evaluate((el: HTMLElement) => el.scrollIntoView({ block: 'center' }));
+    await page.waitForTimeout(150);
+    await cell.click();
+  }
+
   test('TC45 — clicking available cell shows tooltip', async ({ page }) => {
     const availableCell = page.locator('#tableBody .cell-available').first();
     const count = await availableCell.count();
     if (count > 0) {
-      await availableCell.click();
+      await openAvailableTooltip(page);
       await expect(page.locator('#availableTooltip')).toHaveClass(/show/);
     }
   });
@@ -395,7 +428,7 @@ test.describe('Venue Timetable UI', () => {
   test('TC46 — tooltip shows booking confirmation text', async ({ page }) => {
     const availableCell = page.locator('#tableBody .cell-available').first();
     if (await availableCell.count() > 0) {
-      await availableCell.click();
+      await openAvailableTooltip(page);
       const text = await page.locator('#tooltipText').textContent();
       expect(text).toMatch(/Book .+ on .+, .+ at .+/);
     }
@@ -404,7 +437,7 @@ test.describe('Venue Timetable UI', () => {
   test('TC47 — tooltip has Book button', async ({ page }) => {
     const availableCell = page.locator('#tableBody .cell-available').first();
     if (await availableCell.count() > 0) {
-      await availableCell.click();
+      await openAvailableTooltip(page);
       await expect(page.locator('#tooltipBookBtn')).toBeVisible();
     }
   });
@@ -412,7 +445,7 @@ test.describe('Venue Timetable UI', () => {
   test('TC48 — pressing Escape closes tooltip', async ({ page }) => {
     const availableCell = page.locator('#tableBody .cell-available').first();
     if (await availableCell.count() > 0) {
-      await availableCell.click();
+      await openAvailableTooltip(page);
       await page.keyboard.press('Escape');
       await expect(page.locator('#availableTooltip')).not.toHaveClass(/show/);
     }

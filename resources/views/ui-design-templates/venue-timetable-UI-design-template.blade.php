@@ -414,7 +414,8 @@
                 ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Normal or replacement sessions by other lecturers'],
                 ['color' => 'var(--color-surface-variant)', 'label' => 'Others\' Pending', 'tip' => 'Replacement request by other lecturers, awaiting PL approval'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Your Pending', 'tip' => 'Your replacement request, awaiting PL approval'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday (on venue, public-holiday slots show as empty \'PH\' cells — not red)'],
+                ['class' => 'event-conflict', 'label' => 'Your Conflict', 'tip' => 'Your conflicted class — striped, needs your attention (on venue, public-holiday slots show as empty \'PH\' cells — not red)'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Others\' Conflict', 'tip' => 'Other lecturers\' conflicted classes — plain red, no action needed from you'],
             ]
         ])
 
@@ -825,7 +826,8 @@
                         if (e.status === 'pending') {
                             div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
                         } else if (e.status === 'conflict') {
-                            div.classList.add('event-conflict');   // §10.0: conflict = red, owner-agnostic (parity with cohort)
+                            // Loud red = own conflicts; others' stay quiet red (owner-gated, parity with cohort)
+                            div.classList.add(isMine ? 'event-conflict' : 'event-public-holiday');
                         } else {
                             div.classList.add(isMine ? 'event-mine' : 'event-others');
                         }

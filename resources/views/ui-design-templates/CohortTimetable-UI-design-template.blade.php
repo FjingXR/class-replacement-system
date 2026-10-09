@@ -51,7 +51,7 @@
             'guideItems' => [
                 '<strong>Select cohort</strong> — choose a faculty, then a cohort to view its timetable',
                 '<strong>Week navigation</strong> — use arrows or Today button to browse weeks',
-                '<strong>Slot status</strong> — Blue: Your classes, Green: Others\' classes, Grey: Others\' pending, Amber: Your pending, Red: Conflict',
+                '<strong>Slot status</strong> — Blue: Your classes, Green: Others\' classes, Grey: Others\' pending, Amber: Your pending, Striped red: Your conflict/holiday, Plain red: Others\' conflict/holiday',
                 '<strong>View details</strong> — click any slot to see class details and venue info',
             ]
         ])
@@ -77,7 +77,8 @@
                 ['color' => 'var(--color-success-container)', 'label' => 'Others\' Classes', 'tip' => 'Normal or replacement sessions by other lecturers'],
                 ['color' => 'var(--color-surface-variant)', 'label' => 'Others\' Pending', 'tip' => 'Replacement request by other lecturers, awaiting PL approval'],
                 ['color' => 'var(--color-tertiary-container)', 'label' => 'Your Pending', 'tip' => 'Your replacement request, awaiting PL approval'],
-                ['color' => 'var(--color-error-container)', 'label' => 'Conflict / Public Holiday', 'tip' => 'Scheduling conflict or public holiday'],
+                ['class' => 'event-conflict', 'label' => 'Your Conflict / Holiday', 'tip' => 'Your conflicted or public-holiday class — striped, needs your attention'],
+                ['color' => 'var(--color-error-container)', 'label' => 'Others\' Conflict / Holiday', 'tip' => 'Other lecturers\' conflicted or public-holiday classes — plain red, no action needed from you'],
             ]
         ])
 
@@ -343,14 +344,14 @@
                     return e.lecturer || '—';
                 },
                 statusClassFn: function(div, e, isConflict) {
-                    if (isConflict) {
-                        div.classList.add('event-public-holiday');
-                        return;
-                    }
                     var isMine = e.lecturer === MockData.currentUser.name;
-                    if (e.status === 'conflict') {
-                        // §10.0 legend A: Conflict = red, same colour on every page
+                    /* Loud red (stripes + border) is reserved for the logged-in
+                       lecturer's own conflicted / public-holiday classes —
+                       everyone else's stays quiet red (plain tint). */
+                    if ((isConflict || e.status === 'conflict') && isMine) {
                         div.classList.add('event-conflict');
+                    } else if (isConflict || e.status === 'conflict') {
+                        div.classList.add('event-public-holiday');   // quiet red tint, no stripes
                     } else if (e.status === 'pending') {
                         div.classList.add(isMine ? 'event-mine-pending' : 'event-others-pending');
                     } else {

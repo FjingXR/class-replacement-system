@@ -593,3 +593,22 @@ just impossible to mistake for an ordinary block at grid glance.
 Applies to every page rendering conflicted classes (cohort, venue,
 my timetable, student). No legend or test changes needed; verified live
 on cohort (dft2s1 W4 AMCS2093) and venue (B110 W4), suite 124 passed.
+
+### Postscript — loud conflict red is now owner-gated (2026-10-08)
+
+The loud red treatment (stripes + border, `event-conflict`) is reserved for
+**the logged-in lecturer's own** conflicted / public-holiday classes.
+Other lecturers' conflicted classes and PH-day classes fall back to a
+**quiet red tint** (`event-public-holiday`, no stripes/border) — the class
+still reads as "won't run / needs attention (someone else's)", just without
+hijacking your attention. Legend split into two entries: **Your
+Conflict / Holiday** (swatch reuses the real loud `event-conflict` class so
+the legend shows the exact styling) and **Others' Conflict / Holiday**
+(plain tint). Slot-status hint text updated to match. My Timetable keeps
+its existing behaviour (all events shown are the viewer's own, so
+semantics are unchanged); student page intentionally untouched (owner-blind
+red there). Verified live: cohort dft1s1 W1 Muada's `MPU-2302(T)` quiet,
+dft2s1 W4 own `AMCS2093(L)` loud; venue B110 W4 loud + B101 W1 quiet.
+TC34/35 → 7 legend items; new TC35b (owner-gating on venue); TC45–48
+tooltip tests now scroll-settle before clicking (auto-scroll race with the
+by-design scroll-hide, exposed by the taller 7-item legend); suite green.
