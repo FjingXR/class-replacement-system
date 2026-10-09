@@ -192,13 +192,35 @@ test.describe('Venue Timetable UI', () => {
     await expect(page.locator('.venue-dd')).not.toHaveClass(/open/);
   });
 
-  test('TC23 — type column lists the 4 registry venue types', async ({ page }) => {
+  test('TC23 — type column lists the 3 dropdown categories (CiscoLab groups under Lab)', async ({ page }) => {
     await page.locator('.venue-dd-trigger').click();
-    // data-type attributes disambiguate ('Lab' is a substring of 'CiscoLab')
+    // CiscoLab (B006) is merged into the Lab category in the dropdown
     const col = page.locator('.venue-dd-panel .venue-col').first();
-    for (const t of ['Tutorial', 'LectureHall', 'Lab', 'CiscoLab']) {
+    for (const t of ['Tutorial', 'LectureHall', 'Lab']) {
       await expect(col.locator(`.venue-col-item-parent[data-type="${t}"]`)).toBeVisible();
     }
+  });
+
+  test('TC23b — Lab cascade includes B006; every option carries a data-tip full name', async ({ page }) => {
+    await page.locator('.venue-dd-trigger').click();
+    await page.waitForTimeout(300);
+    // Walk Lab → Block B → Ground Floor (clicks, same idiom as pickVenue)
+    await page.locator('.venue-col-item-parent[data-type="Lab"]').click();
+    await page.waitForTimeout(300);
+    await page.locator('.venue-dd-panel .venue-col:nth-child(2) .venue-col-item-parent').first().click();
+    await page.waitForTimeout(300);
+    await page.locator('.venue-dd-panel .venue-col:nth-child(3) .venue-col-item-parent').first().click();
+    await page.waitForTimeout(300);
+    const rooms = page.locator('.venue-dd-panel .venue-col:nth-child(4) .venue-col-item-room');
+    await expect(page.locator('.venue-col-item-room[data-code="B006"]')).toHaveCount(1);
+    // every room option exposes a full-name tooltip attribute
+    const tips = await rooms.evaluateAll((els: HTMLElement[]) => els.map(el => el.getAttribute('data-tip') || ''));
+    expect(tips.length).toBeGreaterThan(0);
+    for (const tip of tips) expect(tip).toMatch(/^B\d+ · .+ · .+, Block B$/);
+    // hovering shows the shared tooltip ABOVE the item, revealing the true name
+    await page.locator('.venue-col-item-room[data-code="B006"]').hover();
+    const tipText = await page.evaluate(() => document.querySelector('.data-tip-tooltip')?.textContent);
+    expect(tipText).toContain('B006 · Cisco Lab');
   });
 
   test('TC24 — clicking a type lists its blocks', async ({ page }) => {

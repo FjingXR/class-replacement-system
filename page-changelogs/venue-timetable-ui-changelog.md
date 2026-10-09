@@ -634,3 +634,19 @@ counts — visible-but-not-counted is intentional). Legend 'Your Conflict'
 tip updated. Verified: B011 W14 own `AMCS2093(P)` Fri loud (Thu Christmas
 Eve cells empty), B110 W8 own `AMCS2093(L)` Mon loud, B006 W8 all-others
 day fully suppressed (22 PH cells).
+
+### Postscript — venue dropdown: B006 under Lab + full-name tooltips (2026-10-09)
+
+- **CiscoLab (B006) now groups under the Lab category** in the cascading
+  VenueDropdown (Type → Block → Floor → Room) — Type column shows 3
+  categories; B006 sits with B005/B009/B010/B011 under Block B → Ground
+  Floor. Registry `type: 'CiscoLab'` untouched (dropdown-only
+  normalization, `_typeOf()`); the room tooltip still reveals its true
+  "Cisco Lab" identity.
+- **Every dropdown option now carries a hover tooltip** (shared data-tip
+  utility — fixed, shown above the item, viewport-clamped): room options
+  show the full name (`B006 · Cisco Lab · Ground Floor, Block B`); parent
+  options (Favourites/Recent/type/block/floor rows) show descriptive
+  counts (`Lab — 5 venues`, `Block B — 5 venues`, …).
+- TC23 → 3 categories; new TC23b (Lab cascade includes B006, tips present,
+  hover reveals true name above the item).

@@ -3122,6 +3122,10 @@ class VenueDropdown {
         return this.filter ? this.venues.filter(this.filter) : this.venues;
     }
 
+    /* Dropdown category: CiscoLab (B006) groups under Lab — the room tooltip
+       still reveals its true "Cisco Lab" identity. */
+    _typeOf(v) { return v.type === 'CiscoLab' ? 'Lab' : v.type; }
+
     _clearColumnsFrom(start) {
         for (let i = start; i < this.columns.length; i++) {
             const col = this.columns[i];
@@ -3145,7 +3149,8 @@ class VenueDropdown {
 
         // Favourites — expandable 2-level group: ★ Favourites › [rooms]
         if (this.getFavourites().some(code => venues.some(v => v.code === code))) {
-            const row = this._createParentItem('★ Favourites', { unit: 'favourites' });
+            const favCount = this.getFavourites().filter(code => venues.some(v => v.code === code)).length;
+            const row = this._createParentItem('★ Favourites', { unit: 'favourites', tip: 'Favourites — ' + favCount + ' venues' });
             row.addEventListener('mouseenter', () => this._buildUnitColumn('favourites'));
             row.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -3156,7 +3161,8 @@ class VenueDropdown {
 
         // Recent — expandable 2-level group: Recent › [rooms]
         if (this.getRecent().some(code => venues.some(v => v.code === code))) {
-            const row = this._createParentItem('Recent', { unit: 'recent' });
+            const recCount = this.getRecent().filter(code => venues.some(v => v.code === code)).length;
+            const row = this._createParentItem('Recent', { unit: 'recent', tip: 'Recent — ' + recCount + ' venues' });
             row.addEventListener('mouseenter', () => this._buildUnitColumn('recent'));
             row.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -3175,12 +3181,12 @@ class VenueDropdown {
             return;
         }
 
-        const typeOrder = ['Tutorial', 'LectureHall', 'Lab', 'CiscoLab'];
-        const typeLabels = { Tutorial: 'Tutorial', LectureHall: 'Lecture Hall', Lab: 'Lab', CiscoLab: 'CiscoLab' };
+        const typeOrder = ['Tutorial', 'LectureHall', 'Lab'];
+        const typeLabels = { Tutorial: 'Tutorial', LectureHall: 'Lecture Hall', Lab: 'Lab' };
         typeOrder.forEach(type => {
-            const catVenues = venues.filter(v => v.type === type);
+            const catVenues = venues.filter(v => this._typeOf(v) === type);
             if (catVenues.length === 0) return;
-            const row = this._createParentItem(typeLabels[type] || type, { type });
+            const row = this._createParentItem(typeLabels[type] || type, { type, tip: (typeLabels[type] || type) + ' — ' + catVenues.length + ' venues' });
             row.addEventListener('mouseenter', () => this._buildBlockColumn(type));
             row.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -3229,7 +3235,7 @@ class VenueDropdown {
         this._addSectionHeader(col, 'Blocks');
 
         const venues = this._getVenues();
-        const catVenues = venues.filter(v => v.type === type);
+        const catVenues = venues.filter(v => this._typeOf(v) === type);
         const blocks = [...new Set(catVenues.map(v => v.code.charAt(0)))].sort();
 
         if (blocks.length === 0) {
@@ -3241,7 +3247,8 @@ class VenueDropdown {
         }
 
         blocks.forEach(block => {
-            const row = this._createParentItem('Block ' + block, { block });
+            const inBlock = catVenues.filter(v => v.code.charAt(0) === block).length;
+            const row = this._createParentItem('Block ' + block, { block, tip: 'Block ' + block + ' — ' + inBlock + ' venues' });
             row.addEventListener('mouseenter', () => this._buildFloorColumn(type, block));
             row.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -3262,7 +3269,7 @@ class VenueDropdown {
         this._addSectionHeader(col, 'Floors');
 
         const venues = this._getVenues();
-        const blockVenues = venues.filter(v => v.type === type && v.code.charAt(0) === block);
+        const blockVenues = venues.filter(v => this._typeOf(v) === type && v.code.charAt(0) === block);
 
         // Floor from 2nd char: 0 = Ground, 1+ = Floor N
         const floorMap = {};
@@ -3287,7 +3294,11 @@ class VenueDropdown {
         }
 
         floorOrder.forEach(floor => {
-            const row = this._createParentItem(floor, { floor });
+            const inFloor = blockVenues.filter(v => {
+                const d = parseInt(v.code.charAt(1));
+                return (d === 0 ? 'Ground Floor' : 'Floor ' + d) === floor;
+            }).length;
+            const row = this._createParentItem(floor, { floor, tip: floor + ', Block ' + block + ' — ' + inFloor + ' venues' });
             row.addEventListener('mouseenter', () => this._buildRoomColumn(type, block, floor));
             row.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -3310,7 +3321,7 @@ class VenueDropdown {
 
         const venues = this._getVenues();
         const floorVenues = venues.filter(v => {
-            if (v.type !== type || v.code.charAt(0) !== block) return false;
+            if (this._typeOf(v) !== type || v.code.charAt(0) !== block) return false;
             const d = parseInt(v.code.charAt(1));
             const label = d === 0 ? 'Ground Floor' : 'Floor ' + d;
             return label === floor;
@@ -3351,6 +3362,15 @@ class VenueDropdown {
         row.className = 'venue-col-item venue-col-item-room';
         row.dataset.code = v.code;
         if (v.code === this.selectedCode) row.classList.add('selected');
+
+        /* Full-name tooltip (shared data-tip utility — fixed, shown ABOVE the
+           item): "B006 · Cisco Lab · Ground Floor, Block B". The dropdown
+           groups CiscoLab under Lab, so this is where its true name shows. */
+        const floorNum = parseInt(v.code.charAt(1));
+        const floorLabel = floorNum === 0 ? 'Ground Floor' : 'Floor ' + floorNum;
+        const typeName = v.type === 'CiscoLab' ? 'Cisco Lab'
+            : (v.type === 'LectureHall' ? 'Lecture Hall' : v.type);
+        row.dataset.tip = v.code + ' · ' + typeName + ' · ' + floorLabel + ', Block ' + v.code.charAt(0);
 
         const favs = this.getFavourites();
         const isFav = favs.includes(v.code);
